@@ -71,14 +71,12 @@ open module consulo.python.impl {
 
   requires consulo.python.language.api;
   requires consulo.python.debugger;
+  requires consulo.python.console;
 
   requires com.google.common;
   requires com.google.gson;
   requires com.dynatrace.hash4j;
   requires one.util.streamex;
-
-  requires xmlrpc.common;
-  requires xmlrpc.server;
 
   // TODO remove in future
   requires consulo.ide.impl;
@@ -135,6 +133,9 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.debugger.containerview;
   exports com.jetbrains.python.impl.debugger.dataframe;
   exports com.jetbrains.python.impl.debugger.settings;
+  exports com.jetbrains.python.impl.debugger.smartstepinto;
+  exports com.jetbrains.python.impl.debugger.variablesview.usertyperenderers;
+  exports com.jetbrains.python.impl.debugger.variablesview.usertyperenderers.codeinsight;
   exports com.jetbrains.python.impl.documentation;
   exports com.jetbrains.python.impl.documentation.docstrings;
   exports com.jetbrains.python.impl.documentation.doctest;

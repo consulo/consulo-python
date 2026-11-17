@@ -1,0 +1,12 @@
+pydev.loading.value:
+    text: '... Loading Value'
+pydev.show.value:
+    text: Show Value
+pydev.view.as:
+    text: '...View as {0}'
+pydev.value.protected.attributes.group.name:
+    text: Protected Attributes
+pydev.error.message.failed.to.find.free.socket.port:
+    text: Failed to find a free socket port
+pydev.session.finished:
+    text: Session has ended

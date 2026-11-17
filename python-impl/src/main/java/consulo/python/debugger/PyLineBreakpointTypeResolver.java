@@ -16,27 +16,15 @@
 
 package consulo.python.debugger;
 
-import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.impl.debugger.PyDebugSupportUtils;
 import com.jetbrains.python.impl.debugger.PyLineBreakpointType;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.util.function.Processor;
-import consulo.document.Document;
-import consulo.document.FileDocumentManager;
-import consulo.execution.debug.XDebuggerUtil;
 import consulo.execution.debug.breakpoint.XLineBreakpointType;
 import consulo.execution.debug.breakpoint.XLineBreakpointTypeResolver;
-import consulo.language.ast.IElementType;
-import consulo.language.psi.PsiComment;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiWhiteSpace;
 import consulo.project.Project;
-import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
-
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -45,49 +33,16 @@ import org.jspecify.annotations.Nullable;
  */
 @ExtensionImpl
 public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver {
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public XLineBreakpointType<?> resolveBreakpointType(Project project, VirtualFile virtualFile, int line) {
-    final Ref<PyLineBreakpointType> result = Ref.create();
-    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-    if (document != null) {
-      if (virtualFile.getFileType() == PythonFileType.INSTANCE) {
-        XDebuggerUtil.getInstance().iterateLine(project, document, line, new Processor<PsiElement>() {
-          @Override
-          @RequiredReadAction
-          public boolean process(PsiElement psiElement) {
-            if (psiElement instanceof PsiWhiteSpace || psiElement instanceof PsiComment) {
-              return true;
-            }
-            if (psiElement.getNode() != null && notStoppableElementType(psiElement.getNode().getElementType())) {
-              return true;
-            }
-
-            // Python debugger seems to be able to stop on pretty much everything
-            result.set(PyLineBreakpointType.getInstance());
-            return false;
-          }
-        });
-
-        if (PyDebugSupportUtils.isContinuationLine(document, line - 1)) {
-          result.set(null);
-        }
-      }
+    @Override
+    @RequiredReadAction
+    public @Nullable XLineBreakpointType<?> resolveBreakpointType(Project project, VirtualFile virtualFile, int line) {
+        // the stoppable check of JetBrains' XLineBreakpointType.canPutAt lives in PyLineBreakpointType
+        PyLineBreakpointType type = PyLineBreakpointType.getInstance();
+        return type.canPutAt(virtualFile, line, project) ? type : null;
     }
 
-    return result.get();
-  }
-
-  @Override
-  public FileType getFileType() {
-    return PythonFileType.INSTANCE;
-  }
-
-  private static boolean notStoppableElementType(IElementType elementType) {
-    return elementType == PyTokenTypes.TRIPLE_QUOTED_STRING ||
-      elementType == PyTokenTypes.SINGLE_QUOTED_STRING ||
-      elementType == PyTokenTypes.SINGLE_QUOTED_UNICODE ||
-      elementType == PyTokenTypes.DOCSTRING;
-  }
+    @Override
+    public FileType getFileType() {
+        return PythonFileType.INSTANCE;
+    }
 }

@@ -1,5 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,34 +16,44 @@
  */
 package com.jetbrains.python.impl.console;
 
-import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.debugger.PyDebugProcess;
 import com.jetbrains.python.impl.debugger.PyDebugRunner;
 import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
 import consulo.execution.debug.XDebugSession;
 import consulo.execution.ui.ExecutionConsole;
 import consulo.execution.ui.console.ConsoleViewContentType;
-import consulo.localize.LocalizeValue;
+import consulo.platform.ForwardedPort;
+import consulo.platform.Platform;
+import consulo.process.event.ProcessEvent;
+import consulo.process.event.ProcessListener;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.ex.awt.UIUtil;
+import consulo.util.lang.Pair;
 
 import java.net.ServerSocket;
+import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author traff
- */
-public class PyConsoleDebugProcess extends PyDebugProcess {
+class PyConsoleDebugProcess extends PyDebugProcess {
     private final int myLocalPort;
     private final PyConsoleDebugProcessHandler myConsoleDebugProcessHandler;
+    /**
+     * Consulo-specific: the platform of the console process, see {@link #connect(PydevConsoleCommunication)}.
+     */
+    private final Platform myConsolePlatform;
 
-    public PyConsoleDebugProcess(XDebugSession session,
-                                 ServerSocket serverSocket,
-                                 ExecutionConsole executionConsole,
-                                 PyConsoleDebugProcessHandler consoleDebugProcessHandler) {
+    PyConsoleDebugProcess(
+        XDebugSession session,
+        ServerSocket serverSocket,
+        ExecutionConsole executionConsole,
+        PyConsoleDebugProcessHandler consoleDebugProcessHandler,
+        Platform consolePlatform
+    ) {
         super(session, serverSocket, executionConsole, consoleDebugProcessHandler, false);
         myLocalPort = serverSocket.getLocalPort();
         myConsoleDebugProcessHandler = consoleDebugProcessHandler;
+        myConsolePlatform = consolePlatform;
     }
 
     @Override
@@ -51,13 +62,13 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
     }
 
     @Override
-    protected LocalizeValue getConnectionMessage() {
-        return LocalizeValue.localizeTODO("Connecting to console...");
+    protected String getConnectionMessage() {
+        return PyLocalize.progressTextConnectingToConsole().get();
     }
 
     @Override
-    protected LocalizeValue getConnectionTitle() {
-        return LocalizeValue.localizeTODO("Debugger connection");
+    protected String getConnectionTitle() {
+        return PyLocalize.progressTitleDebuggerConnection().get();
     }
 
     @Override
@@ -67,11 +78,7 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
 
     @Override
     protected void beforeConnect() {
-        printToConsole(getCurrentStateMessage() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-    }
-
-    @Override
-    protected void afterConnect() {
+        printToConsole(getCurrentStateMessage().get() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     }
 
 
@@ -81,22 +88,37 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
     }
 
     public void connect(PydevConsoleCommunication consoleCommunication) throws Exception {
-        int portToConnect = myLocalPort;
+        Pair<String, Integer> portToConnect;
+        if (!myConsolePlatform.equals(Platform.current())) {
+            // Consulo-specific: JB maps the port through RemoteProcessControl. The console process of another machine
+            // connects to the debugger port of the IDE published on that machine, which lives as long as the console.
+            ForwardedPort publishedPort = myConsolePlatform.net().publish(myLocalPort);
+            myConsoleDebugProcessHandler.addProcessListener(new ProcessListener() {
+                @Override
+                public void processTerminated(ProcessEvent event) {
+                    publishedPort.close();
+                }
+            });
+            portToConnect = Pair.create(publishedPort.host(), publishedPort.port());
+        }
+        else {
+            portToConnect = Pair.create("localhost", myLocalPort);
+        }
         Map<String, Boolean> optionsMap = makeDebugOptionsMap(getSession());
         Map<String, String> envs = getDebuggerEnvs(getSession());
-        consoleCommunication.connectToDebugger(portToConnect, optionsMap, envs);
+        consoleCommunication.connectToDebugger(portToConnect.getSecond(), portToConnect.getFirst(), optionsMap, envs);
     }
 
-    private static Map<String, String> getDebuggerEnvs(XDebugSession session) {
-        Map<String, String> env = Maps.newHashMap();
-        PyDebugRunner.configureDebugEnvironment(session.getProject(), env);
+    public static Map<String, String> getDebuggerEnvs(XDebugSession session) {
+        Map<String, String> env = new HashMap<>();
+        PyDebugRunner.configureDebugEnvironment(session.getProject(), env, session.getRunProfile());
         return env;
     }
 
-    private static Map<String, Boolean> makeDebugOptionsMap(XDebugSession session) {
+    public static Map<String, Boolean> makeDebugOptionsMap(XDebugSession session) {
         Project project = session.getProject();
         PyDebuggerOptionsProvider userOpts = PyDebuggerOptionsProvider.getInstance(project);
-        Map<String, Boolean> dbgOpts = Maps.newHashMap();
+        Map<String, Boolean> dbgOpts = new HashMap<>();
         dbgOpts.put("save-signatures", userOpts.isSaveCallSignatures());
         dbgOpts.put("qt-support", userOpts.isSupportQtDebugging());
         return dbgOpts;
@@ -112,7 +134,7 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
         if (!isWaitingForConnection()) {
             setWaitingForConnection(true);
 
-            UIUtil.invokeLaterIfNeeded(() -> waitForConnection(getCurrentStateMessage(), getConnectionTitle()));
+            UIUtil.invokeLaterIfNeeded(() -> waitForConnection(getCurrentStateMessage().get(), getConnectionTitle()));
         }
     }
 }

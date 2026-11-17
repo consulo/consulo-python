@@ -1,5 +1,6 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +16,7 @@
  */
 package com.jetbrains.python.impl.console;
 
-import com.google.common.collect.Maps;
+import com.jetbrains.python.impl.console.actions.CommandQueueForPythonConsoleService;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
 import com.jetbrains.python.run.PythonRunParams;
@@ -26,260 +27,369 @@ import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
-import consulo.ide.ServiceManager;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
-import consulo.util.lang.ComparatorUtil;
-import consulo.util.xml.serializer.annotation.*;
+import consulo.util.lang.Comparing;
+import consulo.util.xml.serializer.annotation.Attribute;
+import consulo.util.xml.serializer.annotation.MapAnnotation;
+import consulo.util.xml.serializer.annotation.Property;
+import consulo.util.xml.serializer.annotation.Tag;
+import consulo.util.xml.serializer.annotation.Transient;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/**
- * @author traff
- */
 @State(
-  name = "PyConsoleOptionsProvider",
-  storages = {
-    @Storage(file = StoragePathMacros.WORKSPACE_FILE)
-  })
+    name = "PyConsoleOptionsProvider",
+    storages = @Storage(file = StoragePathMacros.WORKSPACE_FILE)
+)
 @ServiceAPI(ComponentScope.PROJECT)
 @ServiceImpl
 @Singleton
 public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptions.State> {
-  private State myState = new State();
+    private final Project myProject;
+    private final State myState = new State();
 
-  public PyConsoleSettings getPythonConsoleSettings() {
-    return myState.myPythonConsoleState;
-  }
-
-  public boolean isShowDebugConsoleByDefault() {
-    return myState.myShowDebugConsoleByDefault;
-  }
-
-  public void setShowDebugConsoleByDefault(boolean showDebugConsoleByDefault) {
-    myState.myShowDebugConsoleByDefault = showDebugConsoleByDefault;
-  }
-
-  public boolean isIpythonEnabled() {
-    return myState.myIpythonEnabled;
-  }
-
-  public void setIpythonEnabled(boolean enabled) {
-    myState.myIpythonEnabled = enabled;
-  }
-
-  public static PyConsoleOptions getInstance(Project project) {
-    return ServiceManager.getService(project, PyConsoleOptions.class);
-  }
-
-  @Override
-  public State getState() {
-    return myState;
-  }
-
-  @Override
-  public void loadState(State state) {
-    myState.myShowDebugConsoleByDefault = state.myShowDebugConsoleByDefault;
-    myState.myPythonConsoleState = state.myPythonConsoleState;
-    myState.myIpythonEnabled = state.myIpythonEnabled;
-  }
-
-  public static class State {
-    public PyConsoleSettings myPythonConsoleState = new PyConsoleSettings();
-
-    public boolean myShowDebugConsoleByDefault = false;
-    public boolean myIpythonEnabled = true;
-  }
-
-  @Tag("console-settings")
-  public static class PyConsoleSettings implements PythonRunParams {
-    public String myCustomStartScript = PydevConsoleRunnerImpl.CONSOLE_START_COMMAND;
-    public String mySdkHome = null;
-    public String myInterpreterOptions = "";
-    public boolean myUseModuleSdk;
-    public String myModuleName = null;
-    public Map<String, String> myEnvs = Maps.newHashMap();
-    public boolean myPassParentEnvs = true;
-    public String myWorkingDirectory = "";
-    public boolean myAddContentRoots = true;
-    public boolean myAddSourceRoots;
-
-    public PyConsoleSettings() {
+    @Inject
+    public PyConsoleOptions(Project project) {
+        myProject = project;
     }
 
-    public PyConsoleSettings(String myCustomStartScript) {
-      this.myCustomStartScript = myCustomStartScript;
+    public PyConsoleSettings getPythonConsoleSettings() {
+        return myState.myPythonConsoleState;
     }
 
-    public void apply(AbstractPythonRunConfigurationParams form) {
-      mySdkHome = form.getSdkHome();
-      myInterpreterOptions = form.getInterpreterOptions();
-      myEnvs = form.getEnvs();
-      myPassParentEnvs = form.isPassParentEnvs();
-      myUseModuleSdk = form.isUseModuleSdk();
-      myModuleName = form.getModule() == null ? null : form.getModule().getName();
-      myWorkingDirectory = form.getWorkingDirectory();
-
-      myAddContentRoots = form.shouldAddContentRoots();
-      myAddSourceRoots = form.shouldAddSourceRoots();
+    public boolean isShowDebugConsoleByDefault() {
+        return myState.myShowDebugConsoleByDefault;
     }
 
-    public boolean isModified(AbstractPyCommonOptionsForm form) {
-      return !ComparatorUtil.equalsNullable(mySdkHome, form.getSdkHome()) ||
-        !myInterpreterOptions.equals(form.getInterpreterOptions()) ||
-        !myEnvs.equals(form.getEnvs()) ||
-        myPassParentEnvs != form.isPassParentEnvs() ||
-        myUseModuleSdk != form.isUseModuleSdk() ||
-        myAddContentRoots != form.shouldAddContentRoots() ||
-        myAddSourceRoots != form.shouldAddSourceRoots() || !ComparatorUtil.equalsNullable(myModuleName,
-                                                                                          form.getModule() == null ? null : form.getModule()
-                                                                                                                                .getName()) ||
-        !myWorkingDirectory.equals(form.getWorkingDirectory());
+    public void setShowDebugConsoleByDefault(boolean value) {
+        myState.myShowDebugConsoleByDefault = value;
     }
 
-    public void reset(Project project, AbstractPythonRunConfigurationParams form) {
-      form.setEnvs(myEnvs);
-      form.setPassParentEnvs(myPassParentEnvs);
-      form.setInterpreterOptions(myInterpreterOptions);
-      form.setSdkHome(mySdkHome);
-      form.setUseModuleSdk(myUseModuleSdk);
-      form.setAddContentRoots(myAddContentRoots);
-      form.setAddSourceRoots(myAddSourceRoots);
-
-      boolean moduleWasAutoselected = false;
-      if (form.isUseModuleSdk() != myUseModuleSdk) {
-        myUseModuleSdk = form.isUseModuleSdk();
-        moduleWasAutoselected = true;
-      }
-
-      if (myModuleName != null) {
-        form.setModule(ModuleManager.getInstance(project).findModuleByName(myModuleName));
-      }
-
-      if (moduleWasAutoselected && form.getModule() != null) {
-        myModuleName = form.getModule().getName();
-      }
-
-      form.setWorkingDirectory(myWorkingDirectory);
+    public boolean isShowVariableByDefault() {
+        return myState.myShowVariablesByDefault;
     }
 
-    @Attribute("custom-start-script")
-    public String getCustomStartScript() {
-      return myCustomStartScript;
+    public void setShowVariablesByDefault(boolean value) {
+        myState.myShowVariablesByDefault = value;
     }
 
-    @Attribute("sdk-home")
-    @Override
-    public String getSdkHome() {
-      return mySdkHome;
+    public boolean isIpythonEnabled() {
+        return myState.myIpythonEnabled;
     }
 
-    @Attribute("module-name")
-    @Override
-    public String getModuleName() {
-      return myModuleName;
+    public void setIpythonEnabled(boolean value) {
+        myState.myIpythonEnabled = value;
     }
 
-    @Attribute("working-directory")
-    @Override
-    public String getWorkingDirectory() {
-      return myWorkingDirectory;
+    public boolean isUseExistingConsole() {
+        return myState.myUseExistingConsole;
     }
 
-    @Attribute("is-module-sdk")
-    @Override
-    public boolean isUseModuleSdk() {
-      return myUseModuleSdk;
+    public void setUseExistingConsole(boolean value) {
+        myState.myUseExistingConsole = value;
     }
 
-    @Tag("envs")
-    @Property(surroundWithTag = false)
-    @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, keyAttributeName = "key",
-      entryTagName = "env", valueAttributeName = "value", surroundValueWithTag = false)
-    @Override
-    public Map<String, String> getEnvs() {
-      return myEnvs;
+    public boolean isCommandQueueEnabled() {
+        return myState.myCommandQueueEnabled;
     }
 
-    @Attribute("add-content-roots")
-    @Override
-    public boolean shouldAddContentRoots() {
-      return myAddContentRoots;
+    public void setCommandQueueEnabled(boolean value) {
+        myState.myCommandQueueEnabled = value;
+        if (!value) {
+            CommandQueueForPythonConsoleService.getInstance(myProject).disableCommandQueue();
+        }
     }
 
-    @Attribute("add-source-roots")
-    @Override
-    public boolean shouldAddSourceRoots() {
-      return myAddSourceRoots;
+    public PyConsoleOptionsConfigurable.CodeCompletionOption getCodeCompletionOption() {
+        return myState.myCodeCompletionOption;
     }
 
-    @Attribute("interpreter-options")
-    @Override
-    public String getInterpreterOptions() {
-      return myInterpreterOptions;
+    public void setCodeCompletionOption(PyConsoleOptionsConfigurable.CodeCompletionOption value) {
+        myState.myCodeCompletionOption = value;
     }
 
-    public void setCustomStartScript(String customStartScript) {
-      myCustomStartScript = customStartScript;
+    public boolean isRuntimeCodeCompletion() {
+        return myState.myCodeCompletionOption == PyConsoleOptionsConfigurable.CodeCompletionOption.RUNTIME;
     }
 
     @Override
-    public void setSdkHome(String sdkHome) {
-      mySdkHome = sdkHome;
+    public State getState() {
+        return myState;
     }
 
     @Override
-    public void setModule(Module module) {
-      setModuleName(module.getName());
+    public void loadState(State state) {
+        myState.myShowDebugConsoleByDefault = state.myShowDebugConsoleByDefault;
+        myState.myShowVariablesByDefault = state.myShowVariablesByDefault;
+        myState.myPythonConsoleState = state.myPythonConsoleState;
+        myState.myIpythonEnabled = state.myIpythonEnabled;
+        myState.myUseExistingConsole = state.myUseExistingConsole;
+        myState.myCommandQueueEnabled = state.myCommandQueueEnabled;
+        myState.myCodeCompletionOption = state.myCodeCompletionOption;
     }
 
-    @Override
-    public void setInterpreterOptions(String interpreterOptions) {
-      myInterpreterOptions = interpreterOptions;
+    public static PyConsoleOptions getInstance(Project project) {
+        return project.getInstance(PyConsoleOptions.class);
     }
 
-    @Override
-    public void setUseModuleSdk(boolean useModuleSdk) {
-      myUseModuleSdk = useModuleSdk;
+    public static class State {
+        public PyConsoleSettings myPythonConsoleState = new PyConsoleSettings();
+
+        public boolean myShowDebugConsoleByDefault = true;
+
+        public boolean myShowVariablesByDefault = true;
+
+        public boolean myIpythonEnabled = true;
+
+        public boolean myUseExistingConsole = false;
+
+        public boolean myCommandQueueEnabled = false;
+
+        public PyConsoleOptionsConfigurable.CodeCompletionOption myCodeCompletionOption =
+            PyConsoleOptionsConfigurable.CodeCompletionOption.STATIC;
     }
 
-    @Override
-    @Attribute("is-pass-parent-envs")
-    public boolean isPassParentEnvs() {
-      return myPassParentEnvs;
-    }
+    @Tag("console-settings")
+    public static class PyConsoleSettings implements PythonRunParams {
+        public String myCustomStartScript = PydevConsoleRunnerImpl.CONSOLE_START_COMMAND;
 
-    @Override
-    public void setPassParentEnvs(boolean passParentEnvs) {
-      myPassParentEnvs = passParentEnvs;
-    }
+        /**
+         * Consulo: JB keeps a transient {@code PythonInterpreter} here (a console runs with the interpreter of its Python project).
+         * Consulo keeps its own SDK design: the console settings store the home of the selected SDK.
+         */
+        public @Nullable String mySdkHome = null;
 
-    public void setModuleName(String moduleName) {
-      myModuleName = moduleName;
-    }
+        public String myInterpreterOptions = "";
 
-    @Override
-    public void setEnvs(Map<String, String> envs) {
-      myEnvs = envs;
-    }
+        public boolean myUseModuleSdk = false;
 
-    @Override
-    public void setWorkingDirectory(String workingDirectory) {
-      myWorkingDirectory = workingDirectory;
-    }
+        public @Nullable String myModuleName = null;
 
-    @Override
-    public void setAddContentRoots(boolean addContentRoots) {
-      myAddContentRoots = addContentRoots;
-    }
+        public Map<String, String> myEnvs = new HashMap<>();
 
-    @Override
-    public void setAddSourceRoots(boolean addSourceRoots) {
-      myAddSourceRoots = addSourceRoots;
+        public List<String> myEnvFiles = List.of();
+
+        public boolean myPassParentEnvs = true;
+
+        public String myWorkingDirectory = "";
+
+        public boolean myAddContentRoots = true;
+
+        public boolean myAddSourceRoots = true;
+
+        // TODO consulo: PathMappingSettings missing (JB myMappings)
+        private boolean myUseSoftWraps = false;
+        private boolean myDebugJustMyCode = false;
+
+        public PyConsoleSettings() {
+        }
+
+        public PyConsoleSettings(String myCustomStartScript) {
+            this.myCustomStartScript = myCustomStartScript;
+        }
+
+        public void apply(AbstractPythonRunConfigurationParams form) {
+            mySdkHome = form.getSdkHome();
+            myInterpreterOptions = form.getInterpreterOptions();
+            myEnvs = form.getEnvs();
+            // TODO consulo: AbstractPythonRunConfigurationParams.getEnvFilePaths() missing
+            myPassParentEnvs = form.isPassParentEnvs();
+            myUseModuleSdk = form.isUseModuleSdk();
+            Module module = form.getModule();
+            myModuleName = module != null ? module.getName() : null;
+            myWorkingDirectory = form.getWorkingDirectory();
+
+            myAddContentRoots = form.shouldAddContentRoots();
+            myAddSourceRoots = form.shouldAddSourceRoots();
+        }
+
+        public boolean isModified(AbstractPyCommonOptionsForm form) {
+            Module module = form.getModule();
+            return !Comparing.equal(mySdkHome, form.getSdkHome()) ||
+                !myInterpreterOptions.equals(form.getInterpreterOptions()) ||
+                !myEnvs.equals(form.getEnvs()) ||
+                myPassParentEnvs != form.isPassParentEnvs() ||
+                myUseModuleSdk != form.isUseModuleSdk() ||
+                myAddContentRoots != form.shouldAddContentRoots() ||
+                myAddSourceRoots != form.shouldAddSourceRoots() ||
+                !Comparing.equal(myModuleName, module != null ? module.getName() : null) ||
+                !myWorkingDirectory.equals(form.getWorkingDirectory());
+        }
+
+        public void reset(Project project, AbstractPythonRunConfigurationParams form) {
+            form.setEnvs(myEnvs);
+            form.setPassParentEnvs(myPassParentEnvs);
+            form.setInterpreterOptions(myInterpreterOptions);
+            form.setSdkHome(mySdkHome);
+            form.setUseModuleSdk(myUseModuleSdk);
+            form.setAddContentRoots(myAddContentRoots);
+            form.setAddSourceRoots(myAddSourceRoots);
+
+            boolean moduleWasAutoselected = false;
+            if (form.isUseModuleSdk() != myUseModuleSdk) {
+                myUseModuleSdk = form.isUseModuleSdk();
+                moduleWasAutoselected = true;
+            }
+
+            if (myModuleName != null) {
+                form.setModule(ModuleManager.getInstance(project).findModuleByName(myModuleName));
+            }
+
+            Module module = form.getModule();
+            if (moduleWasAutoselected && module != null) {
+                myModuleName = module.getName();
+            }
+
+            form.setWorkingDirectory(myWorkingDirectory);
+        }
+
+        @SuppressWarnings("unused")
+        @Attribute("custom-start-script")
+        public String getCustomStartScript() {
+            return myCustomStartScript;
+        }
+
+        @Attribute("sdk-home")
+        @Override
+        public @Nullable String getSdkHome() {
+            return mySdkHome;
+        }
+
+        @Attribute("module-name")
+        @Override
+        public @Nullable String getModuleName() {
+            return myModuleName;
+        }
+
+        @Attribute("working-directory")
+        @Override
+        public String getWorkingDirectory() {
+            return myWorkingDirectory;
+        }
+
+        @Attribute("is-module-sdk")
+        @Override
+        public boolean isUseModuleSdk() {
+            return myUseModuleSdk;
+        }
+
+        @Tag("envs")
+        @Property(surroundWithTag = false)
+        @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, keyAttributeName = "key",
+            entryTagName = "env", valueAttributeName = "value", surroundValueWithTag = false)
+        @Override
+        public Map<String, String> getEnvs() {
+            return myEnvs;
+        }
+
+        @Attribute("add-content-roots")
+        @Override
+        public boolean shouldAddContentRoots() {
+            return myAddContentRoots;
+        }
+
+        @Attribute("add-source-roots")
+        @Override
+        public boolean shouldAddSourceRoots() {
+            return myAddSourceRoots;
+        }
+
+        @Attribute("interpreter-options")
+        @Override
+        public String getInterpreterOptions() {
+            return myInterpreterOptions;
+        }
+
+        @SuppressWarnings("unused")
+        public void setCustomStartScript(String customStartScript) {
+            myCustomStartScript = customStartScript;
+        }
+
+        @Override
+        public void setSdkHome(@Nullable String sdkHome) {
+            mySdkHome = sdkHome;
+        }
+
+        @Override
+        public void setModule(Module module) {
+            setModuleName(module.getName());
+        }
+
+        @Override
+        public void setInterpreterOptions(String interpreterOptions) {
+            myInterpreterOptions = interpreterOptions;
+        }
+
+        @Override
+        public void setUseModuleSdk(boolean useModuleSdk) {
+            myUseModuleSdk = useModuleSdk;
+        }
+
+        @Attribute("is-pass-parent-envs")
+        @Override
+        public boolean isPassParentEnvs() {
+            return myPassParentEnvs;
+        }
+
+        @Override
+        public void setPassParentEnvs(boolean passParentEnvs) {
+            myPassParentEnvs = passParentEnvs;
+        }
+
+        public void setModuleName(@Nullable String moduleName) {
+            myModuleName = moduleName;
+        }
+
+        @Override
+        public void setEnvs(Map<String, String> envs) {
+            myEnvs = envs;
+        }
+
+        @Override
+        public void setWorkingDirectory(String workingDirectory) {
+            myWorkingDirectory = workingDirectory;
+        }
+
+        @Override
+        public void setAddContentRoots(boolean addContentRoots) {
+            myAddContentRoots = addContentRoots;
+        }
+
+        @Override
+        public void setAddSourceRoots(boolean addSourceRoots) {
+            myAddSourceRoots = addSourceRoots;
+        }
+
+        public boolean shouldDebugJustMyCode() {
+            return myDebugJustMyCode;
+        }
+
+        public void setDebugJustMyCode(boolean debugJustMyCode) {
+            myDebugJustMyCode = debugJustMyCode;
+        }
+
+        public boolean isUseSoftWraps() {
+            return myUseSoftWraps;
+        }
+
+        public void setUseSoftWraps(boolean value) {
+            myUseSoftWraps = value;
+        }
+
+        @Transient
+        public List<String> getEnvFilePaths() {
+            return myEnvFiles;
+        }
+
+        public void setEnvFilePaths(List<String> value) {
+            myEnvFiles = value;
+        }
     }
-  }
 }
-

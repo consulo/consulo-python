@@ -1,129 +1,95 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.debugger.array;
 
-import java.awt.Component;
-
-import javax.swing.JTable;
-import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-
-import consulo.ui.ex.JBColor;
-import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.impl.debugger.containerview.ColoredCellRenderer;
 import com.jetbrains.python.impl.debugger.containerview.PyNumericViewUtil;
+import com.jetbrains.python.impl.debugger.dataframe.DataViewCellRenderer;
+import consulo.logging.Logger;
+import org.jspecify.annotations.Nullable;
+
+import javax.swing.JTable;
+import java.awt.Color;
 
 /**
  * @author amarch
  */
-class ArrayTableCellRenderer extends DefaultTableCellRenderer implements ColoredCellRenderer
-{
+class ArrayTableCellRenderer extends DataViewCellRenderer implements ColoredCellRenderer {
+    private static final Logger LOG = Logger.getInstance(ArrayTableCellRenderer.class);
+    private double myMin;
+    private double myMax;
+    private @Nullable String myComplexMin;
+    private @Nullable String myComplexMax;
+    private boolean myColored = true;
+    private final String myType;
 
-	private double myMin = Double.MIN_VALUE;
-	private double myMax = Double.MIN_VALUE;
-	private String myComplexMin;
-	private String myComplexMax;
-	private boolean myColored = true;
-	private final String myType;
+    ArrayTableCellRenderer(double min, double max, String type) {
+        setHorizontalAlignment(LEFT);
+        setHorizontalTextPosition(LEFT);
+        setVerticalAlignment(CENTER);
+        myMin = min;
+        myMax = max;
+        myType = type;
+    }
 
-	public ArrayTableCellRenderer(double min, double max, String type)
-	{
-		setHorizontalAlignment(CENTER);
-		setHorizontalTextPosition(LEFT);
-		setVerticalAlignment(BOTTOM);
-		myMin = min;
-		myMax = max;
-		myType = type;
-	}
+    @Override
+    public void setColored(boolean colored) {
+        myColored = colored;
+    }
 
-	@Override
-    public void setColored(boolean colored)
-	{
-		myColored = colored;
-	}
+    @Override
+    protected void colorize(JTable table, @Nullable Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Color background = null;
+        if (myMax != myMin) {
+            if (myColored && value != null) {
+                try {
+                    String valueStr = value.toString();
+                    if (!valueStr.isEmpty()) {
+                        double rangedValue = PyNumericViewUtil.getRangedValue(valueStr, myType, myMin, myMax, myComplexMax, myComplexMin);
+                        background = PyNumericViewUtil.rangedValueToColor(rangedValue);
+                    }
+                }
+                catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        this.setBackground(background);
+    }
 
-	@Override
-	public boolean getColored()
-	{
-		return myColored;
-	}
+    public void setMin(double min) {
+        myMin = min;
+    }
 
-	@Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col)
-	{
-		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-		if(value != null)
-		{
-			setText(value.toString());
-		}
+    public void setMax(double max) {
+        myMax = max;
+    }
 
-		if(hasFocus)
-		{
-			this.setBorder(new LineBorder(JBColor.BLUE, 2));
-		}
+    public double getMin() {
+        return myMin;
+    }
 
-		if(myMax != myMin)
-		{
-			if(myColored && value != null)
-			{
-				try
-				{
-					double rangedValue = PyNumericViewUtil.getRangedValue(value.toString(), myType, myMin, myMax, myComplexMax, myComplexMin);
-					this.setBackground(PyNumericViewUtil.rangedValueToColor(rangedValue));
-				}
-				catch(NumberFormatException ignored)
-				{
-				}
-			}
-			else
-			{
-				this.setBackground(UIUtil.getBgFillColor(table));
-			}
-		}
+    public double getMax() {
+        return myMax;
+    }
 
-		return this;
-	}
-
-	public void setMin(double min)
-	{
-		myMin = min;
-	}
-
-	public void setMax(double max)
-	{
-		myMax = max;
-	}
-
-	public double getMin()
-	{
-		return myMin;
-	}
-
-	public double getMax()
-	{
-		return myMax;
-	}
-
-	public void setComplexMin(String complexMin)
-	{
-		myComplexMin = complexMin;
-	}
-
-	public void setComplexMax(String complexMax)
-	{
-		myComplexMax = complexMax;
-	}
+    public void fillColorRange(String minValue, String maxValue) {
+        if ("c".equals(myType)) {
+            myMin = 0;
+            myMax = 1;
+            myComplexMin = minValue;
+            myComplexMax = maxValue;
+            return;
+        }
+        if ("b".equals(myType)) {
+            myMin = "True".equals(minValue) ? 1 : 0;
+            myMax = "True".equals(maxValue) ? 1 : 0;
+            return;
+        }
+        try {
+            myMin = Double.parseDouble(minValue);
+            myMax = Double.parseDouble(maxValue);
+        }
+        catch (NumberFormatException e) {
+            LOG.error(String.format("Wrong bounds for '%s' type: minValue = %s, maxValue = %s", myType, minValue, maxValue));
+        }
+    }
 }

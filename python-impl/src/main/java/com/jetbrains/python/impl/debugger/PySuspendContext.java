@@ -1,25 +1,13 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyThreadInfo;
-import com.jetbrains.python.debugger.pydev.AbstractCommand;
+
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.execution.debug.frame.XExecutionStack;
 import consulo.execution.debug.frame.XSuspendContext;
-import consulo.execution.debug.icon.ExecutionDebugIconGroup;
+import com.jetbrains.python.debugger.pydev.AbstractCommand;
+
 import consulo.ui.image.Image;
 
 import java.util.Collection;
@@ -28,7 +16,7 @@ import java.util.Collection;
 public class PySuspendContext extends XSuspendContext {
 
     private final PyExecutionStack myActiveStack;
-    private PyDebugProcess myDebugProcess;
+    private final PyDebugProcess myDebugProcess;
 
     public PySuspendContext(PyDebugProcess debugProcess, PyThreadInfo threadInfo) {
         myDebugProcess = debugProcess;
@@ -52,7 +40,7 @@ public class PySuspendContext extends XSuspendContext {
     @Override
     public XExecutionStack[] getExecutionStacks() {
         Collection<PyThreadInfo> threads = myDebugProcess.getThreads();
-        if (threads.size() < 1) {
+        if (threads.isEmpty()) {
             return XExecutionStack.EMPTY_ARRAY;
         }
         else {

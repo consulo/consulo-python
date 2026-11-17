@@ -1,156 +1,142 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger.pydev.transport;
+
+import consulo.logging.Logger;
+import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-
-import consulo.logging.Logger;
-import consulo.util.io.CharsetToolkit;
-import com.jetbrains.python.debugger.pydev.ProtocolFrame;
-import com.jetbrains.python.debugger.pydev.RemoteDebugger;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Alexander Koshevoy
  */
-public class ServerModeDebuggerTransport extends BaseDebuggerTransport
-{
-	private static final Logger LOG = Logger.getInstance(ServerModeDebuggerTransport.class);
+public class ServerModeDebuggerTransport extends BaseDebuggerTransport {
+    private static final Logger LOG = Logger.getInstance(ServerModeDebuggerTransport.class);
 
-	private final ServerSocket myServerSocket;
-	private volatile DebuggerReader myDebuggerReader;
+    private final ServerSocket myServerSocket;
+    private volatile DebuggerReader myDebuggerReader;
 
-	private volatile boolean myConnected = false;
-	private volatile Socket mySocket;
-	private int myConnectionTimeout;
+    private volatile boolean myConnected = false;
+    private volatile Socket mySocket;
+    private final int myConnectionTimeout;
 
-	public ServerModeDebuggerTransport(RemoteDebugger debugger, ServerSocket socket, int connectionTimeout)
-	{
-		super(debugger);
-		myServerSocket = socket;
-		myConnectionTimeout = connectionTimeout;
-	}
+    public ServerModeDebuggerTransport(RemoteDebugger debugger, ServerSocket socket, int connectionTimeout) {
+        super(debugger);
+        myServerSocket = socket;
+        myConnectionTimeout = connectionTimeout;
+    }
 
-	@Override
-	public void waitForConnect() throws IOException
-	{
-		//noinspection SocketOpenedButNotSafelyClosed
-		myServerSocket.setSoTimeout(myConnectionTimeout);
+    @Override
+    public void waitForConnect() throws IOException {
+        synchronized (mySocketObject) {
+            if (myServerSocket.isClosed()) {
+                return;
+            }
+            myServerSocket.setSoTimeout(myConnectionTimeout);
+            try {
+                mySocket = myServerSocket.accept();
+                myConnected = true;
 
-		synchronized(mySocketObject)
-		{
-			mySocket = myServerSocket.accept();
-			myConnected = true;
-		}
-		try
-		{
-			synchronized(mySocketObject)
-			{
-				myDebuggerReader = new DebuggerReader(myDebugger, mySocket.getInputStream());
-			}
-		}
-		catch(IOException e)
-		{
-			try
-			{
-				mySocket.close();
-			}
-			catch(IOException ignore)
-			{
-			}
-			throw e;
-		}
+                myDebuggerReader = new DebuggerReader(myDebugger, mySocket.getInputStream());
+            }
+            catch (IOException e) {
+                try {
+                    if (mySocket != null) {
+                        mySocket.close();
+                    }
+                }
+                catch (IOException ignore) {
+                }
+                throw e;
+            }
+        }
+        // mySocket is closed in close() method on process termination
+    }
 
-		// mySocket is closed in close() method on process termination
-	}
+    @Override
+    public void close() {
+        try {
+            if (myDebuggerReader != null) {
+                myDebuggerReader.stop();
+            }
+        }
+        finally {
+            if (!myServerSocket.isClosed()) {
+                try {
+                    myServerSocket.close();
+                }
+                catch (IOException e) {
+                    LOG.warn("Error closing socket", e);
+                }
+            }
+        }
+    }
 
-	@Override
-	public void close()
-	{
-		try
-		{
-			if(myDebuggerReader != null)
-			{
-				myDebuggerReader.stop();
-			}
-		}
-		finally
-		{
-			if(!myServerSocket.isClosed())
-			{
-				try
-				{
-					myServerSocket.close();
-				}
-				catch(IOException e)
-				{
-					LOG.warn("Error closing socket", e);
-				}
-			}
-		}
-	}
+    /**
+     * Server mode does not have this intermediate phase.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean isConnecting() {
+        return false;
+    }
 
-	@Override
-	public boolean isConnected()
-	{
-		return myConnected && mySocket != null && !mySocket.isClosed();
-	}
+    @Override
+    public boolean isConnected() {
+        return myConnected && mySocket != null && !mySocket.isClosed();
+    }
 
-	@Override
-	public void disconnect()
-	{
-		synchronized(mySocketObject)
-		{
-			myConnected = false;
+    @Override
+    public void disconnect() {
+        synchronized (mySocketObject) {
+            myConnected = false;
 
-			if(mySocket != null && !mySocket.isClosed())
-			{
-				try
-				{
-					mySocket.close();
-				}
-				catch(IOException ignore)
-				{
-				}
-			}
-		}
-	}
+            if (mySocket != null && !mySocket.isClosed()) {
+                try {
+                    mySocket.close();
+                }
+                catch (IOException ignore) {
+                }
+            }
+        }
+    }
 
-	@Override
-	public void messageReceived(ProtocolFrame frame)
-	{
-		// do nothing
-	}
+    @Override
+    protected boolean sendMessageImpl(byte[] packed) throws IOException {
+        synchronized (mySocketObject) {
+            if (mySocket == null) {
+                return false;
+            }
+            final OutputStream os = mySocket.getOutputStream();
+            os.write(packed);
+            os.flush();
+            return true;
+        }
+    }
 
-	@Override
-	protected boolean sendMessageImpl(byte[] packed) throws IOException
-	{
-		synchronized(mySocketObject)
-		{
-			if(mySocket == null)
-			{
-				return false;
-			}
-			OutputStream os = mySocket.getOutputStream();
-			os.write(packed);
-			os.flush();
-			return true;
-		}
-	}
+    @Override
+    protected void onSocketException() {
+        myDebugger.disconnect();
+        myDebugger.fireCommunicationError();
+    }
 
-	public static class DebuggerReader extends BaseDebuggerReader
-	{
-		public DebuggerReader(RemoteDebugger debugger, InputStream stream) throws IOException
-		{
-			super(stream, CharsetToolkit.UTF8_CHARSET, debugger); //TODO: correct encoding?
-			start(getClass().getName());
-		}
+    public static class DebuggerReader extends BaseDebuggerReader {
+        public DebuggerReader(RemoteDebugger debugger, InputStream stream) {
+            super(stream, StandardCharsets.UTF_8, debugger); //TODO: correct encoding?
+            start(getClass().getName());
+        }
 
-		protected void onCommunicationError()
-		{
-			getDebugger().fireCommunicationError();
-		}
-	}
+        @Override
+        protected void onExit() {
+            getDebugger().fireExitEvent();
+        }
+
+        @Override
+        protected void onCommunicationError() { getDebugger().fireCommunicationError(); }
+    }
 }

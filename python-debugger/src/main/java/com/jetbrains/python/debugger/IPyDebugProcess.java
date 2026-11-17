@@ -1,44 +1,42 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.debugger;
+
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.execution.debug.XDebugSession;
+import consulo.execution.debug.frame.XValueChildrenList;
+import com.jetbrains.python.debugger.pydev.PyDebugCallback;
 
 import java.io.IOException;
 
-import consulo.execution.debug.XDebugSession;
-import consulo.execution.debug.frame.XValueChildrenList;
-import consulo.execution.ui.console.ConsoleViewContentType;
-import com.jetbrains.python.debugger.pydev.PyDebugCallback;
 
-/**
- * @author yole
- */
-public interface IPyDebugProcess extends PyFrameAccessor
-{
-	PyPositionConverter getPositionConverter();
+public interface IPyDebugProcess extends PyFrameAccessor {
+    PyPositionConverter getPositionConverter();
 
-	void threadSuspended(PyThreadInfo thread, boolean updateSourcePosition);
+    void threadSuspended(PyThreadInfo thread, boolean updateSourcePosition);
 
-	boolean canSaveToTemp(String name);
+    boolean canSaveToTemp(String name);
 
-	void threadResumed(PyThreadInfo thread);
+    void threadResumed(PyThreadInfo thread);
 
-	void printToConsole(String text, ConsoleViewContentType contentType);
+    void printToConsole(String text, ConsoleViewContentType contentType);
 
-	void init();
+    void init();
 
-	int handleDebugPort(int port) throws IOException;
+    int handleDebugPort(int port) throws IOException;
 
-	void recordSignature(PySignature signature);
+    void recordSignature(PySignature signature);
 
-	void recordLogEvent(PyConcurrencyEvent event);
+    void showConsole(PyThreadInfo thread);
 
-	void showConsole(PyThreadInfo thread);
+    void loadReferrers(PyReferringObjectsValue var, PyDebugCallback<? super XValueChildrenList> callback);
 
-	void loadReferrers(PyReferringObjectsValue var, PyDebugCallback<XValueChildrenList> callback);
+    void suspendAllOtherThreads(PyThreadInfo thread);
 
-	void suspendAllOtherThreads(PyThreadInfo thread);
+    boolean isSuspendedOnAllThreadsPolicy();
 
-	boolean isSuspendedOnAllThreadsPolicy();
+    void consoleInputRequested(boolean isStarted);
 
-	void consoleInputRequested(boolean isStarted);
+    void showWarning(String warningId);
 
-	XDebugSession getSession();
+    XDebugSession getSession();
 }

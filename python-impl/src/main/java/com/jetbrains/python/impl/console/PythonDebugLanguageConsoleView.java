@@ -1,75 +1,244 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.console;
 
+import com.jetbrains.python.impl.console.actions.ShowCommandQueueAction;
+import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
+import consulo.application.Application;
 import consulo.application.ui.wm.IdeFocusManager;
 import consulo.codeEditor.Editor;
 import consulo.content.bundle.Sdk;
-import consulo.execution.icon.ExecutionIconGroup;
+import consulo.disposer.Disposer;
 import consulo.execution.ui.console.ConsoleView;
+import consulo.execution.ui.console.ConsoleViewContentType;
 import consulo.execution.ui.console.DuplexConsoleView;
 import consulo.execution.ui.console.TextConsoleBuilderFactory;
+import consulo.execution.ui.console.language.AbstractConsoleRunnerWithHistory;
+import consulo.ide.impl.idea.execution.impl.ConsoleViewImpl;
+import consulo.process.ProcessOutputTypes;
+import consulo.process.util.AnsiEscapeDecoder;
 import consulo.project.Project;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.ex.action.AnAction;
+import consulo.util.dataholder.Key;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author traff
- */
+import javax.swing.*;
+import java.util.List;
+
 public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleView, PythonConsoleView> implements PyCodeExecutor {
 
-  public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
+    /**
+     * The value {@link PyDebuggerOptionsProvider#getDebugConsoleStartScript} starts from.
+     */
+    public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
 
-  public PythonDebugLanguageConsoleView(Project project, Sdk sdk, ConsoleView consoleView) {
-    super(consoleView, new PythonConsoleView(project, "Python Console", sdk));
-
-    enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
-
-    getSwitchConsoleActionPresentation().setIcon(ExecutionIconGroup.console());
-    getSwitchConsoleActionPresentation().setText(PyLocalize.runConfigurationShowCommandLineActionName());
-  }
-
-  public PythonDebugLanguageConsoleView(Project project, Sdk sdk) {
-    this(project, sdk, TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole());
-  }
-
-  @Override
-  public void executeCode(String code, @Nullable Editor e) {
-    enableConsole(false);
-    getPydevConsoleView().executeCode(code, e);
-  }
-
-  public PythonConsoleView getPydevConsoleView() {
-    return getSecondaryConsoleView();
-  }
-
-  public ConsoleView getTextConsole() {
-    return getPrimaryConsoleView();
-  }
-
-  @Override
-  public void enableConsole(boolean primary) {
-    super.enableConsole(primary);
-
-    if (!primary && !isPrimaryConsoleEnabled()) {
-      PythonConsoleView console = getPydevConsoleView();
-      console.addConsoleFolding(true);
-      console.showStartMessageForFirstExecution(DEBUG_CONSOLE_START_COMMAND);
-
-      IdeFocusManager.findInstance().requestFocus(console.getConsoleEditor().getContentComponent(), true);
+    /**
+     * The script the Debug Console runs on its first execution.
+     *
+     * @return the configured script, or an empty string when the user cleared it
+     */
+    public static String getStartScript(Project project) {
+        return PyDebuggerOptionsProvider.getInstance(project).getDebugConsoleStartScript();
     }
-  }
+
+    private boolean myDebugConsoleInitialized = false;
+    private boolean myStartScriptExecuted = false;
+    private final AnsiEscapeDecoder myAnsiEscapeDecoder = new AnsiEscapeDecoder();
+
+    /**
+     * @param testMode this console will be used to display test output and should support TC messages
+     */
+    @SuppressWarnings("IncorrectParentDisposable") // the project is the shortest lifetime available before the adoption
+    public PythonDebugLanguageConsoleView(Project project, @Nullable Sdk sdk, ConsoleView consoleView, boolean testMode) {
+        super(consoleView, createPydevConsoleView(project, sdk, testMode, consoleView));
+
+        // The super constructor made this console the owner of the two consoles. This console needs an owner of its own,
+        // because a RunContentDescriptor adopts it much later. XDebugSessionImpl.init makes that descriptor, and the
+        // project can close first. A failure in the window would leave this console at the Disposer root, where it holds
+        // the project through the message bus connections of the two consoles. Disposer.register moves this console to
+        // the descriptor at the adoption, so the project owns it only until then.
+        Disposer.tryRegister(project, this);
+
+        if (consoleView instanceof ConsoleViewImpl) {
+            var console = this.getPydevConsoleView();
+            var action = new ShowCommandQueueAction(console);
+            ((ConsoleViewImpl) consoleView).addCustomConsoleAction(action);
+        }
+
+        getPydevConsoleView().markAsDebugConsole();
+
+        enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
+
+        getSwitchConsoleActionPresentation().setIcon(PythonImplIconGroup.pythonPythonconsole());
+        getSwitchConsoleActionPresentation().setText(PyLocalize.runConfigurationShowCommandLineActionName());
+
+        List<AnAction> actions = List.of(
+            PyConsoleUtil.createTabCompletionAction(getPydevConsoleView()),
+            PyConsoleUtil.createInterruptAction(getPydevConsoleView())
+        );
+        AbstractConsoleRunnerWithHistory.registerActionShortcuts(actions, getPydevConsoleView().getEditor().getComponent());
+        // TODO consulo: EditorSettingsExternalizable.isUseSoftWraps(SoftWrapAppliancePlaces.CONSOLE) is not in the API
+    }
+
+    public PythonDebugLanguageConsoleView(Project project, @Nullable Sdk sdk) {
+        this(project, sdk, TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole(), false);
+    }
+
+    /**
+     * Makes the secondary console, and disposes {@code primaryConsoleView} if the secondary console fails.
+     * <p>
+     * {@link ConsoleViewImpl} registers itself in the Disposer in its own constructor. {@link DuplexConsoleView} then
+     * adopts both consoles, but only after the two exist. A failure between the two steps leaves the primary console at
+     * the Disposer root. The console keeps a message bus connection of the project, so the project leaks.
+     * <p>
+     * A project can close while a debug adapter starts a session for a subprocess. The constructor of
+     * {@link PythonConsoleView} then throws {@code AlreadyDisposedException}.
+     * <p>
+     * Both consoles get the project as the owner here. {@link DuplexConsoleView} moves them under itself when it adopts
+     * them. Its own constructor calls {@code getComponent()} on both consoles before the adoption, and that call fails
+     * on a closing project. The project owns the consoles in that case, so neither one stays at the Disposer root.
+     */
+    @SuppressWarnings("IncorrectParentDisposable") // the project is the shortest lifetime available before the adoption
+    private static PythonConsoleView createPydevConsoleView(
+        Project project,
+        @Nullable Sdk sdk,
+        boolean testMode,
+        ConsoleView primaryConsoleView
+    ) {
+        Disposer.tryRegister(project, primaryConsoleView);
+        try {
+            PythonConsoleView pydevConsoleView = new PythonConsoleView(project, PyLocalize.pythonConsole().get(), sdk, testMode);
+            Disposer.tryRegister(project, pydevConsoleView);
+            return pydevConsoleView;
+        }
+        catch (Throwable e) {
+            // The caller must see why the console did not appear, so a failure of the release keeps the first cause.
+            try {
+                Disposer.dispose(primaryConsoleView);
+            }
+            catch (Throwable releaseError) {
+                e.addSuppressed(releaseError);
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public void executeCode(@Nullable String code, @Nullable Editor e) {
+        enableConsole(false);
+        if (code != null) {
+            getPydevConsoleView().executeInConsole(code);
+        }
+        else {
+            IdeFocusManager.findInstance().doWhenFocusSettlesDown(() -> getPydevConsoleView().requestFocus());
+        }
+    }
+
+    public PythonConsoleView getPydevConsoleView() {
+        return getSecondaryConsoleView();
+    }
+
+    public @Nullable ConsoleViewImpl getTextConsole() {
+        ConsoleView consoleView = getPrimaryConsoleView();
+        if (consoleView instanceof ConsoleViewImpl) {
+            return (ConsoleViewImpl) consoleView;
+        }
+        return null;
+    }
+
+    public void showStartMessageForFirstExecution(String startCommand, PythonConsoleView console) {
+        console.setPrompt("");
+        console.executeStatementWithHighlighting(startCommand + "\n");
+    }
+
+    @Override
+    public void print(String text, ConsoleViewContentType contentType) {
+        Key<?> outputType;
+        if (contentType.equals(ConsoleViewContentType.ERROR_OUTPUT)) {
+            outputType = ProcessOutputTypes.STDERR;
+        }
+        else {
+            outputType = ProcessOutputTypes.STDOUT;
+        }
+
+        myAnsiEscapeDecoder.escapeText(text, outputType, (chunk, attributes) -> {
+            ConsoleViewContentType type = getPydevConsoleView().outputTypeForAttributes(attributes);
+            getPrimaryConsoleView().print(chunk, type);
+            getPydevConsoleView().print(chunk, type);
+        });
+    }
+
+    @Override
+    public void enableConsole(boolean primary) {
+        Application.get().invokeLater(() -> {
+            super.enableConsole(primary);
+
+            if (!primary && !isPrimaryConsoleEnabled()) {
+                PythonConsoleView console = getPydevConsoleView();
+                initDebugConsole();
+                IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> console.requestFocus());
+            }
+        });
+    }
+
+    public void initialized() {
+        myDebugConsoleInitialized = true;
+    }
+
+    /**
+     * Marks the Debug Console ready, whether or not it is the visible one.
+     * <p>
+     * {@link PythonConsoleView#initialized()} resolves a callback that queued work waits on, among it
+     * {@code setConsoleEnabled} and {@code executeCode}. Readiness therefore must not depend on
+     * "Always show Debug Console": that setting picks the visible console, not a working one. See PY-91913.
+     */
+    public void initDebugConsole() {
+        PythonConsoleView console = getPydevConsoleView();
+        if (myDebugConsoleInitialized || console.getExecuteActionHandler() == null) {
+            return;
+        }
+        myDebugConsoleInitialized = true;
+        console.initialized();
+    }
+
+    /**
+     * Runs the Debug Console start script, at most once per session.
+     * <p>
+     * Call it only while the debugged process is paused. The script goes through the same channel as user input,
+     * and that channel needs a stack frame: {@code PyDebugProcess.consoleExec} reads {@code currentFrame()} and
+     * fails without one. The script used to be attempted from {@link #enableConsole}, which runs at session start
+     * while the process is still running, so it never executed. See PY-91913.
+     */
+    public void executeStartScriptIfNeeded() {
+        // Called from XDebugSessionListener.sessionPaused, which pydevd dispatches on its reader thread. Sending the
+        // script reaches PSI through PydevConsoleExecuteActionHandler.checkSingleLine, so it needs the EDT and its
+        // write-intent read action, the same context enableConsole() runs in.
+        Application.get().invokeLater(() -> {
+            if (myStartScriptExecuted) {
+                return;
+            }
+            PythonConsoleView console = getPydevConsoleView();
+            PythonConsoleExecuteActionHandler handler = console.getExecuteActionHandler();
+            if (handler == null || handler.getConsoleCommunication().isWaitingForInput()) {
+                return;
+            }
+
+            myStartScriptExecuted = true;
+            String script = getStartScript(console.getProject());
+            if (script.isBlank()) {
+                return;
+            }
+            showStartMessageForFirstExecution(script, console);
+        });
+    }
+
+    @Override
+    public JComponent getPreferredFocusableComponent() {
+        var console = getPydevConsoleView();
+        if (console.isVisible()) {
+            return console.getConsoleEditor().getContentComponent();
+        }
+        return this;
+    }
 }

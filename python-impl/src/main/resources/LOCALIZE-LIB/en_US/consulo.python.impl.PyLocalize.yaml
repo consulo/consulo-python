@@ -3850,3 +3850,413 @@ search.option.nosetests:
     text: Nosetests
 search.option.attests:
     text: Attests
+debug.notification.title.connection.failed:
+    text: Connection to Python debugger failed
+python.debug.remote.name:
+    text: PyRemoteDebug
+filetype.python.debug.remote.description:
+    text: Remote debug
+compile.cython.extensions.title:
+    text: Compile Cython extensions
+compile.cython.extensions.install:
+    text: Install
+compile.cython.extensions.notification:
+    text: Python debugger extension available
+compile.cython.extensions.error:
+    text: Compile Cython Extensions Error
+debugger.attach.to.process.failed.to.find.free.socket.port:
+    text: Failed to find a free socket port
+debugger.watch.return.values.description:
+    text: Enables watching executed functions return values
+debugger.exception.breakpoint.ignore.library.files:
+    text: Ignore library files
+debugger.exception.breakpoint.on.raise:
+    text: On raise
+debugger.exception.breakpoint.on.termination:
+    text: On termination
+debugger.exception.breakpoint.type:
+    text: Python Exception Breakpoint
+debugger.exception.breakpoint.activation.policy:
+    text: Activation policy
+debugger.exception.breakpoint.any.exception:
+    text: Any exception
+debugger.line.breakpoint.type:
+    text: Python Line Breakpoint
+debugger.simplified.view.description:
+    text: Disables watching classes, functions, and modules objects
+debugger.simplified.view.text:
+    text: Simplified Variables View
+debugger.numeric.view.as.dataframe:
+    text: View as DataFrame
+debugger.numeric.view.as.array:
+    text: View as Array
+debugger.numeric.view.as.series:
+    text: View as Series
+debugger.variables.loading.policy:
+    text: Variables Loading Policy
+debugger.variables.loading.synchronously.text:
+    text: Synchronously
+debugger.variables.loading.synchronously.description:
+    text: Load variable values synchronously
+debugger.variables.loading.asynchronously.text:
+    text: Asynchronously
+debugger.variables.loading.asynchronously.description:
+    text: Load variable values asynchronously
+debugger.variables.loading.on.demand.text:
+    text: On Demand
+debugger.variables.loading.on.demand.description:
+    text: Load variable values on demand
+debugger.variables.view.loading.timed.out:
+    text: Loading timed out
+debugger.variables.view.switch.to.loading.on.demand:
+    text: Switch to loading on demand
+debugger.variables.view.warning.message:
+    text: The values of several variables couldn't be loaded
+debugger.variables.view.quoting.policy:
+    text: Variables Quoting
+debugger.variables.view.quoting.single.text:
+    text: Single Quotes
+debugger.variables.view.quoting.single.description:
+    text: Enclose values in single quotes
+debugger.variables.view.quoting.double.text:
+    text: Double Quotes
+debugger.variables.view.quoting.double.description:
+    text: Enclose values in double quotes
+debugger.variables.view.quoting.without.text:
+    text: Without Quotes
+debugger.variables.view.quoting.without.description:
+    text: Copy values without quotes
+debugger.variables.view.sorting.policy:
+    text: Variables Sorting
+debugger.variables.view.sorting.alphabetically.text:
+    text: Alphabetically
+debugger.variables.view.sorting.alphabetically.description:
+    text: Sort variables by name
+debugger.variables.view.sorting.internal.text:
+    text: Do Not Sort
+debugger.variables.view.sorting.internal.description:
+    text: Keep the order of the object, for example the insertion order of a dictionary
+debugger.variables.view.sorting.by.type.text:
+    text: By Type
+debugger.variables.view.sorting.by.type.description:
+    text: Put the variables of one type together
+debugger.exception.breakpoint.select.exception.class:
+    text: Select Exception Class
+debugger.watch.show.return.values:
+    text: Show Return Values
+debugger.stack.frame.special.variables:
+    text: Special Variables
+debugger.stack.frame.return.values:
+    text: Return Values
+debugger.stack.frame.frame.not.available:
+    text: <frame not available>
+debugger.stack.frame.unable.to.display.frame.variables:
+    text: Unable to display frame variables
+debugger.stack.frames.not.available.in.non.suspended.state:
+    text: Frames not available in non-suspended state
+debugger.remote.waiting.for.process.connection:
+    text: Waiting for process connection…
+debugger.remote.waiting.for.connection:
+    text: Waiting for connection
+debugger.cython.python.run.configuration.should.be.selected:
+    text: Python Run Configuration should be selected
+debugger.cython.extension.speeds.up.python.debugging:
+    text: Cython extension speeds up Python debugging<br><a href="https://www.jetbrains.com/help/pycharm/cython-speedups.html" target="_blank">Learn more ↗</a>
+debugger.cython.extension.permission.denied:
+    text: Permission denied
+debugger.cython.extension.gcc:
+    text: Command 'gcc' failed with exit status 1
+debugger.cython.extension.gcc.failed:
+    text: "\n\nInstall a C compiler in order to build Cython extensions for the debugger.\n"
+debugger.cython.extension.python.h:
+    text: 'Python.h: No such file or directory'
+debugger.cython.extension.python.h.not.found:
+    text: "\n\nUse your package manager to install header files and static libraries for Python dev system-wide.\n\nTry command:\n {0}\n"
+debugger.cython.extension.install.python.command:
+    text: <code>sudo apt-get install python{0}-dev</code>
+debugger.cython.extension.gcc.not.found:
+    text: x86_64-linux-gnu-gcc
+debugger.cython.extension.gcc.not.found.suggestion:
+    text: "\n\nUse your package manager to install the missing <code>gcc</code>.\n\nTry command:\n<code>sudo apt install gcc</code>"
+debugger.cython.extension.non.zero.exit.code:
+    text: "Non-zero exit code ({0}): \n{1}"
+debugger.cython.please.enter.your.password.to.compile.cython.extensions:
+    text: 'Enter your password to compile cython extensions: '
+debugger.warning.message:
+    text: This option may slow down the debugger
+debugger.connected.to.pydev.debugger.build:
+    text: "Connected to pydev debugger (build {0})\n"
+debugger.warning.wrong.debugger.version:
+    text: "Warning: wrong debugger version. Use pycharm-debugger.egg from PyCharm installation folder\nOr execute: ''pip install pydevd-pycharm~={0}''\n"
+debugger.debug.process.running:
+    text: Process is running
+debugger.remote.starting.debug.server.at.port:
+    text: "Starting debug server at port {0}\n"
+debugger.use.the.following.code.to.connect.to.the.debugger:
+    text: "Use the following code to connect to the debugger:\n"
+debugger.progress.title.stackframe.processing:
+    text: StackFrame processing
+python.local.attach.group.name:
+    text: Python
+python.debugger.settings.waiting.for.connection:
+    text: Waiting for connection…
+python.debugger.settings.connecting.to.debugger:
+    text: Connecting to debugger
+python.debugger.attaching.to.process.with.pid:
+    text: Attaching to a process with PID={0}
+python.debugger.attaching:
+    text: Attaching Debugger
+python.debugger.qt.backend.auto:
+    text: Auto
+connecting.to.console.progress:
+    text: Connecting to console…
+connecting.to.console.title:
+    text: Connecting to Console
+console.attach.debugger:
+    text: Attach Debugger
+console.attach.debugger.description:
+    text: Enables tracing of code executed in console
+console.cannot.connect.to.debugger:
+    text: Can't connect to debugger
+console.changing.variable:
+    text: Changing variable
+console.close.console.communication:
+    text: Close console communication
+console.connecting.to.debugger:
+    text: Connecting To debugger
+console.error.connecting.debugger:
+    text: Error Connecting Debugger
+console.evaluating.expression.in.console:
+    text: Evaluating expression in console
+console.executing.dataviewer.command:
+    text: '"Executing DataViewer command"'
+console.getting.array:
+    text: Array
+console.getting.completion:
+    text: Completion
+console.getting.documentation:
+    text: Documentation
+console.getting.frame.variables:
+    text: Frame Variables
+console.getting.from.runtime:
+    text: Getting {0} from Python Runtime
+console.getting.table.data:
+    text: Table Data
+console.getting.variable.value:
+    text: Variable Value
+console.interrupting.execution:
+    text: Interrupting execution
+console.restarting.console:
+    text: Restarting Console
+console.setting.user.type.renderers:
+    text: User Type Renderers
+console.stopping.console:
+    text: Stopping Console
+console.table.failed.to.load:
+    text: 'Failed to load: '
+console.waiting.execution.result:
+    text: Waiting for execution result
+debugger.sending.close.message:
+    text: Sending close message to Python Console…
+debugger.waiting.to.finish:
+    text: Waiting for Python Console process to finish…
+form.console.options.runtime.code.completion:
+    text: Runtime
+form.console.options.static.code.completion:
+    text: Static
+pydev.console.console.process.terminated.with.error:
+    text: "Console process terminated with error:\n{0}{1}"
+pydev.console.console.process.terminated.with.exit.code:
+    text: Console process terminated with exit code {0}, output:{1}
+pydev.console.couldnt.connect.to.console.process:
+    text: Couldn't connect to console process.
+pydev.console.couldnt.read.integer.value.from.stream:
+    text: Couldn't read an integer value from stream
+pydev.console.debugger.connected:
+    text: "\nDebugger connected.\n"
+pydev.console.python.interpreter.is.not.selected:
+    text: Python interpreter is not selected. Please set up Python interpreter first.
+pydev.console.runner.error.running.console:
+    text: Error running console
+pydev.console.runner.output.actions:
+    text: Output Actions
+pydev.console.runner.python.console.debugger:
+    text: Python Console Debugger
+pydev.console.runner.settings:
+    text: Settings
+pydev.console.runner.unknown.error:
+    text: Unknown error
+action.DumbAware.PydevConsoleRunnerImpl.text.stop.console:
+    text: Stop Console
+action.DumbAware.PydevConsoleRunnerImpl.description.stop.python.console:
+    text: Stop Python Console
+action.EditorToggleUseSoftWraps.text:
+    text: Soft-Wrap
+action.EditorToggleUseSoftWraps.description:
+    text: Toggle using soft wraps in the current editor
+action.PyDebugger.CustomizeDataView.text:
+    text: Customize Data View
+form.debugger.variables.view.user.type.renderers.unnamed:
+    text: Unnamed
+form.debugger.variables.view.user.type.renderers.renderer:
+    text: renderer
+form.debugger.variables.view.user.type.renderers.configure.renderer:
+    text: Configure Renderer
+debug.notification.group:
+    text: Python debugger
+debugger.pydev.console.pause.the.process.to.use.command.line:
+    text: Pause the process to use command-line.
+debugger.test.failed.caption:
+    text: Test failed
+debugger.error.in.test.setup.or.teardown.caption:
+    text: Error in test setup or teardown
+notification.group.cython:
+    text: Python debugger native extension available
+pydev.console.runner.copy.console.output.text:
+    text: Copy Console Output
+pydev.console.runner.copy.console.output.description:
+    text: Copy console output to clipboard
+python.console.command.queue.show.action.text:
+    text: Show Command Queue
+python.console.command.queue.show.action.description:
+    text: Shows a window with the command queue
+console.show.variables.title:
+    text: Show Variables
+console.show.variables.description:
+    text: Shows active console variables
+python.console.rename.message:
+    text: 'Enter new console name:'
+python.console.history.root:
+    text: Python Consoles
+python.console.command.queue.add.title:
+    text: '{0} Command Queue'
+console.executing.code.in.console:
+    text: Executing code in console…
+tooltip.hide:
+    text: Hide
+console.new.console:
+    text: New Console
+console.new.console.description:
+    text: Creates new python console
+python.console.no.interpreter.project:
+    text: No interpreter is configured for this project
+action.com.jetbrains.python.console.RunPythonOrDebugConsoleAction.text:
+    text: Python or Debug Console
+action.com.jetbrains.python.console.RunPythonOrDebugConsoleAction.description:
+    text: Allows to quickly run Python Console or Debug Console if debug session is running
+progress.text.connecting.to.console:
+    text: Connecting to console…
+progress.title.debugger.connection:
+    text: Debugger connection
+configurable.PyDebuggerConfigurable.display.name:
+    text: Python Debugger
+debugger.attach.to.process.filter.names:
+    text: 'Attach to Process:'
+form.debugger.attach.to.subprocess.automatically.while.debugging:
+    text: Attach to subprocess automatically while debugging
+form.debugger.clear.caches:
+    text: Clear caches
+form.debugger.collect.run.time.types.information.for.code.insight:
+    text: Collect run-time types information for code insight
+form.debugger.gevent.compatible:
+    text: Gevent compatible
+form.debugger.drop.into.debugger.on.failed.tests:
+    text: Drop into debugger on failed tests
+form.debugger.pyqt.compatible:
+    text: PyQt compatible
+form.debugger.response.timeout:
+    text: 'Debugger evaluation response timeout (ms):'
+debugger.stepping.filter:
+    text: Stepping Filter
+debugger.stepping.filter.specify.pattern:
+    text: 'Specify glob pattern (''*'', ''?'' and ''[seq]'' allowed, semicolon '';'' as name separator):'
+debugger.stepping.no.script.filters:
+    text: No script filters configured
+form.debugger.stepping.checkbox.text.do.not.step.into.library.scripts:
+    text: Do not step into library scripts
+form.debugger.stepping.do.not.step.into.scripts:
+    text: 'Do not step into scripts:'
+form.debugger.stepping.always.do.smart.step.into:
+    text: Always do smart step into
+debugger.data.view.open.new.container.viewer:
+    text: Open new container viewer
+debugger.data.view.view.new.container:
+    text: View New Container
+debugger.data.view.close:
+    text: Close
+debugger.data.view.resize.automatically:
+    text: Resize automatically
+debugger.data.view.colored.cells:
+    text: Colored cells
+debugger.data.view.reach.view.suggestion:
+    text: Rich table viewer could be enabled
+debugger.data.view.failed.to.evaluate.expression:
+    text: Failed to evaluate the expression {0}
+debugger.data.view.numpy.is.not.available:
+    text: NumPy is not available. Install the module for proper data display.
+debugger.data.view.type.is.not.supported:
+    text: '{0} is not supported'
+debugger.data.view.empty.tab:
+    text: Empty
+debugger.data.view.connected.to.python.console:
+    text: Connected to python console
+debugger.data.view.connected.to.debug.session:
+    text: Connected to debug session ''{0}''
+debugger.data.view.empty.text:
+    text: Run Python Console or Debugger to view available data
+debugger.dataViewer.modifier.error:
+    text: 'Modifier error: {0}'
+debugger.dataViewer.dataframes.unsupported:
+    text: <html>The old view does not support this dataframe type.</html>
+debugger.dataViewer.switch.between.tables.gotIt.text:
+    text: Here you can switch between new and old table modes for viewing data.
+debugger.dataViewer.switch.between.tables.gotIt.link:
+    text: Switch mode
+form.data.viewer.format:
+    text: 'Format:'
+configurable.PyConsoleOptionsConfigurable.display.name:
+    text: Python Console
+configurable.PyDebugConsoleConfigurable.display.name:
+    text: Console
+form.console.options.always.show.debug.console:
+    text: Always show Debug Console
+form.console.options.show.console.variables.by.default:
+    text: Show console variables by default
+form.console.options.use.existing.console.for.run.with.python.console:
+    text: Use existing console for "Run with Python Console"
+form.console.options.use.ipython.if.available:
+    text: Use IPython if available
+form.console.options.use.command.queue:
+    text: Command queue for Python Console
+form.debug.console.options.use.command.queue:
+    text: Command queue
+form.console.options.code.completion:
+    text: Code completion
+form.console.specific.options.starting.script:
+    text: Starting Script
+action.PyDebugger.ViewArray.text:
+    text: View as Array
+configurable.PyUserTypeRenderersConfigurable.display.name:
+    text: Python Type Renderers
+form.debugger.variables.view.user.type.renderers.name:
+    text: 'Renderer name:'
+form.debugger.variables.view.user.type.renderers.append.default.children:
+    text: Append default children
+form.debugger.variables.view.user.type.renderers.apply.renderer.to.objects.of.type:
+    text: 'Apply renderer to objects of type (fully qualified name):'
+form.debugger.variables.view.user.type.renderers.when.rendering.node:
+    text: 'When rendering a node:'
+form.debugger.variables.view.user.type.renderers.when.expanding.node:
+    text: 'When expanding a node:'
+form.debugger.variables.view.user.type.renderers.use.default.renderer:
+    text: Use default renderer
+form.debugger.variables.view.user.type.renderers.use.following.expression:
+    text: 'Use the following expression:'
+form.debugger.variables.view.user.type.renderers.use.list.of.expressions:
+    text: 'Use list of expressions:'
+form.debugger.variables.view.user.type.renderers.variable.name:
+    text: Use ''self'' as a variable name
+form.debugger.variables.view.user.type.renderers.class.not.found:
+    text: Class not found
+form.debugger.variables.view.user.type.renderers.no.renderers:
+    text: No renderers

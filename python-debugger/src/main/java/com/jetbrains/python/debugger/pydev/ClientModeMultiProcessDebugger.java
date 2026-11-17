@@ -1,483 +1,590 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger.pydev;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.debugger.*;
-import consulo.application.ApplicationManager;
+import consulo.logging.Logger;
+import consulo.util.lang.Pair;
+import consulo.util.concurrent.ConcurrencyUtil;
+import consulo.util.collection.ContainerUtil;
+import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.breakpoint.SuspendPolicy;
 import consulo.execution.debug.frame.XValueChildrenList;
-import consulo.logging.Logger;
+import com.jetbrains.python.console.pydev.PydevCompletionVariant;
+import com.jetbrains.python.debugger.ArrayChunk;
+import com.jetbrains.python.debugger.IPyDebugProcess;
+import com.jetbrains.python.debugger.PyDebugValue;
+import com.jetbrains.python.debugger.PyDebuggerException;
+import com.jetbrains.python.debugger.PyFrameAccessor;
+import com.jetbrains.python.debugger.PyReferringObjectsValue;
+import com.jetbrains.python.debugger.PyThreadInfo;
+import com.jetbrains.python.debugger.PyUserTypeRenderer;
+import com.jetbrains.python.debugger.pydev.dataviewer.DataViewerCommandBuilder;
+import com.jetbrains.python.debugger.pydev.dataviewer.DataViewerCommandResult;
+import com.jetbrains.python.tables.TableCommandParameters;
+import com.jetbrains.python.tables.TableCommandType;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
- * @author traff
+ * @see com.jetbrains.python.debugger.pydev.transport.ClientModeDebuggerTransport
+ * @deprecated the single-port/client-mode launch path is no longer wired up; nothing in the IDE constructs this
+ * any more.
  */
-public class ClientModeMultiProcessDebugger implements ProcessDebugger
-{
-	private static final Logger LOG = Logger.getInstance(ClientModeMultiProcessDebugger.class);
+@Deprecated(forRemoval = true)
+public class ClientModeMultiProcessDebugger implements ProcessDebugger {
+    private static final Logger LOG = Logger.getInstance(ClientModeMultiProcessDebugger.class);
 
-	private final IPyDebugProcess myDebugProcess;
-	private final String myHost;
-	private final int myPort;
+    private final IPyDebugProcess myDebugProcess;
+    private final String myHost;
+    private final int myPort;
 
-	private final RemoteDebugger myMainDebugger;
-	private final Object myOtherDebuggersObject = new Object();
-	private final List<RemoteDebugger> myOtherDebuggers = Lists.newArrayList();
+    private final Object myDebuggersObject = new Object();
+    /**
+     * Guarded by {@link #myDebuggersObject}.
+     */
+    private final List<RemoteDebugger> myDebuggers = new ArrayList<>();
 
-	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
+    private final ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public ClientModeMultiProcessDebugger(IPyDebugProcess debugProcess, String host, int port)
-	{
-		myDebugProcess = debugProcess;
-		myHost = host;
-		myPort = port;
+    private final ClientModeDebuggerStatusHolder myDebuggerStatusHolder = new ClientModeDebuggerStatusHolder();
 
-		myMainDebugger = createDebugger();
+    private final CompositeRemoteDebuggerCloseListener myCompositeListener = new CompositeRemoteDebuggerCloseListener();
 
-		myOtherDebuggers.add(myMainDebugger);
-	}
+    private final ExecutorService myExecutor;
 
-	private RemoteDebugger createDebugger()
-	{
-		return new RemoteDebugger(myDebugProcess, myHost, myPort)
-		{
-			@Override
-			protected void onProcessCreatedEvent() throws PyDebuggerException
-			{
-				ApplicationManager.getApplication().executeOnPooledThread(ClientModeMultiProcessDebugger.this::connectToSubprocess);
-			}
-		};
-	}
+    private class ConnectToDebuggerTask implements Runnable {
+        @Override
+        public void run() {
+            try {
+                tryToConnectRemoteDebugger();
+            }
+            catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+    }
 
-	@Override
-	public boolean isConnected()
-	{
-		return getOtherDebuggers().stream().anyMatch(RemoteDebugger::isConnected);
-	}
+    public ClientModeMultiProcessDebugger(IPyDebugProcess debugProcess,
+                                          String host, int port) {
+        myDebugProcess = debugProcess;
+        myHost = host;
+        myPort = port;
 
-	@Override
-	public void waitForConnect() throws Exception
-	{
-		Thread.sleep(500L);
+        String connectionThreadsName = "Debugger connection thread (" + host + ":" + port + ")";
 
-		myMainDebugger.waitForConnect();
-	}
+        myExecutor = ConcurrencyUtil.newSingleThreadExecutor(connectionThreadsName);
 
-	private void connectToSubprocess()
-	{
-		try
-		{
-			RemoteDebugger debugger = createDebugger();
-			debugger.waitForConnect();
+        myExecutor.execute(new ConnectToDebuggerTask());
+    }
 
-			addDebugger(debugger);
+    /**
+     * Should either successfully connect to the debugger script or throw {@link IOException} because of the
+     * connection error or the socket timeout error.
+     * <p>
+     * We assume that debugger is successfully connected if the Python debugger
+     * script responded on `CMD_VERSION` command (see {@link RemoteDebugger#handshake()}).
+     *
+     * @throws Exception if the connection or timeout error occurred
+     * @see com.jetbrains.python.debugger.pydev.transport.ClientModeDebuggerTransport
+     */
+    private void tryToConnectRemoteDebugger() throws Exception {
+        RemoteDebugger debugger = new RemoteDebugger(myDebugProcess, myHost, myPort) {
+            @Override
+            protected void onProcessCreatedEvent(int commandSequence) {
+                try {
+                    ProcessCreatedMsgReceivedCommand command = new ProcessCreatedMsgReceivedCommand(this, commandSequence);
+                    command.execute();
+                    myExecutor.execute(new ConnectToDebuggerTask());
+                }
+                catch (PyDebuggerException e) {
+                    LOG.info(e);
+                }
+            }
+        };
+        debugger.waitForConnect();
+        onRemoteDebuggerConnected(debugger);
+    }
 
-			LOG.debug("Connected to subprocess on attempt");
+    private void onRemoteDebuggerConnected(RemoteDebugger debugger) {
+        // register successfully connected debugger
+        synchronized (myDebuggersObject) {
+            myDebuggers.add(debugger);
+        }
 
-			return;
-		}
-		catch(RuntimeException e)
-		{
-			LOG.warn(e);
-		}
-		catch(Exception ignored)
-		{
-		}
-		try
-		{
-			//noinspection BusyWait
-			Thread.sleep(50L);
-		}
-		catch(InterruptedException ignored)
-		{
-		}
-		LOG.debug("Could not connect to subprocess");
-	}
+        // notify `waitForConnect()` that we connected
+        if (myDebuggerStatusHolder.onConnected()) {
+            // add close listeners for the first accepted debugger
+            debugger.addCloseListener(myCompositeListener);
+        }
+        else {
+            // for consequent processes we should init them by ourselves
+            myDebugProcess.init();
+            try {
+                debugger.run();
+            }
+            catch (PyDebuggerException e) {
+                LOG.debug("Failed to `CMD_RUN` the recently connected Python debugger process");
+            }
+        }
+    }
 
-	@Override
-	public void close()
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.close();
-		}
-	}
+    @Override
+    public boolean isConnected() {
+        return ContainerUtil.exists(allDebuggers(), RemoteDebugger::isConnected);
+    }
 
-	private List<RemoteDebugger> allDebuggers()
-	{
-		List<RemoteDebugger> result = new ArrayList<>();
-		synchronized(myOtherDebuggersObject)
-		{
-			result.addAll(myOtherDebuggers);
-		}
-		return result;
-	}
+    @Override
+    public void waitForConnect() throws Exception {
+        Thread.sleep(500L);
 
-	@Override
-	public void disconnect()
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.disconnect();
-		}
-	}
+        myDebuggerStatusHolder.onConnecting();
 
-	@Override
-	public String handshake() throws PyDebuggerException
-	{
-		return myMainDebugger.handshake();
-	}
+        if (!myDebuggerStatusHolder.awaitWhileConnecting()) {
+            throw new PyDebuggerException("The process terminated before IDE established connection with Python debugger script");
+        }
+    }
 
-	@Override
-	public PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute) throws PyDebuggerException
-	{
-		return debugger(threadId).evaluate(threadId, frameId, expression, execute);
-	}
+    @Override
+    public void close() {
+        myDebuggerStatusHolder.onDisconnectionInitiated();
 
-	@Override
-	public PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute, boolean trimResult) throws PyDebuggerException
-	{
-		return debugger(threadId).evaluate(threadId, frameId, expression, execute, trimResult);
-	}
+        for (ProcessDebugger d : allDebuggers()) {
+            d.close();
+        }
+    }
 
-	@Override
-	public void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback)
-	{
-		debugger(threadId).consoleExec(threadId, frameId, expression, callback);
-	}
+    private List<RemoteDebugger> allDebuggers() {
+        synchronized (myDebuggersObject) {
+            return new ArrayList<>(myDebuggers);
+        }
+    }
 
-	@Override
-	public XValueChildrenList loadFrame(String threadId, String frameId) throws PyDebuggerException
-	{
-		return debugger(threadId).loadFrame(threadId, frameId);
-	}
+    @Override
+    public void disconnect() {
+        myDebuggerStatusHolder.onDisconnectionInitiated();
 
-	@Override
-	public XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException
-	{
-		return debugger(threadId).loadVariable(threadId, frameId, var);
-	}
+        for (ProcessDebugger d : allDebuggers()) {
+            d.disconnect();
+        }
+    }
 
-	@Override
-    public ArrayChunk loadArrayItems(String threadId, String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format) throws PyDebuggerException
-	{
-		return debugger(threadId).loadArrayItems(threadId, frameId, var, rowOffset, colOffset, rows, cols, format);
-	}
+    @Override
+    public String handshake() throws PyDebuggerException {
+        synchronized (myDebuggersObject) {
+            if (!myDebuggers.isEmpty()) {
+                return myDebuggers.get(0).handshake();
+            }
+            else {
+                throw new IllegalStateException("waitForConnect() must be executed before handshake()");
+            }
+        }
+    }
 
-	@Override
-	public void loadReferrers(String threadId, String frameId, PyReferringObjectsValue var, PyDebugCallback<XValueChildrenList> callback)
-	{
-		debugger(threadId).loadReferrers(threadId, frameId, var, callback);
-	}
+    @Override
+    public PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute, int evaluationTimeout)
+      throws PyDebuggerException {
+        return debugger(threadId).evaluate(threadId, frameId, expression, execute, evaluationTimeout);
+    }
 
-	private ProcessDebugger debugger(String threadId)
-	{
-		ProcessDebugger debugger = myThreadRegistry.getDebugger(threadId);
-		if(debugger != null)
-		{
-			return debugger;
-		}
-		else
-		{
-			// thread is not found in registry - lets search for it in attached debuggers
+    @Override
+    public PyDebugValue evaluate(String threadId,
+                                 String frameId,
+                                 String expression,
+                                 boolean execute,
+                                 int evaluationTimeout,
+                                 boolean trimResult)
+      throws PyDebuggerException {
+        return debugger(threadId).evaluate(threadId, frameId, expression, execute, evaluationTimeout, trimResult);
+    }
 
-			for(ProcessDebugger d : getOtherDebuggers())
-			{
-				for(PyThreadInfo thread : d.getThreads())
-				{
-					if(threadId.equals(thread.getId()))
-					{
-						return d;
-					}
-				}
-			}
+    @Override
+    public void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback) {
+        debugger(threadId).consoleExec(threadId, frameId, expression, callback);
+    }
 
-			//if not found then return main debugger
-			return myMainDebugger;
-		}
-	}
+    @Override
+    public XValueChildrenList loadFrame(String threadId, String frameId, GROUP_TYPE groupType) throws PyDebuggerException {
+        return debugger(threadId).loadFrame(threadId, frameId, groupType);
+    }
 
-	@Override
-	public PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value) throws PyDebuggerException
-	{
-		return debugger(threadId).changeVariable(threadId, frameId, var, value);
-	}
+    @Override
+    public @Nullable String execTableCommand(String threadId,
+                                             String frameId,
+                                             String command,
+                                             TableCommandType commandType, TableCommandParameters tableCommandParameters)
+      throws PyDebuggerException {
+        return debugger(threadId).execTableCommand(threadId, frameId, command, commandType, tableCommandParameters);
+    }
 
-	@Override
-	public String loadSource(String path)
-	{
-		return myMainDebugger.loadSource(path);
-	}
+    @Override
+    public @Nullable String execTableImageCommand(String threadId,
+                                             String frameId,
+                                             String command,
+                                             TableCommandType commandType, TableCommandParameters tableCommandParameters)
+      throws PyDebuggerException {
+        return debugger(threadId).execTableCommand(threadId, frameId, command, commandType, tableCommandParameters);
+    }
+
+    @Override
+    public List<Pair<String, Boolean>> getSmartStepIntoVariants(String threadId, String frameId, int startContextLine, int endContextLine)
+      throws PyDebuggerException {
+        return debugger(threadId).getSmartStepIntoVariants(threadId, frameId, startContextLine, endContextLine);
+    }
+
+    @Override
+    public XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException {
+        return debugger(threadId).loadVariable(threadId, frameId, var);
+    }
+
+    @Override
+    public ArrayChunk loadArrayItems(String threadId,
+                                     String frameId,
+                                     PyDebugValue var,
+                                     int rowOffset,
+                                     int colOffset,
+                                     int rows,
+                                     int cols,
+                                     String format) throws PyDebuggerException {
+        return debugger(threadId).loadArrayItems(threadId, frameId, var, rowOffset, colOffset, rows, cols, format);
+    }
+
+    @Override
+    public DataViewerCommandResult executeDataViewerCommand(DataViewerCommandBuilder builder) throws PyDebuggerException {
+        assert builder.getThreadId() != null;
+        return debugger(builder.getThreadId()).executeDataViewerCommand(builder);
+    }
+
+    @Override
+    public void loadReferrers(String threadId,
+                              String frameId,
+                              PyReferringObjectsValue var,
+                              PyDebugCallback<? super XValueChildrenList> callback) {
+        debugger(threadId).loadReferrers(threadId, frameId, var, callback);
+    }
+
+    private ProcessDebugger debugger(String threadId) {
+        ProcessDebugger debugger = myThreadRegistry.getDebugger(threadId);
+        if (debugger != null) {
+            return debugger;
+        }
+        else {
+            // thread is not found in registry - lets search for it in attached debuggers
+
+            List<RemoteDebugger> debuggers = getDebuggers();
+            for (ProcessDebugger d : debuggers) {
+                for (PyThreadInfo thread : d.getThreads()) {
+                    if (threadId.equals(thread.getId())) {
+                        return d;
+                    }
+                }
+            }
+
+            //if not found then return main debugger
+            return debuggers.get(0);
+        }
+    }
+
+    @Override
+    public PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value) throws PyDebuggerException {
+        return debugger(threadId).changeVariable(threadId, frameId, var, value);
+    }
+
+    @Override
+    public void loadFullVariableValues(String threadId,
+                                       String frameId,
+                                       List<PyFrameAccessor.PyAsyncValue<String>> vars) throws PyDebuggerException {
+        debugger(threadId).loadFullVariableValues(threadId, frameId, vars);
+    }
+
+    @Override
+    public String loadSource(String path) {
+        synchronized (myDebuggersObject) {
+            if (!myDebuggers.isEmpty()) {
+                return myDebuggers.get(0).loadSource(path);
+            }
+            else {
+                throw new IllegalStateException("waitForConnect() must be executed before loadSource()");
+            }
+        }
+    }
 
 
-	private static class ThreadRegistry
-	{
-		private Map<String, RemoteDebugger> myThreadIdToDebugger = Maps.newHashMap();
+    private static class ThreadRegistry {
+        private final Map<String, RemoteDebugger> myThreadIdToDebugger = Maps.newHashMap();
 
-		public void register(String id, RemoteDebugger debugger)
-		{
-			myThreadIdToDebugger.put(id, debugger);
-		}
+        public void register(String id, RemoteDebugger debugger) {
+            myThreadIdToDebugger.put(id, debugger);
+        }
 
-		public RemoteDebugger getDebugger(String threadId)
-		{
-			return myThreadIdToDebugger.get(threadId);
-		}
+        public RemoteDebugger getDebugger(String threadId) {
+            return myThreadIdToDebugger.get(threadId);
+        }
 
-		public static String threadName(String name, String id)
-		{
-			int indx = id.indexOf("_", id.indexOf("_") + 1);
-			if(indx != -1)
-			{
-				id = id.substring(0, indx);
-			}
+        public static String threadName(String name, String id) {
+            int indx = id.indexOf("_", id.indexOf("_") + 1);
+            if (indx != -1) {
+                id = id.substring(0, indx);
+            }
 
-			return name + "(" + id + ")";
-		}
-	}
+            return name + "(" + id + ")";
+        }
+    }
 
-	@Override
-	public Collection<PyThreadInfo> getThreads()
-	{
-		cleanOtherDebuggers();
+    @Override
+    public Collection<PyThreadInfo> getThreads() {
+        cleanDebuggers();
 
-		List<PyThreadInfo> threads = collectAllThreads();
+        List<PyThreadInfo> threads = collectAllThreads();
 
-		if(!isOtherDebuggersEmpty())
-		{
-			//here we add process id to thread name in case there are more then one process
-			return Collections.unmodifiableCollection(Collections2.transform(threads, t -> {
+        if (!isDebuggersEmpty()) {
+            //here we add process id to thread name in case there are more then one process
+            return Collections.unmodifiableCollection(Collections2.transform(threads, t -> {
+                if (t == null) {
+                    return null;
+                }
                 String threadName = ThreadRegistry.threadName(t.getName(), t.getId());
-                PyThreadInfo newThread = new PyThreadInfo(t.getId(), threadName, t.getFrames(), t.getStopReason(), t.getMessage());
+                PyThreadInfo newThread =
+                  new PyThreadInfo(t.getId(), threadName, t.getFrames(),
+                                   t.getStopReason(),
+                                   t.getMessage());
                 newThread.updateState(t.getState(), t.getFrames());
                 return newThread;
             }));
-		}
-		else
-		{
-			return Collections.unmodifiableCollection(threads);
-		}
-	}
+        }
+        else {
+            return Collections.unmodifiableCollection(threads);
+        }
+    }
 
-	private List<PyThreadInfo> collectAllThreads()
-	{
-		List<PyThreadInfo> result = Lists.newArrayList();
+    private List<PyThreadInfo> collectAllThreads() {
+        List<PyThreadInfo> result = new ArrayList<>();
 
-		result.addAll(myMainDebugger.getThreads());
+        //collect threads and add them to registry to faster access
+        //we don't register mainDebugger as it is default if there is no mapping
+        for (RemoteDebugger d : myDebuggers) {
+            result.addAll(d.getThreads());
+            for (PyThreadInfo t : d.getThreads()) {
+                myThreadRegistry.register(t.getId(), d);
+            }
+        }
 
-		//collect threads and add them to registry to faster access
-		//we don't register mainDebugger as it is default if there is no mapping
-		for(RemoteDebugger d : myOtherDebuggers)
-		{
-			result.addAll(d.getThreads());
-			for(PyThreadInfo t : d.getThreads())
-			{
-				myThreadRegistry.register(t.getId(), d);
-			}
-		}
+        return result;
+    }
 
-		return result;
-	}
+    private void cleanDebuggers() {
+        removeDisconnected(getDebuggers());
+    }
 
-	private void cleanOtherDebuggers()
-	{
-		removeDisconnected(getOtherDebuggers());
-	}
+    private void removeDisconnected(ArrayList<RemoteDebugger> debuggers) {
+        boolean allConnected = true;
+        for (RemoteDebugger d : debuggers) {
+            if (!d.isConnected()) {
+                allConnected = false;
+            }
+        }
+        if (!allConnected) {
+            List<RemoteDebugger> newList = new ArrayList<>();
+            for (RemoteDebugger d : debuggers) {
+                if (d.isConnected()) {
+                    newList.add(d);
+                }
+            }
 
-	private void removeDisconnected(ArrayList<RemoteDebugger> debuggers)
-	{
-		boolean allConnected = true;
-		for(RemoteDebugger d : debuggers)
-		{
-			if(!d.isConnected())
-			{
-				allConnected = false;
-			}
-		}
-		if(!allConnected)
-		{
-			List<RemoteDebugger> newList = Lists.newArrayList();
-			for(RemoteDebugger d : debuggers)
-			{
-				if(d.isConnected())
-				{
-					newList.add(d);
-				}
-			}
+            synchronized (myDebuggersObject) {
+                myDebuggers.clear();
+                myDebuggers.addAll(newList);
+            }
+        }
+    }
 
-			synchronized(myOtherDebuggersObject)
-			{
-				myOtherDebuggers.clear();
-				myOtherDebuggers.addAll(newList);
-			}
-		}
-	}
+    private ArrayList<RemoteDebugger> getDebuggers() {
+        synchronized (myDebuggersObject) {
+            return Lists.newArrayList(myDebuggers);
+        }
+    }
 
-	private ArrayList<RemoteDebugger> getOtherDebuggers()
-	{
-		synchronized(myOtherDebuggersObject)
-		{
-			return Lists.newArrayList(myOtherDebuggers);
-		}
-	}
+    private boolean isDebuggersEmpty() {
+        synchronized (myDebuggersObject) {
+            return myDebuggers.isEmpty();
+        }
+    }
 
-	private boolean isOtherDebuggersEmpty()
-	{
-		synchronized(myOtherDebuggersObject)
-		{
-			return myOtherDebuggers.isEmpty();
-		}
-	}
+    @Override
+    public void execute(AbstractCommand command) {
+        for (ProcessDebugger d : allDebuggers()) {
+            d.execute(command);
+        }
+    }
 
-	@Override
-	public void execute(AbstractCommand command)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.execute(command);
-		}
-	}
+    @Override
+    public void suspendAllThreads() {
+        for (ProcessDebugger d : allDebuggers()) {
+            d.suspendAllThreads();
+        }
+    }
 
-	@Override
-	public void suspendAllThreads()
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.suspendAllThreads();
-		}
-	}
+    @Override
+    public void suspendThread(String threadId) {
+        debugger(threadId).suspendThread(threadId);
+    }
 
-	@Override
-	public void suspendThread(String threadId)
-	{
-		debugger(threadId).suspendThread(threadId);
-	}
+    @Override
+    public void run() throws PyDebuggerException {
+        synchronized (myDebuggersObject) {
+            if (!myDebuggers.isEmpty()) {
+                myDebuggers.get(0).run();
+            }
+            else {
+                throw new IllegalStateException("waitForConnect() must be executed before run()");
+            }
+        }
+    }
 
-	@Override
-	public void run() throws PyDebuggerException
-	{
-		myMainDebugger.run();
-	}
+    @Override
+    public void smartStepInto(String threadId, String frameId, String functionName, int callOrder, int contextStartLine, int contextEndLine) {
+        debugger(threadId).smartStepInto(threadId, frameId, functionName, callOrder, contextStartLine, contextEndLine);
+    }
 
-	@Override
-	public void smartStepInto(String threadId, String functionName)
-	{
-		debugger(threadId).smartStepInto(threadId, functionName);
-	}
+    @Override
+    public void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode) {
+        debugger(threadId).resumeOrStep(threadId, mode);
+    }
 
-	@Override
-	public void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode)
-	{
-		debugger(threadId).resumeOrStep(threadId, mode);
-	}
+    @Override
+    public void setNextStatement(String threadId,
+                                 XSourcePosition sourcePosition,
+                                 @Nullable String functionName,
+                                 PyDebugCallback<Pair<Boolean, String>> callback) {
+        debugger(threadId).setNextStatement(threadId, sourcePosition, functionName, callback);
+    }
 
-	@Override
-	public void setTempBreakpoint(String type, String file, int line)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.setTempBreakpoint(type, file, line);
-		}
-	}
+    @Override
+    public void setTempBreakpoint(String type, String file, int line) {
+        for (ProcessDebugger d : allDebuggers()) {
+            d.setTempBreakpoint(type, file, line);
+        }
+    }
 
-	@Override
-	public void removeTempBreakpoint(String file, int line)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.removeTempBreakpoint(file, line);
-		}
-	}
+    @Override
+    public void removeTempBreakpoint(String file, int line) {
+        for (ProcessDebugger d : allDebuggers()) {
+            d.removeTempBreakpoint(file, line);
+        }
+    }
 
-	@Override
-	public void setBreakpoint(String typeId,
-			String file,
-			int line,
-			@Nullable String condition,
-			@Nullable String logExpression,
-			@Nullable String funcName,
-			SuspendPolicy policy)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.setBreakpoint(typeId, file, line, condition, logExpression, funcName, policy);
-		}
-	}
+    @Override
+    public void setBreakpoint(String typeId,
+                              String file,
+                              int line,
+                              @Nullable String condition,
+                              @Nullable String logExpression,
+                              @Nullable String funcName,
+                              SuspendPolicy policy) {
+        for (ProcessDebugger d : allDebuggers()) {
+            d.setBreakpoint(typeId, file, line, condition, logExpression, funcName, policy);
+        }
+    }
 
-	@Override
-	public void removeBreakpoint(String typeId, String file, int line)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.removeBreakpoint(typeId, file, line);
-		}
-	}
+    @Override
+    public void removeBreakpoint(String typeId, String file, int line) {
+        allDebuggers().forEach(d -> d.removeBreakpoint(typeId, file, line));
+    }
 
-	@Override
-	public void setShowReturnValues(boolean isShowReturnValues)
-	{
-		for(ProcessDebugger d : allDebuggers())
-		{
-			d.setShowReturnValues(isShowReturnValues);
-		}
-	}
+    @Override
+    public void setUserTypeRenderers(List<PyUserTypeRenderer> renderers) {
+        allDebuggers().forEach(d -> d.setUserTypeRenderers(renderers));
+    }
 
-	private void addDebugger(RemoteDebugger debugger)
-	{
-		synchronized(myOtherDebuggersObject)
-		{
-			myOtherDebuggers.add(debugger);
-		}
-	}
+    @Override
+    public void setShowReturnValues(boolean isShowReturnValues) {
+        allDebuggers().forEach(d -> d.setShowReturnValues(isShowReturnValues));
+    }
 
-	@Override
-    public void addCloseListener(RemoteDebuggerCloseListener listener)
-	{
-		myMainDebugger.addCloseListener(listener);
-	}
+    @Override
+    public void setUnitTestDebuggingMode() {
+        allDebuggers().forEach(d -> d.setUnitTestDebuggingMode());
+    }
 
-	@Override
-	public List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix)
-	{
-		return debugger(threadId).getCompletions(threadId, frameId, prefix);
-	}
+    /**
+     * Stores {@link RemoteDebuggerCloseListener} into the single composite
+     * listener. This composite listener is later added to the first connected
+     * {@link RemoteDebugger}.
+     *
+     * @param listener the listener to be added
+     */
+    @Override
+    public void addCloseListener(RemoteDebuggerCloseListener listener) {
+        myCompositeListener.addCloseListener(listener);
+    }
 
-	@Override
-	public String getDescription(String threadId, String frameId, String cmd)
-	{
-		return debugger(threadId).getDescription(threadId, frameId, cmd);
-	}
+    @Override
+    public List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix) {
+        return debugger(threadId).getCompletions(threadId, frameId, prefix);
+    }
 
-	@Override
-	public void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory)
-	{
-		for(RemoteDebugger d : allDebuggers())
-		{
-			d.execute(factory.createAddCommand(d));
-		}
-	}
+    @Override
+    public String getDescription(String threadId, String frameId, String cmd) {
+        return debugger(threadId).getDescription(threadId, frameId, cmd);
+    }
 
-	@Override
-	public void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory)
-	{
-		for(RemoteDebugger d : allDebuggers())
-		{
-			d.execute(factory.createRemoveCommand(d));
-		}
-	}
+    @Override
+    public void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory) {
+        for (RemoteDebugger d : allDebuggers()) {
+            d.execute(factory.createAddCommand(d));
+        }
+    }
 
-	@Override
-	public void suspendOtherThreads(PyThreadInfo thread)
-	{
-		for(RemoteDebugger d : allDebuggers())
-		{
-			// we should notify the debugger in each process about suspending all threads
-			d.suspendOtherThreads(thread);
-		}
-	}
+    @Override
+    public void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory) {
+        for (RemoteDebugger d : allDebuggers()) {
+            d.execute(factory.createRemoveCommand(d));
+        }
+    }
 
+    @Override
+    public void suspendOtherThreads(PyThreadInfo thread) {
+        for (RemoteDebugger d : allDebuggers()) {
+            // we should notify the debugger in each process about suspending all threads
+            d.suspendOtherThreads(thread);
+        }
+    }
+
+    private static class CompositeRemoteDebuggerCloseListener implements RemoteDebuggerCloseListener {
+        private final List<RemoteDebuggerCloseListener> myListeners = consulo.util.collection.Lists.newLockFreeCopyOnWriteList();
+
+        public void addCloseListener(RemoteDebuggerCloseListener listener) {
+            myListeners.add(listener);
+        }
+
+        @Override
+        public void closed() {
+            myListeners.forEach(RemoteDebuggerCloseListener::closed);
+        }
+
+        @Override
+        public void communicationError() {
+            myListeners.forEach(RemoteDebuggerCloseListener::communicationError);
+        }
+
+        @Override
+        public void detached() {
+            myListeners.forEach(RemoteDebuggerCloseListener::detached);
+        }
+    }
+
+    @Override
+    public void interruptDebugConsole() {
+        for (RemoteDebugger debugger : myDebuggers) {
+            debugger.interruptDebugConsole();
+        }
+    }
 }

@@ -1,10 +1,11 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger.pydev.transport;
 
-import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 import consulo.application.Application;
 import consulo.logging.Logger;
-import consulo.process.io.BaseOutputReader;
 import consulo.util.lang.TimeoutUtil;
+import consulo.process.io.BaseOutputReader;
+import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,106 +16,88 @@ import java.util.concurrent.Future;
 /**
  * @author Alexander Koshevoy
  */
-public abstract class BaseDebuggerReader extends BaseOutputReader
-{
-	private static final Logger LOG = Logger.getInstance(BaseDebuggerReader.class);
+public abstract class BaseDebuggerReader extends BaseOutputReader {
+    private static final Logger LOG = Logger.getInstance(BaseDebuggerReader.class);
 
-	private final RemoteDebugger myDebugger;
-	private StringBuilder myTextBuilder = new StringBuilder();
+    private final RemoteDebugger myDebugger;
+    private StringBuilder myTextBuilder = new StringBuilder();
 
-	public BaseDebuggerReader(InputStream inputStream, Charset charset, RemoteDebugger debugger)
-	{
-		super(inputStream, charset);
-		myDebugger = debugger;
-	}
+    public BaseDebuggerReader(InputStream inputStream, Charset charset, RemoteDebugger debugger) {
+        super(inputStream, charset);
+        myDebugger = debugger;
+    }
 
-	protected RemoteDebugger getDebugger()
-	{
-		return myDebugger;
-	}
+    protected RemoteDebugger getDebugger() {
+        return myDebugger;
+    }
 
-	@Override
-    protected void doRun()
-	{
-		try
-		{
-			while(true)
-			{
-				boolean read = readAvailableBlocking();
+    @Override
+    protected void doRun() {
+        try {
+            while (true) {
+                boolean read = readAvailableBlocking();
 
-				if(!read)
-				{
-					break;
-				}
-				else
-				{
-					if(isStopped)
-					{
-						break;
-					}
+                if (!read) {
+                    break;
+                }
+                else {
+                    if (isStopped) {
+                        break;
+                    }
 
-					TimeoutUtil.sleep(mySleepingPolicy.getTimeToSleep(true));
-				}
-			}
-		}
-		catch(Exception e)
-		{
-			onCommunicationError();
-		}
-		finally
-		{
-			close();
-			myDebugger.fireExitEvent();
-		}
-	}
+                    TimeoutUtil.sleep(mySleepingPolicy.getTimeToSleep(true));
+                }
+            }
+        }
+        catch (Exception e) {
+            onCommunicationError();
+        }
+        finally {
+            close();
+            onExit();
+        }
+    }
 
-	protected abstract void onCommunicationError();
+    protected abstract void onExit();
 
-	@Override
-	protected Future<?> executeOnPooledThread(Runnable runnable)
-	{
-		return Application.get().executeOnPooledThread(runnable);
-	}
+    protected abstract void onCommunicationError();
 
-	@Override
-	protected void close()
-	{
-		try
-		{
-			super.close();
-		}
-		catch(IOException e)
-		{
-			LOG.error(e);
-		}
-	}
+    @Override
+    protected Future<?> executeOnPooledThread(Runnable runnable) {
+        return Application.get().executeOnPooledThread(runnable);
+    }
 
-	@Override
-	public void stop()
-	{
-		super.stop();
-		close();
-	}
+    @Override
+    protected void close() {
+        try {
+            super.close();
+        }
+        catch (IOException e) {
+            LOG.error(e);
+        }
+    }
 
-	@Override
-	protected void onTextAvailable(String text)
-	{
-		myTextBuilder.append(text);
-		if(text.contains("\n"))
-		{
-			String[] lines = myTextBuilder.toString().split("\n");
-			myTextBuilder = new StringBuilder();
+    @Override
+    public void stop() {
+        super.stop();
+        close();
+    }
 
-			if(!text.endsWith("\n"))
-			{
-				myTextBuilder.append(lines[lines.length - 1]);
-				lines = Arrays.copyOfRange(lines, 0, lines.length - 1);
-			}
+    @Override
+    protected void onTextAvailable(String text) {
+        myTextBuilder.append(text);
+        if (text.contains("\n")) {
+            String[] lines = myTextBuilder.toString().split("\n");
+            myTextBuilder = new StringBuilder();
 
-			for(String line : lines)
-			{
-				myDebugger.processResponse(line + "\n");
-			}
-		}
-	}
+            if (!text.endsWith("\n")) {
+                myTextBuilder.append(lines[lines.length - 1]);
+                lines = Arrays.copyOf(lines, lines.length - 1);
+            }
+
+            for (String line : lines) {
+                myDebugger.processResponse(line + "\n");
+            }
+        }
+    }
 }

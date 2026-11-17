@@ -43,6 +43,7 @@
 
     <modules>
         <module>python-psi-api</module>
+        <module>python-console</module>
         <module>python-debugger</module>
         <module>python-impl</module>
         <module>python-rest</module>

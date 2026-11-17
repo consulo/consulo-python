@@ -1,57 +1,45 @@
-/*
- * Copyright 2013-2016 must-be.org
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.console.actions;
 
 import com.jetbrains.python.impl.console.PydevConsoleCommunication;
 import com.jetbrains.python.impl.console.PythonConsoleView;
 import consulo.application.dumb.DumbAware;
 import consulo.execution.debug.icon.ExecutionDebugIconGroup;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.ToggleAction;
 
 /**
- * @author VISTALL
- * @since 08-Nov-16
+ * Created by Yuli Fiterman on 9/18/2016.
  */
 public class ShowVarsAction extends ToggleAction implements DumbAware {
-  private boolean mySelected;
-  private PythonConsoleView myConsoleView;
-  private PydevConsoleCommunication myConsoleCommunication;
+    private final PythonConsoleView consoleView;
+    private final PydevConsoleCommunication consoleComm;
 
-  public ShowVarsAction(PythonConsoleView consoleView, PydevConsoleCommunication consoleCommunication) {
-    super("Show Variables", "Shows active console variables", ExecutionDebugIconGroup.nodeWatch());
-    myConsoleView = consoleView;
-    myConsoleCommunication = consoleCommunication;
-  }
-
-  @Override
-  public boolean isSelected(AnActionEvent anActionEvent) {
-    return mySelected;
-  }
-
-  @Override
-  public void setSelected(AnActionEvent anActionEvent, boolean b) {
-    mySelected = b;
-
-    if (mySelected) {
-      myConsoleView.showVariables(myConsoleCommunication);
+    public ShowVarsAction(PythonConsoleView consoleView, PydevConsoleCommunication consoleComm) {
+        super(
+            PyLocalize.consoleShowVariablesTitle(),
+            PyLocalize.consoleShowVariablesDescription(),
+            ExecutionDebugIconGroup.nodeWatch()
+        );
+        this.consoleView = consoleView;
+        this.consoleComm = consoleComm;
     }
-    else {
-      myConsoleView.restoreWindow();
+
+    @Override
+    public boolean isSelected(AnActionEvent e) {
+        return consoleView.isShowVars();
     }
-  }
+
+    @Override
+    public void setSelected(AnActionEvent e, boolean state) {
+        consoleView.setShowVars(state);
+
+        if (state) {
+            consoleView.showVariables(consoleComm);
+        }
+        else {
+            consoleView.restoreWindow();
+        }
+    }
 }

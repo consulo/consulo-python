@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 must-be.org
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,172 +13,147 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.console;
 
-import java.util.Arrays;
-
-import consulo.dataContext.DataManager;
-import consulo.ui.ex.action.IdeActions;
-import consulo.application.Result;
-import consulo.language.editor.WriteCommandAction;
-import consulo.document.Document;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.PyStatementListContainer;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PyStringLiteralUtil;
+import com.jetbrains.python.psi.PyTryPart;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.codeEditor.EditorEx;
 import consulo.codeEditor.LogicalPosition;
 import consulo.codeEditor.action.EditorActionHandler;
 import consulo.codeEditor.action.EditorActionManager;
-import consulo.codeEditor.EditorEx;
-import consulo.project.Project;
+import consulo.codeEditor.util.EditorUtil;
+import consulo.document.Document;
+import consulo.document.util.DocumentUtil;
 import consulo.document.util.TextRange;
-import consulo.util.lang.StringUtil;
+import consulo.language.editor.WriteCommandAction;
 import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.document.util.DocumentUtil;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.PyStatementListContainer;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.psi.PyTryPart;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
+import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.IdeActions;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author VISTALL
- * @since 09-Nov-16
- */
-public class PyConsoleEnterHandler
-{
-	public boolean handleEnterPressed(EditorEx editor)
-	{
-		Project project = editor.getProject();
-		if(project == null)
-		{
-			throw new IllegalArgumentException();
-		}
+import java.util.Objects;
 
-		int lineCount = editor.getDocument().getLineCount();
-		if(lineCount > 0)
-		{ // move to end of line
-			editor.getSelectionModel().removeSelection();
-			LogicalPosition caretPosition = editor.getCaretModel().getLogicalPosition();
-			if(caretPosition.line == lineCount - 1)
-			{
-				// we can move caret if only it's on the last line of command
-				int lineEndOffset = editor.getDocument().getLineEndOffset(caretPosition.line);
-				editor.getCaretModel().moveToOffset(lineEndOffset);
-			}
-			else
-			{
-				// otherwise just process enter action
-				executeEnterHandler(project, editor);
-				return false;
-			}
-		}
-		else
-		{
-			return true;
-		}
-		PsiDocumentManager psiMgr = PsiDocumentManager.getInstance(project);
-		psiMgr.commitDocument(editor.getDocument());
+public class PyConsoleEnterHandler {
+    @RequiredUIAccess
+    public boolean handleEnterPressed(EditorEx editor) {
+        Project project = editor.getProject();
+        if (project == null) {
+            throw new IllegalArgumentException();
+        }
+        int lineCount = editor.getDocument().getLineCount();
+        if (lineCount > 0) { // move to end of line
+            editor.getSelectionModel().removeSelection();
+            LogicalPosition caretPosition = editor.getCaretModel().getLogicalPosition();
+            if (caretPosition.line == lineCount - 1) {
+                // we can move caret if only it's on the last line of command
+                int lineEndOffset = editor.getDocument().getLineEndOffset(caretPosition.line);
+                editor.getCaretModel().moveToOffset(lineEndOffset);
+            }
+            else {
+                // otherwise just process enter action
+                executeEnterHandler(project, editor);
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+        PsiDocumentManager psiMgr = PsiDocumentManager.getInstance(project);
+        psiMgr.commitDocument(editor.getDocument());
 
-		int caretOffset = editor.getExpectedCaretOffset();
-		PsiElement atElement = findFirstNoneSpaceElement(psiMgr.getPsiFile(editor.getDocument()), caretOffset);
-		if(atElement == null)
-		{
-			executeEnterHandler(project, editor);
-			return false;
-		}
+        int caretOffset = editor.getExpectedCaretOffset();
+        PsiElement atElement = findFirstNoneSpaceElement(Objects.requireNonNull(psiMgr.getPsiFile(editor.getDocument())), caretOffset);
+        if (atElement == null) {
+            executeEnterHandler(project, editor);
+            return false;
+        }
 
-		String firstLine = getLineAtOffset(editor.getDocument(), DocumentUtil.getFirstNonSpaceCharOffset(editor.getDocument(), 0));
-		boolean isCellMagic = firstLine.trim().startsWith("%%") && !StringUtil.trimEnd(firstLine, ' ').endsWith("?");
-		String prevLine = getLineAtOffset(editor.getDocument(), caretOffset);
+        String firstLine = getLineAtOffset(editor.getDocument(), DocumentUtil.getFirstNonSpaceCharOffset(editor.getDocument(), 0));
+        boolean isCellMagic = firstLine.trim().startsWith("%%") && !firstLine.stripTrailing().endsWith("?");
+        String prevLine = getLineAtOffset(editor.getDocument(), caretOffset);
 
-		boolean isLineContinuation = StringUtil.endsWithChar(prevLine.trim(), '\\');
-		boolean insideDocString = isElementInsideDocString(atElement, caretOffset);
-		boolean isMultiLineCommand = PsiTreeUtil.getParentOfType(atElement, PyStatementListContainer.class) != null || isCellMagic;
-		boolean isAtTheEndOfCommand = editor.getDocument().getLineNumber(caretOffset) == editor.getDocument().getLineCount() - 1;
+        boolean isLineContinuation = prevLine.trim().endsWith("\\");
+        boolean insideDocString = isElementInsideDocString(atElement, caretOffset);
+        boolean isMultiLineCommand = PsiTreeUtil.getParentOfType(atElement, PyStatementListContainer.class) != null || isCellMagic;
+        boolean isAtTheEndOfCommand = editor.getDocument().getLineNumber(caretOffset) == editor.getDocument().getLineCount() - 1;
 
-		boolean hasCompleteStatement = !insideDocString && !isLineContinuation && checkComplete(atElement);
+        boolean hasCompleteStatement = !insideDocString && !isLineContinuation && checkComplete(atElement);
 
-		executeEnterHandler(project, editor);
+        executeEnterHandler(project, editor);
 
-		return isAtTheEndOfCommand && hasCompleteStatement && ((isMultiLineCommand && prevLine.isEmpty()) || (!isMultiLineCommand));
-	}
+        return isAtTheEndOfCommand && hasCompleteStatement && ((isMultiLineCommand && prevLine.isBlank()) || (!isMultiLineCommand));
+    }
 
-	private boolean checkComplete(PsiElement el)
-	{
-		PyStatementListContainer compoundStatement = PsiTreeUtil.getParentOfType(el, PyStatementListContainer.class);
-		if(compoundStatement != null && !(compoundStatement instanceof PyTryPart))
-		{
-			return compoundStatement.getStatementList().getStatements().length != 0;
-		}
-		PsiElement topLevel = PyPsiUtils.getParentRightBefore(el, el.getContainingFile());
-		return topLevel != null && !PsiTreeUtil.hasErrorElements(topLevel);
-	}
+    private void executeEnterHandler(Project project, EditorEx editor) {
+        EditorActionHandler enterHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
+        WriteCommandAction.runWriteCommandAction(project, () -> {
+            // The enter handler takes its project from the data context, and the console editor's Swing ancestors may
+            // report another project when several projects share one remote development backend (PY-90740).
+            enterHandler.execute(editor, null, EditorUtil.getEditorDataContext(editor));
+        });
+    }
 
-	private boolean isElementInsideDocString(PsiElement atElement, int caretOffset)
-	{
-		return atElement.getContext() instanceof PyStringLiteralExpression &&
-				(PyTokenTypes.TRIPLE_NODES.contains(atElement.getNode().getElementType()) || atElement.getNode().getElementType() == PyTokenTypes.DOCSTRING) &&
-				isMultilineString(atElement.getText()) &&
-				(atElement.getTextRange().getEndOffset() > caretOffset || !isCompleteDocString(atElement.getText()));
-	}
+    @RequiredReadAction
+    private boolean isElementInsideDocString(PsiElement atElement, int caretOffset) {
+        return atElement.getContext() instanceof PyStringLiteralExpression &&
+            (PyTokenTypes.TRIPLE_NODES.contains(atElement.getNode().getElementType()) ||
+                atElement.getNode().getElementType() == PyTokenTypes.DOCSTRING) &&
+            isMultilineString(atElement.getText()) &&
+            (atElement.getTextRange().getEndOffset() > caretOffset || !isCompleteDocString(atElement.getText()));
+    }
 
-	private boolean isMultilineString(String str)
-	{
-		String text = str.substring(PyStringLiteralExpressionImpl.getPrefixLength(str));
-		return text.startsWith("\"\"\"") || text.startsWith("'''");
-	}
+    @RequiredReadAction
+    private boolean checkComplete(PsiElement el) {
+        PyStatementListContainer compoundStatement = PsiTreeUtil.getParentOfType(el, PyStatementListContainer.class);
+        if (compoundStatement != null && !(compoundStatement instanceof PyTryPart)) {
+            return compoundStatement.getStatementList().getStatements().length != 0;
+        }
+        PsiElement topLevel = PyPsiUtils.getParentRightBefore(el, el.getContainingFile());
+        return topLevel != null && !PsiTreeUtil.hasErrorElements(topLevel);
+    }
 
-	private boolean isCompleteDocString(String str)
-	{
-		int prefixLen = PyStringLiteralExpressionImpl.getPrefixLength(str);
-		String text = str.substring(prefixLen);
-		for(String token : Arrays.asList("\"\"\"", "'''"))
-		{
-			if(text.length() >= 2 * token.length() && text.startsWith(token) && text.endsWith(token))
-			{
-				return true;
-			}
-		}
+    @RequiredReadAction
+    private @Nullable PsiElement findFirstNoneSpaceElement(PsiFile psiFile, int offset) {
+        for (int i = offset; i >= 0; i--) {
+            PsiElement el = psiFile.findElementAt(i);
+            if (el != null && !(el instanceof PsiWhiteSpace)) {
+                return el;
+            }
+        }
+        return null;
+    }
 
-		return false;
-	}
+    private String getLineAtOffset(Document doc, int offset) {
+        int line = doc.getLineNumber(offset);
+        int start = doc.getLineStartOffset(line);
+        int end = doc.getLineEndOffset(line);
+        return doc.getText(new TextRange(start, end));
+    }
 
-	private PsiElement findFirstNoneSpaceElement(PsiFile psiFile, int offset)
-	{
-		for(int i = offset; i <= 0; i--)
-		{
-			PsiElement el = psiFile.findElementAt(i);
-			if(el != null && !(el instanceof PsiWhiteSpace))
-			{
-				return el;
-			}
-		}
-		return null;
-	}
+    private boolean isMultilineString(String str) {
+        String text = str.substring(PyStringLiteralUtil.getPrefixLength(str));
+        return text.startsWith("\"\"\"") || text.startsWith("'''");
+    }
 
-	private String getLineAtOffset(Document doc, int offset)
-	{
-		int line = doc.getLineNumber(offset);
-		int start = doc.getLineStartOffset(line);
-		int end = doc.getLineEndOffset(line);
-		return doc.getText(new TextRange(start, end));
-	}
+    private boolean isCompleteDocString(String str) {
+        int prefixLen = PyStringLiteralUtil.getPrefixLength(str);
+        String text = str.substring(prefixLen);
+        for (String token : new String[]{"\"\"\"", "'''"}) {
+            if (text.length() >= 2 * token.length() && text.startsWith(token) && text.endsWith(token)) {
+                return true;
+            }
+        }
 
-	private void executeEnterHandler(Project project, EditorEx editor)
-	{
-		EditorActionHandler enterHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
-		new WriteCommandAction<Void>(project)
-		{
-			@Override
-			protected void run(Result<Void> result) throws Throwable
-			{
-				enterHandler.execute(editor, null, DataManager.getInstance().getDataContext(editor.getComponent()));
-
-			}
-		}.execute();
-	}
-
+        return false;
+    }
 }

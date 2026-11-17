@@ -1,162 +1,148 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.debugger.settings;
 
 import consulo.configurable.IdeaConfigurableUi;
 import consulo.disposer.Disposable;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.ex.NonEmptyInputValidator;
 import consulo.ui.ex.awt.ColumnInfo;
 import consulo.ui.ex.awt.JBCheckBox;
 import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.awt.VerticalFlowLayout;
 import consulo.ui.ex.awt.table.TableModelEditor;
-import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.function.Function;
 
 public class PyDebuggerSteppingConfigurableUi implements IdeaConfigurableUi<PyDebuggerSettings> {
-  private static final ColumnInfo[] COLUMNS = {
-    new EnabledColumn(),
-    new FilterColumn()
-  };
-  private JPanel myPanel;
-  private JPanel mySteppingPanel;
-  private JBCheckBox myLibrariesFilterCheckBox;
-  private JBCheckBox myStepFilterEnabledCheckBox;
-  private TableModelEditor<PySteppingFilter> myPySteppingFilterEditor;
+    private final TableModelEditor<PySteppingFilter> myPySteppingFilterEditor;
+    private final JPanel myPanel;
+    private final JBCheckBox myLibrariesFilterCheckBox;
+    private final JBCheckBox myStepFilterEnabledCheckBox;
+    private final JBCheckBox myAlwaysDoSmartStepIntoCheckBox;
 
-  public PyDebuggerSteppingConfigurableUi() {
-    myStepFilterEnabledCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(@Nullable ActionEvent e) {
+    public PyDebuggerSteppingConfigurableUi() {
+        myPySteppingFilterEditor = new TableModelEditor<>(
+            new ColumnInfo[]{new EnabledColumn(), new FilterColumn()},
+            new DialogEditor(),
+            PyLocalize.debuggerSteppingNoScriptFilters().get(),
+            PySteppingFilter::new
+        );
+        // JB builds this panel with the Kotlin UI DSL: three checkbox rows and a resizable row with the filter table
+        myAlwaysDoSmartStepIntoCheckBox = new JBCheckBox(PyLocalize.formDebuggerSteppingAlwaysDoSmartStepInto().get());
+        myLibrariesFilterCheckBox = new JBCheckBox(PyLocalize.formDebuggerSteppingCheckboxTextDoNotStepIntoLibraryScripts().get());
+        myStepFilterEnabledCheckBox = new JBCheckBox(PyLocalize.formDebuggerSteppingDoNotStepIntoScripts().get());
+
+        JPanel rows = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 5, true, false));
+        rows.add(myAlwaysDoSmartStepIntoCheckBox);
+        rows.add(myLibrariesFilterCheckBox);
+        rows.add(myStepFilterEnabledCheckBox);
+
+        myPanel = new JPanel(new BorderLayout());
+        myPanel.add(rows, BorderLayout.NORTH);
+        myPanel.add(myPySteppingFilterEditor.createComponent(), BorderLayout.CENTER);
+
+        // JB: .enabledIf(myStepFilterEnabledCheckBox.selected)
+        myStepFilterEnabledCheckBox.addActionListener(e -> myPySteppingFilterEditor.enabled(myStepFilterEnabledCheckBox.isSelected()));
+    }
+
+    @Override
+    public void reset(PyDebuggerSettings settings) {
+        myLibrariesFilterCheckBox.setSelected(settings.isLibrariesFilterEnabled());
+        myStepFilterEnabledCheckBox.setSelected(settings.isSteppingFiltersEnabled());
+        myAlwaysDoSmartStepIntoCheckBox.setSelected(settings.isAlwaysDoSmartStepInto());
+        myPySteppingFilterEditor.reset(settings.getSteppingFilters());
         myPySteppingFilterEditor.enabled(myStepFilterEnabledCheckBox.isSelected());
-      }
-    });
-  }
-
-  private void createUIComponents() {
-    TableModelEditor.DialogItemEditor<PySteppingFilter> itemEditor = new DialogEditor();
-    myPySteppingFilterEditor =
-      new TableModelEditor<>(COLUMNS, itemEditor, "No script filters configured", PySteppingFilter::new);
-    mySteppingPanel = new JPanel(new BorderLayout());
-    mySteppingPanel.add(myPySteppingFilterEditor.createComponent());
-  }
-
-  @Override
-  public void reset(PyDebuggerSettings settings) {
-    myLibrariesFilterCheckBox.setSelected(settings.isLibrariesFilterEnabled());
-    myStepFilterEnabledCheckBox.setSelected(settings.isSteppingFiltersEnabled());
-    myPySteppingFilterEditor.reset(settings.getSteppingFilters());
-    myPySteppingFilterEditor.enabled(myStepFilterEnabledCheckBox.isSelected());
-  }
-
-  @Override
-  public boolean isModified(PyDebuggerSettings settings) {
-    return myLibrariesFilterCheckBox.isSelected() != settings.isLibrariesFilterEnabled() || myStepFilterEnabledCheckBox.isSelected() != settings
-      .isSteppingFiltersEnabled() ||
-      myPySteppingFilterEditor.isModified();
-  }
-
-  @Override
-  public void apply(PyDebuggerSettings settings) {
-    settings.setLibrariesFilterEnabled(myLibrariesFilterCheckBox.isSelected());
-    settings.setSteppingFiltersEnabled(myStepFilterEnabledCheckBox.isSelected());
-    if (myPySteppingFilterEditor.isModified()) {
-      settings.setSteppingFilters(myPySteppingFilterEditor.apply());
-    }
-  }
-
-  @Override
-  public JComponent getComponent(Disposable parentDisposable) {
-    return myPanel;
-  }
-
-  private static class EnabledColumn extends TableModelEditor.EditableColumnInfo<PySteppingFilter, Boolean> {
-    @Nullable
-    @Override
-    public Boolean valueOf(PySteppingFilter filter) {
-      return filter.isEnabled();
     }
 
     @Override
-    public Class<?> getColumnClass() {
-      return Boolean.class;
+    public boolean isModified(PyDebuggerSettings settings) {
+        return myLibrariesFilterCheckBox.isSelected() != settings.isLibrariesFilterEnabled() ||
+            myStepFilterEnabledCheckBox.isSelected() != settings.isSteppingFiltersEnabled() ||
+            myAlwaysDoSmartStepIntoCheckBox.isSelected() != settings.isAlwaysDoSmartStepInto() ||
+            myPySteppingFilterEditor.isModified();
     }
 
     @Override
-    public void setValue(PySteppingFilter filter, Boolean value) {
-      filter.setEnabled(value);
-    }
-  }
-
-  private static class FilterColumn extends TableModelEditor.EditableColumnInfo<PySteppingFilter, String> {
-    @Nullable
-    @Override
-    public String valueOf(PySteppingFilter filter) {
-      return filter.getFilter();
+    public void apply(PyDebuggerSettings settings) {
+        settings.setLibrariesFilterEnabled(myLibrariesFilterCheckBox.isSelected());
+        settings.setSteppingFiltersEnabled(myStepFilterEnabledCheckBox.isSelected());
+        settings.setAlwaysDoSmartStepIntoEnabled(myAlwaysDoSmartStepIntoCheckBox.isSelected());
+        if (myPySteppingFilterEditor.isModified()) {
+            settings.setSteppingFilters(myPySteppingFilterEditor.apply());
+        }
     }
 
     @Override
-    public Class<?> getColumnClass() {
-      return String.class;
+    public JComponent getComponent(Disposable parentDisposable) {
+        return myPanel;
     }
 
-    @Override
-    public void setValue(PySteppingFilter filter, String value) {
-      filter.setFilter(value);
-    }
-  }
+    private static class EnabledColumn extends TableModelEditor.EditableColumnInfo<PySteppingFilter, Boolean> {
+        @Override
+        public Boolean valueOf(PySteppingFilter filter) {
+            return filter.isEnabled();
+        }
 
-  private class DialogEditor implements TableModelEditor.DialogItemEditor<PySteppingFilter> {
-    @Override
-    public PySteppingFilter clone(PySteppingFilter item, boolean forInPlaceEditing) {
-      return new PySteppingFilter(item.isEnabled(), item.getFilter());
-    }
+        @Override
+        public Class<?> getColumnClass() {
+            return Boolean.class;
+        }
 
-    @Override
-    public Class<PySteppingFilter> getItemClass() {
-      return PySteppingFilter.class;
-    }
-
-    @Override
-    public void edit(PySteppingFilter item, Function<PySteppingFilter, PySteppingFilter> mutator, boolean isAdd) {
-      String pattern = Messages.showInputDialog(myPanel,
-                                                "Specify glob pattern ('*', '?' and '[seq]' allowed, semicolon ';' as name separator):",
-                                                "Stepping Filter",
-                                                null,
-                                                item.getFilter(),
-                                                new
-                                                    NonEmptyInputValidator());
-      if (pattern != null) {
-        mutator.apply(item).setFilter(pattern);
-        myPySteppingFilterEditor.getModel().fireTableDataChanged();
-      }
+        @Override
+        public void setValue(PySteppingFilter filter, Boolean value) {
+            filter.setEnabled(value);
+        }
     }
 
-    @Override
-    public void applyEdited(PySteppingFilter oldItem, PySteppingFilter newItem) {
-      oldItem.setFilter(newItem.getFilter());
+    private static class FilterColumn extends TableModelEditor.EditableColumnInfo<PySteppingFilter, String> {
+        @Override
+        public String valueOf(PySteppingFilter filter) {
+            return filter.getFilter();
+        }
+
+        @Override
+        public void setValue(PySteppingFilter filter, String value) {
+            filter.setFilter(value);
+        }
     }
 
-    @Override
-    public boolean isUseDialogToAdd() {
-      return true;
+    private class DialogEditor implements TableModelEditor.DialogItemEditor<PySteppingFilter> {
+        @Override
+        public PySteppingFilter clone(PySteppingFilter item, boolean forInPlaceEditing) {
+            return new PySteppingFilter(item.isEnabled(), item.getFilter());
+        }
+
+        @Override
+        public Class<PySteppingFilter> getItemClass() {
+            return PySteppingFilter.class;
+        }
+
+        @Override
+        public void edit(PySteppingFilter item, Function<PySteppingFilter, PySteppingFilter> mutator, boolean isAdd) {
+            String pattern = Messages.showInputDialog(
+                myPanel,
+                PyLocalize.debuggerSteppingFilterSpecifyPattern().get(),
+                PyLocalize.debuggerSteppingFilter().get(),
+                null,
+                item.getFilter(),
+                new NonEmptyInputValidator()
+            );
+            if (pattern != null) {
+                mutator.apply(item).setFilter(pattern);
+                myPySteppingFilterEditor.getModel().fireTableDataChanged();
+            }
+        }
+
+        @Override
+        public void applyEdited(PySteppingFilter oldItem, PySteppingFilter newItem) {
+            oldItem.setFilter(newItem.getFilter());
+        }
+
+        @Override
+        public boolean isUseDialogToAdd() {
+            return true;
+        }
     }
-  }
 }

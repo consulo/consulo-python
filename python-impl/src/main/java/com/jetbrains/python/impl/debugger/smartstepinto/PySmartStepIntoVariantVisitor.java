@@ -1,0 +1,229 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.jetbrains.python.impl.debugger.smartstepinto;
+
+import com.google.common.collect.Maps;
+import consulo.util.lang.Pair;
+import consulo.language.psi.PsiElement;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyComprehensionElement;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyElementType;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyPrefixExpression;
+import com.jetbrains.python.psi.PyRecursiveElementVisitor;
+import com.jetbrains.python.psi.PyReferenceOwner;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.impl.pyi.PyiFile;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.jetbrains.python.PyNames.BUILTINS_MODULES;
+
+public class PySmartStepIntoVariantVisitor extends PyRecursiveElementVisitor {
+    private static final String RERAISE = "RERAISE";
+
+    int myVariantIndex = -1;
+    private final List<PySmartStepIntoVariant> myCollector;
+    private final List<Pair<String, Boolean>> myVariantsFromPython;
+    private final PySmartStepIntoContext myContext;
+    private final Map<String, Integer> mySeenVariants = Maps.newHashMap();
+    private final Set<PsiElement> alreadyVisited = new HashSet<>();
+
+    public PySmartStepIntoVariantVisitor(List<PySmartStepIntoVariant> collector,
+                                         List<Pair<String, Boolean>> variantsFromPython,
+                                         PySmartStepIntoContext context) {
+        myCollector = collector;
+        boolean shouldJump = false;
+        int mid = (variantsFromPython.size() - 1) / 2;
+        if (variantsFromPython.getLast().first.equals(RERAISE)) {
+            int i = 0;
+            while (i < mid) {
+                if (!variantsFromPython.get(i).first.equals(variantsFromPython.get(mid + i).first) ||
+                    !(variantsFromPython.get(i).second && !variantsFromPython.get(mid + i).second)) {
+                    break;
+                }
+                i++;
+            }
+            if (i == mid) {
+                shouldJump = true;
+            }
+        }
+
+        if (shouldJump) {
+            myVariantsFromPython = variantsFromPython.subList(mid, variantsFromPython.size() - 1);
+        }
+        else if (variantsFromPython.getLast().first.equals(RERAISE)) {
+            myVariantsFromPython = variantsFromPython.subList(0, variantsFromPython.size() - 1);
+        }
+        else {
+            myVariantsFromPython = variantsFromPython;
+        }
+
+        myContext = context;
+    }
+
+    @Override
+    public void visitPyCallExpression(PyCallExpression node) {
+        node.acceptChildren(this);
+
+        if (alreadyVisited.contains(node)) {
+            return;
+        }
+        alreadyVisited.add(node);
+
+        if (myVariantIndex == myVariantsFromPython.size() - 1) {
+            return;
+        }
+
+        PyExpression callee = node.getCallee();
+        if (callee == null || callee.getName() == null) {
+            return;
+        }
+
+        myVariantIndex++;
+        int callOrder = getCallOrder();
+        mySeenVariants.put(myVariantsFromPython.get(myVariantIndex).first, ++callOrder);
+
+        PsiElement ref = callee.getReference() != null ? callee.getReference().resolve() : null;
+        if (ref != null && isBuiltIn(ref)) {
+            return;
+        }
+
+        if (LanguageLevel.forElement(node).isOlderThan(LanguageLevel.PYTHON312)
+            && ref instanceof PyFunction function && ((function.isAsync()) || function.isGenerator())) {
+            return;
+        }
+
+        if (isAlreadyCalled()) {
+            return;
+        }
+
+        myCollector.add(new PySmartStepIntoVariantCallExpression(node, callOrder, myContext));
+    }
+
+    @Override
+    public void visitPyDecoratorList(PyDecoratorList node) {
+        PyDecorator[] decorators = node.getDecorators();
+        if (decorators.length > 0) {
+            decorators[0].accept(this);
+        }
+    }
+
+    @Override
+    public void visitPyComprehensionElement(PyComprehensionElement node) {
+        node.acceptChildren(this);
+
+        if (alreadyVisited.contains(node)) {
+            return;
+        }
+        alreadyVisited.add(node);
+
+        if (myVariantIndex == myVariantsFromPython.size() - 1) {
+            return;
+        }
+
+        if (!PySmartStepIntoVariantComprehension.isComprehensionName(myVariantsFromPython.get(myVariantIndex + 1).first)) {
+            return;
+        }
+
+        myVariantIndex++;
+        int callOrder = getCallOrder();
+        mySeenVariants.put(myVariantsFromPython.get(myVariantIndex).first, ++callOrder);
+
+        if (isAlreadyCalled()) {
+            return;
+        }
+
+        myCollector.add(new PySmartStepIntoVariantComprehension(node, callOrder, myContext));
+    }
+
+    @Override
+    public void visitPyBinaryExpression(PyBinaryExpression node) {
+        // We have to visit both branches of a binary expression first to preserve the execution order as it is in a CPython interpreter,
+        // E.g. in the `f() + g()` expression the execution order goes like `f()`, `g()`, `+`, but it's `f()`, `+`, `g()` in the PSI tree.
+        node.getLeftExpression().accept(this);
+        if (node.getRightExpression() != null) {
+            node.getRightExpression().accept(this);
+        }
+        node.acceptChildren(this);
+
+        if (alreadyVisited.contains(node)) {
+            return;
+        }
+        alreadyVisited.add(node);
+
+        if (myVariantIndex == myVariantsFromPython.size() - 1) {
+            return;
+        }
+
+        PyElementType operator = node.getOperator();
+
+        if (PyTokenTypes.OPERATIONS.contains(operator)) {
+            processOperator(operator, node);
+        }
+    }
+
+    @Override
+    public void visitPyPrefixExpression(PyPrefixExpression node) {
+        PyExpression operand = node.getOperand();
+        if (operand != null) {
+            operand.accept(this);
+        }
+
+        PyElementType operator = node.getOperator();
+
+        processOperator(operator, node);
+    }
+
+    private void processOperator(PyElementType operator, PyReferenceOwner expression) {
+        boolean isBinaryOperator = expression instanceof PyBinaryExpression;
+
+        String specialMethodName = isBinaryOperator ? operator.getSpecialMethodName() :
+                                   PySmartStepIntoVariantOperator.getUnaryOperatorSpecialMethodName(operator);
+
+        if (specialMethodName == null || !specialMethodName.equals(myVariantsFromPython.get(myVariantIndex + 1).first)) {
+            return;
+        }
+        myVariantIndex++;
+
+        int callOrder = getCallOrder();
+        mySeenVariants.put(myVariantsFromPython.get(myVariantIndex).first, ++callOrder);
+
+        var context = TypeEvalContext.userInitiated(expression.getProject(), expression.getContainingFile());
+        PsiElement resolved = expression.getReference(PyResolveContext.defaultContext(context)).resolve();
+
+        if (resolved == null || isBuiltIn(resolved) || isAlreadyCalled()) {
+            return;
+        }
+
+        PsiElement psiOperator = isBinaryOperator ? ((PyBinaryExpression)expression).getPsiOperator() : expression;
+        if (psiOperator != null) {
+            myCollector.add(new PySmartStepIntoVariantOperator(psiOperator, callOrder, myContext));
+        }
+    }
+
+    /** Whether {@code ref} is in a builtins module or in a stub, so that the debugger cannot step into it. */
+    public static boolean isBuiltIn(PsiElement ref) {
+        PsiElement navFile = ref.getNavigationElement().getContainingFile();
+        return (navFile instanceof PyFile && BUILTINS_MODULES.contains(navFile.getContainingFile().getName())
+                || navFile instanceof PyiFile);
+    }
+
+    private boolean isAlreadyCalled() {
+        return myVariantsFromPython.get(myVariantIndex).second;
+    }
+
+    private int getCallOrder() {
+        return mySeenVariants.getOrDefault(myVariantsFromPython.get(myVariantIndex).first, -1);
+    }
+}

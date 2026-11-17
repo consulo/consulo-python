@@ -1,5 +1,6 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.console;
 
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.localize.LocalizeValue;
+import consulo.module.Module;
 import consulo.project.Project;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
+import java.util.Map;
+
 @ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyConsoleOptionsProvider {
-  ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create(PyConsoleOptionsProvider.class);
+    ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create(PyConsoleOptionsProvider.class);
 
-  boolean isApplicableTo(Project project);
+    boolean isApplicableTo(Project project);
 
-  String getId();
+    /**
+     * Consulo-specific: the id of the child settings page (JB uses the name, which is localized in Consulo).
+     */
+    String getId();
 
-  LocalizeValue getName();
+    LocalizeValue getName();
 
-  String getHelpTopic();
+    String getHelpTopic();
 
-  PyConsoleOptions.PyConsoleSettings getSettings(Project project);
+    PyConsoleOptions.PyConsoleSettings getSettings(Project project);
+
+    @Nullable
+    PyConsoleParameters getConsoleParameters(Module module);
+
+    void customizeEnvVariables(Module module, Map<String, String> environmentVariablesToBeCustomized);
 }

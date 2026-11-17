@@ -1,94 +1,80 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.PyFrameAccessor;
 import com.jetbrains.python.impl.console.PyConsoleIndentUtil;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
 import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.project.Project;
-
 import org.jspecify.annotations.Nullable;
 
+// TODO consulo: XDebuggerDocumentOffsetEvaluator and ValueHintType missing in execution-debug-api, JB also implements
+//  evaluate(Document, int offset, ValueHintType, XEvaluationCallback) through PyDebuggerEvaluatorKt.evaluateWithOffset
+class PyDebuggerEvaluator extends XDebuggerEvaluator {
+    private final Project myProject;
+    private final PyFrameAccessor myDebugProcess;
 
-public class PyDebuggerEvaluator extends XDebuggerEvaluator
-{
-	private static final PyDebugValue NONE = new PyDebugValue("", "NoneType", null, "None", false, false, false, false, null, null);
+    PyDebuggerEvaluator(Project project, PyFrameAccessor debugProcess) {
+        myProject = project;
+        myDebugProcess = debugProcess;
+    }
 
-	private Project myProject;
-	private final PyFrameAccessor myDebugProcess;
+    @Override
+    public void evaluate(String expression, XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
+        doEvaluate(expression, callback, true);
+    }
 
-	public PyDebuggerEvaluator(Project project, PyFrameAccessor debugProcess)
-	{
-		myProject = project;
-		myDebugProcess = debugProcess;
-	}
+    private PyDebugValue getNone() {
+        return new PyDebugValue("", "NoneType", null, "None", false, null, null, false, false, false, null, null, myDebugProcess);
+    }
 
-	@Override
-	public void evaluate(String expression, XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition)
-	{
-		doEvaluate(expression, callback, true);
-	}
+    private void doEvaluate(String expr, XEvaluationCallback callback, boolean doTrunc) {
+        Application.get().executeOnPooledThread(() -> {
+            String expression = expr.trim();
+            if (expression.isEmpty()) {
+                callback.evaluated(getNone());
+                return;
+            }
 
-	private void doEvaluate(String expr, XEvaluationCallback callback, boolean doTrunc)
-	{
-		ApplicationManager.getApplication().executeOnPooledThread(() -> {
-			String expression = expr.trim();
-			if(expression.isEmpty())
-			{
-				callback.evaluated(NONE);
-				return;
-			}
+            boolean isExpression = PyDebugSupportUtils.isExpression(myProject, expression);
+            try {
+                // todo: think on getting results from EXEC
+                PyDebugValue value = myDebugProcess.evaluate(expression, !isExpression, doTrunc);
+                if (value.isErrorOnEval()) {
+                    callback.errorOccurred("{" + value.getType() + "}" + value.getValue()); //NON-NLS
+                }
+                else {
+                    callback.evaluated(value);
+                }
+            }
+            catch (PyDebuggerException e) {
+                callback.errorOccurred(e.getTracebackError());
+            }
+        });
+    }
 
-			boolean isExpression = PyDebugSupportUtils.isExpression(myProject, expression);
-			try
-			{
-				// todo: think on getting results from EXEC
-				PyDebugValue value = myDebugProcess.evaluate(expression, !isExpression, doTrunc);
-				if(value.isErrorOnEval())
-				{
-					callback.errorOccurred("{" + value.getType() + "}" + value.getValue());
-				}
-				else
-				{
-					callback.evaluated(value);
-				}
-			}
-			catch(PyDebuggerException e)
-			{
-				callback.errorOccurred(e.getTracebackError());
-			}
-		});
-	}
+    @Override
+    public @Nullable TextRange getExpressionRangeAtOffset(@Nullable Project project,
+                                                          @Nullable Document document,
+                                                          int offset,
+                                                          boolean sideEffectsAllowed) {
+        TextRange range = PyDebugSupportUtils.getExpressionRangeAtOffset(project, document, offset);
+        if (range == null) {
+            return null;
+        }
+        if (sideEffectsAllowed || project == null || document == null) {
+            return range;
+        }
+        return PyDebuggerEvaluatorKt.filterExpressionRangeForHover(project, document, offset, range);
+    }
 
-	@Nullable
-	@Override
-	public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset, boolean sideEffectsAllowed)
-	{
-		return PyDebugSupportUtils.getExpressionRangeAtOffset(project, document, offset);
-	}
-
-	@Override
-	public String formatTextForEvaluation(String text)
-	{
-		return PyConsoleIndentUtil.normalize(text);
-	}
+    @Override
+    public String formatTextForEvaluation(String text) {
+        return PyConsoleIndentUtil.normalize(text);
+    }
 }

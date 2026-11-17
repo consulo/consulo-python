@@ -1,5 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +16,61 @@
  */
 package com.jetbrains.python.impl.console;
 
+import com.jetbrains.python.impl.console.actions.PyConsoleRenameAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.dumb.DumbAware;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.project.ui.wm.ToolWindowFactory;
+import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.toolWindow.ToolWindow;
+import consulo.ui.ex.toolWindow.ToolWindowAnchor;
+import consulo.ui.image.Image;
 
+@ExtensionImpl
+public class PythonConsoleToolWindowFactory implements ToolWindowFactory, DumbAware {
+    public static final String ID = "Python Console";
 
-/**
- * @author traff
- */
-public class PythonConsoleToolWindowFactory implements DumbAware {
-  public static final String ID = "Python Console";
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-  //@Override
-  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
-    PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
-    runner.runSync();
-  }
+    @Override
+    @RequiredUIAccess
+    public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+        // Consulo-specific: Consulo has no "ToolWindowContextMenu" group to add PyConsoleRenameAction to
+        toolWindow.setTabDoubleClickActions(new PyConsoleRenameAction());
+
+        Object isStartedFromRunner = toolWindow.getComponent().getClientProperty(PydevConsoleRunnerImpl.STARTED_BY_RUNNER);
+        // we need it to distinguish Console toolwindows started by Console Runner from ones started by toolwindow activation
+        if (!"true".equals(isStartedFromRunner)) {
+            // createToolWindowContent cannot wait, while building the runner waits for the project
+            // model. The runner therefore comes back on the EDT, which is also the write-safe context the former
+            // TransactionGuard.submitTransaction stood for.
+            PythonConsoleStarter.launchPythonConsoleRunnerIfInterpreterExists(project, null, it -> it.runSync(true));
+        }
+    }
+
+    @Override
+    public ToolWindowAnchor getAnchor() {
+        return ToolWindowAnchor.RIGHT;
+    }
+
+    @Override
+    public Image getIcon() {
+        return PythonImplIconGroup.pythonPythonconsoletoolwindow();
+    }
+
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.pythonConsole();
+    }
+
+    @Override
+    public boolean canCloseContents() {
+        return true;
+    }
 }

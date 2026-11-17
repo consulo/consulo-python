@@ -1,52 +1,51 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.console.pydev;
 
-import java.util.List;
 import java.util.function.Function;
 
-/**
- * @author traff
- */
-public interface ConsoleCommunication
-{
-	List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
+import java.util.List;
 
-	String getDescription(String text) throws Exception;
+public interface ConsoleCommunication {
+    List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
 
-	boolean isWaitingForInput();
+    String getDescription(String text) throws Exception;
 
-	boolean isExecuting();
+    boolean isWaitingForInput();
 
-	boolean needsMore();
+    boolean isExecuting();
 
-	void execInterpreter(ConsoleCodeFragment code, Function<InterpreterResponse, Object> callback);
+    boolean needsMore();
 
-	void interrupt();
+    void execInterpreter(ConsoleCodeFragment code, Function<InterpreterResponse, Object> callback);
 
-	void addCommunicationListener(ConsoleCommunicationListener listener);
+    void interrupt();
 
-	void notifyCommandExecuted(boolean more);
+    void addCommunicationListener(ConsoleCommunicationListener listener);
 
-	void notifyInputRequested();
+    void notifyCommandExecuted(boolean more);
+    void notifyInputRequested();
 
-	class ConsoleCodeFragment
-	{
-		private final String myText;
-		private final boolean myIsSingleLine;
+    void notifyInputReceived();
 
-		public ConsoleCodeFragment(String text, boolean isSingleLine)
-		{
-			myText = text;
-			myIsSingleLine = isSingleLine;
-		}
+    class ConsoleCodeFragment {
+        private String myText;
+        private final boolean myIsSingleLine;
 
-		public String getText()
-		{
-			return myText;
-		}
+        public ConsoleCodeFragment(String text, boolean isSingleLine) {
+            myText = text;
+            myIsSingleLine = isSingleLine;
+        }
 
-		public boolean isSingleLine()
-		{
-			return myIsSingleLine;
-		}
-	}
+        public String getText() {
+            return myText;
+        }
+
+        public void setText(String text) {
+            myText = text;
+        }
+
+        public boolean isSingleLine() {
+            return myIsSingleLine;
+        }
+    }
 }

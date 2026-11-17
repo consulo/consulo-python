@@ -1,94 +1,177 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger.pydev;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.jspecify.annotations.Nullable;
+import consulo.logging.Logger;
+import consulo.util.lang.Pair;
+import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.breakpoint.SuspendPolicy;
 import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;
+import com.jetbrains.python.debugger.PyFrameAccessor;
 import com.jetbrains.python.debugger.PyReferringObjectsValue;
 import com.jetbrains.python.debugger.PyThreadInfo;
+import com.jetbrains.python.debugger.PyUserTypeRenderer;
+import com.jetbrains.python.debugger.pydev.dataviewer.DataViewerCommandBuilder;
+import com.jetbrains.python.debugger.pydev.dataviewer.DataViewerCommandResult;
+import com.jetbrains.python.tables.TableCommandParameters;
+import com.jetbrains.python.tables.TableCommandType;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author traff
- */
-public interface ProcessDebugger
-{
-	String handshake() throws PyDebuggerException;
+import java.util.Collection;
+import java.util.List;
 
-	PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute) throws PyDebuggerException;
+public interface ProcessDebugger {
+    String handshake() throws PyDebuggerException;
 
-	PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute, boolean trimResult) throws PyDebuggerException;
+    PyDebugValue evaluate(String threadId,
+                          String frameId,
+                          String expression,
+                          boolean execute,
+                          int evaluationTimeout)
+      throws PyDebuggerException;
 
-	void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback);
+    PyDebugValue evaluate(String threadId,
+                          String frameId,
+                          String expression,
+                          boolean execute,
+                          int evaluationTimeout,
+                          boolean trimResult)
+      throws PyDebuggerException;
 
-	XValueChildrenList loadFrame(String threadId, String frameId) throws PyDebuggerException;
+    void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback);
 
-	// todo: don't generate temp variables for qualified expressions - just split 'em
-	XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException;
+    @Nullable
+    String execTableCommand(String threadId, String frameId, String command, TableCommandType commandType,
+                            TableCommandParameters tableCommandParameters) throws PyDebuggerException;
 
-	ArrayChunk loadArrayItems(String threadId, String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format) throws PyDebuggerException;
+    @Nullable
+    String execTableImageCommand(String threadId, String frameId, String command, TableCommandType commandType,
+                            TableCommandParameters tableCommandParameters) throws PyDebuggerException;
 
-	void loadReferrers(String threadId, String frameId, PyReferringObjectsValue var, PyDebugCallback<XValueChildrenList> callback);
+    /**
+     * Represents the type of group that can be used when loading frames for debugging purposes.
+     * <p>
+     * - DEFAULT: Represents default variables.
+     * <p>
+     * - SPECIAL: Represents special variables (__dict__, __doc__, ...).
+     * <p>
+     * - RETURN: Represents variables specifically related to return values.
+     */
+    enum GROUP_TYPE {
+        DEFAULT,
+        SPECIAL,
+        RETURN
+    }
 
-	PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value) throws PyDebuggerException;
+    @Nullable
+    XValueChildrenList loadFrame(String threadId, String frameId, GROUP_TYPE group_type) throws PyDebuggerException;
 
-	@Nullable
-	String loadSource(String path);
+    List<Pair<String, Boolean>> getSmartStepIntoVariants(String threadId, String frameId, int startContextLine, int endContextLine)
+      throws PyDebuggerException;
 
-	Collection<PyThreadInfo> getThreads();
+    // todo: don't generate temp variables for qualified expressions - just split 'em
+    XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException;
 
-	void execute(AbstractCommand command);
+    ArrayChunk loadArrayItems(String threadId,
+                              String frameId,
+                              PyDebugValue var,
+                              int rowOffset,
+                              int colOffset,
+                              int rows,
+                              int cols,
+                              String format) throws PyDebuggerException;
 
-	void suspendAllThreads();
+    default DataViewerCommandResult executeDataViewerCommand(DataViewerCommandBuilder builder) throws PyDebuggerException {
+        Logger.getInstance(this.getClass()).warn("executeDataViewerCommand is not supported on this ProcessDebugger");
+        return DataViewerCommandResult.NOT_IMPLEMENTED;
+    }
 
-	void suspendThread(String threadId);
+    void loadReferrers(String threadId, String frameId, PyReferringObjectsValue var, PyDebugCallback<? super XValueChildrenList> callback);
 
-	/**
-	 * Disconnects current debug process. Closes all resources.
-	 */
-	void close();
+    PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value)
+      throws PyDebuggerException;
 
-	boolean isConnected();
+    void loadFullVariableValues(String threadId,
+                                String frameId,
+                                List<PyFrameAccessor.PyAsyncValue<String>> vars)
+      throws PyDebuggerException;
 
-	void waitForConnect() throws Exception;
+    @Nullable
+    String loadSource(String path);
 
-	/**
-	 * Disconnects currently connected process. After that it can wait for the next.
-	 */
-	void disconnect();
+    Collection<PyThreadInfo> getThreads();
 
-	void run() throws PyDebuggerException;
+    /**
+     * Executes the provided command <i>asynchronously</i> and then waits for the
+     * response <i>synchronously</i> if it is expected for the specific command.
+     * <p>
+     * When the Python script that is being debugged spawns several processes
+     * then the command is executed for each process.
+     *
+     * @param command the debugger command to execute
+     * @see AbstractCommand#isResponseExpected()
+     */
+    void execute(AbstractCommand command);
 
-	void smartStepInto(String threadId, String functionName);
+    void suspendAllThreads();
 
-	void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode);
+    void suspendThread(String threadId);
 
-	void setTempBreakpoint(String type, String file, int line);
+    /**
+     * Disconnects current debug process. Closes all resources.
+     */
+    void close();
 
-	void removeTempBreakpoint(String file, int line);
+    boolean isConnected();
 
-	void setBreakpoint(String typeId, String file, int line, @Nullable String condition, @Nullable String logExpression, @Nullable String funcName, SuspendPolicy policy);
+    void waitForConnect() throws Exception;
 
-	void removeBreakpoint(String typeId, String file, int line);
+    /**
+     * Disconnects currently connected process. After that it can wait for the next.
+     */
+    void disconnect();
 
-	void setShowReturnValues(boolean isShowReturnValues);
+    void run() throws PyDebuggerException;
 
-	void addCloseListener(RemoteDebuggerCloseListener remoteDebuggerCloseListener);
+    void smartStepInto(String threadId, String frameId, String functionName, int callOrder, int contextStartLine, int contextEndLine);
 
-	List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix);
+    void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode);
 
-	String getDescription(String threadId, String frameId, String cmd);
+    void setNextStatement(String threadId,
+                          XSourcePosition sourcePosition,
+                          @Nullable String functionName,
+                          PyDebugCallback<Pair<Boolean, String>> callback);
+
+    void setTempBreakpoint(String type, String file, int line);
+
+    void removeTempBreakpoint(String file, int line);
+
+    void setBreakpoint(String typeId, String file, int line, @Nullable String condition, @Nullable String logExpression,
+                       @Nullable String funcName, SuspendPolicy policy);
+
+    void removeBreakpoint(String typeId, String file, int line);
+
+    void setUserTypeRenderers(List<PyUserTypeRenderer> renderers);
+
+    void setShowReturnValues(boolean isShowReturnValues);
+
+    void setUnitTestDebuggingMode();
+
+    void addCloseListener(RemoteDebuggerCloseListener remoteDebuggerCloseListener);
+
+    List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix);
+
+    String getDescription(String threadId, String frameId, String cmd);
 
 
-	void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+    void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
 
-	void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+    void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
 
-	void suspendOtherThreads(PyThreadInfo thread);
+    void suspendOtherThreads(PyThreadInfo thread);
 
+    default void interruptDebugConsole() { }
 }

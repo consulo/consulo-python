@@ -1,124 +1,108 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger;
+
+import com.jetbrains.python.debugger.pydev.AbstractCommand;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-import com.jetbrains.python.debugger.pydev.AbstractCommand;
+
+public class PyThreadInfo {
+    public enum State {
+        RUNNING, SUSPENDED, KILLED
+    }
+
+    private final String myId;
+    private final String myName;
+    private List<PyStackFrameInfo> myFrames;
+    private State myState;
+    private int myStopReason;
+    private String myMessage;
+
+    public PyThreadInfo(String id,
+                        String name,
+                        List<PyStackFrameInfo> frames,
+                        int stopReason,
+                        String message) {
+        myId = id;
+        myName = name;
+        myFrames = (frames != null && !frames.isEmpty() ? Collections.unmodifiableList(frames) : null);
+        myStopReason = stopReason;
+        myMessage = message;
+    }
+
+    public String getId() {
+        return myId;
+    }
+
+    public boolean isPydevThread() {
+        return "-1".equals(myId);
+    }
+
+    public String getName() {
+        return myName;
+    }
+
+    public @Nullable String getMessage() {
+        return myMessage;
+    }
+
+    public void setMessage(@Nullable String message) {
+        this.myMessage = message;
+    }
+
+    public synchronized @Nullable List<PyStackFrameInfo> getFrames() {
+        return myFrames;
+    }
+
+    public synchronized State getState() {
+        return myState;
+    }
+
+    public synchronized void updateState(State state, List<PyStackFrameInfo> frames) {
+        myState = state;
+        myFrames = (frames != null && !frames.isEmpty() ? Collections.unmodifiableList(frames) : null);
+    }
 
 
-public class PyThreadInfo
-{
-	public enum State
-	{
-		RUNNING, SUSPENDED, KILLED
-	}
+    public void setStopReason(int stopReason) {
+        myStopReason = stopReason;
+    }
 
-	private final String myId;
-	private final String myName;
-	private List<PyStackFrameInfo> myFrames;
-	private State myState;
-	private int myStopReason;
-	private String myMessage;
+    public int getStopReason() {
+        return myStopReason;
+    }
 
-	public PyThreadInfo(String id, String name, List<PyStackFrameInfo> frames, int stopReason, String message)
-	{
-		myId = id;
-		myName = name;
-		myFrames = (frames != null && frames.size() > 0 ? Collections.unmodifiableList(frames) : null);
-		myStopReason = stopReason;
-		myMessage = message;
-	}
+    public boolean isStopOnBreakpoint() {
+        return myStopReason == AbstractCommand.SET_BREAKPOINT;
+    }
 
-	public String getId()
-	{
-		return myId;
-	}
+    public boolean isExceptionBreak() {
+        return myStopReason == AbstractCommand.ADD_EXCEPTION_BREAKPOINT
+          || myStopReason == AbstractCommand.CMD_STEP_CAUGHT_EXCEPTION;
+    }
 
-	public boolean isPydevThread()
-	{
-		return "-1".equals(myId);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-	public String getName()
-	{
-		return myName;
-	}
+        PyThreadInfo that = (PyThreadInfo)o;
 
-	@Nullable
-	public String getMessage()
-	{
-		return myMessage;
-	}
+        if (myId != null ? !myId.equals(that.myId) : that.myId != null) {
+            return false;
+        }
 
-	public void setMessage(@Nullable String message)
-	{
-		this.myMessage = message;
-	}
+        return true;
+    }
 
-	@Nullable
-	public synchronized List<PyStackFrameInfo> getFrames()
-	{
-		return myFrames;
-	}
-
-	public synchronized State getState()
-	{
-		return myState;
-	}
-
-	public synchronized void updateState(State state, List<PyStackFrameInfo> frames)
-	{
-		myState = state;
-		myFrames = (frames != null && frames.size() > 0 ? Collections.unmodifiableList(frames) : null);
-	}
-
-
-	public void setStopReason(int stopReason)
-	{
-		myStopReason = stopReason;
-	}
-
-	public int getStopReason()
-	{
-		return myStopReason;
-	}
-
-	public boolean isStopOnBreakpoint()
-	{
-		return myStopReason == AbstractCommand.SET_BREAKPOINT;
-	}
-
-	public boolean isExceptionBreak()
-	{
-		return myStopReason == AbstractCommand.ADD_EXCEPTION_BREAKPOINT || myStopReason == AbstractCommand.CMD_STEP_CAUGHT_EXCEPTION;
-	}
-
-	@Override
-	public boolean equals(Object o)
-	{
-		if(this == o)
-		{
-			return true;
-		}
-		if(o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		PyThreadInfo that = (PyThreadInfo) o;
-
-		if(myId != null ? !myId.equals(that.myId) : that.myId != null)
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return myId != null ? myId.hashCode() : 0;
-	}
+    @Override
+    public int hashCode() {
+        return myId != null ? myId.hashCode() : 0;
+    }
 }

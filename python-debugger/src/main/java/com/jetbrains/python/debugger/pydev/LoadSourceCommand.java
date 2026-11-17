@@ -1,39 +1,36 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebuggerException;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author traff
- */
 public class LoadSourceCommand extends AbstractCommand {
-  private final String myPath;
+    private final String myPath;
 
-  private String myContent = null;
+    private String myContent = null;
 
-  protected LoadSourceCommand(RemoteDebugger debugger, String path) {
-    super(debugger, LOAD_SOURCE);
-    myPath = path;
-  }
+    protected LoadSourceCommand(RemoteDebugger debugger, String path) {
+        super(debugger, LOAD_SOURCE);
+        myPath = path;
+    }
 
-  @Override
-  public boolean isResponseExpected() {
-    return true;
-  }
+    @Override
+    public boolean isResponseExpected() {
+        return true;
+    }
 
-  @Override
-  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
-    super.processResponse(response);
-    myContent = ProtocolParser.parseSourceContent(response.getPayload());
-  }
+    @Override
+    protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
+        super.processResponse(response);
+        myContent = ProtocolParser.parseSourceContent(response.getPayload());
+    }
 
-  @Override
-  protected void buildPayload(Payload payload) {
-    payload.add(myPath);
-  }
+    @Override
+    protected void buildPayload(Payload payload) {
+        payload.add(myPath);
+    }
 
-  @Nullable
-  public String getContent() {
-    return myContent;
-  }
+    public @Nullable String getContent() {
+        return myContent;
+    }
 }

@@ -1,40 +1,48 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
+// Licensed under the terms of the Eclipse Public License (EPL).
 package com.jetbrains.python.debugger.pydev;
+
 
 import com.jetbrains.python.debugger.IPyDebugProcess;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;
 
 public class ChangeVariableCommand extends AbstractFrameCommand {
-  private final String myVariableName;
-  private final String myValue;
-  private PyDebugValue myNewValue = null;
-  private final IPyDebugProcess myDebugProcess;
 
-  public ChangeVariableCommand(RemoteDebugger debugger, String threadId, String frameId, String variableName, String value) {
-    super(debugger, CHANGE_VARIABLE, threadId, frameId);
-    myVariableName = variableName;
-    myValue = value;
-    myDebugProcess = debugger.getDebugProcess();
-  }
+    private final String myVariableName;
+    private final String myValue;
+    private PyDebugValue myNewValue = null;
+    private final IPyDebugProcess myDebugProcess;
 
-  @Override
-  protected void buildPayload(Payload payload) {
-    super.buildPayload(payload);
-    payload.add("FRAME").add(myVariableName).add(ProtocolParser.encodeExpression(myValue));
-  }
+    public ChangeVariableCommand(RemoteDebugger debugger, String threadId, String frameId, String variableName,
+                                 String value) {
+        super(debugger, CHANGE_VARIABLE, threadId, frameId);
+        myVariableName = variableName;
+        myValue = value;
+        myDebugProcess = debugger.getDebugProcess();
+    }
 
-  @Override
-  public boolean isResponseExpected() {
-    return true;
-  }
 
-  @Override
-  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
-    super.processResponse(response);
-    myNewValue = ProtocolParser.parseValue(response.getPayload(), myDebugProcess).setName(myVariableName);
-  }
+    @Override
+    protected void buildPayload(Payload payload) {
+        super.buildPayload(payload);
+        payload.add("FRAME").add(myVariableName).add(ProtocolParser.encodeExpression(myValue));
+    }
 
-  public PyDebugValue getNewValue() {
-    return myNewValue;
-  }
+    @Override
+    public boolean isResponseExpected() {
+        return true;
+    }
+
+    @Override
+    protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
+        super.processResponse(response);
+        PyDebugValue returnedValue = ProtocolParser.parseValue(response.getPayload(), myDebugProcess);
+        myNewValue = new PyDebugValue(returnedValue, myVariableName);
+    }
+
+    public PyDebugValue getNewValue() {
+        return myNewValue;
+    }
 }

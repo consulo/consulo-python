@@ -15,35 +15,24 @@
  */
 package com.jetbrains.python.impl.run;
 
-import com.google.common.collect.Lists;
-import com.jetbrains.python.impl.PythonHelper;
+import com.jetbrains.python.impl.actions.PyExecuteInConsole;
 import com.jetbrains.python.impl.actions.PyRunFileInConsoleAction;
 import com.jetbrains.python.impl.console.PyConsoleOptions;
-import com.jetbrains.python.impl.console.PyConsoleType;
-import com.jetbrains.python.impl.console.PydevConsoleRunner;
-import com.jetbrains.python.impl.console.PydevConsoleRunnerImpl;
-import com.jetbrains.python.impl.console.actions.ShowVarsAction;
-import com.jetbrains.python.impl.sdk.PythonEnvUtil;
-import consulo.content.bundle.Sdk;
-import consulo.execution.DefaultExecutionResult;
+import consulo.application.Application;
 import consulo.execution.ExecutionResult;
 import consulo.execution.debug.DefaultDebugExecutor;
+import consulo.execution.executor.DefaultRunExecutor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
-import consulo.execution.ui.console.ConsoleExecuteAction;
-import consulo.execution.ui.console.language.AbstractConsoleRunnerWithHistory;
+import consulo.execution.util.ProgramParametersUtil;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParametersList;
 import consulo.process.cmd.ParamsGroup;
 import consulo.project.Project;
-import consulo.ui.ex.action.AnAction;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author yole
@@ -57,35 +46,30 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
   }
 
   @Override
-  public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
+  public @Nullable ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
+    Project project = myConfig.getProject();
+
     if (myConfig.showCommandLineAfterwards()) {
+      if (!DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId()) && !DefaultRunExecutor.EXECUTOR_ID.equals(executor.getId())) {
+        // disable "Show command line" for all executors except of Run and Debug, because it's useless
+        return super.execute(executor, patchers);
+      }
+
       PyRunFileInConsoleAction.configExecuted(myConfig);
 
-      if (executor.getId().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
+      if (DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId())) {
         return super.execute(executor, ArrayUtil.append(patchers,
                                                         commandLine -> commandLine.getParametersList()
                                                                                   .getParamsGroup(PythonCommandLineState.GROUP_DEBUGGER)
                                                                                   .addParameterAt(1, "--cmd-line")));
       }
 
-      PydevConsoleRunner runner = new PythonScriptWithConsoleRunner(myConfig.getProject(),
-                                                                    myConfig.getSdk(),
-                                                                    PyConsoleType.PYTHON,
-                                                                    myConfig.getWorkingDirectory(),
-                                                                    myConfig.getEnvs(),
-                                                                    patchers,
-                                                                    PyConsoleOptions.getInstance(myConfig.getProject())
-                                                                                    .getPythonConsoleSettings());
-
-      runner.runSync();
-      // runner.getProcessHandler() would be null if execution error occurred
-      if (runner.getProcessHandler() == null) {
-        return null;
-      }
-      List<AnAction> actions = Lists.newArrayList(createActions(runner.getConsoleView(), runner.getProcessHandler()));
-      actions.add(new ShowVarsAction(runner.getConsoleView(), runner.getPydevConsoleCommunication()));
-
-      return new DefaultExecutionResult(runner.getConsoleView(), runner.getProcessHandler(), actions.toArray(new AnAction[actions.size()]));
+      final String runFileText = PythonConsoleScripts.buildScriptWithConsoleRun(myConfig);
+      final boolean useExistingConsole = PyConsoleOptions.getInstance(project).isUseExistingConsole();
+      Application.get().invokeLater(() -> {
+        PyExecuteInConsole.executeCodeInConsole(project, runFileText, null, useExistingConsole, false, true, myConfig);
+      });
+      return null;
     }
     else {
       return super.execute(executor, patchers);
@@ -115,53 +99,13 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
     }
   }
 
-  /**
-   * @author traff
-   */
-  public class PythonScriptWithConsoleRunner extends PydevConsoleRunnerImpl {
+  public static String getExpandedWorkingDir(AbstractPythonRunConfiguration config) {
+    final String workingDirectory = config.getWorkingDirectory();
+    return ProgramParametersUtil.expandPath(workingDirectory, config.getModule(), config.getProject());
+  }
 
-    private CommandLinePatcher[] myPatchers;
-
-    public PythonScriptWithConsoleRunner(Project project,
-                                         Sdk sdk,
-                                         PyConsoleType consoleType,
-                                         @Nullable String workingDir,
-                                         Map<String, String> environmentVariables,
-                                         CommandLinePatcher[] patchers,
-                                         PyConsoleOptions.PyConsoleSettings consoleSettings,
-                                         String... statementsToExecute) {
-      super(project, sdk, consoleType, workingDir, environmentVariables, consoleSettings, (s) -> {
-      }, statementsToExecute);
-      myPatchers = patchers;
-    }
-
-    @Override
-    protected void createContentDescriptorAndActions() {
-      AnAction a = new ConsoleExecuteAction(super.getConsoleView(),
-                                            myConsoleExecuteActionHandler,
-                                            myConsoleExecuteActionHandler.getEmptyExecuteAction(),
-                                            myConsoleExecuteActionHandler);
-      AbstractConsoleRunnerWithHistory.registerActionShortcuts(Lists.newArrayList(a), getConsoleView().getConsoleEditor().getComponent());
-    }
-
-    @Override
-    protected GeneralCommandLine createCommandLine(Sdk sdk,
-                                                   Map<String, String> environmentVariables,
-                                                   String workingDir,
-                                                   int[] ports) {
-      GeneralCommandLine consoleCmdLine = doCreateConsoleCmdLine(sdk, environmentVariables, workingDir, ports, PythonHelper.RUN_IN_CONSOLE);
-
-      GeneralCommandLine cmd = generateCommandLine(myPatchers);
-
-      ParamsGroup group = consoleCmdLine.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);
-      assert group != null;
-      group.addParameters(cmd.getParametersList().getList());
-
-      PythonEnvUtil.mergePythonPath(consoleCmdLine.getEnvironment(), cmd.getEnvironment());
-
-      consoleCmdLine.getEnvironment().putAll(cmd.getEnvironment());
-
-      return consoleCmdLine;
-    }
+  public static String getExpandedScriptName(PythonRunConfiguration config) {
+    final String scriptName = config.getScriptName();
+    return ProgramParametersUtil.expandPath(scriptName, config.getModule(), config.getProject());
   }
 }

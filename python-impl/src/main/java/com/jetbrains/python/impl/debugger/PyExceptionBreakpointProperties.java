@@ -1,5 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,82 +14,124 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.debugger;
-
 
 import consulo.util.xml.serializer.annotation.Attribute;
 import com.jetbrains.python.debugger.pydev.AddExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.ExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author traff
- */
 public class PyExceptionBreakpointProperties extends ExceptionBreakpointProperties<PyExceptionBreakpointProperties> {
-  @Attribute("notifyAlways")
-  public boolean myNotifyAlways;
-  @Attribute("notifyOnlyOnFirst")
-  public boolean myNotifyOnlyOnFirst;
-  @Attribute("notifyOnTerminate")
-  public boolean myNotifyOnTerminate;
+    // Consulo-specific: "notify always" (on each raise) policy, JB has no equivalent
+    @Attribute("notifyAlways")
+    public boolean myNotifyAlways;
+    @Attribute("notifyOnlyOnFirst")
+    public boolean myNotifyOnlyOnFirst;
+    @Attribute("notifyOnTerminate")
+    public boolean myNotifyOnTerminate;
+    @Attribute("ignoreLibraries")
+    public boolean myIgnoreLibraries;
+    public @Nullable String myCondition;
+    public @Nullable String myLogExpression;
 
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  public PyExceptionBreakpointProperties() {
-  }
+    @SuppressWarnings({"UnusedDeclaration"})
+    public PyExceptionBreakpointProperties() {
+    }
 
-  public PyExceptionBreakpointProperties(String exception) {
-    myException = exception;
-  }
+    public PyExceptionBreakpointProperties(String exception) {
+        myException = exception;
+        myNotifyOnTerminate = true;
+        myIgnoreLibraries = false;
+        myCondition = null;
+        myLogExpression = null;
+    }
 
-  @Override
-  public PyExceptionBreakpointProperties getState() {
-    return this;
-  }
+    @Override
+    public PyExceptionBreakpointProperties getState() {
+        return this;
+    }
 
-  @Override
-  public void loadState(PyExceptionBreakpointProperties state) {
-    myException = state.myException;
-    myNotifyAlways = state.myNotifyAlways;
-    myNotifyOnlyOnFirst = state.myNotifyOnlyOnFirst;
-    myNotifyOnTerminate = state.myNotifyOnTerminate;
-  }
+    @Override
+    public void loadState(PyExceptionBreakpointProperties state) {
+        myException = state.myException;
+        myNotifyAlways = state.myNotifyAlways;
+        myNotifyOnlyOnFirst = state.myNotifyOnlyOnFirst;
+        myNotifyOnTerminate = state.myNotifyOnTerminate;
+        myIgnoreLibraries = state.myIgnoreLibraries;
+    }
 
-  public boolean isNotifyOnTerminate() {
-    return myNotifyOnTerminate;
-  }
+    // Consulo-specific
+    public boolean isNotifyAlways() {
+        return myNotifyAlways;
+    }
 
-  public void setNotifyOnTerminate(boolean notifyOnTerminate) {
-    myNotifyOnTerminate = notifyOnTerminate;
-  }
+    // Consulo-specific
+    public void setNotifyAlways(boolean notifyAlways) {
+        myNotifyAlways = notifyAlways;
+    }
 
-  public boolean isNotifyAlways() {
-    return myNotifyAlways;
-  }
+    public boolean isNotifyOnTerminate() {
+        return myNotifyOnTerminate;
+    }
 
-  public void setNotifyAlways(boolean notifyAlways) {
-    myNotifyAlways = notifyAlways;
-  }
+    public void setNotifyOnTerminate(boolean notifyOnTerminate) {
+        myNotifyOnTerminate = notifyOnTerminate;
+    }
 
-  public boolean isNotifyOnlyOnFirst() {
-    return myNotifyOnlyOnFirst;
-  }
+    public boolean isNotifyOnlyOnFirst() {
+        return myNotifyOnlyOnFirst;
+    }
 
-  public void setNotifyOnlyOnFirst(boolean notifyOnlyOnFirst) {
-    myNotifyOnlyOnFirst = notifyOnlyOnFirst;
-  }
+    public void setNotifyOnlyOnFirst(boolean notifyOnlyOnFirst) {
+        myNotifyOnlyOnFirst = notifyOnlyOnFirst;
+    }
 
-  @Override
-  public ExceptionBreakpointCommand createAddCommand(RemoteDebugger debugger) {
-    return ExceptionBreakpointCommand.addExceptionBreakpointCommand(debugger, getException(),
-                                                                    new AddExceptionBreakpointCommand.ExceptionBreakpointNotifyPolicy(
-                                                                      isNotifyAlways(),
-                                                                      isNotifyOnTerminate(), isNotifyOnlyOnFirst()));
-  }
+    public void setIgnoreLibraries(boolean ignoreLibraries) {
+        myIgnoreLibraries = ignoreLibraries;
+    }
 
-  @Override
-  public ExceptionBreakpointCommand createRemoveCommand(RemoteDebugger debugger) {
-    return ExceptionBreakpointCommand.removeExceptionBreakpointCommand(debugger, getException());
-  }
+    public boolean isIgnoreLibraries() {
+        return myIgnoreLibraries;
+    }
+
+    public @Nullable String getCondition() {
+        return myCondition;
+    }
+
+    @Override
+    public void setCondition(@Nullable String condition) {
+        myCondition = condition;
+    }
+
+    public @Nullable String getLogExpression() {
+        return myLogExpression;
+    }
+
+    @Override
+    public void setLogExpression(@Nullable String logExpression) {
+        myLogExpression = logExpression;
+    }
+
+    @Override
+    public String getExceptionBreakpointId() {
+        return "python-" + myException;
+    }
+
+    @Override
+    public ExceptionBreakpointCommand createAddCommand(RemoteDebugger debugger) {
+        return ExceptionBreakpointCommand.addExceptionBreakpointCommand(debugger,
+                                                                        getExceptionBreakpointId(),
+                                                                        getCondition(),
+                                                                        getLogExpression(),
+                                                                        new AddExceptionBreakpointCommand.ExceptionBreakpointNotifyPolicy(
+                                                                          // Consulo-specific: the "notify always" policy goes first
+                                                                          isNotifyAlways(), isNotifyOnTerminate(), isNotifyOnlyOnFirst(), isIgnoreLibraries()));
+    }
+
+    @Override
+    public ExceptionBreakpointCommand createRemoveCommand(RemoteDebugger debugger) {
+        return ExceptionBreakpointCommand.removeExceptionBreakpointCommand(debugger, getExceptionBreakpointId());
+    }
 }

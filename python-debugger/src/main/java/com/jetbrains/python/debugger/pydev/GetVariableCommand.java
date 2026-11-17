@@ -1,69 +1,70 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
+// Licensed under the terms of the Eclipse Public License (EPL).
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebugValue;
 
 
-public class GetVariableCommand extends GetFrameCommand
-{
+public class GetVariableCommand extends GetFrameCommand {
 
-	public static final String BY_ID = "BY_ID";
-	private final String myVariableName;
-	private final PyDebugValue myParent;
+    public static final String BY_ID = "BY_ID";
+    private final String myVariableName;
+    private final PyDebugValue myParent;
 
-	public GetVariableCommand(RemoteDebugger debugger, String threadId, String frameId, PyDebugValue var)
-	{
-		super(debugger, GET_VARIABLE, threadId, frameId);
-		myVariableName = composeName(var);
-		myParent = var;
-	}
+    public GetVariableCommand(RemoteDebugger debugger, String threadId, String frameId, PyDebugValue var) {
+        super(debugger, GET_VARIABLE, threadId, frameId);
+        myVariableName = var.getOffset() == 0 ? composeName(var) : var.getOffset() + "\t" + composeName(var);
+        myParent = var;
+    }
 
-	public static String composeName(PyDebugValue var)
-	{
-		StringBuilder sb = new StringBuilder();
-		PyDebugValue p = var;
-		while(p != null)
-		{
-			if(sb.length() > 0)
-			{
-				sb.insert(0, '\t');
-			}
-			if(p.getId() != null)
-			{
-				sb.insert(0, BY_ID).insert(0, '\t').insert(0, p.getId());
-				break;
-			}
-			else
-			{
-				sb.insert(0, p.getTempName().replaceAll("\t", TAB_CHAR));
-			}
-			p = p.getParent();
-		}
-		return sb.toString();
-	}
+    /**
+     * Return a full path in a variables tree from the top-level parent to the debug value
+     *
+     * @param var a debug variable
+     * @return A string of attributes in a path separated by \t
+     */
+    public static String composeName(PyDebugValue var) {
+        final StringBuilder sb = new StringBuilder();
+        PyDebugValue p = var;
 
-	@Override
-	protected void buildPayload(Payload payload)
-	{
-		if(myParent.getVariableLocator() != null)
-		{
-			payload.add(myParent.getVariableLocator().getThreadId()).add(myParent.getVariableLocator().getPyDBLocation());
-		}
-		else if(myVariableName.contains(BY_ID))
-		{
-			//id instead of frame_id
-			payload.add(getThreadId()).add(myVariableName);
-		}
-		else
-		{
-			super.buildPayload(payload);
-			payload.add(myVariableName);
-		}
-	}
+        while (p != null) {
+            if (!sb.isEmpty()) {
+                sb.insert(0, '\t');
+            }
+            if (p.getId() != null) {
+                sb.insert(0, BY_ID).insert(0, '\t').insert(0, p.getId());
+                break;
+            }
+            else {
+                final String tempName = p.getTempName();
+                if (tempName != null) {
+                    sb.insert(0, tempName.replaceAll("\t", TAB_CHAR));
+                }
+            }
+            p = p.getParent();
+        }
 
-	@Override
-	protected PyDebugValue extend(PyDebugValue value)
-	{
-		return new PyDebugValue(value.getName(), value.getType(), value.getTypeQualifier(), value.getValue(), value.isContainer(), value.isReturnedVal(), value.isIPythonHidden(), value.isErrorOnEval
-				(), myParent, myDebugProcess);
-	}
+        return sb.toString();
+    }
+
+    @Override
+    protected void buildPayload(Payload payload) {
+        if (myVariableName.contains(BY_ID)) {
+            //id instead of frame_id
+            payload.add(getThreadId()).add(myVariableName);
+        }
+        else {
+            super.buildPayload(payload);
+            payload.add(myVariableName);
+        }
+    }
+
+    @Override
+    protected PyDebugValue extend(PyDebugValue value) {
+        PyDebugValue debugValue = new PyDebugValue(value);
+        debugValue.setParent(myParent);
+        debugValue.setFrameAccessor(myDebugProcess);
+        return debugValue;
+    }
 }

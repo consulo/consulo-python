@@ -1,3 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
+// Licensed under the terms of the Eclipse Public License (EPL).
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.IPyDebugProcess;
@@ -7,41 +10,53 @@ import com.jetbrains.python.debugger.PyDebuggerException;
 
 public class EvaluateCommand extends AbstractFrameCommand {
 
-  private final String myExpression;
-  private final boolean myExecute;
-  private final IPyDebugProcess myDebugProcess;
-  private final boolean myTrimResult;
-  private PyDebugValue myValue = null;
+    private final String myExpression;
+    private final boolean myExecute;
+    private final IPyDebugProcess myDebugProcess;
+    private final boolean myTrimResult;
+    private PyDebugValue myValue = null;
+    private final String myTempName;
+    private final int myEvaluationTimeout;
 
 
-  public EvaluateCommand(RemoteDebugger debugger, String threadId, String frameId, String expression,
-                         boolean execute, boolean trimResult) {
-    super(debugger, (execute ? EXECUTE : EVALUATE), threadId, frameId);
-    myExpression = expression;
-    myExecute = execute;
-    myDebugProcess = debugger.getDebugProcess();
-    myTrimResult = trimResult;
-  }
+    public EvaluateCommand(RemoteDebugger debugger, String threadId, String frameId, String expression,
+                           boolean execute, boolean trimResult, int evaluationTimeout) {
+        super(debugger, (execute ? EXECUTE : EVALUATE), threadId, frameId);
+        myExpression = expression;
+        myExecute = execute;
+        myDebugProcess = debugger.getDebugProcess();
+        myTrimResult = trimResult;
+        myTempName = myDebugProcess.canSaveToTemp(expression) ? debugger.generateSaveTempName(threadId, frameId) : "";
+        myEvaluationTimeout = evaluationTimeout;
+    }
 
-  @Override
-  protected void buildPayload(Payload payload) {
-    super.buildPayload(payload);
-    payload.add("FRAME").add(myExpression).add(myTrimResult);
-  }
+    @Override
+    protected void buildPayload(Payload payload) {
+        super.buildPayload(payload);
+        payload.add("FRAME").add(myExpression).add(myTrimResult).add(myTempName);
+    }
 
-  @Override
-  public boolean isResponseExpected() {
-    return true;
-  }
+    @Override
+    public boolean isResponseExpected() {
+        return true;
+    }
 
-  @Override
-  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
-    super.processResponse(response);
-    PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), myDebugProcess);
-    myValue = value.setName((myExecute ? "" : myExpression));
-  }
+    @Override
+    protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
+        super.processResponse(response);
+        final PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), myDebugProcess);
+        myValue = new PyDebugValue(value, myExecute ? "" : myExpression);
+        if (!myTempName.isEmpty()) {
+            myValue.setTempName(myTempName);
+        }
+    }
 
-  public PyDebugValue getValue() {
-    return myValue;
-  }
+    @Override
+    protected long getResponseTimeout() {
+        return myEvaluationTimeout;
+    }
+
+    public PyDebugValue getValue() {
+        return myValue;
+    }
 }

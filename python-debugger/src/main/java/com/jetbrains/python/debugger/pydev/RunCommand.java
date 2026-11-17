@@ -1,13 +1,14 @@
+// Licensed under the terms of the Eclipse Public License (EPL).
 package com.jetbrains.python.debugger.pydev;
 
 
 public class RunCommand extends AbstractCommand {
 
-  public RunCommand(RemoteDebugger debugger) {
-    super(debugger, RUN);
-  }
+    public RunCommand(RemoteDebugger debugger) {
+        super(debugger, RUN);
+    }
 
-  @Override
-  protected void buildPayload(Payload payload) {
-  }
+    @Override
+    protected void buildPayload(Payload payload) {
+    }
 }

@@ -1,68 +1,65 @@
-package com.jetbrains.python.debugger.pydev;
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
-import java.util.List;
+// Licensed under the terms of the Eclipse Public License (EPL).
+package com.jetbrains.python.debugger.pydev;
 
 import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.debugger.IPyDebugProcess;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;
 
+import java.util.List;
 
-public class GetFrameCommand extends AbstractFrameCommand
-{
 
-	protected final IPyDebugProcess myDebugProcess;
-	private XValueChildrenList myFrameVariables = null;
+public class GetFrameCommand extends AbstractFrameCommand {
 
-	public GetFrameCommand(RemoteDebugger debugger, String threadId, String frameId)
-	{
-		this(debugger, GET_FRAME, threadId, frameId);
-	}
+    protected final IPyDebugProcess myDebugProcess;
+    private XValueChildrenList myFrameVariables = null;
+    private ProcessDebugger.GROUP_TYPE myGroupType = ProcessDebugger.GROUP_TYPE.DEFAULT;
 
-	protected GetFrameCommand(RemoteDebugger debugger, int command, String threadId, String frameId)
-	{
-		super(debugger, command, threadId, frameId);
-		myDebugProcess = debugger.getDebugProcess();
-	}
+    public GetFrameCommand(RemoteDebugger debugger, String threadId, String frameId, ProcessDebugger.GROUP_TYPE groupType) {
+        this(debugger, GET_FRAME, threadId, frameId);
+        myGroupType = groupType;
+    }
 
-	@Override
-	protected void buildPayload(Payload payload)
-	{
-		super.buildPayload(payload);
-		payload.add("FRAME");
-	}
+    protected GetFrameCommand(RemoteDebugger debugger, int command, String threadId, String frameId) {
+        super(debugger, command, threadId, frameId);
+        myDebugProcess = debugger.getDebugProcess();
+    }
 
-	@Override
-	public boolean isResponseExpected()
-	{
-		return true;
-	}
+    @Override
+    protected void buildPayload(Payload payload) {
+        super.buildPayload(payload);
+        payload.add("FRAME");
+        payload.add(myGroupType.ordinal());
+    }
 
-	@Override
-	protected void processResponse(ProtocolFrame response) throws PyDebuggerException
-	{
-		super.processResponse(response);
-		List<PyDebugValue> values = ProtocolParser.parseValues(response.getPayload(), myDebugProcess);
-		myFrameVariables = new XValueChildrenList(values.size());
-		for(PyDebugValue value : values)
-		{
-			if(!value.getName().startsWith(RemoteDebugger.TEMP_VAR_PREFIX))
-			{
-				PyDebugValue debugValue = extend(value);
-				myFrameVariables.add(debugValue.getName(), debugValue);
-			}
-		}
-	}
+    @Override
+    public boolean isResponseExpected() {
+        return true;
+    }
 
-	protected PyDebugValue extend(PyDebugValue value)
-	{
-		return new PyDebugValue(value.getName(), value.getType(), value.getTypeQualifier(), value.getValue(), value.isContainer(), value.isReturnedVal(), value.isIPythonHidden(), value.isErrorOnEval
-				(), null, myDebugProcess);
-	}
+    @Override
+    protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
+        super.processResponse(response);
+        final List<PyDebugValue> values = ProtocolParser.parseValues(response.getPayload(), myDebugProcess);
+        myFrameVariables = new XValueChildrenList(values.size());
+        for (PyDebugValue value : values) {
+            if (!value.getName().startsWith(RemoteDebugger.TEMP_VAR_PREFIX)) {
+                final PyDebugValue debugValue = extend(value);
+                myFrameVariables.add(debugValue.getVisibleName(), debugValue);
+            }
+        }
+    }
 
-	public XValueChildrenList getVariables()
-	{
-		return myFrameVariables;
-	}
+    protected PyDebugValue extend(PyDebugValue value) {
+        PyDebugValue debugValue = new PyDebugValue(value);
+        debugValue.setParent(null);
+        debugValue.setFrameAccessor(myDebugProcess);
+        return debugValue;
+    }
 
+    public XValueChildrenList getVariables() {
+        return myFrameVariables;
+    }
 }

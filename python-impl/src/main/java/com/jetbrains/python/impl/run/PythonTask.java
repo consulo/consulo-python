@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.run;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.impl.HelperPackage;
 import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.console.PydevConsoleRunner;
+import com.jetbrains.python.impl.console.PydevConsoleRunnerUtil;
 import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -132,7 +132,7 @@ public class PythonTask {
         if (env != null) {
             commandLine.getEnvironment().putAll(env);
         }
-        PydevConsoleRunner.setCorrectStdOutEncoding(commandLine, myModule.getProject()); // To support UTF-8 output
+        PydevConsoleRunnerUtil.setCorrectStdOutEncoding(commandLine); // To support UTF-8 output
 
         ProcessHandler handler;
         EncodingEnvironmentUtil.setLocaleEnvironmentIfMac(commandLine);

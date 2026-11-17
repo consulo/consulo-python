@@ -1,68 +1,66 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.debugger;
 
-import com.jetbrains.python.impl.console.PydevConsoleExecuteActionHandler;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
+import com.jetbrains.python.impl.console.PydevConsoleExecuteActionHandler;
+import com.jetbrains.python.impl.console.PythonDebugLanguageConsoleView;
 import consulo.execution.debug.event.XDebugSessionListener;
+import consulo.execution.ui.console.ConsoleViewContentType;
 import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.process.ProcessHandler;
+import consulo.python.impl.localize.PyLocalize;
 
-/**
- * @author traff
- */
-public class PydevDebugConsoleExecuteActionHandler extends PydevConsoleExecuteActionHandler implements XDebugSessionListener
-{
+public class PydevDebugConsoleExecuteActionHandler extends PydevConsoleExecuteActionHandler implements XDebugSessionListener {
+    private final PythonDebugLanguageConsoleView myConsole;
 
-	public PydevDebugConsoleExecuteActionHandler(LanguageConsoleView consoleView, ProcessHandler myProcessHandler, ConsoleCommunication consoleCommunication)
-	{
-		super(consoleView, myProcessHandler, consoleCommunication);
-	}
+    public PydevDebugConsoleExecuteActionHandler(PythonDebugLanguageConsoleView console,
+                                                 ProcessHandler processHandler,
+                                                 ConsoleCommunication consoleCommunication) {
+        super(console.getPydevConsoleView(), processHandler, consoleCommunication);
+        myConsole = console;
+    }
 
-	@Override
-	protected String getConsoleIsNotEnabledMessage()
-	{
-		return "Pause the process to use command-line.";
-	}
+    @Override
+    protected boolean isCommandQueueEnabled() {
+        return PyDebuggerOptionsProvider.getInstance(myConsole.getPydevConsoleView().getProject()).isDebugConsoleCommandQueueEnabled();
+    }
 
-	@Override
-	public void sessionPaused()
-	{
-		setEnabled(true);
-	}
+    @Override
+    protected String getConsoleIsNotEnabledMessage() {
+        return PyLocalize.debuggerPydevConsolePauseTheProcessToUseCommandLine().get();
+    }
 
-	@Override
-	public void sessionResumed()
-	{
-		setEnabled(false);
-	}
+    @Override
+    public void sessionPaused() {
+        setEnabled(true);
+        // The start script needs a stack frame, so the first pause is the earliest moment it can run.
+        myConsole.executeStartScriptIfNeeded();
+    }
 
-	@Override
-	public void sessionStopped()
-	{
-		setEnabled(false);
-	}
+    @Override
+    public void sessionResumed() {
+        if (!getConsoleCommunication().isWaitingForInput()) {
+            setEnabled(false);
+        }
+    }
 
-	@Override
-	public void stackFrameChanged()
-	{
-	}
+    @Override
+    public void sessionStopped() {
+        setEnabled(false);
+    }
 
-	@Override
-	public void beforeSessionResume()
-	{
-	}
+    @Override
+    public void stackFrameChanged() {
+    }
+
+    @Override
+    public void beforeSessionResume() {
+    }
+
+    @Override
+    protected void beforeExecution(LanguageConsoleView consoleView) {
+        super.beforeExecution(consoleView);
+        String text = consoleView.getCurrentEditor().getDocument().getText();
+        myConsole.getPrimaryConsoleView().print(text + '\n', ConsoleViewContentType.NORMAL_OUTPUT);
+    }
 }

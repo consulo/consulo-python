@@ -1,81 +1,99 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.console;
 
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.impl.PythonRuntimeService;
 import com.jetbrains.python.impl.console.completion.PydevConsoleElement;
-import com.jetbrains.python.console.pydev.ConsoleCommunication;
-import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.impl.console.completion.PydevConsoleReference;
+import com.jetbrains.python.impl.documentation.PyDocumentationBuilder;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
 import consulo.language.Language;
+import consulo.language.ast.IElementType;
 import consulo.language.editor.documentation.AbstractDocumentationProvider;
 import consulo.language.editor.documentation.LanguageDocumentationProvider;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author oleg
- */
 @ExtensionImpl
-public class PydevDocumentationProvider extends AbstractDocumentationProvider implements LanguageDocumentationProvider {
+public final class PydevDocumentationProvider extends AbstractDocumentationProvider implements LanguageDocumentationProvider {
 
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
+    @Override
+    public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
+        if (object instanceof PydevConsoleElement) {
+            return (PydevConsoleElement) object;
+        }
+        return super.getDocumentationElementForLookupItem(psiManager, object, element);
+    }
 
-  @Override
-  public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
-    if (object instanceof PydevConsoleElement){
-      return (PydevConsoleElement) object;
+    @Override
+    public @Nullable String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+        // Process PydevConsoleElement case
+        if (element instanceof PydevConsoleElement pydevElement) {
+            return PydevConsoleElement.generateDoc(pydevElement).toString();
+        }
+        return null;
     }
-    return super.getDocumentationElementForLookupItem(psiManager, object, element);
-  }
 
-  @Override
-  public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    // Process PydevConsoleElement case
-    if (element instanceof PydevConsoleElement){
-      return PydevConsoleElement.generateDoc((PydevConsoleElement)element);
-    }
-    return null;
-  }
+    @RequiredReadAction
+    public static @Nullable String createDoc(PsiElement element, PsiElement originalElement) {
+        PyReferenceExpression expression = PsiTreeUtil.getNonStrictParentOfType(originalElement, PyReferenceExpression.class);
+        if (expression == null) {
+            expression = PsiTreeUtil.getNonStrictParentOfType(element, PyReferenceExpression.class);
+            if (expression == null) {
+                return null;
+            }
+        }
+        // Indicates that we are inside console, not a lookup element!
+        PydevConsoleReference consoleRef = PyUtil.as(expression.getReference(), PydevConsoleReference.class);
+        if (consoleRef == null) { //shouldn't really happen!
+            return null;
+        }
+        PyElement documentationElement = consoleRef.getDocumentationElement();
+        if (documentationElement == null) {
+            return null;
+        }
 
-  @Nullable
-  public static String createDoc(PsiElement element, PsiElement originalElement) {
-    PyExpression expression = PsiTreeUtil.getParentOfType(originalElement, PyExpression.class);
-    // Indicates that we are inside console, not a lookup element!
-    if (expression == null){
-      return null;
+        return new PyDocumentationBuilder(documentationElement, null).build();
     }
-    ConsoleCommunication communication = PydevConsoleRunner.getConsoleCommunication(originalElement);
-    if (communication == null){
-      return null;
+
+    @Override
+    @RequiredReadAction
+    public @Nullable PsiElement getCustomDocumentationElement(
+        Editor editor,
+        PsiFile file,
+        @Nullable PsiElement contextElement,
+        int targetOffset
+    ) {
+        if (contextElement != null && PythonRuntimeService.getInstance().isInPydevConsole(contextElement)) {
+            IElementType elementType = contextElement.getNode().getElementType();
+            if (PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(elementType)) {
+                return contextElement;
+            }
+            PsiElement parent = contextElement.getParent();
+            if (parent instanceof PyArgumentList && (PyTokenTypes.LPAR == elementType || PyTokenTypes.RPAR == elementType)) {
+                PyCallExpression expression = PsiTreeUtil.getParentOfType(contextElement, PyCallExpression.class);
+                if (expression != null) {
+                    return expression.getCallee();
+                }
+            }
+        }
+        return null;
     }
-    try {
-      String description = communication.getDescription(expression.getText());
-      return StringUtil.isEmptyOrSpaces(description) ? null : description;
+
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
     }
-    catch (Exception e) {
-      return null;
-    }
-  }
 }

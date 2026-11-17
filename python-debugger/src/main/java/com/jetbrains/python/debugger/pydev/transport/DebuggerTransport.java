@@ -1,24 +1,26 @@
 package com.jetbrains.python.debugger.pydev.transport;
 
-import java.io.IOException;
-
-
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
+
+import java.io.IOException;
 
 /**
  * @author Alexander Koshevoy
  */
-public interface DebuggerTransport
-{
-	void waitForConnect() throws IOException;
+public interface DebuggerTransport {
+    void waitForConnect() throws IOException;
 
-	void close();
+    void close();
 
-	boolean sendFrame(ProtocolFrame frame);
+    boolean sendFrame(ProtocolFrame frame);
 
-	boolean isConnected();
+    /**
+     * Returns {@code true} if IDE is in process of connecting to the debugger
+     * and {@code false} otherwise.
+     */
+    boolean isConnecting();
 
-	void disconnect();
+    boolean isConnected();
 
-	void messageReceived(ProtocolFrame frame);
+    void disconnect();
 }

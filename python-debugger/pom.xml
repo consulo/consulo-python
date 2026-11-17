@@ -40,6 +40,24 @@
 		</repository>
 	</repositories>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>consulo.maven</groupId>
+				<artifactId>maven-consulo-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-localize</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>consulo</groupId>
@@ -50,6 +68,18 @@
 		<dependency>
 			<groupId>consulo</groupId>
 			<artifactId>consulo-base-icon-library</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-component-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-disposer-api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -97,7 +127,19 @@
 		</dependency>
 		<dependency>
 			<groupId>consulo</groupId>
+			<artifactId>consulo-ui-ex-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
 			<artifactId>consulo-util-collection</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-util-concurrent</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

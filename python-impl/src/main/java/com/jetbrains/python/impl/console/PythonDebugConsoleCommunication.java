@@ -1,26 +1,19 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.console;
 
 import com.jetbrains.python.console.pydev.AbstractConsoleCommunication;
 import com.jetbrains.python.console.pydev.InterpreterResponse;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.impl.debugger.PyDebugProcess;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.pydev.PyDebugCallback;
+import com.jetbrains.python.impl.console.actions.CommandQueueForPythonConsoleService;
+import com.jetbrains.python.impl.debugger.PyDebugProcessWithConsole;
+import com.jetbrains.python.impl.debugger.PyDebuggerEditorsProvider;
+import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
+import com.jetbrains.python.impl.psi.impl.PyExpressionCodeFragmentImpl;
+import consulo.execution.debug.XDebugProcess;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiUtilCore;
 import consulo.logging.Logger;
 import consulo.project.Project;
 import consulo.util.lang.Pair;
@@ -32,135 +25,160 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * @author traff
- */
-public class PythonDebugConsoleCommunication extends AbstractConsoleCommunication
-{
-	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.console.pydev.PythonDebugConsoleCommunication");
-	private final PyDebugProcess myDebugProcess;
-	private boolean myNeedsMore = false;
+public class PythonDebugConsoleCommunication<T extends XDebugProcess & PyDebugProcessWithConsole> extends AbstractConsoleCommunication {
+    private static final Logger LOG = Logger.getInstance(PythonDebugConsoleCommunication.class);
+    private final T myDebugProcess;
+    private boolean myNeedsMore = false;
+    private boolean firstExecution = true;
+    private final PythonConsoleView myConsoleView;
+    private boolean isExecuting = false;
+    // Set true after stdin is written. Cleared by the next "input ended" notification:
+    //  - pydevd path -> via notifyInputReceived() (see PyDebugProcess.consoleInputRequested(false))
+    //  - DAP path    -> via notifyInputRequested() (DAP collapses started=true/false into one event)
+    private volatile boolean inputRecentlyConsumed = false;
 
-	public PythonDebugConsoleCommunication(Project project, PyDebugProcess debugProcess)
-	{
-		super(project);
-		myDebugProcess = debugProcess;
-	}
+    public PythonDebugConsoleCommunication(Project project, T debugProcess, PythonConsoleView consoleView) {
+        super(project);
+        myDebugProcess = debugProcess;
+        myConsoleView = consoleView;
+    }
 
-	@Override
-	public List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception
-	{
-		return myDebugProcess.getCompletions(actualToken);
-	}
+    /**
+     * Set context for static code completion in the Debugger Console
+     */
+    public void setContext() {
+        if (PsiUtilCore.getPsiFile(myProject, myConsoleView.getVirtualFile()) instanceof PyExpressionCodeFragmentImpl editorPsiFile) {
+            PsiElement debuggerContext =
+                PyDebuggerEditorsProvider.getContextElement(myProject, myDebugProcess.getSession().getCurrentPosition());
+            editorPsiFile.setContext(debuggerContext);
+        }
+    }
 
-	@Override
-	public String getDescription(String refExpression) throws Exception
-	{
-		return myDebugProcess.getDescription(refExpression);
-	}
+    @Override
+    public List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception {
+        return myDebugProcess.getCompletions(actualToken);
+    }
 
-	@Override
-	public boolean isWaitingForInput()
-	{
-		return waitingForInput;
-	}
+    @Override
+    public String getDescription(String refExpression) throws Exception {
+        return myDebugProcess.getDescription(refExpression);
+    }
 
-	@Override
-	public boolean needsMore()
-	{
-		return myNeedsMore;
-	}
+    @Override
+    public boolean needsMore() {
+        return myNeedsMore;
+    }
 
-	@Override
-	public boolean isExecuting()
-	{
-		return false;
-	}
+    @Override
+    public boolean isExecuting() {
+        return isExecuting;
+    }
 
-	protected void exec(ConsoleCodeFragment command, final PyDebugCallback<Pair<String, Boolean>> callback)
-	{
-		myDebugProcess.consoleExec(command.getText(), new PyDebugCallback<String>()
-		{
-			@Override
-			public void ok(String value)
-			{
-				callback.ok(parseExecResponseString(value));
-			}
+    protected void exec(ConsoleCodeFragment command, PyDebugCallback<? super Pair<String, Boolean>> callback) {
+        if (firstExecution) {
+            firstExecution = false;
+            myConsoleView.addConsoleFolding(true, false);
+        }
+        myDebugProcess.consoleExec(command.getText(), new PyDebugCallback<>() {
+            @Override
+            public void ok(String value) {
+                callback.ok(parseExecResponseString(value));
+                if (PyDebuggerOptionsProvider.getInstance(myProject).isDebugConsoleCommandQueueEnabled()) {
+                    CommandQueueForPythonConsoleService.getInstance(myProject)
+                        .removeCommand(PythonDebugConsoleCommunication.this, false);
+                }
+            }
 
-			@Override
-			public void error(PyDebuggerException exception)
-			{
-				callback.error(exception);
-			}
-		});
-	}
+            @Override
+            public void error(PyDebuggerException exception) {
+                callback.error(exception);
+                if (PyDebuggerOptionsProvider.getInstance(myProject).isDebugConsoleCommandQueueEnabled()) {
+                    CommandQueueForPythonConsoleService.getInstance(myProject)
+                        .removeCommand(PythonDebugConsoleCommunication.this, true);
+                }
+            }
+        });
+    }
 
-	public void execInterpreter(ConsoleCodeFragment code, final Function<InterpreterResponse, Object> callback)
-	{
-		if(waitingForInput)
-		{
-			OutputStream processInput = myDebugProcess.getProcessHandler().getProcessInput();
-			if(processInput != null)
-			{
-				try
-				{
-					Charset defaultCharset = EncodingProjectManager.getInstance(myDebugProcess.getProject()).getDefaultCharset();
-					processInput.write((code.getText()).getBytes(defaultCharset));
-					processInput.flush();
+    @Override
+    public void execInterpreter(ConsoleCodeFragment code, Function<InterpreterResponse, Object> callback) {
+        isExecuting = true;
+        if (waitingForInput) {
+            OutputStream processInput = myDebugProcess.getDebugConsoleInputStream();
+            if (processInput == null) {
+                processInput = myDebugProcess.getProcessHandler().getProcessInput();
+            }
+            if (processInput != null) {
+                try {
+                    Charset defaultCharset = EncodingProjectManager.getInstance(myProject).getDefaultCharset();
+                    processInput.write((code.getText()).getBytes(defaultCharset));
+                    processInput.flush();
 
-				}
-				catch(IOException e)
-				{
-					LOG.error(e.getMessage());
-				}
-			}
-			myNeedsMore = false;
-			waitingForInput = false;
-			notifyCommandExecuted(waitingForInput);
+                }
+                catch (IOException e) {
+                    LOG.error(e.getMessage());
+                }
+            }
+            myNeedsMore = false;
+            isExecuting = false;
+            waitingForInput = false;
+            inputRecentlyConsumed = true;
+            notifyCommandExecuted(waitingForInput);
+        }
+        else {
 
-		}
-		else
-		{
+            exec(new ConsoleCodeFragment(code.getText(), false), new PyDebugCallback<>() {
+                @Override
+                public void ok(Pair<String, Boolean> executed) {
+                    boolean more = executed.second;
+                    myNeedsMore = more;
+                    isExecuting = false;
+                    notifyCommandExecuted(more);
+                    callback.apply(new InterpreterResponse(more, isWaitingForInput()));
+                }
 
-			exec(new ConsoleCodeFragment(code.getText(), false), new PyDebugCallback<Pair<String, Boolean>>()
-			{
-				@Override
-				public void ok(Pair<String, Boolean> executed)
-				{
-					boolean more = executed.second;
-					myNeedsMore = more;
-					notifyCommandExecuted(more);
-					callback.apply(new InterpreterResponse(more, isWaitingForInput()));
+                @Override
+                public void error(PyDebuggerException exception) {
+                    myNeedsMore = false;
+                    isExecuting = false;
+                    notifyCommandExecuted(false);
+                    callback.apply(new InterpreterResponse(false, isWaitingForInput()));
+                }
+            });
+        }
+    }
 
-				}
+    @Override
+    public void notifyInputRequested() {
+        if (inputRecentlyConsumed) {
+            // DAP path: "input ended" notification arrives here too because the JSON
+            // factory does not carry the started flag. Swallow exactly one such notification.
+            inputRecentlyConsumed = false;
+            return;
+        }
+        waitingForInput = true;
+        super.notifyInputRequested();
+    }
 
-				@Override
-				public void error(PyDebuggerException exception)
-				{
-					myNeedsMore = false;
-					notifyCommandExecuted(false);
-					callback.apply(new InterpreterResponse(false, isWaitingForInput()));
-				}
-			});
-		}
-	}
+    @Override
+    public void notifyInputReceived() {
+        // pydevd routes the "input ended" notification here (not through notifyInputRequested),
+        // so this is where the one-shot flag set in execInterpreter must be cleared.
+        // Without this, subsequent input() calls in the pydevd path are filtered out and stall.
+        inputRecentlyConsumed = false;
+        super.notifyInputReceived();
+    }
 
-	@Override
-	public void notifyInputRequested()
-	{
-		waitingForInput = true;
-		super.notifyInputRequested();
-	}
+    @Override
+    public void interrupt() {
+        myDebugProcess.interruptDebugConsole();
+    }
 
+    public boolean isSuspended() {
+        return myDebugProcess.getSession().isSuspended();
+    }
 
-	@Override
-	public void interrupt()
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean isSuspended()
-	{
-		return myDebugProcess.getSession().isSuspended();
-	}
+    public void resume() {
+        myDebugProcess.getSession().resume();
+    }
 }

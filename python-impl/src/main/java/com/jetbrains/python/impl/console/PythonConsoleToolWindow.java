@@ -1,66 +1,47 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.console;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
+import consulo.application.dumb.DumbAware;
 import consulo.disposer.Disposer;
 import consulo.execution.ui.RunContentDescriptor;
+import consulo.module.Module;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
 import consulo.project.ui.wm.ToolWindowManager;
 import consulo.project.ui.wm.ToolWindowManagerListener;
+import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.AnActionWithSyncUpdate;
 import consulo.ui.ex.awt.SimpleToolWindowPanel;
 import consulo.ui.ex.content.Content;
 import consulo.ui.ex.content.ContentFactory;
 import consulo.ui.ex.toolWindow.ToolWindow;
+import consulo.ui.ex.toolWindow.ToolWindowAnchor;
 import consulo.util.dataholder.Key;
-import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
-/**
- * @author traff
- */
 @Singleton
 @ServiceAPI(ComponentScope.PROJECT)
 @ServiceImpl
-public class PythonConsoleToolWindow {
-    public static PythonConsoleToolWindow getInstance(Project project) {
-        return project.getInstance(PythonConsoleToolWindow.class);
-    }
-
+public final class PythonConsoleToolWindow {
     public static final Key<RunContentDescriptor> CONTENT_DESCRIPTOR = Key.create("CONTENT_DESCRIPTOR");
 
-    public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION =
-        new Function<>() {
-            @Override
-            public RunContentDescriptor apply(@Nullable Content input) {
-                return input != null ? input.getUserData(CONTENT_DESCRIPTOR) : null;
-            }
-        };
+    public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION = input -> {
+        return input == null ? null : input.getUserData(CONTENT_DESCRIPTOR);
+    };
 
     private final Project myProject;
 
@@ -71,13 +52,16 @@ public class PythonConsoleToolWindow {
         myProject = project;
     }
 
-    public List<RunContentDescriptor> getConsoleContentDescriptors() {
-        return FluentIterable.from(Lists.newArrayList(getToolWindow(myProject).getContentManager().getContents()))
-            .transform(CONTENT_TO_DESCRIPTOR_FUNCTION)
-            .filter(Predicates.notNull())
-            .toList();
+    public static PythonConsoleToolWindow getInstance(Project project) {
+        return project.getInstance(PythonConsoleToolWindow.class);
     }
 
+    public List<RunContentDescriptor> getConsoleContentDescriptors() {
+        return Arrays.stream(getToolWindow(myProject).getContentManager().getContents())
+            .map(CONTENT_TO_DESCRIPTOR_FUNCTION)
+            .filter(Objects::nonNull)
+            .toList();
+    }
 
     public void init(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
         setContent(toolWindow, contentDescriptor);
@@ -85,33 +69,31 @@ public class PythonConsoleToolWindow {
         if (!myInitialized) {
             doInit(toolWindow);
         }
+
+        toolWindow.setTabActions(new NewConsoleAction());
     }
 
-    private void doInit(final ToolWindow toolWindow) {
-        myInitialized = true;
+    public boolean isInitialized() {
+        return myInitialized;
+    }
 
-        toolWindow.setToHideOnEmptyContent(true);
+    private void doInit(ToolWindow toolWindow) {
+        myInitialized = true;
 
         myProject.getMessageBus().connect().subscribe(ToolWindowManagerListener.class, new ToolWindowManagerListener() {
             @Override
-            public void toolWindowRegistered(String id) {
-            }
-
-            @Override
             public void stateChanged(ToolWindowManager toolWindowManager) {
-                ToolWindow window = getToolWindow(myProject);
-                if (window != null) {
-                    boolean visible = window.isVisible();
-                    if (visible && toolWindow.getContentManager().getContentCount() == 0) {
-                        PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(myProject, null);
-                        runner.run();
-                    }
+                // TODO consulo: ToolWindowManagerEventType (ActivateToolWindow) missing, the visible state is checked instead
+                if (toolWindow.isVisible() && toolWindow.getContentManager().getContentCount() == 0) {
+                    PythonConsoleStarter.launchPythonConsoleRunnerIfInterpreterExists(myProject, null, runner -> runner.run(true));
                 }
             }
         });
     }
 
     private static void setContent(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
+        // TODO consulo: ToolWindowContentUi.HIDE_ID_LABEL is internal in Consulo
+
         Content content = toolWindow.getContentManager().findContent(contentDescriptor.getDisplayName());
         if (content == null) {
             content = createContent(contentDescriptor);
@@ -130,7 +112,13 @@ public class PythonConsoleToolWindow {
     }
 
     public static ToolWindow getToolWindow(Project project) {
-        return ToolWindowManager.getInstance(project).getToolWindow(PythonConsoleToolWindowFactory.ID);
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        ToolWindow consoleToolWindow = toolWindowManager.getToolWindow(PythonConsoleToolWindowFactory.ID);
+        if (consoleToolWindow == null) {
+            consoleToolWindow = toolWindowManager.registerToolWindow(PythonConsoleToolWindowFactory.ID, false, ToolWindowAnchor.BOTTOM);
+            consoleToolWindow.setIcon(PythonImplIconGroup.pythonPythonconsoletoolwindow());
+        }
+        return consoleToolWindow;
     }
 
     public void setContent(RunContentDescriptor contentDescriptor) {
@@ -160,38 +148,44 @@ public class PythonConsoleToolWindow {
         content.setComponent(panel);
         content.setDisposer(contentDescriptor);
         content.setPreferredFocusableComponent(contentDescriptor.getComponent());
+        content.setPreferredFocusedComponent(contentDescriptor.getPreferredFocusComputable());
 
         content.putUserData(CONTENT_DESCRIPTOR, contentDescriptor);
     }
-
-    private static FocusListener createFocusListener(final ToolWindow toolWindow) {
-        return new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                JComponent component = getComponentToFocus(toolWindow);
-                if (component != null) {
-                    component.requestFocusInWindow();
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-
-            }
-        };
-    }
-
-    private static JComponent getComponentToFocus(ToolWindow window) {
-        return window.getContentManager().getComponent();
-    }
-
 
     public void activate(Runnable runnable) {
         getToolWindow(myProject).activate(runnable);
     }
 
-    @Nullable
-    public RunContentDescriptor getSelectedContentDescriptor() {
+    public @Nullable RunContentDescriptor getSelectedContentDescriptor() {
         return CONTENT_TO_DESCRIPTOR_FUNCTION.apply(getToolWindow(myProject).getContentManager().getSelectedContent());
+    }
+
+    private static class NewConsoleAction extends AnAction implements DumbAware, AnActionWithSyncUpdate {
+        NewConsoleAction() {
+            super(PyLocalize.consoleNewConsole(), PyLocalize.consoleNewConsoleDescription(), PlatformIconGroup.generalAdd());
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(false);
+            Project project = e.getData(Project.KEY);
+            if (project == null) {
+                return;
+            }
+            boolean hasInterpreter = PythonConsoleStarter.hasPythonConsoleInterpreter(project, e.getData(Module.KEY));
+            PythonConsoleStarter.setConsoleInterpreterState(
+                e.getPresentation(), hasInterpreter,
+                PyLocalize.pythonConsoleNoInterpreterProject(), getTemplatePresentation().getDescription());
+        }
+
+        @Override
+        @RequiredUIAccess
+        public void actionPerformed(AnActionEvent e) {
+            Project project = e.getData(Project.KEY);
+            if (project != null) {
+                PythonConsoleStarter.launchPythonConsoleRunner(project, e.getData(Module.KEY), runner -> runner.run(true));
+            }
+        }
     }
 }

@@ -1,65 +1,49 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.debugger;
 
 import com.google.common.collect.Maps;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
-import com.jetbrains.python.psi.PyClass;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ApplicationManager;
-import consulo.application.WriteAction;
-import consulo.application.util.function.Computable;
+import consulo.application.ReadAction;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.ui.ex.awt.IdeBorderFactory;
+import consulo.ui.ex.awt.JBLabel;
+import consulo.ui.ex.awt.JBUI;
 import consulo.execution.debug.XDebuggerManager;
 import consulo.execution.debug.breakpoint.XBreakpoint;
 import consulo.execution.debug.breakpoint.XBreakpointType;
 import consulo.execution.debug.breakpoint.ui.XBreakpointCustomPropertiesPanel;
+import consulo.execution.debug.evaluation.XDebuggerEditorsProvider;
 import consulo.execution.debug.icon.ExecutionDebugIconGroup;
-import consulo.language.editor.ui.TreeChooser;
-import consulo.language.editor.ui.TreeClassChooserFactory;
-import consulo.language.psi.scope.GlobalSearchScope;
-import consulo.localize.LocalizeValue;
-import consulo.project.Project;
-import consulo.ui.ex.awt.IdeBorderFactory;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
-import consulo.util.lang.Pair;
-import consulo.virtualFileSystem.VirtualFile;
+import consulo.python.impl.localize.PyLocalize;
+import com.jetbrains.python.impl.PyClassTreeChooserDialog;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.impl.psi.PyUtil;
+import org.jspecify.annotations.Nullable;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Predicate;
 
 
 @ExtensionImpl
-public class PyExceptionBreakpointType
-    extends XBreakpointType<XBreakpoint<PyExceptionBreakpointProperties>, PyExceptionBreakpointProperties> {
+public final class PyExceptionBreakpointType
+  extends XBreakpointType<XBreakpoint<PyExceptionBreakpointProperties>, PyExceptionBreakpointProperties> {
 
     private static final String BASE_EXCEPTION = "BaseException";
 
     public PyExceptionBreakpointType() {
-        super("python-exception", "Python Exception Breakpoint");
+        super("python-exception", PyLocalize.debuggerExceptionBreakpointType().get());
     }
 
     @Override
@@ -84,35 +68,20 @@ public class PyExceptionBreakpointType
 
     @Override
     public XBreakpoint<PyExceptionBreakpointProperties> addBreakpoint(Project project, JComponent parentComponent) {
-        TreeClassChooserFactory.Builder<PyClass> builder = TreeClassChooserFactory.getInstance(project).newChooser(PyClass.class);
-        builder.withTitle(LocalizeValue.localizeTODO("Select Exception Class"));
-        builder.withSearchScope(GlobalSearchScope.allScope(project));
-        builder.withClassProvider((proj, name, searchInLibraries, pattern, searchScope) ->
-        {
-            PyExceptionCachingFilter filter = new PyExceptionCachingFilter();
-            Collection<PyClass> classes = PyClassNameIndex.find(name, proj, searchScope.isSearchInLibraries());
-            List<PyClass> result = new ArrayList<>();
-            for (PyClass c : classes) {
-                if (filter.test(c)) {
-                    result.add(c);
-                }
-            }
+        PyClassTreeChooserDialog dialog = new PyClassTreeChooserDialog(PyLocalize.debuggerExceptionBreakpointSelectExceptionClass().get(),
+                                                                             project,
+                                                                             GlobalSearchScope.allScope(project),
+                                                                             new PyExceptionCachingFilter(), null);
 
-            return result;
-        });
-
-        TreeChooser<PyClass> treeChooser = builder.build();
-
-
-        treeChooser.showDialog();
+        dialog.showDialog();
 
         // on ok
-        PyClass pyClass = treeChooser.getSelected();
+        PyClass pyClass = dialog.getSelected();
         if (pyClass != null) {
             String qualifiedName = pyClass.getQualifiedName();
             assert qualifiedName != null : "Qualified name of the class shouldn't be null";
-            return WriteAction.compute(() -> XDebuggerManager.getInstance(project).getBreakpointManager().addBreakpoint(PyExceptionBreakpointType.this, new PyExceptionBreakpointProperties
-                (qualifiedName)));
+            return XDebuggerManager.getInstance(project).getBreakpointManager()
+              .addBreakpoint(this, new PyExceptionBreakpointProperties(qualifiedName));
         }
         return null;
     }
@@ -121,7 +90,7 @@ public class PyExceptionBreakpointType
         private final HashMap<Integer, Pair<WeakReference<PyClass>, Boolean>> processedElements = Maps.newHashMap();
 
         @Override
-        public boolean test(final PyClass pyClass) {
+        public boolean test(PyClass pyClass) {
             VirtualFile virtualFile = pyClass.getContainingFile().getVirtualFile();
             if (virtualFile == null) {
                 return false;
@@ -131,13 +100,8 @@ public class PyExceptionBreakpointType
             Pair<WeakReference<PyClass>, Boolean> pair = processedElements.get(key);
             boolean isException;
             if (pair == null || pair.first.get() != pyClass) {
-                isException = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-                    @Override
-                    public Boolean compute() {
-                        return PyUtil.isExceptionClass(pyClass);
-                    }
-                });
-                processedElements.put(key, Pair.create(new WeakReference<PyClass>(pyClass), isException));
+                isException = ReadAction.compute(() -> PyUtil.isExceptionClass(pyClass));
+                processedElements.put(key, Pair.create(new WeakReference<>(pyClass), isException));
             }
             else {
                 isException = pair.second;
@@ -157,11 +121,17 @@ public class PyExceptionBreakpointType
         if (properties != null) {
             String exception = properties.getException();
             if (BASE_EXCEPTION.equals(exception)) {
-                return "All exceptions";
+                return PyLocalize.debuggerExceptionBreakpointAnyException().get();
             }
             return exception;
         }
         return "";
+    }
+
+    @Override
+    public @Nullable XDebuggerEditorsProvider getEditorsProvider(XBreakpoint<PyExceptionBreakpointProperties> breakpoint,
+                                                                 Project project) {
+        return new PyDebuggerEditorsProvider();
     }
 
     @Override
@@ -174,8 +144,7 @@ public class PyExceptionBreakpointType
     private static PyExceptionBreakpointProperties createDefaultBreakpointProperties() {
         PyExceptionBreakpointProperties p = new PyExceptionBreakpointProperties(BASE_EXCEPTION);
         p.setNotifyOnTerminate(true);
-        p.setNotifyAlways(false);
-        p.setNotifyAlways(false);
+        p.setNotifyOnlyOnFirst(false);
         return p;
     }
 
@@ -184,40 +153,36 @@ public class PyExceptionBreakpointType
         return new PyExceptionBreakpointPropertiesPanel();
     }
 
+
     private static class PyExceptionBreakpointPropertiesPanel
-        extends XBreakpointCustomPropertiesPanel<XBreakpoint<PyExceptionBreakpointProperties>> {
+      extends XBreakpointCustomPropertiesPanel<XBreakpoint<PyExceptionBreakpointProperties>> {
         private JCheckBox myNotifyOnTerminateCheckBox;
         private JCheckBox myNotifyOnRaiseCheckBox;
-        private JRadioButton myAlwaysRadio;
-        private JRadioButton myOnlyOnFirstRadio;
+        private JCheckBox myIgnoreLibrariesCheckBox;
+        private JBLabel myWarningIcon;
 
         @Override
         public JComponent getComponent() {
-            myNotifyOnTerminateCheckBox = new JCheckBox("On termination");
-            myNotifyOnRaiseCheckBox = new JCheckBox("On raise");
-            myAlwaysRadio = new JRadioButton("At each level of call chain");
-            myOnlyOnFirstRadio = new JRadioButton("At top of call chain");
-
-            ButtonGroup group = new ButtonGroup();
-            group.add(myAlwaysRadio);
-            group.add(myOnlyOnFirstRadio);
+            myNotifyOnTerminateCheckBox = new JCheckBox(PyLocalize.debuggerExceptionBreakpointOnTermination().get());
+            myNotifyOnRaiseCheckBox = new JCheckBox(PyLocalize.debuggerExceptionBreakpointOnRaise().get());
+            myIgnoreLibrariesCheckBox = new JCheckBox(PyLocalize.debuggerExceptionBreakpointIgnoreLibraryFiles().get());
 
             Box notificationsBox = Box.createVerticalBox();
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(myNotifyOnTerminateCheckBox, BorderLayout.NORTH);
             notificationsBox.add(panel);
-            panel = new JPanel(new BorderLayout());
-            panel.add(myNotifyOnRaiseCheckBox, BorderLayout.NORTH);
+            panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            panel.setBorder(JBUI.Borders.empty());
+            panel.add(myNotifyOnRaiseCheckBox, Integer.valueOf(FlowLayout.LEFT));
+            myWarningIcon = new JBLabel(PlatformIconGroup.generalBalloonwarning());
+            // TODO consulo: IdeTooltipManager.setCustomTooltip and TooltipWithClickableLinks missing
+            myWarningIcon.setToolTipText(PyLocalize.debuggerWarningMessage().get());
+            myWarningIcon.setBorder(JBUI.Borders.emptyLeft(5));
+            panel.add(myWarningIcon);
             notificationsBox.add(panel);
             panel = new JPanel(new BorderLayout());
-            EmptyBorder border = new EmptyBorder(0, 20, 0, 0);
-            panel.setBorder(border);
-            panel.add(myAlwaysRadio, BorderLayout.NORTH);
-            panel.add(myOnlyOnFirstRadio, BorderLayout.CENTER);
-
-
+            panel.add(myIgnoreLibrariesCheckBox, BorderLayout.NORTH);
             notificationsBox.add(panel);
-
 
             panel = new JPanel(new BorderLayout());
             JPanel innerPanel = new JPanel(new BorderLayout());
@@ -225,58 +190,23 @@ public class PyExceptionBreakpointType
             innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.WEST);
             innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.EAST);
             panel.add(innerPanel, BorderLayout.NORTH);
-            panel.setBorder(IdeBorderFactory.createTitledBorder("Activation policy", true));
-
-            ActionListener listener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setRadioButtonsEnabled();
-                }
-            };
-
-            myNotifyOnRaiseCheckBox.addActionListener(listener);
-
-            setRadioButtonsEnabled();
+            panel.setBorder(IdeBorderFactory.createTitledBorder(PyLocalize.debuggerExceptionBreakpointActivationPolicy().get()));
 
             return panel;
-        }
-
-        private void setRadioButtonsEnabled() {
-            setRadioButtonsEnabled(myNotifyOnRaiseCheckBox.isSelected());
-        }
-
-        private void setNotifyOnRaiseSelected(boolean selected) {
-            myNotifyOnRaiseCheckBox.setSelected(selected);
-            setRadioButtonsEnabled(selected);
-        }
-
-        private void setRadioButtonsEnabled(boolean selected) {
-            myAlwaysRadio.setEnabled(selected);
-            myOnlyOnFirstRadio.setEnabled(selected);
-            if (selected && !(myAlwaysRadio.isSelected() || myOnlyOnFirstRadio.isSelected())) {
-                myAlwaysRadio.setSelected(true);
-            }
         }
 
         @Override
         public void saveTo(XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
             breakpoint.getProperties().setNotifyOnTerminate(myNotifyOnTerminateCheckBox.isSelected());
-
-            breakpoint.getProperties().setNotifyAlways(myNotifyOnRaiseCheckBox.isSelected() && myAlwaysRadio.isSelected());
-            breakpoint.getProperties().setNotifyOnlyOnFirst(myNotifyOnRaiseCheckBox.isSelected() && myOnlyOnFirstRadio.isSelected());
+            breakpoint.getProperties().setNotifyOnlyOnFirst(myNotifyOnRaiseCheckBox.isSelected());
+            breakpoint.getProperties().setIgnoreLibraries(myIgnoreLibrariesCheckBox.isSelected());
         }
 
         @Override
         public void loadFrom(XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
+            myIgnoreLibrariesCheckBox.setSelected(breakpoint.getProperties().isIgnoreLibraries());
             myNotifyOnTerminateCheckBox.setSelected(breakpoint.getProperties().isNotifyOnTerminate());
-
-            boolean always = breakpoint.getProperties().isNotifyAlways();
-            boolean onFirst = breakpoint.getProperties().isNotifyOnlyOnFirst();
-
-            setNotifyOnRaiseSelected(always || onFirst);
-
-            myAlwaysRadio.setSelected(always);
-            myOnlyOnFirstRadio.setSelected(onFirst);
+            myNotifyOnRaiseCheckBox.setSelected(breakpoint.getProperties().isNotifyOnlyOnFirst());
         }
     }
 }

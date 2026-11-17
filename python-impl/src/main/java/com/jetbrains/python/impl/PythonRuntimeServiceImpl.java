@@ -19,6 +19,7 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
+import com.jetbrains.python.impl.console.PydevConsoleRunnerUtil;
 import com.jetbrains.python.impl.console.PydevDocumentationProvider;
 import com.jetbrains.python.impl.documentation.PyRuntimeDocstringFormatter;
 import com.jetbrains.python.impl.console.completion.PydevConsoleReference;
@@ -48,8 +49,7 @@ import java.util.List;
 public final class PythonRuntimeServiceImpl extends PythonRuntimeService {
   @Override
   public boolean isInPydevConsole(PsiElement file) {
-    // consulo: JB PydevConsoleRunnerUtil.isInPydevConsole lives in PydevConsoleRunner
-    return PydevConsoleRunner.isInPydevConsole(file);
+    return PydevConsoleRunnerUtil.isInPydevConsole(file);
   }
 
   @Override
@@ -65,7 +65,7 @@ public final class PythonRuntimeServiceImpl extends PythonRuntimeService {
 
   @Override
   public @Nullable Sdk getConsoleSdk(PsiElement foothold) {
-    return PydevConsoleRunner.getConsoleSdk(foothold);
+    return PydevConsoleRunnerUtil.getConsoleSdk(foothold);
   }
 
   @Override
@@ -83,7 +83,7 @@ public final class PythonRuntimeServiceImpl extends PythonRuntimeService {
                                                                     PyResolveContext context) {
     PsiFile file = element.getContainingFile();
     if (file != null) {
-      final ConsoleCommunication communication = file.getCopyableUserData(PydevConsoleRunner.CONSOLE_KEY);
+      final ConsoleCommunication communication = file.getCopyableUserData(PydevConsoleRunner.CONSOLE_COMMUNICATION_KEY);
       // TODO consulo: PyConsoleOptions.isRuntimeCodeCompletion missing
       if (communication != null) {
         PyExpression qualifier = element.getQualifier();
@@ -97,7 +97,7 @@ public final class PythonRuntimeServiceImpl extends PythonRuntimeService {
 
   @Override
   public @Nullable PythonConsoleData getPythonConsoleData(@Nullable ASTNode node) {
-    return PydevConsoleRunner.getPythonConsoleData(node);
+    return PydevConsoleRunnerUtil.getPythonConsoleData(node);
   }
 
   @Override
