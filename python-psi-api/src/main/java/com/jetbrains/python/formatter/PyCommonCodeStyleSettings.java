@@ -32,8 +32,6 @@ import org.jdom.Element;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -190,18 +188,8 @@ public class PyCommonCodeStyleSettings extends CommonCodeStyleSettings {
     // TODO consulo: CommonCodeStyleSettings#copyPublicFields is package-private
     ReflectionUtil.copyFields(commonSettings.getClass().getFields(), this, commonSettings);
 
-    // Reflection is used here only because the base CommonCodeStyleSettings#clone hard-codes
-    // `new CommonCodeStyleSettings(...)` and offers no hook to clone into a subclass instance, while
-    // `setRootSettings` / `setSoftMargins` are package-private. This mirrors KotlinCommonCodeStyleSettings#clone;
-    // keep the two in sync if the platform ever exposes a supported extension point.
-    try {
-      Method setRootSettingsMethod = CommonCodeStyleSettings.class.getDeclaredMethod("setRootSettings", CodeStyleSettings.class);
-      setRootSettingsMethod.setAccessible(true);
-      setRootSettingsMethod.invoke(commonSettings, rootSettings);
-    }
-    catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      throw new IllegalStateException(e);
-    }
+    // consulo: setRootSettings / setSoftMargins are protected in Consulo, so JB's reflective calls are not needed
+    commonSettings.setRootSettings(rootSettings);
 
     commonSettings.setForceArrangeMenuAvailable(isForceArrangeMenuAvailable());
 
@@ -216,22 +204,7 @@ public class PyCommonCodeStyleSettings extends CommonCodeStyleSettings {
       commonSettings.setArrangementSettings(arrangementSettings.clone());
     }
 
-    try {
-      Method setSoftMarginsMethod = null;
-      for (Method method : CommonCodeStyleSettings.class.getDeclaredMethods()) {
-        if ("setSoftMargins".equals(method.getName())) {
-          setSoftMarginsMethod = method;
-          break;
-        }
-      }
-      if (setSoftMarginsMethod != null) {
-        setSoftMarginsMethod.setAccessible(true);
-        setSoftMarginsMethod.invoke(commonSettings, getSoftMargins());
-      }
-    }
-    catch (IllegalAccessException | InvocationTargetException e) {
-      throw new IllegalStateException(e);
-    }
+    commonSettings.setSoftMargins(getSoftMargins());
 
     return commonSettings;
   }
