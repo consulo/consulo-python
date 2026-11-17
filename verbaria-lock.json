@@ -3,11 +3,21 @@
   "project" : "consulo-python",
   "projectVersion" : "master",
   "sourceLocale" : "en-US",
-  "generatedAt" : "2026-10-24T10:49:36.796473490Z",
+  "generatedAt" : "2026-11-17T08:07:51.870144928Z",
   "documents" : {
     "consulo.python.impl.PyLocalize" : {
       "source" : {
-        "sig" : "16d5c6a2168547cb8d2d1c2d1660f445"
+        "sig" : "09bf04172c85f6aa4fa77c8dc31f5c84"
+      }
+    },
+    "consulo.python.psi.PyParsingLocalize" : {
+      "source" : {
+        "sig" : "661613071ac6bda6c6f4bbc0055340ff"
+      }
+    },
+    "consulo.python.psi.PySyntaxCoreLocalize" : {
+      "source" : {
+        "sig" : "bca34525af67a2002d7005c6e00d7c20"
       }
     }
   }
