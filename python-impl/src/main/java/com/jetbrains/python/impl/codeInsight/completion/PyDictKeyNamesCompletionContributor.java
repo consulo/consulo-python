@@ -1,83 +1,87 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import java.util.Collection;
-import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
+import com.jetbrains.python.impl.psi.types.PyTypedDictType;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyDictLiteralExpression;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyKeyValueExpression;
+import com.jetbrains.python.psi.PyKeywordArgument;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PySubscriptionExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.document.Document;
-import consulo.document.util.TextRange;
+import consulo.application.dumb.DumbAware;
 import consulo.language.Language;
-import consulo.language.ast.ASTNode;
 import consulo.language.editor.completion.CompletionContributor;
+import consulo.language.editor.completion.CompletionParameters;
+import consulo.language.editor.completion.CompletionProvider;
 import consulo.language.editor.completion.CompletionResultSet;
 import consulo.language.editor.completion.CompletionType;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
 import consulo.platform.base.icon.PlatformIconGroup;
-import consulo.util.lang.StringUtil;
+
+import java.util.Collection;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
+ * User: catherine
+ * <p/>
  * Complete known keys for dictionaries
- *
- * @author catherine
  */
 @ExtensionImpl(id = "PyDictKeyNames")
-public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
+public final class PyDictKeyNamesCompletionContributor extends CompletionContributor implements DumbAware {
+    private static final String DEFAULT_QUOTE = "\"";
+
     public PyDictKeyNamesCompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement().inside(PySubscriptionExpression.class),
-            (parameters, context, result) -> {
-                PsiElement original = parameters.getOriginalPosition();
-                int offset = parameters.getOffset();
-                if (original == null) {
-                    return;
-                }
-                CompletionResultSet dictCompletion = createResult(original, result, offset);
-
-                PySubscriptionExpression subscription = PsiTreeUtil.getParentOfType(original, PySubscriptionExpression.class);
-                if (subscription == null) {
-                    return;
-                }
-                PsiElement operand = subscription.getOperand();
-                PsiReference reference = operand.getReference();
-                if (reference != null && reference.resolve() instanceof PyTargetExpression targetExpr) {
-                    PyDictLiteralExpression dict = PsiTreeUtil.getNextSiblingOfType(targetExpr, PyDictLiteralExpression.class);
-                    if (dict != null) {
-                        addDictLiteralKeys(dict, dictCompletion);
-                        PsiFile file = parameters.getOriginalFile();
-                        addAdditionalKeys(file, operand, dictCompletion);
+            new CompletionProvider() {
+                @Override
+                @RequiredReadAction
+                public void addCompletions(CompletionParameters parameters,
+                                           ProcessingContext context,
+                                           CompletionResultSet result) {
+                    PsiElement original = parameters.getOriginalPosition();
+                    if (original == null) {
+                        return;
                     }
-                    PyCallExpression dictConstructor = PsiTreeUtil.getNextSiblingOfType(targetExpr, PyCallExpression.class);
-                    if (dictConstructor != null) {
-                        addDictConstructorKeys(dictConstructor, dictCompletion);
-                        PsiFile file = parameters.getOriginalFile();
-                        addAdditionalKeys(file, operand, dictCompletion);
+
+                    PySubscriptionExpression subscription = PsiTreeUtil.getParentOfType(original, PySubscriptionExpression.class);
+                    if (subscription == null) {
+                        return;
+                    }
+
+                    PyExpression operand = subscription.getOperand();
+                    DictKeyCompletionResultSet dictCompletion =
+                        new DictKeyCompletionResultSet(result, subscription.getIndexExpression() instanceof PyStringLiteralExpression);
+
+                    if (addCompletionIfOperandIsTypedDict(operand, dictCompletion)) {
+                        return;
+                    }
+                    if (operand instanceof PyReferenceExpression) {
+                        PyExpression resolvedElement = PyResolveUtil.fullResolveLocally((PyReferenceExpression) operand);
+                        if (resolvedElement instanceof PyDictLiteralExpression) {
+                            addDictLiteralKeys((PyDictLiteralExpression) resolvedElement, dictCompletion);
+                            addAdditionalKeys(parameters.getOriginalFile(), operand, dictCompletion);
+                        }
+                        if (resolvedElement instanceof PyCallExpression) {
+                            addDictConstructorKeys((PyCallExpression) resolvedElement, dictCompletion);
+                            addAdditionalKeys(parameters.getOriginalFile(), operand, dictCompletion);
+                        }
                     }
                 }
             }
@@ -85,51 +89,28 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
     }
 
     /**
-     * create completion result with prefix matcher if needed
+     * Add index expression completion if an operand is a TypedDict
      *
-     * @param original is original element
-     * @param result   is initial completion result
-     * @param offset
-     * @return
+     * @return true if an operand is a TypedDict
      */
-    @RequiredReadAction
-    private static CompletionResultSet createResult(PsiElement original, CompletionResultSet result, int offset) {
-        PyStringLiteralExpression prevElement = PsiTreeUtil.getPrevSiblingOfType(original, PyStringLiteralExpression.class);
-        if (prevElement != null) {
-            ASTNode prevNode = prevElement.getNode();
-            if (prevNode != null) {
-                if (prevNode.getElementType() != PyTokenTypes.LBRACKET) {
-                    return result.withPrefixMatcher(findPrefix(prevElement, offset));
-                }
+    private static boolean addCompletionIfOperandIsTypedDict(PyExpression operand,
+                                                             DictKeyCompletionResultSet dictCompletion) {
+        TypeEvalContext typeEvalContext = TypeEvalContext.codeCompletion(operand.getProject(), operand.getContainingFile());
+        PyType type = typeEvalContext.getType(operand);
+        if (type instanceof PyTypedDictType dictType) {
+            for (String key : dictType.fields(typeEvalContext).keySet()) {
+                dictCompletion.addKey(key);
             }
+            return true;
         }
-        if (original.getParent() instanceof PyStringLiteralExpression stringLiteralExpr) {
-            return result.withPrefixMatcher(findPrefix(stringLiteralExpr, offset));
-        }
-        PyNumericLiteralExpression number =
-            PsiTreeUtil.findElementOfClassAtOffset(original.getContainingFile(), offset - 1, PyNumericLiteralExpression.class, false);
-        if (number != null) {
-            return result.withPrefixMatcher(findPrefix(number, offset));
-        }
-        return result;
-    }
-
-    /**
-     * finds prefix. For *'str'* returns just *'str*.
-     *
-     * @param element to find prefix of
-     * @return prefix
-     */
-    @RequiredReadAction
-    private static String findPrefix(PyElement element, int offset) {
-        return TextRange.create(element.getTextRange().getStartOffset(), offset).substring(element.getContainingFile().getText());
+        return false;
     }
 
     /**
      * add keys to completion result from dict constructor
      */
     @RequiredReadAction
-    private static void addDictConstructorKeys(PyCallExpression dictConstructor, CompletionResultSet result) {
+    private static void addDictConstructorKeys(PyCallExpression dictConstructor, DictKeyCompletionResultSet result) {
         PyExpression callee = dictConstructor.getCallee();
         if (callee == null) {
             return;
@@ -145,8 +126,11 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
                 }
                 PyExpression[] argumentList = list.getArguments();
                 for (PyExpression argument : argumentList) {
-                    if (argument instanceof PyKeywordArgument) {
-                        result.addElement(createElement("'" + ((PyKeywordArgument) argument).getKeyword() + "'"));
+                    if (argument instanceof PyKeywordArgument keywordArgument) {
+                        String keyword = keywordArgument.getKeyword();
+                        if (keyword != null) {
+                            result.addKey(keyword);
+                        }
                     }
                 }
             }
@@ -162,22 +146,14 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
      * @param result  is completion result set
      */
     @RequiredReadAction
-    private static void addAdditionalKeys(PsiFile file, PsiElement operand, CompletionResultSet result) {
+    private static void addAdditionalKeys(PsiFile file, PsiElement operand, DictKeyCompletionResultSet result) {
         Collection<PySubscriptionExpression> subscriptionExpressions = PsiTreeUtil.findChildrenOfType(file, PySubscriptionExpression.class);
         for (PySubscriptionExpression expr : subscriptionExpressions) {
-            if (expr.getOperand().getText().equals(operand.getText())
-                && expr.getParent() instanceof PyAssignmentStatement assignment
-                && expr.equals(assignment.getLeftHandSideExpression())) {
-                PyExpression key = expr.getIndexExpression();
-                if (key != null) {
-                    boolean addHandler = PsiTreeUtil.findElementOfClassAtRange(
-                        file,
-                        key.getTextRange().getStartOffset(),
-                        key.getTextRange().getEndOffset(),
-                        PyStringLiteralExpression.class
-                    ) != null;
-                    result.addElement(createElement(key.getText(), addHandler));
-                }
+            if (expr.getOperand().getText().equals(operand.getText()) &&
+                expr.getParent() instanceof PyAssignmentStatement assignmentStatement &&
+                expr.equals(assignmentStatement.getLeftHandSideExpression()) &&
+                expr.getIndexExpression() instanceof PyStringLiteralExpression key) {
+                result.addKey(key);
             }
         }
     }
@@ -185,59 +161,49 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
     /**
      * add keys from dict literal expression
      */
-    @RequiredReadAction
-    public static void addDictLiteralKeys(PyDictLiteralExpression dict, CompletionResultSet result) {
+    private static void addDictLiteralKeys(PyDictLiteralExpression dict, DictKeyCompletionResultSet result) {
         PyKeyValueExpression[] keyValues = dict.getElements();
         for (PyKeyValueExpression expression : keyValues) {
-            boolean addHandler = PsiTreeUtil.findElementOfClassAtRange(
-                dict.getContainingFile(),
-                expression.getTextRange().getStartOffset(),
-                expression.getTextRange().getEndOffset(),
-                PyStringLiteralExpression.class
-            ) != null;
-            result.addElement(createElement(expression.getKey().getText(), addHandler));
+            if (expression.getKey() instanceof PyStringLiteralExpression key) {
+                result.addKey(key);
+            }
         }
-    }
-
-    private static LookupElementBuilder createElement(String key) {
-        return createElement(key, true);
-    }
-
-    private static LookupElementBuilder createElement(String key, boolean addHandler) {
-        LookupElementBuilder item;
-        item = LookupElementBuilder.create(key).withTypeText("dict key").withIcon(PlatformIconGroup.nodesParameter());
-
-        if (addHandler) {
-            item = item.withInsertHandler((context, item1) -> {
-                PyStringLiteralExpression str = PsiTreeUtil.findElementOfClassAtOffset(
-                    context.getFile(),
-                    context.getStartOffset(),
-                    PyStringLiteralExpression.class,
-                    false
-                );
-                if (str != null) {
-                    boolean isDictKeys = PsiTreeUtil.getParentOfType(str, PySubscriptionExpression.class) != null;
-                    if (isDictKeys) {
-                        int off = context.getStartOffset() + str.getTextLength();
-                        PsiElement element = context.getFile().findElementAt(off);
-                        boolean atRBrace = element == null || element.getNode().getElementType() == PyTokenTypes.RBRACKET;
-                        String text = str.getText();
-                        boolean badQuoting = !(StringUtil.startsWithChar(text, '\'') && StringUtil.endsWithChar(text, '\''))
-                            && !(StringUtil.startsWithChar(text, '"') && StringUtil.endsWithChar(text, '"'));
-                        if (badQuoting || !atRBrace) {
-                            Document document = context.getEditor().getDocument();
-                            int offset = context.getTailOffset();
-                            document.deleteString(offset - 1, offset);
-                        }
-                    }
-                }
-            });
-        }
-        return item;
     }
 
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;
+    }
+
+    private static class DictKeyCompletionResultSet {
+        private final CompletionResultSet myResult;
+        private final boolean myIsInsideString;
+
+        DictKeyCompletionResultSet(CompletionResultSet result, boolean isInsideString) {
+            myResult = result;
+            myIsInsideString = isInsideString;
+        }
+
+        @RequiredReadAction
+        void addKey(PyStringLiteralExpression keyExpression) {
+            if (myIsInsideString) {
+                addElement(keyExpression.getStringValue());
+            }
+            else {
+                addElement(keyExpression.getText());
+            }
+        }
+
+        void addKey(String key) {
+            String lookupString = myIsInsideString ? key : "%s%s%s".formatted(DEFAULT_QUOTE, key, DEFAULT_QUOTE);
+            addElement(lookupString);
+        }
+
+        private void addElement(String lookupString) {
+            myResult.addElement(LookupElementBuilder
+                .create(lookupString)
+                .withTypeText("dict key")
+                .withIcon(PlatformIconGroup.nodesParameter()));
+        }
     }
 }

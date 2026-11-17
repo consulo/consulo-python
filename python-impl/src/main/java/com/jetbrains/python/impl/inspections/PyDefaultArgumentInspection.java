@@ -1,22 +1,11 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.PyDefaultArgumentQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -25,44 +14,38 @@ import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author Alexey.Ivanov
- */
 @ExtensionImpl
-public class PyDefaultArgumentInspection extends PyInspection {
+public final class PyDefaultArgumentInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameDefaultArgument();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder,
+                TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyNamedParameter(PyNamedParameter node) {
             PyExpression defaultValue = node.getDefaultValue();
-            if (defaultValue != null) {
-                if (defaultValue instanceof PyListLiteralExpression || defaultValue instanceof PyDictLiteralExpression) {
-                    registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
-                }
-                if (defaultValue instanceof PyCallExpression) {
-                    PyExpression callee = ((PyCallExpression) defaultValue).getCallee();
-                    if (callee != null && "dict".equals(callee.getText())) {
-                        registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
-                    }
-                }
+            if (PyUtil.isForbiddenMutableDefault(defaultValue, myTypeEvalContext)) {
+                registerProblem(defaultValue, PyLocalize.inspDefaultArgumentsDefaultArgumentValueMutable().get(),
+                                new PyDefaultArgumentQuickFix());
             }
         }
     }

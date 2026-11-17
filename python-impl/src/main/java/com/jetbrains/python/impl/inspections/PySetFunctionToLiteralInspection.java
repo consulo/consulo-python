@@ -1,101 +1,69 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.ReplaceFunctionWithSetLiteralQuickFix;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyParenthesizedExpression;
+import com.jetbrains.python.psi.PySequenceExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PyTupleExpression;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
-import consulo.language.editor.inspection.scheme.InspectionProfile;
-import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
-import consulo.language.editor.inspection.scheme.InspectionToolWrapper;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 /**
+ * User: catherine
+ * <p>
  * Inspection to find set built-in function and replace it with set literal
  * available if the selected language level supports set literals.
- *
- * @author catherine
  */
 @ExtensionImpl
-public class PySetFunctionToLiteralInspection extends PyInspection {
+public final class PySetFunctionToLiteralInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameSetFunctionToLiteral();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonCodeStyleIssues();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyCallExpression(PyCallExpression node) {
-            if (!isAvailable(node)) {
-                return;
-            }
             PyExpression callee = node.getCallee();
             if (node.isCalleeText(PyNames.SET) && callee != null && PyBuiltinCache.isInBuiltins(callee)) {
                 PyExpression[] arguments = node.getArguments();
                 if (arguments.length == 1) {
                     PyElement[] elements = getSetCallArguments(node);
                     if (elements.length != 0) {
-                        registerProblem(
-                            node,
-                            PyLocalize.inspNameSetFunctionToLiteral().get(),
-                            new ReplaceFunctionWithSetLiteralQuickFix()
-                        );
+                        registerProblem(node, PyLocalize.inspNameSetFunctionToLiteral().get(),
+                                        new ReplaceFunctionWithSetLiteralQuickFix());
                     }
                 }
             }
-        }
-
-        private static boolean isAvailable(PyCallExpression node) {
-            InspectionProfile profile = InspectionProjectProfileManager.getInstance(node.getProject()).getInspectionProfile();
-            InspectionToolWrapper inspectionTool = profile.getInspectionTool("PyCompatibilityInspection", node.getProject());
-            if (inspectionTool != null) {
-                Object inspection = inspectionTool.getState();
-                if (inspection instanceof PyCompatibilityInspectionState) {
-                    List<String> versions = ((PyCompatibilityInspectionState) inspection).versions;
-                    for (String s : versions) {
-                        if (!LanguageLevel.fromPythonVersion(s).supportsSetLiterals()) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return LanguageLevel.forElement(node).supportsSetLiterals();
         }
     }
 
@@ -104,16 +72,15 @@ public class PySetFunctionToLiteralInspection extends PyInspection {
         if (argument instanceof PyStringLiteralExpression) {
             return PyElement.EMPTY_ARRAY;
         }
-        if ((argument instanceof PySequenceExpression || (argument instanceof PyParenthesizedExpression && ((PyParenthesizedExpression) argument)
-            .getContainedExpression() instanceof
-            PyTupleExpression))) {
+        if ((argument instanceof PySequenceExpression || (argument instanceof PyParenthesizedExpression &&
+                                                          ((PyParenthesizedExpression)argument).getContainedExpression() instanceof PyTupleExpression))) {
 
             if (argument instanceof PySequenceExpression) {
-                return ((PySequenceExpression) argument).getElements();
+                return ((PySequenceExpression)argument).getElements();
             }
-            PyExpression tuple = ((PyParenthesizedExpression) argument).getContainedExpression();
+            PyExpression tuple = ((PyParenthesizedExpression)argument).getContainedExpression();
             if (tuple instanceof PyTupleExpression) {
-                return ((PyTupleExpression) (tuple)).getElements();
+                return ((PyTupleExpression)(tuple)).getElements();
             }
         }
         return PyElement.EMPTY_ARRAY;

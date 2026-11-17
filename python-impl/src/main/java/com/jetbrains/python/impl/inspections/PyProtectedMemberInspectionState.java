@@ -4,7 +4,7 @@ import consulo.configurable.ConfigurableBuilder;
 import consulo.configurable.ConfigurableBuilderState;
 import consulo.configurable.UnnamedConfigurable;
 import consulo.language.editor.inspection.InspectionToolState;
-import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 
 import org.jspecify.annotations.Nullable;
@@ -23,8 +23,8 @@ public class PyProtectedMemberInspectionState implements InspectionToolState<PyP
 	public UnnamedConfigurable createConfigurable()
 	{
 		ConfigurableBuilder<ConfigurableBuilderState> builder = ConfigurableBuilder.newBuilder();
-		builder.checkBox(LocalizeValue.localizeTODO("Ignore test functions"), () -> ignoreTestFunctions, b -> ignoreTestFunctions = b);
-		builder.checkBox(LocalizeValue.localizeTODO("Ignore annotations"), () -> ignoreAnnotations, b -> ignoreAnnotations = b);
+		builder.checkBox(PyLocalize.inspProtectedMemberIgnoreTestFunctions(), () -> ignoreTestFunctions, b -> ignoreTestFunctions = b);
+		builder.checkBox(PyLocalize.inspProtectedMemberIgnoreAnnotations(), () -> ignoreAnnotations, b -> ignoreAnnotations = b);
 		return builder.buildUnnamed();
 	}
 

@@ -1,28 +1,18 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.google.common.collect.Lists;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.PyChangeBaseClassQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.PyConvertToNewStyleQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
@@ -35,66 +25,60 @@ import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * User: catherine
+ * <p>
  * Inspection to detect occurrences of new-style class features in old-style classes
- *
- * @author catherine
  */
 @ExtensionImpl
-public class PyOldStyleClassesInspection extends PyInspection {
+public final class PyOldStyleClassesInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameOldstyleClass();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonPython2();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyClass(PyClass node) {
             List<PyClassLikeType> expressions = node.getSuperClassTypes(myTypeEvalContext);
-            List<LocalQuickFix> quickFixes = Lists.<LocalQuickFix>newArrayList(new PyConvertToNewStyleQuickFix());
+            List<LocalQuickFix> quickFixes = new ArrayList<>();
+            quickFixes.add(new PyConvertToNewStyleQuickFix());
             if (!expressions.isEmpty()) {
                 quickFixes.add(new PyChangeBaseClassQuickFix());
             }
             if (!node.isNewStyleClass(myTypeEvalContext)) {
                 for (PyTargetExpression attr : node.getClassAttributes()) {
                     if (PyNames.SLOTS.equals(attr.getName())) {
-                        registerProblem(
-                            attr,
-                            PyLocalize.inspOldstyleClassSlots().get(),
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            null,
-                            quickFixes.toArray(new LocalQuickFix[quickFixes.size()])
-                        );
+                        registerProblem(attr, PyLocalize.inspOldstyleClassSlots().get(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null,
+                                        quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
                     }
                 }
                 for (PyFunction attr : node.getMethods()) {
                     if (PyNames.GETATTRIBUTE.equals(attr.getName())) {
                         ASTNode nameNode = attr.getNameNode();
                         assert nameNode != null;
-                        registerProblem(
-                            nameNode.getPsi(),
-                            PyLocalize.inspOldstyleClassGetattribute().get(),
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            null,
-                            quickFixes.toArray(new
-                                LocalQuickFix[quickFixes.size()])
-                        );
+                        registerProblem(nameNode.getPsi(), PyLocalize.inspOldstyleClassGetattribute().get(),
+                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null, quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
                     }
                 }
             }
@@ -117,7 +101,8 @@ public class PyOldStyleClassesInspection extends PyInspection {
                         return;
                     }
                 }
-                List<LocalQuickFix> quickFixes = Lists.<LocalQuickFix>newArrayList(new PyConvertToNewStyleQuickFix());
+                List<LocalQuickFix> quickFixes = new ArrayList<>();
+                quickFixes.add(new PyConvertToNewStyleQuickFix());
                 if (!types.isEmpty()) {
                     quickFixes.add(new PyChangeBaseClassQuickFix());
                 }
@@ -125,14 +110,8 @@ public class PyOldStyleClassesInspection extends PyInspection {
                 if (PyUtil.isSuperCall(node)) {
                     PyExpression callee = node.getCallee();
                     if (callee != null) {
-                        registerProblem(
-                            callee,
-                            PyLocalize.inspOldstyleClassSuper().get(),
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            null,
-                            quickFixes.toArray(quickFixes.toArray(new
-                                LocalQuickFix[quickFixes.size()]))
-                        );
+                        registerProblem(callee, PyLocalize.inspOldstyleClassSuper().get(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                        null, quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
                     }
                 }
             }

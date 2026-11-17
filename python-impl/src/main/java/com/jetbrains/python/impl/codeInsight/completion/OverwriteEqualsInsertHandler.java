@@ -1,44 +1,33 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import consulo.language.editor.completion.lookup.*;
-import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.document.Document;
+import consulo.language.editor.completion.lookup.InsertHandler;
 import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.language.editor.completion.lookup.Lookup;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.util.lang.CharArrayUtil;
 
-/**
- * @author yole
- */
-public class OverwriteEqualsInsertHandler implements InsertHandler<LookupElement>
-{
-	public static OverwriteEqualsInsertHandler INSTANCE = new OverwriteEqualsInsertHandler();
 
-	@Override
-	public void handleInsert(InsertionContext context, LookupElement item)
-	{
-		if(context.getCompletionChar() != Lookup.REPLACE_SELECT_CHAR)
-		{
-			return;
-		}
-		Document doc = context.getDocument();
-		int tailOffset = context.getTailOffset();
-		if(tailOffset < doc.getCharsSequence().length() && doc.getCharsSequence().charAt(tailOffset) == '=')
-		{
-			doc.deleteString(tailOffset, tailOffset + 1);
-		}
-	}
+public class OverwriteEqualsInsertHandler implements InsertHandler<LookupElement> {
+    public static final OverwriteEqualsInsertHandler INSTANCE = new OverwriteEqualsInsertHandler();
+
+    private OverwriteEqualsInsertHandler() {
+    }
+
+    @Override
+    public void handleInsert(InsertionContext context, LookupElement item) {
+        if (context.getCompletionChar() != Lookup.REPLACE_SELECT_CHAR) {
+            return;
+        }
+        String lookupString = item.getLookupString();
+        Document doc = context.getDocument();
+        int tailOffset = context.getTailOffset();
+        if (lookupString.endsWith("=") && CharArrayUtil.regionMatches(doc.getCharsSequence(), tailOffset, "=")) {
+            doc.deleteString(tailOffset, tailOffset + 1);
+        }
+        else if (lookupString.endsWith(" = ") && CharArrayUtil.regionMatches(doc.getCharsSequence(), tailOffset, " = ")) {
+            doc.deleteString(tailOffset, tailOffset + 3);
+        }
+    }
 }

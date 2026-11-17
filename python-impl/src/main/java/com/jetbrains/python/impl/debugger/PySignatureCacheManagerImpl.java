@@ -1,38 +1,23 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.debugger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
+import com.jetbrains.python.ast.PyAstFunction;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ServiceImpl;
+import consulo.application.ReadAction;
 import consulo.application.progress.ProgressManager;
-import consulo.content.ContentIterator;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.logging.Logger;
 import consulo.module.content.ProjectFileIndex;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
-import consulo.ui.ex.awt.Messages;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.Ref;
@@ -41,22 +26,19 @@ import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
 import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author traff
- */
 @ServiceImpl
 @Singleton
-public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
-  protected static final Logger LOG = Logger.getInstance(PySignatureCacheManagerImpl.class);
+public final class PySignatureCacheManagerImpl extends PySignatureCacheManager {
+  private static final Logger LOG = Logger.getInstance(PySignatureCacheManagerImpl.class.getName());
 
-  private final static boolean SHOULD_OVERWRITE_TYPES = false;
+  private static final boolean SHOULD_OVERWRITE_TYPES = false;
 
   public static final FileAttribute CALL_SIGNATURES_ATTRIBUTE = new FileAttribute("call.signatures.attribute", 1, true);
 
@@ -66,9 +48,9 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     .maximumSize(1000)
     .expireAfterAccess(10, TimeUnit.MINUTES)
     .build(
-      new CacheLoader<VirtualFile, String>() {
+      new CacheLoader<>() {
         @Override
-        public String load(VirtualFile key) throws Exception {
+        public String load(VirtualFile key) {
           return readAttributeFromFile(key);
         }
       });
@@ -80,10 +62,10 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
   @Override
   public void recordSignature(PySignature signature) {
-    GlobalSearchScope scope = (GlobalSearchScope) ProjectScopes.getProjectScope(myProject);
+    GlobalSearchScope scope = (GlobalSearchScope)ProjectScopes.getProjectScope(myProject);
 
     VirtualFile file = getFile(signature);
-    if (file != null && scope.contains(file)) {
+    if (file != null && ReadAction.compute(() -> scope.contains(file))) {
       recordSignature(file, signature);
     }
   }
@@ -105,14 +87,8 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
       String[] parts = sign.split("\t");
       if (parts.length > 0 && parts[0].equals(signature.getFunctionName())) {
         found = true;
-        if (SHOULD_OVERWRITE_TYPES) {
-          lines[i] = signatureToString(signature);
-        }
-        else {
-          //noinspection ConstantConditions
-          lines[i] = signatureToString(stringToSignature(file.
-            getCanonicalPath(), lines[i]).addAllArgs(signature));
-        }
+
+        lines[i] = changeSignatureString(file.getCanonicalPath(), signature, lines[i]);
       }
       i++;
     }
@@ -129,6 +105,17 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     writeAttribute(file, attrString);
   }
 
+  public static String changeSignatureString(String filePath, PySignature signature, String oldSignatureString) {
+    if (SHOULD_OVERWRITE_TYPES) {
+      return signatureToString(signature);
+    }
+    else {
+      //noinspection ConstantConditions
+      return signatureToString(
+        stringToSignature(filePath, oldSignatureString).addAllArgs(signature).addReturnType(signature.getReturnTypeQualifiedName()));
+    }
+  }
+
   private void writeAttribute(VirtualFile file, String attrString) {
     String cachedValue = mySignatureCache.asMap().get(file);
     if (!attrString.equals(cachedValue)) {
@@ -139,39 +126,27 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
   private static void writeAttributeToAFile(VirtualFile file, String attrString) {
     try {
-      CALL_SIGNATURES_ATTRIBUTE.writeAttributeBytes(file, attrString.getBytes());
+      CALL_SIGNATURES_ATTRIBUTE.writeAttributeBytes(file, attrString.getBytes(StandardCharsets.UTF_8));
     }
     catch (IOException e) {
       LOG.warn("Can't write attribute " + file.getCanonicalPath() + " " + attrString);
     }
   }
 
-  private static String signatureToString(PySignature signature) {
-    return signature.getFunctionName() + "\t" + StringUtil.join(arguments(signature), "\t");
-  }
-
-  private static List<String> arguments(PySignature signature) {
-    List<String> res = Lists.newArrayList();
-    for (PySignature.NamedParameter param : signature.getArgs()) {
-      res.add(param.getName() + ":" + param.getTypeQualifiedName());
-    }
-    return res;
-  }
-
-  @Nullable
-  public String findParameterType(PyFunction function, String name) {
-    PySignature signature = findSignature(function);
+  @Override
+  public @Nullable String findParameterType(PyAstFunction function, String name) {
+    final PySignature signature = findSignature(function);
     if (signature != null) {
       return signature.getArgTypeQualifiedName(name);
     }
     return null;
   }
 
-  @Nullable
-  public PySignature findSignature(PyFunction function) {
-    VirtualFile file = getFile(function);
+  @Override
+  public @Nullable PySignature findSignature(PyAstFunction function) {
+    VirtualFile file = getFile((PyFunction)function);
     if (file != null) {
-      return readSignatureAttributeFromFile(file, getFunctionName(function));
+      return readSignatureAttributeFromFile(file, getFunctionName((PyFunction)function));
     }
     else {
       return null;
@@ -193,8 +168,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return name;
   }
 
-  @Nullable
-  private PySignature readSignatureAttributeFromFile(VirtualFile file, String name) {
+  private @Nullable PySignature readSignatureAttributeFromFile(VirtualFile file, String name) {
     String content = readAttribute(file);
 
     if (content != null) {
@@ -210,8 +184,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return null;
   }
 
-  @Nullable
-  private String readAttribute(VirtualFile file) {
+  private @Nullable String readAttribute(VirtualFile file) {
     try {
       String attrContent = mySignatureCache.get(file);
       if (!StringUtil.isEmpty(attrContent)) {
@@ -235,7 +208,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
     String content;
     if (data != null && data.length > 0) {
-      content = new String(data);
+      content = new String(data, StandardCharsets.UTF_8);
     }
     else {
       content = null;
@@ -244,18 +217,27 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
 
-  @Nullable
-  private static PySignature stringToSignature(String path, String string) {
+  private static @Nullable PySignature stringToSignature(String path, String string) {
     String[] parts = string.split("\t");
     if (parts.length > 0) {
       PySignature signature = new PySignature(path, parts[0]);
       for (int i = 1; i < parts.length; i++) {
-        String[] var = parts[i].split(":");
+        String part = parts[i];
+        if (part.isEmpty()) {
+          continue;
+        }
+        String[] var = part.split(":");
         if (var.length == 2) {
-          signature = signature.addArgument(var[0], var[1]);
+          if (RETURN_TYPE.equals(var[0])) {
+            signature = signature.addReturnType(var[1]);
+          }
+          else {
+            signature = signature.addArgument(var[0], var[1]);
+          }
         }
         else {
-          throw new IllegalStateException("Should be <name>:<type> format. " + parts[i] + " instead.");
+          throw new IllegalStateException(
+            "Should be <name>:<type> format for arg or " + RETURN_TYPE + ":<type> for return type; '" + part + "' instead.");
         }
       }
       return signature;
@@ -263,13 +245,11 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return null;
   }
 
-  @Nullable
-  private static VirtualFile getFile(PySignature signature) {
-    return LocalFileSystem.getInstance().findFileByPath(signature.getFile());
+  private static @Nullable VirtualFile getFile(PySignature signature) {
+    return LocalFileSystem.getInstance().refreshAndFindFileByPath(signature.getFile());
   }
 
-  @Nullable
-  private static VirtualFile getFile(PyFunction function) {
+  private static @Nullable VirtualFile getFile(PyFunction function) {
     PsiFile file = function.getContainingFile();
 
     return file != null ? file.getOriginalFile().getVirtualFile() : null;
@@ -277,36 +257,19 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
 
   @Override
-  public void clearCache() {
+  public boolean clearCache() {
     final Ref<Boolean> deleted = Ref.create(false);
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-
-      @Override
-      public void run() {
-        ProjectFileIndex.SERVICE.getInstance(myProject).iterateContent(new ContentIterator() {
-          @Override
-          public boolean processFile(VirtualFile fileOrDir) {
-            if (readAttribute(fileOrDir) != null) {
-              writeAttribute(fileOrDir, "");
-              deleted.set(true);
-            }
-            if (ProgressManager.getInstance().getProgressIndicator().isCanceled()) {
-              return false;
-            }
-            return true;
-          }
-        });
-      }
-    }, "Cleaning the cache of dynamically collected types", true, myProject);
-
-
-    String message;
-    if (deleted.get()) {
-      message = "Collected signatures were deleted";
-    }
-    else {
-      message = "Nothing to delete";
-    }
-    Messages.showInfoMessage(myProject, message, "Delete Cache");
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      (Runnable)() -> ProjectFileIndex.getInstance(myProject).iterateContent(fileOrDir -> {
+        if (readAttribute(fileOrDir) != null) {
+          writeAttribute(fileOrDir, "");
+          deleted.set(true);
+        }
+        if (ProgressManager.getInstance().getProgressIndicator().isCanceled()) {
+          return false;
+        }
+        return true;
+      }), PyLocalize.debuggerCleaningSignatureCache(), true, myProject);
+    return deleted.get();
   }
 }

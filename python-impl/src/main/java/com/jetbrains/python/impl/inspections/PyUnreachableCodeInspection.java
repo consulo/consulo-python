@@ -1,23 +1,13 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
+import com.jetbrains.python.impl.codeInsight.controlflow.Reachability;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.ControlFlowUtil;
@@ -28,13 +18,12 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.jetbrains.python.impl.codeInsight.controlflow.PyDataFlowKt.getReachabilityForInspection;
 
 /**
- * Detects unreachable code using control flow graph
+ * Detects unreachable code using the control flow graph
  */
 @ExtensionImpl
 public class PyUnreachableCodeInspection extends PyInspection {
@@ -44,41 +33,46 @@ public class PyUnreachableCodeInspection extends PyInspection {
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonControlFlowIssues();
     }
 
-    public static class Visitor extends PyInspectionVisitor {
-        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        TypeEvalContext context = PyInspectionVisitor.getContext(session);
+        if (context.getUsesExternalTypeEngine()) {
+            return PsiElementVisitor.EMPTY_VISITOR;
         }
-
-        @Override
-        public void visitElement(PsiElement element) {
-            if (element instanceof ScopeOwner) {
-                ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
-                Instruction[] instructions = flow.getInstructions();
-                List<PsiElement> unreachable = new ArrayList<PsiElement>();
-                if (instructions.length > 0) {
-                    ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, instruction -> {
-                        if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
-                            unreachable.add(instruction.getElement());
-                        }
-                        return ControlFlowUtil.Operation.NEXT;
-                    });
+        return new PyInspectionVisitor(holder, context) {
+            @Override
+            public void visitPyStatementList(PyStatementList node) {
+                if (getReachabilityForInspection(node.getParent(), myTypeEvalContext) == Reachability.UNREACHABLE) {
+                    return;
                 }
-                for (PsiElement e : unreachable) {
-                    registerProblem(e, PyLocalize.inspUnreachableCode().get());
+                if (getReachabilityForInspection(node, myTypeEvalContext) == Reachability.UNREACHABLE) {
+                    registerProblem(node, PyLocalize.inspUnreachableCode().get());
                 }
             }
-        }
+
+            @Override
+            public void visitPyStatement(PyStatement node) {
+                if (getReachabilityForInspection(node.getParent(), myTypeEvalContext) == Reachability.UNREACHABLE) {
+                    return;
+                }
+                if (getReachabilityForInspection(node, myTypeEvalContext) == Reachability.UNREACHABLE) {
+                    registerProblem(node, PyLocalize.inspUnreachableCode().get());
+                }
+            }
+        };
     }
 
+    /**
+     * Consulo: not present in JB anymore, still used by the Consulo copy of PyUnresolvedReferencesInspection
+     * until it is synced with JB {@code PyUnresolvedReferencesVisitor}.
+     */
     public static boolean hasAnyInterruptedControlFlowPaths(PsiElement element) {
         ScopeOwner owner = ScopeUtil.getScopeOwner(element);
         if (owner != null) {
@@ -86,7 +80,7 @@ public class PyUnreachableCodeInspection extends PyInspection {
             Instruction[] instructions = flow.getInstructions();
             int start = ControlFlowUtil.findInstructionNumberByElement(instructions, element);
             if (start >= 0) {
-                Ref<Boolean> resultRef = Ref.create(false);
+                SimpleReference<Boolean> resultRef = SimpleReference.create(false);
                 ControlFlowUtil.iteratePrev(start, instructions, instruction -> {
                     if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
                         resultRef.set(true);

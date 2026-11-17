@@ -116,6 +116,12 @@ public final class PyCompatibilityInspection extends PyInspection {
         return PyLocalize.inspNameCompatibility();
     }
 
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+
     private static List<LanguageLevel> updateVersionsToProcess(PyCompatibilityInspectionState state) {
         List<LanguageLevel> result = new ArrayList<>();
 

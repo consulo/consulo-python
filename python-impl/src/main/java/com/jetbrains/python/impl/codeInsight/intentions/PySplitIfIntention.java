@@ -1,22 +1,14 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyIfPart;
+import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
@@ -26,22 +18,24 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 
-/**
- * @author Alexey.Ivanov
- * @since 2010-03-10
- */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PySplitIfIntention", categories = "Python", fileExtensions = "py")
-public class PySplitIfIntention extends PyBaseIntentionAction {
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+public final class PySplitIfIntention extends PyBaseIntentionAction {
+    public PySplitIfIntention() {
+        setText(PyLocalize.intnNameSplitIf());
+    }
+
+    @Override
+    public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
+        if (!(psiFile instanceof PyFile)) {
             return false;
         }
 
-        PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement elementAtOffset = psiFile.findElementAt(editor.getCaretModel().getOffset());
         if (elementAtOffset == null || elementAtOffset.getNode() == null) {
             return false;
         }
@@ -65,17 +59,19 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
         while (element.getParent() instanceof PyBinaryExpression) {
             element = element.getParent();
         }
-        if (((PyBinaryExpression) element).getOperator() != PyTokenTypes.AND_KEYWORD || ((PyBinaryExpression) element).getRightExpression() == null) {
+        if (((PyBinaryExpression)element).getOperator() != PyTokenTypes.AND_KEYWORD
+                || ((PyBinaryExpression)element).getRightExpression() == null) {
             return false;
         }
         PsiElement parent = element.getParent();
         if (!(parent instanceof PyIfPart)) {
             return false;
         }
-        setText(PyLocalize.intnSplitIfText());
+        setText(PyLocalize.intnSplitIf());
         return true;
     }
 
+    @Override
     public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
         // PY-745
@@ -91,18 +87,17 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
 
         PyBinaryExpression element = PsiTreeUtil.getParentOfType(elementAtOffset, PyBinaryExpression.class, false);
         while (element.getParent() instanceof PyBinaryExpression) {
-            element = (PyBinaryExpression) element.getParent();
+            element = (PyBinaryExpression)element.getParent();
         }
         PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
-        PyIfStatement subIf = (PyIfStatement) ifStatement.copy();
+        PyIfStatement subIf = (PyIfStatement)ifStatement.copy();
 
         subIf.getIfPart().getCondition().replace(element.getRightExpression());
         ifStatement.getIfPart().getCondition().replace(element.getLeftExpression());
-        PyStatementList statementList = elementGenerator.createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if a:\n    a = 1")
-            .getIfPart()
-            .getStatementList();
+        PyStatementList statementList =
+                elementGenerator.createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if a:\n    a = 1").getIfPart().getStatementList();
         statementList.getStatements()[0].replace(subIf);
         PyIfStatement newIf = elementGenerator.createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if a:\n    a = 1");
         newIf.getIfPart().getCondition().replace(ifStatement.getIfPart().getCondition());
@@ -116,3 +111,4 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
         ifStatement.replace(newIf);
     }
 }
+

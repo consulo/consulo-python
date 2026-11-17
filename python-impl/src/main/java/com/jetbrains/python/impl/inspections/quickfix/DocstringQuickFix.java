@@ -1,29 +1,18 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import consulo.codeEditor.Editor;
-import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.ast.PyAstStringLiteralExpression;
-import com.jetbrains.python.impl.codeInsight.intentions.PyGenerateDocstringIntention;
 import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.codeEditor.Editor;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
 import consulo.language.psi.SmartPointerManager;
 import consulo.language.psi.SmartPsiElementPointer;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -34,11 +23,11 @@ import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author catherine
+ * User : catherine
  */
 public class DocstringQuickFix implements LocalQuickFix {
-    private final SmartPsiElementPointer<PyNamedParameter> myMissingParam;
-    private final String myUnexpectedParamName;
+    private final @Nullable SmartPsiElementPointer<PyNamedParameter> myMissingParam;
+    private final @Nullable String myUnexpectedParamName;
 
     public DocstringQuickFix(@Nullable PyNamedParameter missing, @Nullable String unexpectedParamName) {
         if (missing != null) {
@@ -57,10 +46,10 @@ public class DocstringQuickFix implements LocalQuickFix {
             if (param == null) {
                 throw new IncorrectOperationException("Parameter was invalidates before quickfix is called");
             }
-            return PyLocalize.qfixDocstringAdd$0(param.getName());
+            return PyLocalize.qfixDocstringAddParameter(param.getName());
         }
         else if (myUnexpectedParamName != null) {
-            return PyLocalize.qfixDocstringRemove$0(myUnexpectedParamName);
+            return PyLocalize.qfixDocstringRemoveParameter(myUnexpectedParamName);
         }
         else {
             return PyLocalize.qfixDocstringInsertStub();
@@ -70,7 +59,8 @@ public class DocstringQuickFix implements LocalQuickFix {
     @Override
     @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyDocStringOwner.class);
+        PsiElement element = descriptor.getPsiElement();
+        PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
         if (docStringOwner == null) {
             return;
         }
@@ -95,22 +85,22 @@ public class DocstringQuickFix implements LocalQuickFix {
     }
 
     private static void addEmptyDocstring(PyDocStringOwner docStringOwner) {
-        if (docStringOwner instanceof PyFunction
-            || docStringOwner instanceof PyClass pyClass && pyClass.findInitOrNew(false, null) != null) {
-            PyGenerateDocstringIntention.generateDocstring(docStringOwner, PyQuickFixUtil.getEditor(docStringOwner));
+        if (docStringOwner instanceof PyFunction ||
+                docStringOwner instanceof PyClass && ((PyClass)docStringOwner).findInitOrNew(false, null) != null) {
+            doGenerateDocstring(docStringOwner, PyQuickFixUtil.getEditor(docStringOwner));
         }
     }
 
-  public static void doGenerateDocstring(PyDocStringOwner docStringOwner, @Nullable Editor editor) {
-    final PyDocstringGenerator docstringGenerator = PyDocstringGenerator
-      .forDocStringOwner(docStringOwner)
-      .withInferredParameters(false)
-      .addFirstEmptyLine();
-    final PyAstStringLiteralExpression updated = docstringGenerator.buildAndInsert().getDocStringExpression();
-    if (updated != null && editor != null) {
-      final int offset = updated.getTextOffset();
-      editor.getCaretModel().moveToOffset(offset);
-      editor.getCaretModel().moveCaretRelatively(0, 1, false, false, false);
+    public static void doGenerateDocstring(PyDocStringOwner docStringOwner, @Nullable Editor editor) {
+        PyDocstringGenerator docstringGenerator = PyDocstringGenerator
+            .forDocStringOwner(docStringOwner)
+            .withInferredParameters(false)
+            .addFirstEmptyLine();
+        PyAstStringLiteralExpression updated = docstringGenerator.buildAndInsert().getDocStringExpression();
+        if (updated != null && editor != null) {
+            int offset = updated.getTextOffset();
+            editor.getCaretModel().moveToOffset(offset);
+            editor.getCaretModel().moveCaretRelatively(0, 1, false, false, false);
+        }
     }
-  }
 }

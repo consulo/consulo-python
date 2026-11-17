@@ -20,8 +20,10 @@ import consulo.configurable.*;
 import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import jakarta.inject.Inject;
 import org.jspecify.annotations.Nullable;
@@ -67,7 +69,12 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
   @Override
   @RequiredUIAccess
   public Component createUIComponent(Disposable parentDisposable) {
-    myClearCacheButton.addActionListener(event -> PySignatureCacheManager.getInstance(myProject).clearCache());
+    myClearCacheButton.addActionListener(event -> {
+      boolean cleared = PySignatureCacheManager.getInstance(myProject).clearCache();
+      LocalizeValue msg = cleared ? PyLocalize.pythonDebuggerCollectionSignaturesDeleted()
+                                  : PyLocalize.pythonDebuggerNothingToDelete();
+      Messages.showInfoMessage(myProject, msg.get(), PyLocalize.debuggerDeleteSignatureCache().get());
+    });
     return TargetAWT.wrap(myMainPanel);
   }
 

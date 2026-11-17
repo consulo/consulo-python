@@ -1,23 +1,15 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.MoveFromFutureImportQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -29,29 +21,29 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author Alexey.Ivanov
- */
 @ExtensionImpl
-public class PyFromFutureImportInspection extends PyInspection {
+public final class PyFromFutureImportInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameFromFutureImport();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -60,11 +52,11 @@ public class PyFromFutureImportInspection extends PyInspection {
             if (importSource != null && PyNames.FUTURE_MODULE.equals(importSource.getName())) {
                 PsiFile file = importSource.getContainingFile();
                 if (file instanceof PyFile) {
-                    List<PyStatement> statementList = ((PyFile) file).getStatements();
+                    List<PyStatement> statementList = ((PyFile)file).getStatements();
                     boolean skippedDocString = false;
                     for (PyStatement statement : statementList) {
                         if (statement instanceof PyExpressionStatement &&
-                            ((PyExpressionStatement) statement).getExpression() instanceof PyStringLiteralExpression &&
+                            ((PyExpressionStatement)statement).getExpression() instanceof PyStringLiteralExpression &&
                             !skippedDocString) {
                             skippedDocString = true;
                             continue;
@@ -73,14 +65,13 @@ public class PyFromFutureImportInspection extends PyInspection {
                             if (statement == node) {
                                 return;
                             }
-                            PyReferenceExpression source = ((PyFromImportStatement) statement).getImportSource();
+                            PyReferenceExpression source = ((PyFromImportStatement)statement).getImportSource();
                             if (source != null && PyNames.FUTURE_MODULE.equals(source.getName())) {
                                 continue;
                             }
                         }
-                        registerProblem(node, "from __future__ imports must occur at the beginning of the file",
-                            new MoveFromFutureImportQuickFix()
-                        );
+                        registerProblem(node, PyLocalize.inspFromFutureImportFromFutureImportsMustOccurAtBeginningFile().get(),
+                                        new MoveFromFutureImportQuickFix());
                         return;
                     }
                 }

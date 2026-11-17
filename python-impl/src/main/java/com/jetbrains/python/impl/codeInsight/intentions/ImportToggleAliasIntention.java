@@ -1,31 +1,24 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.impl.PythonUiService;
+
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyImportStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.Application;
-import consulo.application.ApplicationManager;
+import consulo.application.WriteAction;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
@@ -33,7 +26,6 @@ import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiLanguageInjectionHost;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.resolve.PsiElementProcessor;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -41,12 +33,9 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.ui.NotificationType;
-import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.InputValidator;
-import consulo.ui.ex.awt.Messages;
-import consulo.ui.ex.awt.UIUtil;
 import consulo.util.lang.Pair;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,29 +43,23 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.python.impl.codeInsight.intentions.DeclarationConflictChecker.findDefinitions;
-import static com.jetbrains.python.impl.codeInsight.intentions.DeclarationConflictChecker.showConflicts;
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
 /**
  * Adds an alias to "import foo" or "from foo import bar" import elements, or removes it if it's already present.
- *
- * @author dcheryasov
- * @since 2009-10-09
  */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.ImportToggleAliasIntention", categories = "Python", fileExtensions = "py")
-public class ImportToggleAliasIntention extends PyBaseIntentionAction {
+public final class ImportToggleAliasIntention extends PyBaseIntentionAction {
     private static class IntentionState {
         private PyImportElement myImportElement;
         private PyFromImportStatement myFromImportStatement;
         private PyImportStatement myImportStatement;
         private String myAlias;
 
-        @RequiredReadAction
         private static IntentionState fromContext(Editor editor, PsiFile file) {
             IntentionState state = new IntentionState();
-            state.myImportElement =
-                PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyImportElement.class);
+            state.myImportElement = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyImportElement.class);
             PyPsiUtils.assertValid(state.myImportElement);
             if (state.myImportElement != null) {
                 PyTargetExpression target = state.myImportElement.getAsNameElement();
@@ -93,7 +76,6 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
             return state;
         }
 
-        @RequiredReadAction
         public boolean isAvailable() {
             if (myFromImportStatement != null) {
                 PyPsiUtils.assertValid(myFromImportStatement);
@@ -108,105 +90,108 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                 }
             }
             PyReferenceExpression referenceExpression = myImportElement.getImportReferenceExpression();
-            return referenceExpression != null && referenceExpression.getReference().resolve() != null;
+            if (referenceExpression == null || referenceExpression.getReference().resolve() == null) {
+                return false;
+            }
+            return true;
         }
 
-        @RequiredReadAction
         public LocalizeValue getText() {
-            LocalizeValue addName = LocalizeValue.localizeTODO("Add alias");
+            LocalizeValue add_name = PyLocalize.intnAddImportAlias();
             if (myImportElement != null) {
-                PyReferenceExpression refEx = myImportElement.getImportReferenceExpression();
-                if (refEx != null) {
-                    addName = PyLocalize.intnAddAliasForImport$0(refEx.getText());
+                PyReferenceExpression refex = myImportElement.getImportReferenceExpression();
+                if (refex != null) {
+                    add_name = PyLocalize.intnAddImportAliasToName(refex.getText());
                 }
             }
-            return myAlias == null ? addName : PyLocalize.intnRemoveAliasForImport$0(myAlias);
+            return myAlias == null ? add_name : PyLocalize.intnRemoveImportAlias(myAlias);
         }
     }
 
+    public ImportToggleAliasIntention() {
+        setText(PyLocalize.intnNameToggleImportAlias());
+    }
+
     @Override
-    @RequiredReadAction
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
+        if (!(psiFile instanceof PyFile)) {
             return false;
         }
 
-        IntentionState state = IntentionState.fromContext(editor, file);
+        IntentionState state = IntentionState.fromContext(editor, psiFile);
         setText(state.getText());
         return state.isAvailable();
     }
 
     @Override
-    @RequiredWriteAction
-    public void doInvoke(final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public boolean startInWriteAction() {
+        return false;
+    }
+
+    @Override
+    public @Nullable PsiElement getElementToMakeWritable(PsiFile currentFile) {
+        return currentFile;
+    }
+
+    @Override
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         // sanity check: isAvailable must have set it.
         IntentionState state = IntentionState.fromContext(editor, file);
         //
-        String targetName; // we set in in the source
-        final String removeName; // we replace it in the source
+        String target_name; // we set in in the source
+        String remove_name; // we replace it in the source
         PyReferenceExpression reference = sure(state.myImportElement.getImportReferenceExpression());
         // search for references to us with the right name
         try {
-            String importedName = PyPsiUtils.toPath(reference);
+            String imported_name = PyPsiUtils.toPath(reference);
             if (state.myAlias != null) {
                 // have to remove alias, rename everything to original
-                targetName = importedName;
-                removeName = state.myAlias;
+                target_name = imported_name;
+                remove_name = state.myAlias;
             }
             else {
                 // ask for and add alias
-                Application application = ApplicationManager.getApplication();
-                if (application != null && !application.isUnitTestMode()) {
-                    String alias = Messages.showInputDialog(
-                        project,
-                        PyLocalize.intnAliasFor$0DialogTitle(importedName).get(),
-                        "Add Alias",
-                        UIUtil.getQuestionIcon(),
-                        "",
-                        new InputValidator() {
-                            @Override
-                            @RequiredUIAccess
-                            public boolean checkInput(String inputString) {
-                                return PyNames.isIdentifier(inputString);
-                            }
-
-                            @Override
-                            @RequiredUIAccess
-                            public boolean canClose(String inputString) {
-                                return PyNames.isIdentifier(inputString);
-                            }
+                String alias = PythonUiService.getInstance().showInputDialog(project,
+                    PyLocalize.intnAddImportAliasDialogMessage(imported_name).get(),
+                    PyLocalize.intnAddImportAliasTitle().get(), "",
+                    new InputValidator() {
+                        @Override
+                        public boolean checkInput(String inputString) {
+                            return PyNames.isIdentifier(inputString);
                         }
-                    );
-                    if (alias == null) {
-                        return;
-                    }
-                    targetName = alias;
+
+                        @Override
+                        public boolean canClose(String inputString) {
+                            return PyNames.isIdentifier(inputString);
+                        }
+                    });
+                if (alias == null) {
+                    return;
                 }
-                else { // test mode
-                    targetName = "alias";
-                }
-                removeName = importedName;
+                target_name = alias;
+                remove_name = imported_name;
             }
-            final PsiElement referee = reference.getReference().resolve();
-            if (referee != null && importedName != null) {
-                final Collection<PsiReference> references = new ArrayList<>();
+            PsiElement referee = reference.getReference().resolve();
+            if (referee != null) {
+                Collection<PsiReference> references = new ArrayList<>();
                 ScopeOwner scope = PsiTreeUtil.getParentOfType(state.myImportElement, ScopeOwner.class);
-                PsiTreeUtil.processElements(scope, new PsiElementProcessor() {
+                PsiTreeUtil.processElements(scope, new PsiElementProcessor<>() {
                     @Override
                     public boolean execute(PsiElement element) {
                         getReferences(element);
-                        if (element instanceof PyStringLiteralExpression) {
-                            PsiLanguageInjectionHost host = (PsiLanguageInjectionHost) element;
+                        if (element instanceof PyStringLiteralExpression host) {
                             List<Pair<PsiElement, TextRange>> files =
-                                InjectedLanguageManager.getInstance(project).getInjectedPsiFiles(host);
+                                    InjectedLanguageManager.getInstance(project).getInjectedPsiFiles(host);
                             if (files != null) {
                                 for (Pair<PsiElement, TextRange> pair : files) {
                                     PsiElement first = pair.getFirst();
-                                    if (first instanceof ScopeOwner) {
-                                        ScopeOwner scopeOwner = (ScopeOwner) first;
-                                        PsiTreeUtil.processElements(scopeOwner, element1 -> {
-                                            getReferences(element1);
-                                            return true;
+                                    if (first instanceof ScopeOwner scopeOwner) {
+                                        PsiTreeUtil.processElements(scopeOwner, new PsiElementProcessor<>() {
+                                            @Override
+                                            public boolean execute(PsiElement element) {
+                                                getReferences(element);
+                                                return true;
+                                            }
                                         });
                                     }
                                 }
@@ -216,11 +201,12 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                     }
 
                     private void getReferences(PsiElement element) {
-                        if (element instanceof PyReferenceExpression ref
-                            && PsiTreeUtil.getParentOfType(element, PyImportElement.class) == null) {
-                            if (removeName.equals(PyPsiUtils.toPath(ref))) {  // filter out other names that might resolve to our target
+                        if (element instanceof PyReferenceExpression ref && PsiTreeUtil.getParentOfType(element,
+                                PyImportElement.class) == null) {
+                            if (remove_name.equals(PyPsiUtils.toPath(ref))) {  // filter out other names that might resolve to our target
                                 PsiElement resolved = ref.getReference().resolve();
-                                if (resolved == referee) {
+                                if (resolved == referee ||
+                                        resolved instanceof PyFunction && PyUtil.turnConstructorIntoClass((PyFunction)resolved) == referee) {
                                     references.add(ref.getReference());
                                 }
                             }
@@ -228,12 +214,8 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                     }
                 });
                 // no references here is OK by us.
-                if (showConflicts(
-                    project,
-                    findDefinitions(targetName, references, Collections.<PsiElement>emptySet()),
-                    targetName,
-                    null
-                )) {
+                if (PythonUiService.getInstance()
+                    .showConflicts(project, findDefinitions(target_name, references, Collections.emptySet()), target_name, null)) {
                     return; // got conflicts
                 }
 
@@ -242,35 +224,39 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                 LanguageLevel languageLevel = LanguageLevel.forElement(state.myImportElement);
                 if (state.myAlias != null) {
                     // remove alias
-                    ASTNode node = sure(state.myImportElement.getNode());
-                    ASTNode parent = sure(node.getTreeParent());
-                    node = sure(node.getFirstChildNode()); // this is the reference
-                    node = sure(node.getTreeNext()); // things past the reference: space, 'as', and alias
-                    parent.removeRange(node, null);
+                    WriteAction.run(() -> {
+                        ASTNode node = sure(state.myImportElement.getNode());
+                        ASTNode parent = sure(node.getTreeParent());
+                        node = sure(node.getFirstChildNode()); // this is the reference
+                        node = sure(node.getTreeNext()); // things past the reference: space, 'as', and alias
+                        parent.removeRange(node, null);
+                    });
                 }
                 else {
                     // add alias
-                    ASTNode myIEltNode = sure(state.myImportElement.getNode());
-                    PyImportElement fountain =
-                        generator.createFromText(languageLevel, PyImportElement.class, "import foo as " + targetName, new int[]{0, 2});
-                    ASTNode graft_node = sure(fountain.getNode()); // at import elt
-                    graft_node = sure(graft_node.getFirstChildNode()); // at ref
-                    graft_node = sure(graft_node.getTreeNext()); // space
-                    myIEltNode.addChild((ASTNode) graft_node.clone());
-                    graft_node = sure(graft_node.getTreeNext()); // 'as'
-                    myIEltNode.addChild((ASTNode) graft_node.clone());
-                    graft_node = sure(graft_node.getTreeNext()); // space
-                    myIEltNode.addChild((ASTNode) graft_node.clone());
-                    graft_node = sure(graft_node.getTreeNext()); // alias
-                    myIEltNode.addChild((ASTNode) graft_node.clone());
+                    WriteAction.run(() -> {
+                        ASTNode my_ielt_node = sure(state.myImportElement.getNode());
+                        PyImportElement fountain =
+                                generator.createFromText(languageLevel, PyImportElement.class, "import foo as " + target_name, new int[]{0, 2});
+                        ASTNode graft_node = sure(fountain.getNode()); // at import elt
+                        graft_node = sure(graft_node.getFirstChildNode()); // at ref
+                        graft_node = sure(graft_node.getTreeNext()); // space
+                        my_ielt_node.addChild((ASTNode)graft_node.clone());
+                        graft_node = sure(graft_node.getTreeNext()); // 'as'
+                        my_ielt_node.addChild((ASTNode)graft_node.clone());
+                        graft_node = sure(graft_node.getTreeNext()); // space
+                        my_ielt_node.addChild((ASTNode)graft_node.clone());
+                        graft_node = sure(graft_node.getTreeNext()); // alias
+                        my_ielt_node.addChild((ASTNode)graft_node.clone());
+                    });
                 }
                 // alter references
                 for (PsiReference ref : references) {
-                    ASTNode refNameNode = sure(sure(ref.getElement()).getNode());
-                    ASTNode parent = sure(refNameNode.getTreeParent());
-                    ASTNode newNameNode = generator.createExpressionFromText(languageLevel, targetName).getNode();
-                    assert newNameNode != null;
-                    parent.replaceChild(refNameNode, newNameNode);
+                    ASTNode ref_name_node = sure(sure(ref.getElement()).getNode());
+                    ASTNode parent = sure(ref_name_node.getTreeParent());
+                    ASTNode new_name_node = generator.createExpressionFromText(languageLevel, target_name).getNode();
+                    assert new_name_node != null;
+                    WriteAction.run(() -> parent.replaceChild(ref_name_node, new_name_node));
                 }
             }
         }
@@ -279,3 +265,4 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
         }
     }
 }
+

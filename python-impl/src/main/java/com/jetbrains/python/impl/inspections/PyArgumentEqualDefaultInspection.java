@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.localize.LocalizeValue;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
@@ -53,6 +54,23 @@ public final class PyArgumentEqualDefaultInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameArgumentEqualDefault();
+    }
+
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonCodeStyleIssues();
+    }
+
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return false;
+    }
+
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
     }
 
 

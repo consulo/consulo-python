@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.codeInsight.intentions.PyTypeHintGenerationUtil;
 import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
 import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.impl.psi.types.PyLiteralType;
@@ -22,6 +23,8 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ref.Ref;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 // TODO consulo: PsiUpdateModCommandAction missing, ported as a LocalQuickFix over a smart pointer to the function
 public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
@@ -72,7 +75,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
             PyExpression annotationExpr = annotation.getValue();
             if (annotationExpr != null) {
                 annotationExpr.replace(elementGenerator.createExpressionFromText(LanguageLevel.PYTHON34, myReturnTypeName));
-                // TODO consulo: PyTypeHintGenerationUtil.addImportsForTypeAnnotations missing (myReturnTypeFqName imports are not added)
+                PyTypeHintGenerationUtil.addImportsForTypeAnnotations(List.of(myReturnTypeFqName), function);
             }
         }
 
@@ -83,7 +86,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
             typeCommentAnnotation.append("-> ").append(myReturnTypeName);
             typeComment.replace(
                 elementGenerator.createFromText(LanguageLevel.PYTHON27, PsiComment.class, typeCommentAnnotation.toString()));
-            // TODO consulo: PyTypeHintGenerationUtil.addImportsForTypeAnnotations missing (myReturnTypeFqName imports are not added)
+            PyTypeHintGenerationUtil.addImportsForTypeAnnotations(List.of(myReturnTypeFqName), function);
         }
     }
 }

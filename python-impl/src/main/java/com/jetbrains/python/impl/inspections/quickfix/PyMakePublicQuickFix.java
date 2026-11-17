@@ -1,27 +1,11 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.psi.PyTargetExpression;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.editor.refactoring.rename.RenameProcessor;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
@@ -29,6 +13,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
 public class PyMakePublicQuickFix implements LocalQuickFix {
+
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixMakePublic();
@@ -36,28 +21,24 @@ public class PyMakePublicQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PsiElement element = descriptor.getPsiElement();
-        if (element instanceof PyReferenceExpression) {
-            PsiReference reference = element.getReference();
-            if (reference == null) {
-                return;
-            }
-            element = reference.resolve();
+        PsiElement element = PyQuickFixUtil.dereference(descriptor.getPsiElement());
+        if (element == null) {
+            return;
         }
         if (element instanceof PyTargetExpression) {
-            String name = ((PyTargetExpression) element).getName();
+            String name = ((PyTargetExpression)element).getName();
             if (name == null) {
                 return;
             }
             VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
             if (virtualFile != null) {
                 String publicName = StringUtil.trimLeading(name, '_');
-                new RenameProcessor(project, element, publicName, false, false).run();
+                PythonUiService.getInstance().runRenameProcessor(project, element, publicName, false, false);
             }
         }
     }
 
-    //@Override
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

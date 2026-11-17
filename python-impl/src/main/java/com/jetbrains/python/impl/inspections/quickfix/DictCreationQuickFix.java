@@ -1,26 +1,22 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.inspections.PyDictCreationInspection;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyDictLiteralExpression;
+import com.jetbrains.python.psi.PyDoubleStarExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyKeyValueExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.psi.PyTupleExpression;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
@@ -28,41 +24,44 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexey.Ivanov
- * @since 2010-02-26
- */
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+
 public class DictCreationQuickFix implements LocalQuickFix {
-    private final PyAssignmentStatement myStatement;
-
-    public DictCreationQuickFix(PyAssignmentStatement statement) {
-        myStatement = statement;
-    }
-
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixDictCreation();
     }
 
     @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         Map<String, String> statementsMap = Maps.newLinkedHashMap();
+        PyAssignmentStatement myStatement = as(element, PyAssignmentStatement.class);
+        if (myStatement == null) {
+            return;
+        }
         PyExpression assignedValue = myStatement.getAssignedValue();
         if (assignedValue instanceof PyDictLiteralExpression) {
-            for (PyKeyValueExpression expression : ((PyDictLiteralExpression) assignedValue).getElements()) {
-                PyExpression value = expression.getValue();
-                if (value != null) {
-                    statementsMap.put(expression.getKey().getText(), value.getText());
+            for (PsiElement expression : assignedValue.getChildren()) {
+                if (expression instanceof PyKeyValueExpression kvExpr) {
+                    PyExpression value = kvExpr.getValue();
+                    if (value != null) {
+                        statementsMap.put(kvExpr.getKey().getText(), value.getText());
+                    }
+                }
+                else if (expression instanceof PyDoubleStarExpression) {
+                    statementsMap.put(expression.getText(), null);
                 }
             }
 
             PyStatement statement = PsiTreeUtil.getNextSiblingOfType(myStatement, PyStatement.class);
-            while (statement instanceof PyAssignmentStatement) {
-                PyAssignmentStatement assignmentStatement = (PyAssignmentStatement) statement;
+            while (statement instanceof PyAssignmentStatement assignmentStatement) {
                 PyExpression target = myStatement.getTargets()[0];
                 String targetName = target.getName();
                 if (targetName != null) {
@@ -73,7 +72,7 @@ public class DictCreationQuickFix implements LocalQuickFix {
                         break;
                     }
                     for (Pair<PyExpression, PyExpression> targetToValue : targetsToValues) {
-                        PySubscriptionExpression subscription = (PySubscriptionExpression) targetToValue.first;
+                        PySubscriptionExpression subscription = (PySubscriptionExpression)targetToValue.first;
                         PyExpression indexExpression = subscription.getIndexExpression();
                         assert indexExpression != null;
                         String indexText;
@@ -98,17 +97,18 @@ public class DictCreationQuickFix implements LocalQuickFix {
                     statement = nextStatement;
                 }
             }
-            List<String> statements = Lists.newArrayList();
+            List<String> statements = new ArrayList<>();
             for (Map.Entry<String, String> entry : statementsMap.entrySet()) {
-                statements.add(entry.getKey() + ": " + entry.getValue());
+                if (entry.getValue() != null) {
+                    statements.add(entry.getKey() + ": " + entry.getValue());
+                }
+                else {
+                    statements.add(entry.getKey());
+                }
             }
-            PyExpression expression = elementGenerator.createExpressionFromText(
-                LanguageLevel.forElement(myStatement),
-                "{" + StringUtil.join(statements, ", ") + "}"
-            );
-            if (expression != null) {
-                assignedValue.replace(expression);
-            }
+            PyExpression expression =
+                elementGenerator.createExpressionFromText(LanguageLevel.forElement(myStatement), "{" + StringUtil.join(statements, ", ") + "}");
+            assignedValue.replace(expression);
         }
     }
 }

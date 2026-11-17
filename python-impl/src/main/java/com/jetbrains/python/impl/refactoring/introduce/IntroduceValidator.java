@@ -20,8 +20,8 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
 import consulo.document.util.TextRange;
 import consulo.language.editor.refactoring.NamesValidator;
@@ -67,6 +67,6 @@ public abstract class IntroduceValidator {
       context = psiElement.getContainingFile();
     }
 
-    return PyRefactoringUtil.collectUsedNames(context).contains(name) || PyBuiltinCache.getInstance(psiElement).getByName(name) != null;
+    return PyUtil.collectUsedNames(context).contains(name) || PyBuiltinCache.getInstance(psiElement).getByName(name) != null;
   }
 }

@@ -40,6 +40,11 @@ public final class PyMethodOverridingInspection extends PyInspection {
         return PyLocalize.inspNameMethodOver();
     }
 
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonInheritance();
+    }
+
 
     @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder,

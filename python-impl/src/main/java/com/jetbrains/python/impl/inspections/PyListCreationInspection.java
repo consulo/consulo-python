@@ -1,54 +1,61 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.ListCreationQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyListLiteralExpression;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.collection.ContainerUtil;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * @author catherine
- */
+  * User :catherine
+  */
 @ExtensionImpl
-public class PyListCreationInspection extends PyInspection {
+public final class PyListCreationInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameListCreation();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonCodeStyleIssues();
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -65,53 +72,53 @@ public class PyListCreationInspection extends PyInspection {
             if (name == null) {
                 return;
             }
-
-            PyStatement expressionStatement = PsiTreeUtil.getNextSiblingOfType(node, PyStatement.class);
-            if (!(expressionStatement instanceof PyExpressionStatement)) {
-                return;
-            }
-
-            ListCreationQuickFix quickFix = null;
-
-            String message = "This list creation could be rewritten as a list literal";
-            while (expressionStatement instanceof PyExpressionStatement) {
-                PyExpression statement = ((PyExpressionStatement) expressionStatement).getExpression();
-                if (!(statement instanceof PyCallExpression)) {
-                    break;
-                }
-
-                PyCallExpression callExpression = (PyCallExpression) statement;
-                PyExpression callee = callExpression.getCallee();
-                if (callee instanceof PyQualifiedExpression) {
-                    PyExpression qualifier = ((PyQualifiedExpression) callee).getQualifier();
-                    String funcName = ((PyQualifiedExpression) callee).getReferencedName();
-                    if (qualifier != null && name.equals(qualifier.getText()) && "append".equals(funcName)) {
-                        PyArgumentList argList = callExpression.getArgumentList();
-                        if (argList != null) {
-                            for (PyExpression argument : argList.getArguments()) {
-                                if (argument.getText().equals(name)) {
-                                    if (quickFix != null) {
-                                        registerProblem(node, message, quickFix);
-                                    }
-                                    return;
-                                }
-                            }
-                            if (quickFix == null) {
-                                quickFix = new ListCreationQuickFix(node);
-                            }
-                            quickFix.addStatement((PyExpressionStatement) expressionStatement);
-                        }
-                    }
-                }
-                if (quickFix == null) {
-                    return;
-                }
-                expressionStatement = PsiTreeUtil.getNextSiblingOfType(expressionStatement, PyStatement.class);
-            }
-
-            if (quickFix != null) {
-                registerProblem(node, message, quickFix);
+            List<PyExpressionStatement> appendCalls = collectSubsequentListAppendCalls(node);
+            if (!appendCalls.isEmpty()) {
+                registerProblem(node, PyLocalize.inspListCreationThisListCreationCouldBeRewrittenAsListLiteral().get(),
+                                new ListCreationQuickFix());
             }
         }
+    }
+
+    public static List<PyExpressionStatement> collectSubsequentListAppendCalls(PyAssignmentStatement assignment) {
+        ArrayList<PyExpressionStatement> result = new ArrayList<>();
+        PyExpression[] targets = assignment.getTargets();
+        assert targets.length == 1;
+        PyExpression target = targets[0];
+        String name = target.getName();
+        assert name != null;
+        PyStatement expressionStatement = PsiTreeUtil.getNextSiblingOfType(assignment, PyStatement.class);
+        while (expressionStatement instanceof PyExpressionStatement) {
+            PyExpression statement = ((PyExpressionStatement)expressionStatement).getExpression();
+            if (!(statement instanceof PyCallExpression callExpression)) {
+                break;
+            }
+
+            PyExpression callee = callExpression.getCallee();
+            if (!(callee instanceof PyQualifiedExpression)) {
+                break;
+            }
+
+            PyExpression qualifier = ((PyQualifiedExpression)callee).getQualifier();
+            if (qualifier == null || !name.equals(qualifier.getText())) {
+                break;
+            }
+
+            String funcName = ((PyQualifiedExpression)callee).getReferencedName();
+            if (!"append".equals(funcName)) {
+                break;
+            }
+
+            PyArgumentList argList = callExpression.getArgumentList();
+            if (argList != null) {
+                // TODO Use proper resolve to the original target here
+                if (ContainerUtil.exists(argList.getArguments(), argument -> argument.getText().equals(name))) {
+                    break;
+                }
+                result.add((PyExpressionStatement)expressionStatement);
+            }
+            expressionStatement = PsiTreeUtil.getNextSiblingOfType(expressionStatement, PyStatement.class);
+        }
+        return result;
     }
 }

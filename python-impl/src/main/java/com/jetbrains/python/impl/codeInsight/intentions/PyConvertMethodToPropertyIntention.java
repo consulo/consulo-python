@@ -1,63 +1,54 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.codeInsight.PyPsiIndexUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyRecursiveElementVisitor;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyReturnStatement;
+import com.jetbrains.python.psi.PyYieldExpression;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.application.WriteAction;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.FileModificationService;
 import consulo.language.editor.intention.IntentionMetaData;
-import consulo.localize.LocalizeValue;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiInvalidElementAccessException;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
-import consulo.language.util.IncorrectOperationException;
+import consulo.util.collection.ContainerUtil;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author ktisha
- */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyConvertMethodToPropertyIntention", categories = "Python", fileExtensions = "py")
-public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
+public final class PyConvertMethodToPropertyIntention extends PyBaseIntentionAction {
+
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertMethodToProperty();
     }
 
     @Override
-    @RequiredReadAction
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
+        if (!(psiFile instanceof PyFile)) {
             return false;
         }
-        if (!LanguageLevel.forElement(file).isAtLeast(LanguageLevel.PYTHON26)) {
-            return false;
-        }
-        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(psiFile, editor.getCaretModel().getOffset());
         PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (function == null) {
             return false;
@@ -69,19 +60,16 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         if (function.getParameterList().getParameters().length > 1) {
             return false;
         }
-
         PyDecoratorList decoratorList = function.getDecoratorList();
         if (decoratorList != null) {
             return false;
         }
-
-        final boolean[] available = {false};
+        boolean[] available = {false};
         function.accept(new PyRecursiveElementVisitor() {
             @Override
             public void visitPyReturnStatement(PyReturnStatement node) {
-                if (node.getExpression() != null) {
+                if (node.getExpression() != null)
                     available[0] = true;
-                }
             }
 
             @Override
@@ -94,8 +82,12 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
     }
 
     @Override
-    @RequiredWriteAction
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public boolean startInWriteAction() {
+        return false;
+    }
+
+    @Override
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
@@ -105,36 +97,57 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         if (containingClass == null) {
             return;
         }
-        List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
+        List<UsageInfo> usages = PyPsiIndexUtil.findUsages(problemFunction, false);
 
-        PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
-        List<String> decoTexts = new ArrayList<>();
-        decoTexts.add("@property");
-        if (problemDecoratorList != null) {
-            PyDecorator[] decorators = problemDecoratorList.getDecorators();
-            for (PyDecorator deco : decorators) {
-                decoTexts.add(deco.getText());
-            }
+        if (!prepareForWrite(file, usages)) {
+
+            return;
+
         }
+        WriteAction.run(() -> {
+            PyUtil.addDecorator(problemFunction, "@" + PyNames.PROPERTY);
+            deleteUsages(usages);
+        });
+    }
 
-        PyElementGenerator generator = PyElementGenerator.getInstance(project);
-        PyDecoratorList decoratorList = generator.createDecoratorList(decoTexts.toArray(new String[decoTexts.size()]));
-
-        if (problemDecoratorList != null) {
-            problemDecoratorList.replace(decoratorList);
+    private static boolean prepareForWrite(PsiFile file, List<UsageInfo> usages) {
+        List<PsiElement> toWrite = ContainerUtil.prepend(ContainerUtil.mapNotNull(usages, UsageInfo::getElement), file);
+        if (!FileModificationService.getInstance().preparePsiElementsForWrite(toWrite)) {
+            return false;
         }
-        else {
-            problemFunction.addBefore(decoratorList, problemFunction.getFirstChild());
-        }
+        return true;
+    }
 
+    private static void deleteUsages(List<UsageInfo> usages) {
         for (UsageInfo usage : usages) {
-            if (usage.getElement() instanceof PyReferenceExpression refExpr
-                && refExpr.getParent() instanceof PyCallExpression call) {
-                PyArgumentList argumentList = call.getArgumentList();
-                if (argumentList != null) {
-                    argumentList.delete();
+            PsiElement usageElement = usage.getElement();
+            if (usageElement instanceof PyReferenceExpression) {
+                PsiElement parent = usageElement.getParent();
+                if (parent instanceof PyCallExpression callExpression) {
+                    convertCallExpToRefExpr(callExpression);
                 }
             }
         }
     }
+
+    private static void convertCallExpToRefExpr(PyCallExpression callExpression) {
+        PyExpression callee = callExpression.getCallee();
+        if (callee == null) {
+            throw new PsiInvalidElementAccessException(callExpression);
+        }
+
+        String newReferenceExpressionText = callee.getText();
+
+        PyExpression newExpression = PyElementGenerator.getInstance(callExpression.getProject())
+            .createExpressionFromText(LanguageLevel.forElement(callExpression), newReferenceExpressionText);
+
+        if (newExpression instanceof PyReferenceExpression referenceExpression) {
+            callExpression.replace(referenceExpression);
+        }
+        else {
+            throw new IllegalStateException(
+                    "Failed to create reference expression from call expression with text: \"" + callExpression.getText() + "\"");
+        }
+    }
 }
+

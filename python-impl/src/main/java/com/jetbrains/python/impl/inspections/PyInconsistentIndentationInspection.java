@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyTokenTypes;
@@ -28,18 +14,21 @@ import consulo.language.editor.inspection.scheme.InspectionManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
 @ExtensionImpl
-public class PyInconsistentIndentationInspection extends PyInspection {
+public final class PyInconsistentIndentationInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
-        return LocalizeValue.localizeTODO("Inconsistent indentation");
+        return PyLocalize.inspNameInconsistentIndentation();
+    }
+
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
     }
 
     @Override
@@ -51,18 +40,18 @@ public class PyInconsistentIndentationInspection extends PyInspection {
     }
 
     private static class IndentValidator {
-        private PsiFile myFile;
-        private InspectionManager myManager;
-        private boolean myOnTheFly;
-        private List<ProblemDescriptor> myProblems;
+        private final PsiFile myFile;
+        private final InspectionManager myManager;
+        private final boolean myOnTheFly;
+        private final List<ProblemDescriptor> myProblems;
         private int myLastTabs = 0;
         private int myLastSpaces = 0;
 
-        public IndentValidator(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
+        IndentValidator(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
             myFile = file;
             myManager = manager;
             myOnTheFly = isOnTheFly;
-            myProblems = new ArrayList<ProblemDescriptor>();
+            myProblems = new ArrayList<>();
         }
 
         public ProblemDescriptor[] invoke() {
@@ -83,7 +72,7 @@ public class PyInconsistentIndentationInspection extends PyInspection {
                 }
                 lexer.advance();
             }
-            return myProblems.toArray(new ProblemDescriptor[myProblems.size()]);
+            return myProblems.toArray(ProblemDescriptor.EMPTY_ARRAY);
         }
 
         private void validateIndent(int tokenStart, String indent) {
@@ -103,7 +92,7 @@ public class PyInconsistentIndentationInspection extends PyInspection {
             }
             int problemStart = tokenStart + lastLF + 1;
             if (spaces > 0 && tabs > 0) {
-                reportProblem("Inconsistent indentation: mix of tabs and spaces", problemStart, length);
+                reportProblem(PyLocalize.inspInconsistentIndentationMixTabsSpaces().get(), problemStart, length);
                 // don't know which one is correct => don't complain about inconsistent indentation on subsequent lines which use
                 // either tabs or spaces
                 myLastSpaces = 0;
@@ -111,10 +100,12 @@ public class PyInconsistentIndentationInspection extends PyInspection {
             }
             else {
                 if (spaces > 0 && myLastTabs > 0) {
-                    reportProblem("Inconsistent indentation: previous line used tabs, this line uses spaces", problemStart, length);
+                    reportProblem(PyLocalize.inspInconsistentIndentationPreviousLineUsedTabsThisLineUsesSpaces().get(),
+                                  problemStart, length);
                 }
                 else if (tabs > 0 && myLastSpaces > 0) {
-                    reportProblem("Inconsistent indentation: previous line used spaces, this line uses tabs", problemStart, length);
+                    reportProblem(PyLocalize.inspInconsistentIndentationPreviousLineUsedSpacesThisLineUsesTabs().get(),
+                                  problemStart, length);
                 }
                 if (spaces > 0 || tabs > 0) {
                     myLastTabs = tabs;
@@ -128,10 +119,9 @@ public class PyInconsistentIndentationInspection extends PyInspection {
             int startOffset = problemStart - elt.getTextRange().getStartOffset();
             int endOffset = startOffset + problemLength;
             myProblems.add(myManager.createProblemDescriptor(elt, new TextRange(startOffset, endOffset),
-                descriptionTemplate,
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myOnTheFly,
-                new ConvertIndentsFix(false), new ConvertIndentsFix(true)
-            ));
+                                                             descriptionTemplate,
+                                                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myOnTheFly,
+                                                             new ConvertIndentsFix(false), new ConvertIndentsFix(true)));
         }
     }
 }

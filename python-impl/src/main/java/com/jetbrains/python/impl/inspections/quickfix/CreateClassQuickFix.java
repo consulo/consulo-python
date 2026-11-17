@@ -1,79 +1,92 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.language.editor.inspection.FileModifier;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.PythonTemplateRunner;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.language.psi.SmartPointerManager;
+import consulo.language.psi.SmartPsiElementPointer;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 
-/**
- * @author yole
- */
 public class CreateClassQuickFix implements LocalQuickFix {
     private final String myClassName;
-    private final PsiElement myAnchor;
+    private final SmartPsiElementPointer<PsiFile> myTargetFile;
 
-    public CreateClassQuickFix(String className, PsiElement anchor) {
+    public CreateClassQuickFix(String className, PsiFile targetFile) {
         myClassName = className;
-        myAnchor = anchor;
+        myTargetFile = SmartPointerManager.getInstance(targetFile.getProject()).createSmartPsiElementPointer(targetFile);
     }
 
     @Override
     public LocalizeValue getName() {
-        if (myAnchor instanceof PyFile) {
-            return LocalizeValue.localizeTODO("Create class '" + myClassName + "' in module " + ((PyFile) myAnchor).getName());
+        PsiFile targetFile = myTargetFile.getElement();
+        if (targetFile != null) {
+            return PyLocalize.qfixCreateClassInModule(myClassName, targetFile.getName());
         }
-        return LocalizeValue.localizeTODO("Create class '" + myClassName + "'");
+        return PyLocalize.qfixCreateClass0(myClassName);
     }
 
     @Override
     @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PsiElement anchor = myAnchor;
-        if (!anchor.isValid()) {
+        PsiElement unresolvedReference = descriptor.getPsiElement();
+        if (unresolvedReference == null) {
             return;
         }
-        if (!(anchor instanceof PyFile)) {
-            while (!(anchor.getParent() instanceof PyFile)) {
-                anchor = anchor.getParent();
-            }
+
+        PsiFile targetFile = myTargetFile.getElement();
+        if (targetFile == null) {
+            return;
         }
-        PyClass pyClass = PyElementGenerator.getInstance(project)
-            .createFromText(LanguageLevel.getDefault(), PyClass.class, "class " + myClassName + "(object):\n    pass");
-        if (anchor instanceof PyFile) {
-            pyClass = (PyClass) anchor.add(pyClass);
+
+        boolean isPy3K = LanguageLevel.forElement(targetFile).isPy3K();
+        String superClass = isPy3K ? "" : "(object)";
+        PyClass pyClass = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyClass.class,
+                "class " + myClassName + superClass + ":\n" +
+                "    pass");
+        InjectedLanguageManager injectionManager = InjectedLanguageManager.getInstance(unresolvedReference.getProject());
+        PsiLanguageInjectionHost injectionHost = injectionManager.getInjectionHost(unresolvedReference);
+        if (unresolvedReference.getContainingFile() == targetFile) {
+            PsiElement insertionAnchor = PyPsiUtils.getParentRightBefore(unresolvedReference, targetFile);
+            assert insertionAnchor != null;
+            pyClass = (PyClass)insertionAnchor.getParent().addBefore(pyClass, insertionAnchor);
+        }
+        else if (injectionHost != null && injectionHost.getContainingFile() == targetFile) {
+            PsiElement insertionAnchor = PyPsiUtils.getParentRightBefore(injectionHost, targetFile);
+            assert insertionAnchor != null;
+            pyClass = (PyClass)insertionAnchor.getParent().addBefore(pyClass, insertionAnchor);
         }
         else {
-            pyClass = (PyClass) anchor.getParent().addBefore(pyClass, anchor);
+            pyClass = (PyClass)targetFile.add(pyClass);
         }
         pyClass = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(pyClass);
         TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(pyClass);
-        builder.replaceElement(pyClass.getSuperClassExpressions()[0], "object");
+        if (!isPy3K) {
+            builder.replaceElement(pyClass.getSuperClassExpressions()[0], "object");
+        }
         builder.replaceElement(pyClass.getStatementList(), PyNames.PASS);
-        builder.run();
+
+        PythonTemplateRunner.runTemplate(pyClass.getContainingFile(), builder);
+    }
+
+    @Override
+    public FileModifier getFileModifierForPreview(PsiFile target) {
+        return new CreateClassQuickFix(myClassName, target);
     }
 }

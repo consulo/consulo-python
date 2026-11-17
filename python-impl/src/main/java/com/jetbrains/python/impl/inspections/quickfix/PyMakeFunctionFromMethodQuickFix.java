@@ -1,26 +1,22 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.codeInsight.PyPsiIndexUtil;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
-import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.application.WriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -32,18 +28,21 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
+import one.util.streamex.StreamEx;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author ktisha
- */
 public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
+    public PyMakeFunctionFromMethodQuickFix() {
+    }
+
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameMakeFunction();
     }
 
+    @Override
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -55,36 +54,37 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
             return;
         }
 
-        List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
-        PyParameter[] parameters = problemFunction.getParameterList().getParameters();
+        List<PyReferenceExpression> usages = StreamEx.of(PyPsiIndexUtil.findUsages(problemFunction, false))
+            .map(UsageInfo::getElement)
+            .select(PyReferenceExpression.class)
+            .toList();
+
+        // TODO consulo: ApplicationManagerEx.runWriteActionWithCancellableProgressInDispatchThread is not exported to plugins,
+        //  JB runs this under the PyLocalize.refactoringProgressTitleUpdatingExistingUsages() cancellable progress
+        WriteAction.run(() -> {
+            PyFunction function = transformDefinition(problemFunction);
+            for (int i = 0; i < usages.size(); i++) {
+                PyReferenceExpression usage = usages.get(i);
+                PsiFile usageFile = usage.getContainingFile();
+                updateUsage(function, usage, usageFile, !usageFile.equals(containingClass.getContainingFile()));
+            }
+        });
+    }
+
+    private static PyFunction transformDefinition(PyFunction method) {
+        PyParameter[] parameters = method.getParameterList().getParameters();
         if (parameters.length > 0) {
             parameters[0].delete();
         }
-
-        PsiElement copy = problemFunction.copy();
-        problemFunction.delete();
-        PsiElement parent = containingClass.getParent();
-        PyClass aClass = PsiTreeUtil.getTopmostParentOfType(containingClass, PyClass.class);
-        if (aClass == null) {
-            aClass = containingClass;
-        }
-        copy = parent.addBefore(copy, aClass);
-
-        for (UsageInfo usage : usages) {
-            PsiElement usageElement = usage.getElement();
-            if (usageElement instanceof PyReferenceExpression) {
-                PsiFile usageFile = usageElement.getContainingFile();
-                updateUsage(copy, (PyReferenceExpression) usageElement, usageFile, !usageFile.equals(parent));
-            }
-        }
+        PyClass topmostClass = PsiTreeUtil.getTopmostParentOfType(method, PyClass.class);
+        assert topmostClass != null;
+        PsiElement copy = method.copy();
+        method.delete();
+        return (PyFunction)topmostClass.getParent().addBefore(copy, topmostClass);
     }
 
-    private static void updateUsage(
-        PsiElement finalElement,
-        PyReferenceExpression element,
-        PsiFile usageFile,
-        boolean addImport
-    ) {
+    private static void updateUsage(PsiElement finalElement, PyReferenceExpression element,
+            PsiFile usageFile, boolean addImport) {
         PyExpression qualifier = element.getQualifier();
         if (qualifier == null) {
             return;
@@ -94,11 +94,12 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
             return;
         }
         if (qualifier instanceof PyCallExpression) {              // remove qualifier A().m()
-            if (addImport) {
-                AddImportHelper.addImport((PsiNamedElement) finalElement, usageFile, element);
-            }
+            if (addImport)
+                AddImportHelper.addImport((PsiNamedElement)finalElement, usageFile, element);
 
-            PyUtil.removeQualifier(element);
+            if (element.isValid()) {
+                PyUtil.removeQualifier(element);
+            }
             removeFormerImport(usageFile, addImport);
         }
         else {
@@ -127,11 +128,11 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
     private static void updateAssignment(PyReferenceExpression element, PsiElement resolved) {
         PsiElement parent = resolved.getParent();
         if (parent instanceof PyAssignmentStatement) {
-            PyExpression value = ((PyAssignmentStatement) parent).getAssignedValue();
+            PyExpression value = ((PyAssignmentStatement)parent).getAssignedValue();
             if (value instanceof PyCallExpression) {
-                PyExpression callee = ((PyCallExpression) value).getCallee();
+                PyExpression callee = ((PyCallExpression)value).getCallee();
                 if (callee instanceof PyReferenceExpression) {
-                    PyExpression calleeQualifier = ((PyReferenceExpression) callee).getQualifier();
+                    PyExpression calleeQualifier = ((PyReferenceExpression)callee).getQualifier();
                     if (calleeQualifier != null) {
                         value.replace(calleeQualifier);
                     }
@@ -156,5 +157,15 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
         if (arguments.length > 0) {
             arguments[0].delete();
         }
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+        return false;
+    }
+
+    @Override
+    public @Nullable PsiElement getElementToMakeWritable(PsiFile currentFile) {
+        return currentFile;
     }
 }

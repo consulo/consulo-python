@@ -1,7 +1,12 @@
 <html>
 <body>
-<span style="font-family: verdana,serif;">
-This inspection highlights backslashes in places where line continuation is implicit (inside (), [], {}).
-</span>
+<p>Reports backslashes in places where line continuation is implicit inside <code>()</code>,
+  <code>[]</code>, and <code>{}</code>.</p>
+<p><b>Example:</b></p>
+<pre><code>
+a = ('first', \
+     'second', 'third')
+</code></pre>
+<p>When the quick-fix is applied, the redundant backslash is deleted.</p>
 </body>
 </html>

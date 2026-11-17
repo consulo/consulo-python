@@ -36,6 +36,11 @@ public final class PyInitNewSignatureInspection extends PyInspection {
     }
 
     @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonInheritance();
+    }
+
+    @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder,
                                           boolean isOnTheFly,
                                           LocalInspectionToolSession session,
@@ -78,8 +83,8 @@ public final class PyInitNewSignatureInspection extends PyInspection {
             List<PyCallableParameter> currentParameters = current.getParameters(myTypeEvalContext);
             List<PyCallableParameter> otherParameters = other.getParameters(myTypeEvalContext);
 
-            var currentInputSignature = new PyCallableParameterListTypeImpl(ParamHelper.dropSelf(currentParameters));
-            var otherInputSignature = new PyCallableParameterListTypeImpl(ParamHelper.dropSelf(otherParameters));
+            PyCallableParameterListTypeImpl currentInputSignature = new PyCallableParameterListTypeImpl(ParamHelper.dropSelf(currentParameters));
+            PyCallableParameterListTypeImpl otherInputSignature = new PyCallableParameterListTypeImpl(ParamHelper.dropSelf(otherParameters));
 
             return PyTypeChecker.match(currentInputSignature, otherInputSignature, myTypeEvalContext);
         }

@@ -408,13 +408,13 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                         }
                     }
                     if (refText.equals("true") || refText.equals("false")) {
-                        actions.add(new UnresolvedRefTrueFalseQuickFix(element));
+                        actions.add(new UnresolvedRefTrueFalseQuickFix(refText));
                     }
                     addAddSelfFix(node, expr, actions);
                     PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
                     if (callExpression != null && (!(callExpression.getCallee() instanceof PyQualifiedExpression) || ((PyQualifiedExpression) callExpression
                         .getCallee()).getQualifier() == null)) {
-                        actions.add(new UnresolvedRefCreateFunctionQuickFix(callExpression, expr));
+                        actions.add(new UnresolvedRefCreateFunctionQuickFix(expr));
                     }
                     PyFunction parentFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
                     PyDecorator decorator = PsiTreeUtil.getParentOfType(element, PyDecorator.class);
@@ -922,7 +922,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                         }
                     }
                     if (anchor != null) {
-                        actions.add(new CreateClassQuickFix(refText, anchor));
+                        actions.add(new CreateClassQuickFix(refText, anchor.getContainingFile()));
                     }
                 }
             }
@@ -935,7 +935,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
 
         private static void addPluginQuickFixes(PsiReference reference, List<LocalQuickFix> actions) {
             for (PyUnresolvedReferenceQuickFixProvider provider : PyUnresolvedReferenceQuickFixProvider.EP_NAME.getExtensionList()) {
-                provider.registerQuickFixes(reference, actions::add);
+                provider.registerQuickFixes(reference, actions);
             }
         }
     }

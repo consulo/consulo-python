@@ -2,6 +2,7 @@
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.inspections.PyInspectionExtension;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.localize.LocalizeValue;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.scheme.InspectionProfile;
@@ -34,6 +35,17 @@ public final class PyMethodParametersInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameProblematicFirstParameter();
+    }
+
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonClassStructure();
+    }
+
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
     }
 
 

@@ -1,22 +1,11 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.psi.*;
-import consulo.ide.impl.idea.util.FunctionUtil;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -25,23 +14,23 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 
-import java.util.function.Function;
-
-/**
- * @author ktisha
- */
 public class PyMoveAttributeToInitQuickFix implements LocalQuickFix {
+
+    public PyMoveAttributeToInitQuickFix() {
+    }
+
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixMoveAttribute();
     }
 
+    @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
-        if (!(element instanceof PyTargetExpression)) {
+        if (!(element instanceof PyTargetExpression targetExpression)) {
             return;
         }
-        PyTargetExpression targetExpression = (PyTargetExpression) element;
 
         PyClass containingClass = targetExpression.getContainingClass();
         PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
@@ -49,22 +38,15 @@ public class PyMoveAttributeToInitQuickFix implements LocalQuickFix {
             return;
         }
 
-        Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(assignment);
-        AddFieldQuickFix.addFieldToInit(project, containingClass, ((PyTargetExpression) element).getName(), callback);
+        AddFieldQuickFix.addFieldToInit(project, containingClass, targetExpression.getName(), x -> assignment);
         removeDefinition(assignment);
     }
 
-    private static boolean removeDefinition(PyAssignmentStatement assignment) {
+    private static void removeDefinition(PyAssignmentStatement assignment) {
         PyStatementList statementList = PsiTreeUtil.getParentOfType(assignment, PyStatementList.class);
         if (statementList == null) {
-            return false;
-        }
-
-        if (statementList.getStatements().length == 1) {
-            PyPassStatement passStatement = PyElementGenerator.getInstance(assignment.getProject()).createPassStatement();
-            statementList.addBefore(passStatement, assignment);
+            return;
         }
         assignment.delete();
-        return true;
     }
 }

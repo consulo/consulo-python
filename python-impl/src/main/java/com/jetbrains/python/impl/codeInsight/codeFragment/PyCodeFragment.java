@@ -1,66 +1,83 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.codeFragment;
 
+import com.jetbrains.python.psi.types.PyType;
 import consulo.language.editor.codeFragment.CodeFragment;
+import consulo.util.lang.Pair;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Set;
 
-/**
- * @author vlan
- */
-public class PyCodeFragment extends CodeFragment
-{
-	private final Set<String> myGlobalWrites;
-	private final Set<String> myNonlocalWrites;
-	private final boolean myYieldInside;
-	private final boolean myAsync;
+public class PyCodeFragment extends CodeFragment {
+    /**
+     * Maps variable names to their type names and types.
+     */
+    private final Map<String, Pair<String, PyType>> myInputTypes;
+    private final @Nullable String myOutputType;
+    private final Set<PyType> myOutputTypes;
+    private final Set<String> myGlobalWrites;
+    private final Set<String> myNonlocalWrites;
+    private final boolean myYieldInside;
+    private final boolean myAsync;
 
-	public PyCodeFragment(Set<String> input,
+    public PyCodeFragment(Set<String> input,
                           Set<String> output,
+                          Map<String, Pair<String, PyType>> inputTypeNames,
+                          @Nullable String outputType,
+                          Set<PyType> outputTypes,
                           Set<String> globalWrites,
                           Set<String> nonlocalWrites,
                           boolean returnInside,
                           boolean yieldInside,
-                          boolean isAsync)
-	{
-		super(input, output, returnInside);
-		myGlobalWrites = globalWrites;
-		myNonlocalWrites = nonlocalWrites;
-		myYieldInside = yieldInside;
-		myAsync = isAsync;
-	}
+                          boolean isAsync) {
+        super(input, output, returnInside);
+        myInputTypes = inputTypeNames;
+        myOutputType = outputType;
+        myOutputTypes = outputTypes;
+        myGlobalWrites = globalWrites;
+        myNonlocalWrites = nonlocalWrites;
+        myYieldInside = yieldInside;
+        myAsync = isAsync;
+    }
 
-	public Set<String> getGlobalWrites()
-	{
-		return myGlobalWrites;
-	}
+    /**
+     * Returns the type name of the input variable with the given name.
+     */
+    public @Nullable String getInputTypeName(String varName) {
+        Pair<String, PyType> type = myInputTypes.get(varName);
+        return type == null ? null : type.first;
+    }
 
-	public Set<String> getNonlocalWrites()
-	{
-		return myNonlocalWrites;
-	}
+    /**
+     * Returns the type of the input variable with the given name.
+     */
+    public @Nullable PyType getInputType(String varName) {
+        Pair<String, PyType> type = myInputTypes.get(varName);
+        return type == null ? null : type.second;
+    }
 
-	public boolean isYieldInside()
-	{
-		return myYieldInside;
-	}
+    public @Nullable String getOutputType() {
+        return myOutputType;
+    }
 
-	public boolean isAsync()
-	{
-		return myAsync;
-	}
+    public Set<PyType> getOutputTypes() {
+        return myOutputTypes;
+    }
+
+    public Set<String> getGlobalWrites() {
+        return myGlobalWrites;
+    }
+
+    public Set<String> getNonlocalWrites() {
+        return myNonlocalWrites;
+    }
+
+    public boolean isYieldInside() {
+        return myYieldInside;
+    }
+
+    public boolean isAsync() {
+        return myAsync;
+    }
 }

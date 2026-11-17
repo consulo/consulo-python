@@ -1,26 +1,18 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.editor.intention.IntentionMetaData;
+import consulo.language.editor.intention.PsiElementBaseIntentionAction;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -29,139 +21,156 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.collection.ContainerUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+
 /**
- * Intention to merge the if clauses in the case of nested ifs where only the inner if contains code
- * (the outer if only contains the inner one).
- *
- * <p>For instance,
- * <code>if a:
- *   if b:
- *     # stuff here</code>
+ * User: catherine
+ * Intention to merge the if clauses in the case of nested ifs where only the inner if contains code (the outer if only contains the inner one)
+ * For instance,
+ * if a:
+ * if b:
+ * # stuff here
  * into
- * <code>if a and b:
- *   #stuff here</code></p>
- *
- * @author catherine
+ * if a and b:
+ * #stuff here
  */
+// TODO consulo: ModCommand API (PsiUpdateModCommandAction) missing, JB logic adapted to PsiElementBaseIntentionAction
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyJoinIfIntention", categories = "Python", fileExtensions = "py")
-public class PyJoinIfIntention extends BaseIntentionAction {
-    @Override
-    public LocalizeValue getText() {
-        return PyLocalize.intnJoinIfText();
+public final class PyJoinIfIntention extends PsiElementBaseIntentionAction {
+    public PyJoinIfIntention() {
+        setText(PyLocalize.intnNameJoinIf());
     }
 
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    private static @Nullable PyIfStatement findElement(PsiElement leaf) {
+        PsiElement current = leaf;
+        while (current != null) {
+            if (current instanceof PyIfStatement candidate) {
+                return candidate;
+            }
+            if (current instanceof PsiFile) {
+                return null;
+            }
+            current = current.getParent();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isAvailable(Project project, Editor editor, PsiElement leaf) {
+        PyIfStatement element = findElement(leaf);
+        if (element == null) {
             return false;
         }
-
-        PyIfStatement expression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyIfStatement.class);
-
-        PyIfStatement outer = getIfStatement(expression);
-        if (outer != null) {
-            if (outer.getElsePart() != null || outer.getElifParts().length > 0) {
-                return false;
-            }
-            PyStatement firstStatement = getFirstStatement(outer);
-            PyStatementList outerStList = outer.getIfPart().getStatementList();
-            if (outerStList != null && outerStList.getStatements().length != 1) {
-                return false;
-            }
-            if (firstStatement instanceof PyIfStatement) {
-                PyIfStatement inner = (PyIfStatement) firstStatement;
-                if (inner.getElsePart() != null || inner.getElifParts().length > 0) {
-                    return false;
-                }
-                PyStatementList stList = inner.getIfPart().getStatementList();
-                if (stList != null) {
-                    if (stList.getStatements().length != 0) {
-                        return true;
-                    }
-                }
-            }
+        LocalizeValue text = getPresentation(element);
+        if (text == null) {
+            return false;
         }
-        return false;
+        setText(text);
+        return true;
     }
 
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PyIfStatement expression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyIfStatement.class);
-        PyIfStatement ifStatement = getIfStatement(expression);
-
-        PyStatement firstStatement = getFirstStatement(ifStatement);
-        if (ifStatement == null) {
+    @Override
+    public void invoke(Project project, Editor editor, PsiElement leaf) throws IncorrectOperationException {
+        PyIfStatement element = findElement(leaf);
+        if (element == null) {
             return;
         }
-        if (firstStatement != null && firstStatement instanceof PyIfStatement) {
-            PyExpression condition = ((PyIfStatement) firstStatement).getIfPart().getCondition();
-            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-            PyExpression ifCondition = ifStatement.getIfPart().getCondition();
-            if (ifCondition == null || condition == null) {
-                return;
-            }
-            StringBuilder replacementText = new StringBuilder(ifCondition.getText() + " and ");
-            if (condition instanceof PyBinaryExpression && ((PyBinaryExpression) condition).getOperator() == PyTokenTypes.OR_KEYWORD) {
-                replacementText.append("(").append(condition.getText()).append(")");
-            }
-            else {
-                replacementText.append(condition.getText());
-            }
-
-            PyExpression newCondition = elementGenerator.createExpressionFromText(LanguageLevel.forElement(condition), replacementText.toString());
-            ifCondition.replace(newCondition);
-
-            PyStatementList stList = ((PyIfStatement) firstStatement).getIfPart().getStatementList();
-            PyStatementList ifStatementList = ifStatement.getIfPart().getStatementList();
-            if (ifStatementList == null || stList == null) {
-                return;
-            }
-            List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(ifStatement.getIfPart(), PsiComment.class);
-            comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(((PyIfStatement) firstStatement).getIfPart(), PsiComment.class));
-            comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(ifStatementList, PsiComment.class));
-            comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(stList, PsiComment.class));
-
-            for (PsiElement comm : comments) {
-                ifStatement.getIfPart().addBefore(comm, ifStatementList);
-                comm.delete();
-            }
-            ifStatementList.replace(stList);
-        }
+        invoke(element, editor);
     }
 
-    @Nullable
-    private static PyStatement getFirstStatement(PyIfStatement ifStatement) {
-        PyStatement firstStatement = null;
-        if (ifStatement != null) {
-            PyStatementList stList = ifStatement.getIfPart().getStatementList();
-            if (stList != null) {
-                if (stList.getStatements().length != 0) {
-                    firstStatement = stList.getStatements()[0];
-                }
-            }
+
+    private @Nullable LocalizeValue getPresentation(PyIfStatement expression) {
+        PyIfStatement outer = getIfStatement(expression);
+        if (outer == null) {
+            return null;
         }
-        return firstStatement;
+        if (outer.getElsePart() != null || outer.getElifParts().length > 0) {
+            return null;
+        }
+        PyStatement firstStatement = getFirstStatement(outer);
+        PyStatementList outerStList = outer.getIfPart().getStatementList();
+        if (outerStList.getStatements().length != 1) {
+            return null;
+        }
+        if (!(firstStatement instanceof PyIfStatement inner)) {
+            return null;
+        }
+        if (inner.getElsePart() != null || inner.getElifParts().length > 0) {
+            return null;
+        }
+        PyStatementList stList = inner.getIfPart().getStatementList();
+        if (stList.getStatements().length == 0) {
+            return null;
+        }
+        return PyLocalize.intnJoinIf();
     }
 
-    @Nullable
-    private static PyIfStatement getIfStatement(PyIfStatement expression) {
-        while (expression != null) {
-            PyStatementList stList = expression.getIfPart().getStatementList();
-            if (stList != null) {
-                if (stList.getStatements().length != 0) {
-                    PyStatement firstStatement = stList.getStatements()[0];
-                    if (firstStatement instanceof PyIfStatement) {
-                        break;
-                    }
-                }
-            }
-            expression = PsiTreeUtil.getParentOfType(expression, PyIfStatement.class);
+    private void invoke(PyIfStatement expression, Editor editor) {
+        PyIfStatement outerIfStatement = getIfStatement(expression);
+        if (outerIfStatement == null) {
+            return;
         }
-        return expression;
+        PyIfStatement innerIfStatement = as(getFirstStatement(outerIfStatement), PyIfStatement.class);
+        if (innerIfStatement == null) {
+            return;
+        }
+        PyExpression innerCondition = innerIfStatement.getIfPart().getCondition();
+        PyExpression outerCondition = outerIfStatement.getIfPart().getCondition();
+        if (outerCondition == null || innerCondition == null) {
+            return;
+        }
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(expression.getProject());
+        LanguageLevel pyVersion = LanguageLevel.forElement(expression.getContainingFile());
+        PyBinaryExpression fakeAndExpression = (PyBinaryExpression)elementGenerator.createExpressionFromText(pyVersion, "foo and bar");
+        StringBuilder replacementText = new StringBuilder();
+        if (PyReplaceExpressionUtil.isNeedParenthesis(fakeAndExpression.getLeftExpression(), outerCondition)) {
+            replacementText.append("(").append(outerCondition.getText()).append(")");
+        }
+        else {
+            replacementText.append(outerCondition.getText());
+        }
+        replacementText.append(" and ");
+        if (PyReplaceExpressionUtil.isNeedParenthesis(fakeAndExpression.getLeftExpression(), innerCondition)) {
+            replacementText.append("(").append(innerCondition.getText()).append(")");
+        }
+        else {
+            replacementText.append(innerCondition.getText());
+        }
+
+        PyExpression newCondition = elementGenerator.createExpressionFromText(pyVersion, replacementText.toString());
+        outerCondition.replace(newCondition);
+
+        PyStatementList innerStatementList = innerIfStatement.getIfPart().getStatementList();
+        PyStatementList outerStatementList = outerIfStatement.getIfPart().getStatementList();
+        List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(outerIfStatement.getIfPart(), PsiComment.class);
+        comments = ContainerUtil.concat(comments, PsiTreeUtil.getChildrenOfTypeAsList(innerIfStatement.getIfPart(), PsiComment.class));
+        comments = ContainerUtil.concat(comments, PsiTreeUtil.getChildrenOfTypeAsList(outerStatementList, PsiComment.class));
+        comments = ContainerUtil.concat(comments, PsiTreeUtil.getChildrenOfTypeAsList(innerStatementList, PsiComment.class));
+
+        for (PsiElement comm : comments) {
+            outerIfStatement.getIfPart().addBefore(comm, outerStatementList);
+            comm.delete();
+        }
+        outerStatementList.replace(innerStatementList);
+    }
+
+    private static @Nullable PyStatement getFirstStatement(PyIfStatement ifStatement) {
+        PyStatementList stList = ifStatement.getIfPart().getStatementList();
+        return ArrayUtil.getFirstElement(stList.getStatements());
+    }
+
+    private static @Nullable PyIfStatement getIfStatement(@Nullable PyIfStatement ifStatement) {
+        while (ifStatement != null && !(getFirstStatement(ifStatement) instanceof PyIfStatement)) {
+            ifStatement = PsiTreeUtil.getParentOfType(ifStatement, PyIfStatement.class);
+        }
+        return ifStatement;
     }
 }
+

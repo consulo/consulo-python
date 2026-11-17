@@ -1,91 +1,104 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyDictLiteralExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyKeywordArgument;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.IntentionMetaData;
+import consulo.language.editor.intention.PsiElementBaseIntentionAction;
+import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import org.jspecify.annotations.Nullable;
 
 /**
+ * User: catherine
  * Intention to convert dict constructor to dict literal expression with only explicit keyword arguments
  * For instance,
  * dict() -> {}
  * dict(a=3, b=5) -> {'a': 3, 'b': 5}
  * dict(foo) -> no transformation
  * dict(**foo) -> no transformation
- *
- * @author catherine
  */
+// TODO consulo: ModCommand API (PsiUpdateModCommandAction) missing, JB logic adapted to PsiElementBaseIntentionAction
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyDictConstructorToLiteralFormIntention", categories = "Python", fileExtensions = "py")
-public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionAction {
-    @Override
-    public LocalizeValue getText() {
-        return PyLocalize.intnConvertDictConstructorToDictLiteral();
+public final class PyDictConstructorToLiteralFormIntention extends PsiElementBaseIntentionAction {
+    public PyDictConstructorToLiteralFormIntention() {
+        setText(PyLocalize.intnConvertDictConstructorToDictLiteral());
+    }
+
+    private static @Nullable PyCallExpression findElement(PsiElement leaf) {
+        PsiElement current = leaf;
+        while (current != null) {
+            if (current instanceof PyCallExpression candidate) {
+                return candidate;
+            }
+            if (current instanceof PsiFile) {
+                return null;
+            }
+            current = current.getParent();
+        }
+        return null;
     }
 
     @Override
-    @RequiredReadAction
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiElement leaf) {
+        PyCallExpression element = findElement(leaf);
+        if (element == null) {
             return false;
         }
-
-        PyCallExpression expression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
-
-        if (expression != null && expression.isCalleeText("dict")) {
-            TypeEvalContext context = TypeEvalContext.codeAnalysis(file.getProject(), file);
-            PyType type = context.getType(expression);
-            if (type != null && type.isBuiltin()) {
-                PyExpression[] argumentList = expression.getArguments();
-                for (PyExpression argument : argumentList) {
-                    if (!(argument instanceof PyKeywordArgument)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
+        LocalizeValue text = getPresentation(element);
+        if (text == null) {
+            return false;
         }
-        return false;
+        setText(text);
+        return true;
     }
 
     @Override
-    @RequiredWriteAction
-    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PyCallExpression expression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
-        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        if (expression != null) {
-            replaceDictConstructor(expression, elementGenerator);
+    public void invoke(Project project, Editor editor, PsiElement leaf) throws IncorrectOperationException {
+        PyCallExpression element = findElement(leaf);
+        if (element == null) {
+            return;
         }
+        invoke(element, editor);
     }
 
-    @RequiredWriteAction
+    private @Nullable LocalizeValue getPresentation(PyCallExpression element) {
+        if (element.isCalleeText("dict")) {
+            TypeEvalContext context = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile());
+            PyType type = context.getType(element);
+            if (type != null && type.isBuiltin()) {
+                PyExpression[] argumentList = element.getArguments();
+                for (PyExpression argument : argumentList) {
+                    if (!(argument instanceof PyKeywordArgument)) {
+                        return null;
+                    }
+                }
+                return PyLocalize.intnConvertDictConstructorToDictLiteral();
+            }
+        }
+        return null;
+    }
+
+
+    private void invoke(PyCallExpression element, Editor editor) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(element.getProject());
+        replaceDictConstructor(element, elementGenerator);
+    }
+
     private static void replaceDictConstructor(PyCallExpression expression, PyElementGenerator elementGenerator) {
         PyExpression[] argumentList = expression.getArguments();
         StringBuilder stringBuilder = new StringBuilder();
@@ -93,21 +106,21 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         int size = argumentList.length;
 
         for (int i = 0; i != size; ++i) {
-            if (argumentList[i] instanceof PyKeywordArgument kwArg) {
+            PyExpression argument = argumentList[i];
+            if (argument instanceof PyKeywordArgument) {
                 stringBuilder.append("'");
-                stringBuilder.append(kwArg.getKeyword());
+                stringBuilder.append(((PyKeywordArgument)argument).getKeyword());
                 stringBuilder.append("' : ");
-                stringBuilder.append(kwArg.getValueExpression().getText());
+                stringBuilder.append(((PyKeywordArgument)argument).getValueExpression().getText());
                 if (i != size - 1) {
                     stringBuilder.append(",");
                 }
             }
         }
-        PyDictLiteralExpression dict = (PyDictLiteralExpression) elementGenerator.createFromText(
-            LanguageLevel.forElement(expression),
-            PyExpressionStatement.class,
-            "{" + stringBuilder.toString() + "}"
-        ).getExpression();
+        PyDictLiteralExpression dict =
+                (PyDictLiteralExpression)elementGenerator.createFromText(LanguageLevel.forElement(expression), PyExpressionStatement.class,
+                "{" + stringBuilder + "}").getExpression();
         expression.replace(dict);
     }
 }
+

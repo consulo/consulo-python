@@ -1,95 +1,75 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.vp;
+
+import com.google.common.base.Preconditions;
+import consulo.application.ApplicationManager;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.jspecify.annotations.Nullable;
-
-import com.google.common.base.Preconditions;
-import consulo.application.ApplicationManager;
-
 /**
  * Wrapper for view.
- *
- * @param <C> view class
  * @author Ilya.Kazakevich
+ * @param <C> view class
  */
-class ViewHandler<C> implements InvocationHandler
-{
-	/**
-	 * Real view, created by user using {@link Creator#createView(Presenter)}
-	 */
-	private C realView;
+class ViewHandler<C> implements InvocationHandler {
+    /**
+     * Real view, created by user using {@link Creator#createView(Presenter)}
+     */
+    private C realView;
 
-	public void setRealView(C realView)
-	{
-		this.realView = realView;
-	}
+    public void setRealView(C realView) {
+        this.realView = realView;
+    }
 
-	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-	{
-		Preconditions.checkState(realView != null, "Real view not set");
-		Invoker invoker = new Invoker(realView, method, args);
-		ApplicationManager.getApplication().invokeAndWait(invoker);
-		if(invoker.exception != null)
-		{
-			throw invoker.exception;
-		}
-		return invoker.result;
-	}
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Preconditions.checkState(realView != null, "Real view not set");
+        Invoker invoker = new Invoker(realView, method, args);
+        // PY-59217
+        // TODO: rewrite to UI DSL and model
+        if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+            invoker.run();
+        }
+        else {
+            ApplicationManager.getApplication().invokeAndWait(invoker);
+        }
+        if (invoker.exception != null) {
+            throw invoker.exception;
+        }
+        return invoker.result;
+    }
 
-	/**
-	 * Class that invokes view methods in appropriate thread
-	 */
-	private static class Invoker implements Runnable
-	{
-		private final Method method;
-		@Nullable
-		private final Object[] args;
-		private final Object target;
+    /**
+     * Class that invokes view methods in appropriate thread
+     */
+    private static final class Invoker implements Runnable {
+        private final Method method;
+        private final Object @Nullable [] args;
+        private final Object target;
 
-		private InvocationTargetException exception;
-		private Object result;
+        private InvocationTargetException exception;
+        private Object result;
 
-		private Invoker(Object target, Method method, @Nullable Object[] args)
-		{
-			this.target = target;
-			this.method = method;
-			this.args = args;
-		}
+        private Invoker(Object target, Method method, Object @Nullable [] args) {
+            this.target = target;
+            this.method = method;
+            this.args = args;
+        }
 
-		@Override
-		public void run()
-		{
-			try
-			{
-				result = method.invoke(target, args);
-			}
-			catch(IllegalAccessException e)
-			{
-				throw new IllegalStateException("Method is unaccessible: " + method, e);
-			}
-			catch(InvocationTargetException e)
-			{
-				exception = e;
-			}
-		}
-	}
+        @Override
+        public void run() {
+            try {
+                result = method.invoke(target, args);
+            }
+            catch (IllegalAccessException e) {
+                throw new IllegalStateException("Method is unaccessible: " + method, e);
+            }
+            catch (InvocationTargetException e) {
+                exception = e;
+            }
+        }
+    }
 }

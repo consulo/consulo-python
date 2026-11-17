@@ -1,158 +1,141 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.psi.PyQuotesUtil;
 import com.jetbrains.python.psi.PyDocStringOwner;
-import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyStringElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.ast.IElementType;
 import consulo.language.editor.intention.IntentionMetaData;
+import consulo.language.editor.intention.PsiElementBaseIntentionAction;
+import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.collection.ContainerUtil;
+import org.jspecify.annotations.Nullable;
+
+import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**
- * Intention to convert between single-quoted and double-quoted strings.
- *
- * @author catherine
+ * User: catherine
+ * Intention to convert between single-quoted and double-quoted strings
  */
+// TODO consulo: ModCommand API (PsiUpdateModCommandAction) missing, JB logic adapted to PsiElementBaseIntentionAction
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyQuotedStringIntention", categories = "Python", fileExtensions = "py")
-public class PyQuotedStringIntention extends BaseIntentionAction {
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+public final class PyQuotedStringIntention extends PsiElementBaseIntentionAction {
+    public PyQuotedStringIntention() {
+        setText(PyLocalize.intnQuotedString());
+    }
+
+    private static @Nullable PsiElement findElement(PsiElement leaf) {
+        PsiElement current = leaf;
+        while (current != null) {
+            if (current instanceof PsiElement candidate) {
+                return candidate;
+            }
+            if (current instanceof PsiFile) {
+                return null;
+            }
+            current = current.getParent();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isAvailable(Project project, Editor editor, PsiElement leaf) {
+        PsiElement element = findElement(leaf);
+        if (element == null) {
             return false;
         }
-
-        PyStringLiteralExpression string =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
-        if (string != null) {
-            PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
-            if (docStringOwner != null) {
-                if (docStringOwner.getDocStringExpression() == string) {
-                    return false;
-                }
-            }
-            String stringText = string.getText();
-            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
-            stringText = stringText.substring(prefixLength);
-
-            if (stringText.length() >= 6) {
-                if (stringText.startsWith("'''") && stringText.endsWith("'''") ||
-                    stringText.startsWith("\"\"\"") && stringText.endsWith("\"\"\"")) {
-                    return false;
-                }
-            }
-            if (stringText.length() > 2) {
-                if (stringText.startsWith("'") && stringText.endsWith("'")) {
-                    setText(PyLocalize.intnQuotedStringSingleToDouble());
-                    return true;
-                }
-                if (stringText.startsWith("\"") && stringText.endsWith("\"")) {
-                    setText(PyLocalize.intnQuotedStringDoubleToSingle());
-                    return true;
-                }
-            }
+        LocalizeValue text = getPresentation(element);
+        if (text == null) {
+            return false;
         }
-        return false;
+        setText(text);
+        return true;
     }
 
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PyStringLiteralExpression string =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
-        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        if (string != null) {
-            String stringText = string.getText();
-            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
-            String text = stringText.substring(prefixLength);
+    @Override
+    public void invoke(Project project, Editor editor, PsiElement leaf) throws IncorrectOperationException {
+        PsiElement element = findElement(leaf);
+        if (element == null) {
+            return;
+        }
+        invoke(element, editor);
+    }
 
-            if (text.startsWith("'") && text.endsWith("'")) {
-                String result = convertSingleToDoubleQuoted(stringText);
-                PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
-                string.replace(st);
-            }
-            if (text.startsWith("\"") && text.endsWith("\"")) {
-                String result = convertDoubleToSingleQuoted(stringText);
-                PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
-                string.replace(st);
-            }
+    private @Nullable LocalizeValue getPresentation(PsiElement element) {
+        if (!(element.getContainingFile() instanceof PyFile)) {
+            return null;
+        }
+
+        PyStringElement stringElement = findConvertibleStringElementUnderCaret(element);
+        if (stringElement == null) {
+            return null;
+        }
+        PyStringLiteralExpression stringLiteral = as(stringElement.getParent(), PyStringLiteralExpression.class);
+        if (stringLiteral == null) {
+            return null;
+        }
+        PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteral, PyDocStringOwner.class);
+        if (docStringOwner != null && docStringOwner.getDocStringExpression() == stringLiteral) {
+            return null;
+        }
+        String currentQuote = stringElement.getQuote();
+        if (currentQuote.equals("'")) {
+            return PyLocalize.intnQuotedStringSingleToDouble();
+        }
+        else {
+            return PyLocalize.intnQuotedStringDoubleToSingle();
         }
     }
 
-    private static String convertDoubleToSingleQuoted(String stringText) {
-        StringBuilder stringBuilder = new StringBuilder();
 
-        boolean skipNext = false;
-        char[] charArr = stringText.toCharArray();
-        for (int i = 0; i != charArr.length; ++i) {
-            char ch = charArr[i];
-            if (skipNext) {
-                skipNext = false;
-                continue;
-            }
-            if (ch == '"') {
-                stringBuilder.append('\'');
-                continue;
-            }
-            else if (ch == '\'') {
-                stringBuilder.append("\\\'");
-            }
-            else if (ch == '\\' && charArr[i + 1] == '\"' && !(i + 2 == charArr.length)) {
-                skipNext = true;
-                stringBuilder.append(charArr[i + 1]);
-            }
-            else {
-                stringBuilder.append(ch);
-            }
+    private static @Nullable PyStringElement findConvertibleStringElementUnderCaret(PsiElement element) {
+        IElementType elementType = element.getNode().getElementType();
+        if (!(PyTokenTypes.STRING_NODES.contains(elementType) || PyTokenTypes.FSTRING_TOKENS.contains(elementType))) {
+            return null;
         }
-
-        return stringBuilder.toString();
+        PyStringElement stringElement = PsiTreeUtil.getParentOfType(element, PyStringElement.class, false, PyExpression.class);
+        return stringElement != null && PyQuotesUtil.canBeConverted(stringElement, true) ? stringElement : null;
     }
 
-    private static String convertSingleToDoubleQuoted(String stringText) {
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean skipNext = false;
-        char[] charArr = stringText.toCharArray();
-        for (int i = 0; i != charArr.length; ++i) {
-            char ch = charArr[i];
-            if (skipNext) {
-                skipNext = false;
-                continue;
-            }
-            if (ch == '\'') {
-                stringBuilder.append('"');
-                continue;
-            }
-            else if (ch == '"') {
-                stringBuilder.append("\\\"");
-            }
-            else if (ch == '\\' && charArr[i + 1] == '\'' && !(i + 2 == charArr.length)) {
-                skipNext = true;
-                stringBuilder.append(charArr[i + 1]);
-            }
-            else {
-                stringBuilder.append(ch);
-            }
+    private void invoke(PsiElement element, Editor editor) {
+        PyStringElement stringElement = PsiTreeUtil.getParentOfType(element, PyStringElement.class, false, PyExpression.class);
+        if (stringElement == null) {
+            return;
         }
-        return stringBuilder.toString();
+        PyStringLiteralExpression stringLiteral = as(stringElement.getParent(), PyStringLiteralExpression.class);
+        if (stringLiteral == null) {
+            return;
+        }
+        String originalQuote = stringElement.getQuote();
+        boolean entireLiteralCanBeConverted = ContainerUtil.all(stringLiteral.getStringElements(),
+            s -> s.getQuote().equals(originalQuote) &&
+                PyQuotesUtil.canBeConverted(s, true));
+        if (entireLiteralCanBeConverted) {
+            stringLiteral.getStringElements().forEach(PyQuotedStringIntention::convertStringElement);
+        }
+        else {
+            convertStringElement(stringElement);
+        }
+    }
+
+    // JB also declares isAvailable(Project, Editor, PsiFile) / invoke(Project, Editor, PsiFile) bridging to ModCommandExecutor;
+    // in Consulo they are provided by PsiElementBaseIntentionAction
+
+    private static void convertStringElement(PyStringElement stringElement) {
+        stringElement.replace(PyQuotesUtil.createCopyWithConvertedQuotes(stringElement));
     }
 }
+

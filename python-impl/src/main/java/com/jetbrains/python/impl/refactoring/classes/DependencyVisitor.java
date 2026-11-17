@@ -1,20 +1,5 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.refactoring.classes;
-
 
 import consulo.util.lang.function.Condition;
 import consulo.language.psi.PsiElement;
@@ -28,6 +13,7 @@ import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
 
 /**
  * Searches for element in another element's usages.
@@ -35,107 +21,101 @@ import com.jetbrains.python.psi.PyReferenceExpression;
  *
  * @author Ilya.Kazakevich
  */
-class DependencyVisitor extends PyRecursiveElementVisitor
-{
+final class DependencyVisitor extends PyRecursiveElementVisitor {
 
-	private final PyElement myElementToFind;
-	private boolean myDependencyFound;
+    private final PyElement myElementToFind;
+    private boolean myDependencyFound;
 
-	/**
-	 * @param elementToFind what to find
-	 */
-	DependencyVisitor(PyElement elementToFind)
-	{
-		myElementToFind = elementToFind;
-	}
+    /**
+     * @param elementToFind what to find
+     */
+    DependencyVisitor(PyElement elementToFind) {
+        myElementToFind = elementToFind;
+    }
 
-	@Override
-	public void visitPyCallExpression(PyCallExpression node)
-	{
-		PyExpression callee = node.getCallee();
-		if(callee != null)
-		{
-			PsiReference calleeReference = callee.getReference();
-			if((calleeReference != null) && calleeReference.isReferenceTo(myElementToFind))
-			{
-				myDependencyFound = true;
-				return;
-			}
-			String calleeName = callee.getName();
+    @Override
+    public void visitPyTargetExpression(PyTargetExpression node) {
+        PyExpression value = node.findAssignedValue();
+        if (value != null) {
+            PsiReference reference = value.getReference();
+            if (reference != null && reference.isReferenceTo(myElementToFind)) {
+                myDependencyFound = true;
+                return;
+            }
+        }
+        super.visitPyTargetExpression(node);
+    }
 
-			String name = myElementToFind.getName();
-			if((calleeName != null) && calleeName.equals(name))
-			{  // Check by name also
-				myDependencyFound = true;
-			}
+    @Override
+    public void visitPyCallExpression(PyCallExpression node) {
+        PyExpression callee = node.getCallee();
+        if (callee != null) {
+            PsiReference calleeReference = callee.getReference();
+            if ((calleeReference != null) && calleeReference.isReferenceTo(myElementToFind)) {
+                myDependencyFound = true;
+                return;
+            }
+            String calleeName = callee.getName();
 
-			// Member could be used as method param
-			PyArgumentList list = node.getArgumentList();
-			if(list != null)
-			{
-				for(PyExpression expression : node.getArgumentList().getArgumentExpressions())
-				{
-					PsiReference reference = expression.getReference();
-					if((reference != null) && reference.isReferenceTo(myElementToFind))
-					{
-						myDependencyFound = true;
-					}
-					if((name != null) && name.equals(expression.getName()))
-					{
-						myDependencyFound = true;
-					}
-				}
-			}
-		}
-	}
+            String name = myElementToFind.getName();
+            if ((calleeName != null) && calleeName.equals(name)) {  // Check by name also
+                myDependencyFound = true;
+            }
 
-	@Override
-	public void visitPyReferenceExpression(PyReferenceExpression node)
-	{
+            // Member could be used as method param
+            PyArgumentList list = node.getArgumentList();
+            if (list != null) {
+                for (PyExpression expression : node.getArgumentList().getArgumentExpressions()) {
+                    PsiReference reference = expression.getReference();
+                    if ((reference != null) && reference.isReferenceTo(myElementToFind)) {
+                        myDependencyFound = true;
+                    }
+                    if ((name != null) && name.equals(expression.getName())) {
+                        myDependencyFound = true;
+                    }
+                }
+            }
+        }
+    }
 
-		PsiPolyVariantReference reference = node.getReference();
-		if(reference.isReferenceTo(myElementToFind))
-		{
-			myDependencyFound = true;
-			return;
-		}
-		// TODO: This step is member-type specific. Move to MemberManagers?
-		if(myElementToFind instanceof PyAssignmentStatement)
-		{
-			PyExpression[] targets = ((PyAssignmentStatement) myElementToFind).getTargets();
+    @Override
+    public void visitPyReferenceExpression(PyReferenceExpression node) {
 
-			if(targets.length != 1)
-			{
-				return;
-			}
-			PyExpression expression = targets[0];
+        PsiPolyVariantReference reference = node.getReference();
+        if (reference.isReferenceTo(myElementToFind)) {
+            myDependencyFound = true;
+            return;
+        }
+        // TODO: This step is member-type specific. Move to MemberManagers?
+        if (myElementToFind instanceof PyAssignmentStatement) {
+            PyExpression[] targets = ((PyAssignmentStatement)myElementToFind).getTargets();
 
-			if(reference.isReferenceTo(expression))
-			{
-				myDependencyFound = true;
-				return;
-			}
-			if(node.getText().equals(expression.getText()))
-			{ // Check by name also
-				myDependencyFound = true;
-			}
-			return;
-		}
-		PsiElement declaration = reference.resolve();
-		myDependencyFound = PsiTreeUtil.findFirstParent(declaration, new PsiElementCondition()) != null;
-	}
+            if (targets.length != 1) {
+                return;
+            }
+            PyExpression expression = targets[0];
 
-	public boolean isDependencyFound()
-	{
-		return myDependencyFound;
-	}
+            if (reference.isReferenceTo(expression)) {
+                myDependencyFound = true;
+                return;
+            }
+            if (node.getText().equals(expression.getText())) { // Check by name also
+                myDependencyFound = true;
+            }
+            return;
+        }
+        PsiElement declaration = reference.resolve();
+        myDependencyFound = PsiTreeUtil.findFirstParent(declaration, new PsiElementCondition()) != null;
+    }
 
-	private class PsiElementCondition implements Condition<PsiElement>
-	{
-		@Override
-		public boolean value(PsiElement psiElement)
-		{
-			return psiElement.equals(myElementToFind);
-		}
-	}
+    public boolean isDependencyFound() {
+        return myDependencyFound;
+    }
+
+    private class PsiElementCondition implements Condition<PsiElement> {
+        @Override
+        public boolean value(PsiElement psiElement) {
+            return psiElement.equals(myElementToFind);
+        }
+    }
 }

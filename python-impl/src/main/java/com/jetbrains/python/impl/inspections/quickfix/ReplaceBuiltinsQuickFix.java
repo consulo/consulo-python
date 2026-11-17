@@ -1,21 +1,12 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyImportStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -23,10 +14,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 
-/**
- * @author Alexey.Ivanov
- * @since 2010-02-19
- */
 public class ReplaceBuiltinsQuickFix implements LocalQuickFix {
     @Override
     public LocalizeValue getName() {
@@ -34,26 +21,19 @@ public class ReplaceBuiltinsQuickFix implements LocalQuickFix {
     }
 
     @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        PsiElement importStatement = descriptor.getPsiElement();
-        if (importStatement instanceof PyImportStatement) {
-            for (PyImportElement importElement : ((PyImportStatement) importStatement).getImportElements()) {
+        if (element instanceof PyImportStatement) {
+            for (PyImportElement importElement : ((PyImportStatement)element).getImportElements()) {
                 PyReferenceExpression importReference = importElement.getImportReferenceExpression();
                 if (importReference != null) {
                     if ("__builtin__".equals(importReference.getName())) {
-                        importReference.replace(elementGenerator.createFromText(
-                            LanguageLevel.getDefault(),
-                            PyReferenceExpression.class,
-                            "builtins"
-                        ));
+                        importReference.replace(elementGenerator.createExpressionFromText(LanguageLevel.getDefault(), "builtins"));
                     }
-                    if ("builtins".equals(importReference.getName())) {
-                        importReference.replace(elementGenerator.createFromText(
-                            LanguageLevel.getDefault(),
-                            PyReferenceExpression.class,
-                            "__builtin__"
-                        ));
+                    else if ("builtins".equals(importReference.getName())) {
+                        importReference.replace(elementGenerator.createExpressionFromText(LanguageLevel.getDefault(), "__builtin__"));
                     }
                 }
             }

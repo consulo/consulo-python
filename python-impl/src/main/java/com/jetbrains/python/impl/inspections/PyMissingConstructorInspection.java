@@ -1,23 +1,17 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.AddCallSuperQuickFix;
+import com.jetbrains.python.impl.psi.PyKnownDecoratorUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
@@ -27,39 +21,45 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.util.lang.Comparing;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
-import static com.jetbrains.python.PyNames.*;
+import static com.jetbrains.python.PyNames.CANONICAL_SELF;
+import static com.jetbrains.python.PyNames.INIT;
+import static com.jetbrains.python.PyNames.SUPER;
+import static com.jetbrains.python.PyNames.__CLASS__;
 
 /**
- * Inspection to warn if call to super constructor in class is missed
- *
- * @author catherine
- */
+  * User: catherine
+  * <p>
+  * Inspection to warn if call to super constructor in class is missed
+  */
 @ExtensionImpl
-public class PyMissingConstructorInspection extends PyInspection {
+public final class PyMissingConstructorInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameMissingSuperConstructor();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonInheritance();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -67,41 +67,36 @@ public class PyMissingConstructorInspection extends PyInspection {
             PsiElement[] superClasses = node.getSuperClassExpressions();
 
             if (superClasses.length == 0 ||
-                superClasses.length == 1 && OBJECT.equals(superClasses[0].getText()) ||
-                !superHasConstructor(node, myTypeEvalContext)) {
+                superClasses.length == 1 && PyNames.OBJECT.equals(superClasses[0].getText()) ||
+                !superHasNonAbstractConstructor(node, myTypeEvalContext)) {
                 return;
             }
 
             PyFunction initMethod = node.findMethodByName(INIT, false, myTypeEvalContext);
 
-            if (initMethod == null || isExceptionClass(node, myTypeEvalContext) || hasConstructorCall(
-                node,
-                initMethod,
-                myTypeEvalContext
-            )) {
+            if (initMethod == null || isExceptionClass(node, myTypeEvalContext) || hasConstructorCall(node, initMethod, myTypeEvalContext)) {
                 return;
             }
 
             if (superClasses.length == 1 || node.isNewStyleClass(myTypeEvalContext)) {
-                registerProblem(
-                    initMethod.getNameIdentifier(),
-                    PyLocalize.inspMissingSuperConstructorMessage().get(),
-                    new AddCallSuperQuickFix()
-                );
+                registerProblem(initMethod.getNameIdentifier(), PyLocalize.inspMissingSuperConstructorMessage().get(),
+                                new AddCallSuperQuickFix());
             }
             else {
                 registerProblem(initMethod.getNameIdentifier(), PyLocalize.inspMissingSuperConstructorMessage().get());
             }
         }
 
-        private static boolean superHasConstructor(PyClass cls, TypeEvalContext context) {
+        private static boolean superHasNonAbstractConstructor(PyClass cls, TypeEvalContext context) {
             String className = cls.getName();
 
             for (PyClass baseClass : cls.getAncestorClasses(context)) {
                 if (!PyUtil.isObjectClass(baseClass) &&
-                    !Comparing.equal(className, baseClass.getName()) &&
-                    baseClass.findMethodByName(INIT, false, context) != null) {
-                    return true;
+                    !Objects.equals(className, baseClass.getName())) {
+                    PyFunction initMethod = baseClass.findMethodByName(INIT, false, context);
+                    if (initMethod != null && !PyKnownDecoratorUtil.hasAbstractDecorator(initMethod, context)) {
+                        return true;
+                    }
                 }
             }
 
@@ -114,10 +109,8 @@ public class PyMissingConstructorInspection extends PyInspection {
             }
 
             return cls.getAncestorClasses(context)
-                .stream()
-                .filter(baseClass -> PyBroadExceptionInspection.equalsException(baseClass, context))
-                .findAny()
-                .isPresent();
+              .stream()
+              .anyMatch(baseClass -> PyBroadExceptionInspection.equalsException(baseClass, context));
         }
 
         private static boolean hasConstructorCall(PyClass cls, PyFunction initMethod, TypeEvalContext context) {
@@ -134,7 +127,7 @@ public class PyMissingConstructorInspection extends PyInspection {
 
             private boolean myHasConstructorCall = false;
 
-            public CallVisitor(PyClass cls, TypeEvalContext context) {
+            CallVisitor(PyClass cls, TypeEvalContext context) {
                 myClass = cls;
                 myContext = context;
             }
@@ -146,46 +139,39 @@ public class PyMissingConstructorInspection extends PyInspection {
                 }
             }
 
-            private static boolean isConstructorCall(
-                PyCallExpression call,
-                PyClass cls,
-                TypeEvalContext context
-            ) {
+            private static boolean isConstructorCall(PyCallExpression call, PyClass cls, TypeEvalContext context) {
                 PyExpression callee = call.getCallee();
 
                 if (callee == null || !INIT.equals(callee.getName())) {
                     return false;
                 }
 
-                PyExpression calleeQualifier =
-                    Optional.of(callee).filter(PyQualifiedExpression.class::isInstance).map(PyQualifiedExpression.class::cast).map
-                        (PyQualifiedExpression::getQualifier).orElse(null);
+                PyExpression calleeQualifier = Optional
+                  .of(callee)
+                  .filter(PyQualifiedExpression.class::isInstance)
+                  .map(PyQualifiedExpression.class::cast)
+                  .map(PyQualifiedExpression::getQualifier)
+                  .orElse(null);
 
-                return calleeQualifier != null && (isSuperCall(calleeQualifier, cls, context) || isSuperClassCall(
-                    calleeQualifier,
-                    cls,
-                    context
-                ));
+                return calleeQualifier != null && (isSuperCall(calleeQualifier, cls, context) || isSuperClassCall(calleeQualifier, cls, context));
             }
 
-            private static boolean isSuperCall(
-                PyExpression calleeQualifier,
-                PyClass cls,
-                TypeEvalContext context
-            ) {
-                String prevCalleeName = Optional.of(calleeQualifier)
-                    .filter(PyCallExpression.class::isInstance)
-                    .map(PyCallExpression.class::cast)
-                    .map(PyCallExpression::getCallee)
-                    .map
-                        (PyExpression::getName)
-                    .orElse(null);
+            private static boolean isSuperCall(PyExpression calleeQualifier,
+                                               PyClass cls,
+                                               TypeEvalContext context) {
+                String prevCalleeName = Optional
+                  .of(calleeQualifier)
+                  .filter(PyCallExpression.class::isInstance)
+                  .map(PyCallExpression.class::cast)
+                  .map(PyCallExpression::getCallee)
+                  .map(PyExpression::getName)
+                  .orElse(null);
 
                 if (!SUPER.equals(prevCalleeName)) {
                     return false;
                 }
 
-                PyExpression[] args = ((PyCallExpression) calleeQualifier).getArguments();
+                PyExpression[] args = ((PyCallExpression)calleeQualifier).getArguments();
 
                 if (args.length == 0) {
                     return true;
@@ -197,34 +183,41 @@ public class PyMissingConstructorInspection extends PyInspection {
                 if (firstArg.equals(cls.getName()) ||
                     firstArg.equals(CANONICAL_SELF + "." + __CLASS__) ||
                     classQName != null && classQName.endsWith(firstArg) ||
-                    firstArg.equals(__CLASS__) && LanguageLevel.forElement(cls).isAtLeast(LanguageLevel.PYTHON30)) {
+                    firstArg.equals(__CLASS__) && !LanguageLevel.forElement(cls).isPython2()) {
                     return true;
                 }
 
-                return cls.getAncestorClasses(context).stream().map(PyClass::getName).filter(firstArg::equals).findAny().isPresent();
+                return cls.getAncestorClasses(context)
+                  .stream()
+                  .map(PyClass::getName)
+                  .anyMatch(firstArg::equals);
             }
 
-            private static boolean isSuperClassCall(
-                PyExpression calleeQualifier,
-                PyClass cls,
-                TypeEvalContext context
-            ) {
+            private static boolean isSuperClassCall(PyExpression calleeQualifier,
+                                                    PyClass cls,
+                                                    TypeEvalContext context) {
                 PsiElement callingClass = resolveCallingClass(calleeQualifier);
 
-                return callingClass != null && cls.getAncestorClasses(context).stream().filter(callingClass::equals).findAny().isPresent();
+                return callingClass != null &&
+                       cls.getAncestorClasses(context)
+                         .stream()
+                         .anyMatch(callingClass::equals);
             }
 
-            @Nullable
-            private static PsiElement resolveCallingClass(PyExpression calleeQualifier) {
+            private static @Nullable PsiElement resolveCallingClass(PyExpression calleeQualifier) {
                 if (calleeQualifier instanceof PyCallExpression) {
-                    return Optional.of((PyCallExpression) calleeQualifier)
-                        .map(PyCallExpression::getCallee)
-                        .map(PyExpression::getReference)
-                        .map(PsiReference::resolve)
-                        .orElse(null);
+                    return Optional
+                      .of((PyCallExpression)calleeQualifier)
+                      .map(PyCallExpression::getCallee)
+                      .map(PyExpression::getReference)
+                      .map(PsiReference::resolve)
+                      .orElse(null);
                 }
                 else {
-                    return Optional.ofNullable(calleeQualifier.getReference()).map(PsiReference::resolve).orElse(null);
+                    return Optional
+                      .ofNullable(calleeQualifier.getReference())
+                      .map(PsiReference::resolve)
+                      .orElse(null);
                 }
             }
         }

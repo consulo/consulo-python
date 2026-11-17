@@ -1,71 +1,85 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyElementType;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyPrefixExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.editor.intention.IntentionMetaData;
+import consulo.language.editor.intention.PsiElementBaseIntentionAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
+
+// TODO consulo: ModCommand API (PsiUpdateModCommandAction) missing, JB logic adapted to PsiElementBaseIntentionAction
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyDemorganIntention", categories = "Python", fileExtensions = "py")
-public class PyDemorganIntention extends BaseIntentionAction {
-    @Override
-    public LocalizeValue getText() {
-        return LocalizeValue.localizeTODO("DeMorgan Law");
+public final class PyDemorganIntention extends PsiElementBaseIntentionAction {
+    public PyDemorganIntention() {
+        setText(PyLocalize.intnNameDemorganLaw());
+    }
+
+    private static @Nullable PyBinaryExpression findElement(PsiElement leaf) {
+        PsiElement current = leaf;
+        while (current != null) {
+            if (current instanceof PyBinaryExpression candidate) {
+                return candidate;
+            }
+            if (current instanceof PsiFile) {
+                return null;
+            }
+            current = current.getParent();
+        }
+        return null;
     }
 
     @Override
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiElement leaf) {
+        PyBinaryExpression element = findElement(leaf);
+        if (element == null) {
             return false;
         }
-
-        PyBinaryExpression expression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
-        if (expression != null) {
-            PyElementType op = expression.getOperator();
-            if (op == PyTokenTypes.AND_KEYWORD || op == PyTokenTypes.OR_KEYWORD) {
-                return true;
-            }
+        LocalizeValue text = getPresentation(element);
+        if (text == null) {
+            return false;
         }
-        return false;
+        setText(text);
+        return true;
     }
 
     @Override
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PyBinaryExpression expression = PsiTreeUtil.getParentOfType(
-            file.findElementAt(editor.getCaretModel().getOffset()),
-            PyBinaryExpression.class
-        );
-        PyElementType op = expression.getOperator();
-        String converted = convertConjunctionExpression(expression, op);
-        replaceExpression(converted, expression);
+    public void invoke(Project project, Editor editor, PsiElement leaf) throws IncorrectOperationException {
+        PyBinaryExpression element = findElement(leaf);
+        if (element == null) {
+            return;
+        }
+        invoke(element, editor);
+    }
+
+
+    private @Nullable LocalizeValue getPresentation(PyBinaryExpression element) {
+        PyElementType op = element.getOperator();
+        if (op == PyTokenTypes.AND_KEYWORD || op == PyTokenTypes.OR_KEYWORD) {
+            return PyLocalize.intnNameDemorganLaw();
+        }
+        return null;
+    }
+
+    private void invoke(PyBinaryExpression element, Editor editor) {
+        PyElementType op = element.getOperator();
+        assert op != null;
+        String converted = convertConjunctionExpression(element, op);
+        replaceExpression(converted, element);
     }
 
     private static void replaceExpression(String newExpression, PyBinaryExpression expression) {
@@ -78,7 +92,7 @@ public class PyDemorganIntention extends BaseIntentionAction {
         }
         PyElementGenerator generator = PyElementGenerator.getInstance(expression.getProject());
         PyExpression newCall = generator.createExpressionFromText(LanguageLevel.forElement(expression), expString);
-        PsiElement insertedElement = expressionToReplace.replace(newCall);
+        expressionToReplace.replace(newCall);
         // codeStyleManager = expression.getManager().getCodeStyleManager()
         // TODO codeStyleManager.reformat(insertedElement)
     }
@@ -88,7 +102,7 @@ public class PyDemorganIntention extends BaseIntentionAction {
         String lhsText;
         String rhsText;
         if (isConjunctionExpression(lhs, tokenType)) {
-            lhsText = convertConjunctionExpression((PyBinaryExpression) lhs, tokenType);
+            lhsText = convertConjunctionExpression((PyBinaryExpression)lhs, tokenType);
         }
         else {
             lhsText = convertLeafExpression(lhs);
@@ -96,7 +110,7 @@ public class PyDemorganIntention extends BaseIntentionAction {
 
         PyExpression rhs = exp.getRightExpression();
         if (isConjunctionExpression(rhs, tokenType)) {
-            rhsText = convertConjunctionExpression((PyBinaryExpression) rhs, tokenType);
+            rhsText = convertConjunctionExpression((PyBinaryExpression)rhs, tokenType);
         }
         else {
             rhsText = convertLeafExpression(rhs);
@@ -106,8 +120,11 @@ public class PyDemorganIntention extends BaseIntentionAction {
         return lhsText + flippedConjunction + rhsText;
     }
 
-    private static String convertLeafExpression(PyExpression condition) {
-        if (isNegation(condition)) {
+    private static String convertLeafExpression(@Nullable PyExpression condition) {
+        if (condition == null) {
+            return "";
+        }
+        else if (isNegation(condition)) {
             PyExpression negated = getNegated(condition);
             if (negated == null) {
                 return "";
@@ -122,25 +139,24 @@ public class PyDemorganIntention extends BaseIntentionAction {
         }
     }
 
-    @Nullable
-    private static PyExpression getNegated(PyExpression expression) {
-        PyExpression operand = ((PyPrefixExpression) expression).getOperand();
-        return operand;  // TODO strip ()
+    private static @Nullable PyExpression getNegated(PyExpression expression) {
+        return ((PyPrefixExpression)expression).getOperand();  // TODO strip ()
     }
 
-    private static boolean isConjunctionExpression(PyExpression expression, PyElementType tokenType) {
+    private static boolean isConjunctionExpression(@Nullable PyExpression expression, PyElementType tokenType) {
         if (expression instanceof PyBinaryExpression) {
-            PyElementType operator = ((PyBinaryExpression) expression).getOperator();
+            PyElementType operator = ((PyBinaryExpression)expression).getOperator();
             return operator == tokenType;
         }
         return false;
     }
 
-    private static boolean isNegation(PsiElement expression) {
+    private static boolean isNegation(@Nullable PsiElement expression) {
         if (!(expression instanceof PyPrefixExpression)) {
             return false;
         }
-        PyElementType op = ((PyPrefixExpression) expression).getOperator();
+        PyElementType op = ((PyPrefixExpression)expression).getOperator();
         return op == PyTokenTypes.NOT_KEYWORD;
     }
 }
+

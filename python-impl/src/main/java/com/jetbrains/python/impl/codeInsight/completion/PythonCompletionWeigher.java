@@ -61,7 +61,9 @@ public final class PythonCompletionWeigher extends CompletionWeigher {
             return WEIGHT_FOR_KEYWORDS;
         }
 
-        // TODO consulo: PyMultipleArgumentsCompletionContributor is not ported yet (MULTIPLE_ARGUMENTS_VARIANT_KEY -> WEIGHT_FOR_MULTIPLE_ARGUMENTS)
+        if (element.getUserData(PyMultipleArgumentsCompletionContributor.Helper.MULTIPLE_ARGUMENTS_VARIANT_KEY) != null) {
+            return WEIGHT_FOR_MULTIPLE_ARGUMENTS;
+        }
 
         return PyCompletionUtilsKt.FALLBACK_WEIGHT;
     }

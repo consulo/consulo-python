@@ -1,27 +1,15 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.inspections.PyInspectionMessages.CodifiedParam;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -31,30 +19,34 @@ import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author Alexey.Ivanov
- */
 @ExtensionImpl
-public class PySuperArgumentsInspection extends PyInspection {
+public final class PySuperArgumentsInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameWrongSuperArguments();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonInheritance();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        TypeEvalContext context = PyInspectionVisitor.getContext(session);
+        if (context.getUsesExternalTypeEngine()) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
+        return new Visitor(holder, context);
     }
 
     private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -70,8 +62,8 @@ public class PySuperArgumentsInspection extends PyInspection {
                             if (firstClass != null && secondClass != null) {
                                 if (!secondClass.isSubclass(firstClass, myTypeEvalContext)) {
                                     registerProblem(
-                                        node.getArgumentList(),
-                                        PyLocalize.insp$0IsNotSuperclassOf$1(secondClass.getName(), firstClass.getName()).get()
+                                      node.getArgumentList(),
+                                      PyInspectionMessages.problemMessage(a -> PyLocalize.inspClassIsNotSubtypeOfClass(a[0], a[1]), CodifiedParam.ofReference(secondClass), CodifiedParam.ofReference(firstClass))
                                     );
                                 }
                             }
@@ -81,17 +73,16 @@ public class PySuperArgumentsInspection extends PyInspection {
             }
         }
 
-        @Nullable
-        private PyClass findClassOf(PyExpression argument) {
-            PsiElement firstElement = ((PyReferenceExpression) argument).followAssignmentsChain(getResolveContext()).getElement();
+        private @Nullable PyClass findClassOf(PyExpression argument) {
+            PsiElement firstElement = ((PyReferenceExpression)argument).followAssignmentsChain(getResolveContext()).getElement();
             PyClass firstClass = null;
             if (firstElement instanceof PyClass) {
-                firstClass = (PyClass) firstElement;
+                firstClass = (PyClass)firstElement;
             }
             else if (firstElement instanceof PyExpression) {
-                PyType first_type = myTypeEvalContext.getType((PyExpression) firstElement);
+                PyType first_type = myTypeEvalContext.getType((PyExpression)firstElement);
                 if (first_type instanceof PyClassType) {
-                    firstClass = ((PyClassType) first_type).getPyClass();
+                    firstClass = ((PyClassType)first_type).getPyClass();
                 }
             }
             return firstClass;

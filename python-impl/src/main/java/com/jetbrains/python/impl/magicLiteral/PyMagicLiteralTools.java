@@ -38,14 +38,8 @@ public final class PyMagicLiteralTools {
      */
     public static @Nullable PyMagicLiteralExtensionPoint getPoint(StringLiteralExpression element) {
         return LanguageCachedValueUtil.getCachedValue(element, () -> {
-            PyMagicLiteralExtensionPoint point = null;
-            for (PyMagicLiteralExtensionPoint ep : PyMagicLiteralExtensionPoint.EP_NAME.getExtensionList()) {
-                if (ep.isMagicLiteral(element)) {
-                    point = ep;
-                    break;
-                }
-            }
-            return Result.create(point, PsiModificationTracker.MODIFICATION_COUNT);
+            return Result.create(PyMagicLiteralExtensionPoint.EP_NAME.findFirstSafe(ep -> ep.isMagicLiteral(element)),
+                PsiModificationTracker.MODIFICATION_COUNT);
         });
     }
 }

@@ -1,29 +1,36 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.PyKnownDecoratorUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyEvaluator;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyConditionalExpression;
+import com.jetbrains.python.psi.PyDecoratable;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyExceptPart;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyForPart;
+import com.jetbrains.python.psi.PyForStatement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportStatement;
+import com.jetbrains.python.psi.PyPattern;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTryPart;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.ConditionalInstruction;
 import consulo.language.controlFlow.Instruction;
+import consulo.language.controlFlow.ControlFlowUtil;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemHighlightType;
@@ -34,50 +41,59 @@ import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+
+import static com.jetbrains.python.impl.psi.impl.PyTypeDeclarationStatementNavigator.isTypeDeclarationTarget;
 
 /**
  * Annotates declarations that unconditionally override others without these being used.
- *
- * @author dcheryasov
- * @author vlan
  */
 @ExtensionImpl
-public class PyRedeclarationInspection extends PyInspection {
+public final class PyRedeclarationInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameRedeclaration();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        TypeEvalContext context = PyInspectionVisitor.getContext(session);
+        if (context.getUsesExternalTypeEngine()) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
+        return new Visitor(holder, context);
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyFunction(PyFunction node) {
-            if (!isDecorated(node)) {
+            if (!PyKnownDecoratorUtil.hasUnknownDecorator(node, myTypeEvalContext) &&
+                !PyKnownDecoratorUtil.hasRedeclarationDecorator(node, myTypeEvalContext)) {
                 processElement(node);
             }
         }
 
         @Override
         public void visitPyTargetExpression(PyTargetExpression node) {
+            if (node.isQualified() || PyNames.UNDERSCORE.equals(node.getText()) || isTypeDeclarationTarget(node)) {
+                return;
+            }
             ScopeOwner owner = ScopeUtil.getScopeOwner(node);
             if (owner instanceof PyFile || owner instanceof PyClass) {
                 processElement(node);
@@ -89,15 +105,6 @@ public class PyRedeclarationInspection extends PyInspection {
             if (!isDecorated(node)) {
                 processElement(node);
             }
-        }
-
-        private static boolean isConditional(PsiElement node) {
-            return PsiTreeUtil.getParentOfType(
-                node,
-                PyIfStatement.class,
-                PyConditionalExpression.class,
-                PyTryExceptStatement.class
-            ) != null;
         }
 
         private static boolean isDecorated(PyDecoratable node) {
@@ -112,11 +119,8 @@ public class PyRedeclarationInspection extends PyInspection {
             return isDecorated;
         }
 
-        private void processElement(final PsiNameIdentifierOwner element) {
-            if (isConditional(element)) {
-                return;
-            }
-            final String name = element.getName();
+        private void processElement(PsiNameIdentifierOwner element) {
+            String name = element.getName();
             ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner != null && name != null) {
                 Instruction[] instructions = ControlFlowCache.getControlFlow(owner).getInstructions();
@@ -127,53 +131,85 @@ public class PyRedeclarationInspection extends PyInspection {
                         elementInControlFlow = importStatement;
                     }
                 }
-                final int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
+                int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
                 if (startInstruction < 0) {
                     return;
                 }
-                final Ref<PsiElement> readElementRef = Ref.create(null);
-                final Ref<PsiElement> writeElementRef = Ref.create(null);
-                ControlFlowUtil.iteratePrev(startInstruction,
-                    instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
-                        @Override
-                        public ControlFlowUtil.Operation apply(Instruction instruction) {
-                            if (instruction instanceof ReadWriteInstruction && instruction.num() != startInstruction) {
-                                ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
-                                if (name.equals(rwInstruction.getName())) {
-                                    PsiElement originalElement = rwInstruction.getElement();
-                                    if (originalElement != null) {
-                                        if (rwInstruction.getAccess().isReadAccess()) {
-                                            readElementRef.set(originalElement);
-                                        }
-                                        if (rwInstruction.getAccess().isWriteAccess()) {
-                                            if (originalElement != element) {
-                                                writeElementRef.set(originalElement);
-                                            }
-                                        }
+                SimpleReference<PsiElement> readElementRef = SimpleReference.create(null);
+                SimpleReference<PsiElement> writeElementRef = SimpleReference.create(null);
+                SimpleReference<Boolean> underPossiblyFalseCondition = SimpleReference.create(false);
+                ControlFlowUtil.iteratePrev(startInstruction, instructions, instruction -> {
+                    if (instruction instanceof ReadWriteInstruction rwInstruction && instruction.num() != startInstruction) {
+                        if (name.equals(rwInstruction.getName())) {
+                            PsiElement originalElement = rwInstruction.getElement();
+                            if (originalElement != null) {
+                                if (rwInstruction.getAccess().isReadAccess()) {
+                                    readElementRef.set(originalElement);
+                                }
+                                if (rwInstruction.getAccess().isWriteAccess() && originalElement != element) {
+                                    if (PyiUtil.isOverload(originalElement, myTypeEvalContext) || isTypeDeclarationTarget(originalElement)) {
+                                        return ControlFlowUtil.Operation.NEXT;
                                     }
-                                    return ControlFlowUtil.Operation.CONTINUE;
+                                    else if (!underPossiblyFalseCondition.get()) {
+                                        writeElementRef.set(originalElement);
+                                    }
                                 }
                             }
-                            return ControlFlowUtil.Operation.NEXT;
+                            return ControlFlowUtil.Operation.CONTINUE;
                         }
                     }
-                );
+                    if (possiblyFalseCondition(instruction)) {
+                        underPossiblyFalseCondition.set(true);
+                    }
+                    return ControlFlowUtil.Operation.NEXT;
+                });
                 PsiElement writeElement = writeElementRef.get();
                 if (writeElement != null && readElementRef.get() == null) {
-                    List<LocalQuickFix> quickFixes = new ArrayList<LocalQuickFix>();
+                    // Repeated patterns are reported as syntactic errors in an annotator
+                    if (PsiTreeUtil.findCommonParent(writeElement, element) instanceof PyPattern) {
+                        return;
+                    }
+                    List<LocalQuickFix> quickFixes = new ArrayList<>();
                     if (suggestRename(element, writeElement)) {
-                        quickFixes.add(new PyRenameElementQuickFix());
+                        LocalQuickFix quickFix = PythonUiService.getInstance().createPyRenameElementQuickFix(element);
+                        if (quickFix != null) {
+                            quickFixes.add(quickFix);
+                        }
                     }
                     PsiElement identifier = element.getNameIdentifier();
-                    registerProblem(
-                        identifier != null ? identifier : element,
-                        PyLocalize.inspRedeclaredName(name).get(),
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        null,
-                        quickFixes.toArray(new LocalQuickFix[quickFixes.size()])
-                    );
+                    registerProblem(identifier != null ? identifier : element,
+                                    PyInspectionMessages.problemMessage(a -> PyLocalize.inspRedeclaredName(a[0]), name),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                    quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
                 }
             }
+        }
+
+        private static boolean possiblyFalseCondition(Instruction instruction) {
+            if (instruction instanceof ConditionalInstruction conditionalInstruction) {
+                if (conditionalInstruction.getCondition() instanceof PyExpression condition) {
+                    return conditionalInstruction.getResult()
+                           ? !PyEvaluator.evaluateAsBoolean(condition, false)
+                           : PyEvaluator.evaluateAsBoolean(condition, true);
+                }
+                return false;
+            }
+
+            PsiElement element = instruction.getElement();
+            if (element == null) {
+                return false;
+            }
+
+            if (element instanceof PyTryPart || element instanceof PyExceptPart || element instanceof PyConditionalExpression) {
+                return true;
+            }
+
+            if (element instanceof PyForStatement) {
+                PyForPart forPart = ((PyForStatement)element).getForPart();
+                return !PyEvaluator.evaluateAsBoolean(forPart.getSource(), false);
+            }
+
+            return false;
         }
 
         private static boolean suggestRename(PsiNameIdentifierOwner element, PsiElement originalElement) {
@@ -182,8 +218,7 @@ public class PyRedeclarationInspection extends PyInspection {
                 return false;
             }
             // Renaming an __init__ method results in renaming its class
-            else if (element instanceof PyFunction && PyNames.INIT.equals(element.getName()) &&
-                ((PyFunction) element).getContainingClass() != null) {
+            else if (PyUtil.isInitMethod(element)) {
                 return false;
             }
             return true;

@@ -1,56 +1,54 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExceptPart;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyRaiseStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
-import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.Stack;
 import org.jspecify.annotations.Nullable;
 
 /**
- * User: catherine
- * <p>
  * Inspection to detect too broad except clause
  * such as no exception class specified, or specified as 'Exception'
  */
 @ExtensionImpl
-public class PyBroadExceptionInspection extends PyInspection {
+public final class PyBroadExceptionInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameTooBroadExceptionClauses();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonExceptions();
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     public static boolean equalsException(PyClass cls, TypeEvalContext context) {
@@ -59,8 +57,9 @@ public class PyBroadExceptionInspection extends PyInspection {
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder,
+                TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -70,15 +69,15 @@ public class PyBroadExceptionInspection extends PyInspection {
                 return;
             }
             if (exceptClass == null) {
-                registerProblem(node.getFirstChild(), "Too broad exception clause");
+                registerProblem(node.getFirstChild(), PyLocalize.inspTooBroadExceptionClause().get());
             }
-            if (exceptClass != null) {
+            if (exceptClass instanceof PyReferenceExpression) {
                 PyType type = myTypeEvalContext.getType(exceptClass);
                 if (type instanceof PyClassType) {
                     PyClass cls = ((PyClassType) type).getPyClass();
                     PyExpression target = node.getTarget();
                     if (equalsException(cls, myTypeEvalContext) && (target == null || !isExceptionUsed(node, target.getText()))) {
-                        registerProblem(exceptClass, "Too broad exception clause");
+                        registerProblem(exceptClass, PyLocalize.inspTooBroadExceptionClause().get());
                     }
                 }
             }
@@ -86,11 +85,9 @@ public class PyBroadExceptionInspection extends PyInspection {
 
         private static boolean reRaised(PyExceptPart node) {
             PyStatementList statementList = node.getStatementList();
-            if (statementList != null) {
-                for (PyStatement st : statementList.getStatements()) {
-                    if (st instanceof PyRaiseStatement) {
-                        return true;
-                    }
+            for (PyStatement st : statementList.getStatements()) {
+                if (st instanceof PyRaiseStatement) {
+                    return true;
                 }
             }
             return false;
@@ -99,25 +96,20 @@ public class PyBroadExceptionInspection extends PyInspection {
         private static boolean isExceptionUsed(PyExceptPart node, String text) {
             Stack<PsiElement> stack = new Stack<>();
             PyStatementList statementList = node.getStatementList();
-            if (statementList != null) {
-                for (PyStatement st : statementList.getStatements()) {
-                    stack.push(st);
-                    while (!stack.isEmpty()) {
-                        PsiElement e = stack.pop();
-                        if (e instanceof PyReferenceExpression) {
-                            PsiReference reference = e.getReference();
-                            if (reference != null) {
-                                PsiElement resolved = reference.resolve();
-                                if (resolved != null) {
-                                    if (resolved.getText().equals(text)) {
-                                        return true;
-                                    }
-                                }
+            for (PyStatement st : statementList.getStatements()) {
+                stack.push(st);
+                while (!stack.isEmpty()) {
+                    PsiElement e = stack.pop();
+                    if (e instanceof PyReferenceExpression ref) {
+                        PsiElement resolved = ref.getReference().resolve();
+                        if (resolved != null) {
+                            if (text.equals(resolved.getText())) {
+                                return true;
                             }
                         }
-                        for (PsiElement psiElement : e.getChildren()) {
-                            stack.push(psiElement);
-                        }
+                    }
+                    for (PsiElement psiElement : e.getChildren()) {
+                        stack.push(psiElement);
                     }
                 }
             }

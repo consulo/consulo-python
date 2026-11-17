@@ -1,80 +1,129 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.language.editor.inspection.*;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.scheme.InspectionProfile;
 import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.editor.intention.LowPriorityAction;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-
+import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Warns about shadowing built-in names.
  *
- * @author vlan
  */
 @ExtensionImpl
-public class PyShadowingBuiltinsInspection extends PyInspection {
+public final class PyShadowingBuiltinsInspection extends PyInspection {
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameShadowingBuiltins();
+    }
+
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    private static LocalQuickFix[] createQuickFixes(String name, PsiElement problemElement) {
+        List<LocalQuickFix> fixes = new ArrayList<>();
+        LocalQuickFix qf = PythonUiService.getInstance().createPyRenameElementQuickFix(problemElement);
+        if (qf != null) {
+            fixes.add(qf);
+        }
+        fixes.add(new PyIgnoreBuiltinQuickFix(name));
+        return fixes.toArray(LocalQuickFix.EMPTY_ARRAY);
+    }
+
+    /**
+     * JB persistent setting {@code ignoredNames} lives in {@link PyShadowingBuiltinsInspectionState}.
+     */
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyShadowingBuiltinsInspectionState();
     }
 
     @Override
-    public LocalizeValue getDisplayName() {
-        return LocalizeValue.localizeTODO("Shadowing built-ins");
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session), ((PyShadowingBuiltinsInspectionState) state).ignoredNames);
     }
 
-    @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        PyShadowingBuiltinsInspectionState inspectionState = (PyShadowingBuiltinsInspectionState) state;
-        return new Visitor(holder, session, inspectionState.ignoredNames);
+    private static final class PyIgnoreBuiltinQuickFix implements LocalQuickFix, LowPriorityAction {
+        private final String myName;
+
+        private PyIgnoreBuiltinQuickFix(String name) {
+            myName = name;
+        }
+
+        @Override
+        public LocalizeValue getName() {
+            return PyLocalize.qfixIgnoreShadowedBuiltInName(myName);
+        }
+
+        @Override
+        public boolean startInWriteAction() {
+            return false;
+        }
+
+        @Override
+        public void applyFix(Project project, ProblemDescriptor descriptor) {
+            PsiElement element = descriptor.getPsiElement();
+            if (element != null) {
+                // TODO consulo: InspectionProfileModifiableModelKt.modifyAndCommitProjectProfile missing, modifying the current profile instead
+                InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+                profile.<PyShadowingBuiltinsInspection, PyShadowingBuiltinsInspectionState>modifyToolSettings(
+                    PyShadowingBuiltinsInspection.class.getSimpleName(),
+                    element,
+                    (inspection, state) -> {
+                        if (!state.ignoredNames.contains(myName)) {
+                            state.ignoredNames.add(myName);
+                        }
+                    }
+                );
+            }
+        }
     }
 
     private static class Visitor extends PyInspectionVisitor {
         private final Set<String> myIgnoredNames;
 
-        public Visitor(
-            @Nullable ProblemsHolder holder,
-            LocalInspectionToolSession session,
-            Collection<String> ignoredNames
-        ) {
-            super(holder, session);
-            myIgnoredNames = ImmutableSet.copyOf(ignoredNames);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context, Collection<String> ignoredNames) {
+            super(holder, context);
+            myIgnoredNames = Set.copyOf(ignoredNames);
         }
 
         @Override
@@ -94,7 +143,7 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
 
         @Override
         public void visitPyTargetExpression(PyTargetExpression node) {
-            if (node.getQualifier() == null) {
+            if (!node.isQualified()) {
                 processElement(node);
             }
         }
@@ -105,45 +154,14 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
                 return;
             }
             String name = element.getName();
-            if (name != null && !myIgnoredNames.contains(name)) {
+            if (name != null && PyUtil.getInitialUnderscores(name) != 1 && !myIgnoredNames.contains(name)) {
                 PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
                 PsiElement builtin = builtinCache.getByName(name);
                 if (builtin != null && !PyUtil.inSameFile(builtin, element)) {
                     PsiElement identifier = element.getNameIdentifier();
                     PsiElement problemElement = identifier != null ? identifier : element;
-                    registerProblem(problemElement, String.format("Shadows built-in name '%s'", name),
-                        ProblemHighlightType.WEAK_WARNING, null, new PyRenameElementQuickFix(), new PyIgnoreBuiltinQuickFix(name)
-                    );
-                }
-            }
-        }
-
-        private static class PyIgnoreBuiltinQuickFix implements LocalQuickFix, LowPriorityAction {
-            private final String myName;
-
-            private PyIgnoreBuiltinQuickFix(String name) {
-                myName = name;
-            }
-
-            @Override
-            public LocalizeValue getName() {
-                return LocalizeValue.localizeTODO("Ignore shadowed built-in name \"" + myName + "\"");
-            }
-
-            @Override
-            public void applyFix(Project project, ProblemDescriptor descriptor) {
-                PsiElement element = descriptor.getPsiElement();
-                if (element != null) {
-                    InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-                    profile.<PyShadowingBuiltinsInspection, PyShadowingBuiltinsInspectionState>modifyToolSettings(
-                        PyShadowingBuiltinsInspection.class.getSimpleName(),
-                        element,
-                        (i, s) -> {
-                            if (!s.ignoredNames.contains(myName)) {
-                                s.ignoredNames.add(myName);
-                            }
-                        }
-                    );
+                    registerProblem(problemElement, PyInspectionMessages.problemMessage(a -> PyLocalize.inspShadowingBuiltinsShadowsBuiltInName(a[0]), name),
+                                    ProblemHighlightType.WEAK_WARNING, createQuickFixes(name, problemElement));
                 }
             }
         }

@@ -75,6 +75,11 @@ public class PyTypeCheckerInspection extends PyInspection {
     }
 
     @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonTypeHinting();
+    }
+
+    @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyTypeCheckerInspectionState();
     }

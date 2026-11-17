@@ -1,29 +1,18 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypedDictTypeProvider;
 import com.jetbrains.python.impl.inspections.quickfix.AddMethodQuickFix;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
@@ -34,30 +23,38 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
+ * User: ktisha
  * See pylint W0232
- *
- * @author ktisha
  */
 @ExtensionImpl
-public class PyClassHasNoInitInspection extends PyInspection {
+public final class PyClassHasNoInitInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameClassHasNoInit();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonPython2();
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder,
+                TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -68,6 +65,9 @@ public class PyClassHasNoInitInspection extends PyInspection {
                 return;
             }
             List<PyClassLikeType> types = node.getAncestorTypes(myTypeEvalContext);
+            if (PyTypedDictTypeProvider.Helper.isTypingTypedDictInheritor(node, myTypeEvalContext)) {
+                return;
+            }
             for (PyClassLikeType type : types) {
                 if (type == null) {
                     return;
@@ -81,13 +81,10 @@ public class PyClassHasNoInitInspection extends PyInspection {
                 }
             }
 
-            PyFunction init = node.findInitOrNew(true, null);
+            PyFunction init = node.findInitOrNew(true, myTypeEvalContext);
             if (init == null) {
-                registerProblem(
-                    node.getNameIdentifier(),
-                    PyLocalize.inspClassHasNoInit().get(),
-                    new AddMethodQuickFix("__init__", node.getName(), false)
-                );
+                registerProblem(node.getNameIdentifier(), PyLocalize.inspClassHasNoInit().get(),
+                                new AddMethodQuickFix(PyNames.INIT, node.getName(), false));
             }
         }
     }

@@ -1,23 +1,14 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.PyAddExceptionSuperClassQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyRaiseStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -26,31 +17,34 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.collection.ContainerUtil;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author Alexey.Ivanov
- */
+import java.util.List;
+
 @ExtensionImpl
-public class PyExceptionInheritInspection extends PyInspection {
+public final class PyExceptionInheritInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameExceptionNotInherit();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonExceptions();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -61,29 +55,25 @@ public class PyExceptionInheritInspection extends PyInspection {
             }
             PyExpression expression = expressions[0];
             if (expression instanceof PyCallExpression) {
-                PyExpression callee = ((PyCallExpression) expression).getCallee();
+                PyExpression callee = ((PyCallExpression)expression).getCallee();
                 if (callee instanceof PyReferenceExpression) {
-                    PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference(getResolveContext());
-                    if (reference == null) {
-                        return;
-                    }
+                    PsiPolyVariantReference reference = ((PyReferenceExpression)callee).getReference(getResolveContext());
                     PsiElement psiElement = reference.resolve();
-                    if (psiElement instanceof PyClass) {
-                        PyClass aClass = (PyClass) psiElement;
-                        for (PyClassLikeType type : aClass.getAncestorTypes(myTypeEvalContext)) {
+                    if (psiElement instanceof PyClass aClass) {
+                        List<PyClassLikeType> selfAndAncestorTypes = ContainerUtil.prepend(aClass.getAncestorTypes(myTypeEvalContext),
+                                                                                           aClass.getType(myTypeEvalContext));
+                        for (PyClassLikeType type : selfAndAncestorTypes) {
                             if (type == null) {
                                 return;
                             }
                             String name = type.getName();
-                            if (name == null || "BaseException".equals(name) || "Exception".equals(name)) {
+                            if (name == null || "BaseException".equals(name)) {
                                 return;
                             }
                         }
-                        registerProblem(
-                            expression,
-                            "Exception doesn't inherit from base \'Exception\' class",
-                            new PyAddExceptionSuperClassQuickFix()
-                        );
+                        registerProblem(expression,
+                                        PyLocalize.inspExceptionInheritanceExceptionDoesNotInheritFromBaseExceptionClass().get(),
+                                        new PyAddExceptionSuperClassQuickFix());
                     }
                 }
             }

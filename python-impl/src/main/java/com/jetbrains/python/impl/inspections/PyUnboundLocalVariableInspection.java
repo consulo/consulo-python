@@ -57,6 +57,11 @@ public final class PyUnboundLocalVariableInspection extends PyInspection {
     }
 
     @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonControlFlowIssues();
+    }
+
+    @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder,
                                           boolean isOnTheFly,
                                           LocalInspectionToolSession session,

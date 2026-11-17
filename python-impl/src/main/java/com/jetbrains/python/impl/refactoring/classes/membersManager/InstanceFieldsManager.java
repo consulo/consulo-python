@@ -1,30 +1,10 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 
 import com.google.common.collect.Collections2;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.NotNullPredicate;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -36,122 +16,112 @@ import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * @author Ilya.Kazakevich
  */
-class InstanceFieldsManager extends FieldsManager
-{
-	private static final FieldsOnly FIELDS_ONLY = new FieldsOnly();
+class InstanceFieldsManager extends FieldsManager {
+    private static final FieldsOnly FIELDS_ONLY = new FieldsOnly();
 
-	// PY-12170
+    // PY-12170
 
-	InstanceFieldsManager()
-	{
-		super(false);
-	}
+    InstanceFieldsManager() {
+        super(false);
+    }
 
-	@Override
-	public boolean hasConflict(PyTargetExpression member, PyClass aClass)
-	{
-		return NamePredicate.hasElementWithSameName(member, aClass.getInstanceAttributes());
-	}
+    @Override
+    public boolean hasConflict(PyTargetExpression member, PyClass aClass) {
+        return NamePredicate.hasElementWithSameName(member, aClass.getInstanceAttributes());
+    }
 
-	@Override
-	protected Collection<PyElement> moveAssignments(PyClass from, Collection<PyAssignmentStatement> statements, PyClass... to)
-	{
-		//TODO: Copy/paste with ClassFieldsManager. Move to parent?
+    @Override
+    protected Collection<PyElement> moveAssignments(PyClass from,
+                                                    Collection<PyAssignmentStatement> statements,
+                                                    PyClass ... to) {
+        //TODO: Copy/paste with ClassFieldsManager. Move to parent?
 
-		List<PyElement> result = new ArrayList<>();
-		for(PyClass destClass : to)
-		{
-			result.addAll(copyInstanceFields(statements, destClass));
-		}
-		// Delete only declarations made in __init__ to prevent PY-12170
-		PyFunction fromInitMethod = PyUtil.getInitMethod(from);
-		if(fromInitMethod != null)
-		{ // If class has no init method that means all its fields declared in other methods, so nothing to remove
-			deleteElements(Collections2.filter(statements, new InitsOnly(fromInitMethod)));
-			//We can't leave class constructor with empty body
-		}
-		return result;
-	}
+        List<PyElement> result = new ArrayList<>();
+        for (PyClass destClass : to) {
+            result.addAll(copyInstanceFields(statements, destClass));
+        }
+        // Delete only declarations made in __init__ to prevent PY-12170
+        PyFunction fromInitMethod = PyUtil.getInitMethod(from);
+        if (fromInitMethod != null) { // If class has no init method that means all its fields declared in other methods, so nothing to remove
+            deleteElements(Collections2.filter(statements, new InitsOnly(fromInitMethod)));
+            //We can't leave class constructor with empty body
+        }
+        return result;
+    }
 
-	/**
-	 * Copies class' fields in form of assignments (instance fields) to another class.
-	 * Creates init method if there is no any
-	 *
-	 * @param members assignments to copy
-	 * @param to      destination
-	 * @return newly created fields
-	 */
-	private static List<PyAssignmentStatement> copyInstanceFields(Collection<PyAssignmentStatement> members, PyClass to)
-	{
-		//We need __init__ method, and if there is no any -- we need to create it
-		PyFunction toInitMethod = PyUtil.getInitMethod(to);
-		if(toInitMethod == null)
-		{
-			toInitMethod = createInitMethod(to);
-		}
-		PyStatementList statementList = toInitMethod.getStatementList();
-		return PyClassRefactoringUtil.copyFieldDeclarationToStatement(members, statementList, null);
-	}
+    /**
+     * Copies class' fields in form of assignments (instance fields) to another class.
+     * Creates init method if there is no any
+     *
+     * @param members assignments to copy
+     * @param to      destination
+     * @return newly created fields
+     */
+    private static List<PyAssignmentStatement> copyInstanceFields(Collection<PyAssignmentStatement> members,
+                                                                           PyClass to) {
+        //We need __init__ method, and if there is no any -- we need to create it
+        PyFunction toInitMethod = PyUtil.getInitMethod(to);
+        if (toInitMethod == null) {
+            toInitMethod = createInitMethod(to);
+        }
+        PyStatementList statementList = toInitMethod.getStatementList();
+        return PyClassRefactoringUtil.copyFieldDeclarationToStatement(members, statementList, null);
+    }
 
-	/**
-	 * Creates init method and adds it to certain class.
-	 *
-	 * @param to Class where method should be added
-	 * @return newly created method
-	 */
-	//TODO: Move to utils?
-	private static PyFunction createInitMethod(PyClass to)
-	{
-		PyFunctionBuilder functionBuilder = new PyFunctionBuilder(PyNames.INIT, to);
-		functionBuilder.parameter(PyNames.CANONICAL_SELF); //TODO: Take param from codestyle?
-		PyFunction function = functionBuilder.buildFunction();
-		return PyClassRefactoringUtil.addMethods(to, true, function).get(0);
-	}
+    /**
+     * Creates init method and adds it to certain class.
+     *
+     * @param to Class where method should be added
+     * @return newly created method
+     */
+    //TODO: Move to utils?
+    private static PyFunction createInitMethod(PyClass to) {
+        PyFunctionBuilder functionBuilder = new PyFunctionBuilder(PyNames.INIT, to);
+        functionBuilder.parameter(PyNames.CANONICAL_SELF); //TODO: Take param from codestyle?
+        PyFunction function = functionBuilder.buildFunction();
+        return PyClassRefactoringUtil.addMethods(to, true, function).get(0);
+    }
 
-	@Override
-	protected boolean classHasField(PyClass pyClass, String fieldName)
-	{
-		return pyClass.findInstanceAttribute(fieldName, true) != null;
-	}
+    @Override
+    protected boolean classHasField(PyClass pyClass, String fieldName) {
+        return pyClass.findInstanceAttribute(fieldName, true) != null;
+    }
 
-	@Override
-	protected Collection<PyTargetExpression> getFieldsByClass(PyClass pyClass)
-	{
-		return Collections2.filter(pyClass.getInstanceAttributes(), FIELDS_ONLY);
-	}
+    @Override
+    protected Collection<PyTargetExpression> getFieldsByClass(PyClass pyClass) {
+        return Collections2.filter(pyClass.getInstanceAttributes(), FIELDS_ONLY);
+    }
 
-	private static class InitsOnly extends NotNullPredicate<PyAssignmentStatement>
-	{
-		private final PyFunction myInitMethod;
+    private static final class InitsOnly extends NotNullPredicate<PyAssignmentStatement> {
+        private final PyFunction myInitMethod;
 
-		private InitsOnly(PyFunction initMethod)
-		{
-			myInitMethod = initMethod;
-		}
+        private InitsOnly(PyFunction initMethod) {
+            myInitMethod = initMethod;
+        }
 
-		@Override
-		protected boolean applyNotNull(PyAssignmentStatement input)
-		{
-			PyExpression expression = input.getLeftHandSideExpression();
-			if(expression == null)
-			{
-				return false;
-			}
+        @Override
+        protected boolean applyNotNull(PyAssignmentStatement input) {
+            PyExpression expression = input.getLeftHandSideExpression();
+            if (expression == null) {
+                return false;
+            }
 
-			PyFunction functionWhereDeclared = PsiTreeUtil.getParentOfType(PyUtil.resolveToTheTop(expression), PyFunction.class);
-			return myInitMethod.equals(functionWhereDeclared);
-		}
-	}
+            PyFunction functionWhereDeclared = PsiTreeUtil.getParentOfType(PyUtil.resolveToTheTop(expression), PyFunction.class);
+            return myInitMethod.equals(functionWhereDeclared);
+        }
+    }
 
-	private static class FieldsOnly extends NotNullPredicate<PyTargetExpression>
-	{
-		@Override
-		protected boolean applyNotNull(PyTargetExpression input)
-		{
-			return input.getReference().resolve() instanceof PyTargetExpression;
-		}
-	}
+    private static class FieldsOnly extends NotNullPredicate<PyTargetExpression> {
+        @Override
+        protected boolean applyNotNull(PyTargetExpression input) {
+            return input.getReference().resolve() instanceof PyTargetExpression;
+        }
+    }
 }

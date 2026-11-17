@@ -109,6 +109,7 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.codeInsight.highlighting;
   exports com.jetbrains.python.impl.codeInsight.imports;
   exports com.jetbrains.python.impl.codeInsight.intentions;
+  exports com.jetbrains.python.impl.codeInsight.intentions.convertToFString;
   exports com.jetbrains.python.impl.codeInsight.liveTemplates;
   exports com.jetbrains.python.impl.codeInsight.mlcompletion;
   exports com.jetbrains.python.impl.codeInsight.override;

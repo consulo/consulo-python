@@ -1,21 +1,14 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyNamedParameter;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -25,15 +18,15 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 
 /**
+ * User: catherine
+ * <p>
  * QuickFix to replace mutable default argument. For instance,
  * def foo(args=[]):
- *   pass
+ * pass
  * replace with:
  * def foo(args=None):
- *   if not args: args = []
- *   pass
- *
- * @author catherine
+ * if not args: args = []
+ * pass
  */
 public class PyDefaultArgumentQuickFix implements LocalQuickFix {
 
@@ -43,48 +36,24 @@ public class PyDefaultArgumentQuickFix implements LocalQuickFix {
     }
 
     @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PsiElement defaultValue = descriptor.getPsiElement();
-        PsiElement param = PsiTreeUtil.getParentOfType(defaultValue, PyNamedParameter.class);
-        PyFunction function = PsiTreeUtil.getParentOfType(defaultValue, PyFunction.class);
-        String defName = PsiTreeUtil.getParentOfType(defaultValue, PyNamedParameter.class).getName();
-        if (function != null) {
-            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-            PyStatementList list = function.getStatementList();
-            if (list != null) {
-                PyParameterList paramList = function.getParameterList();
+        PsiElement element = descriptor.getPsiElement();
+        PyNamedParameter param = PsiTreeUtil.getParentOfType(element, PyNamedParameter.class);
+        PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        assert param != null;
+        String defName = param.getName();
+        if (function != null && defName != null) {
+            PyElementGenerator generator = PyElementGenerator.getInstance(project);
+            LanguageLevel languageLevel = LanguageLevel.forElement(function);
 
-                StringBuilder str = new StringBuilder("def foo(");
-                int size = paramList.getParameters().length;
-                for (int i = 0; i != size; ++i) {
-                    PyParameter p = paramList.getParameters()[i];
-                    if (p == param) {
-                        str.append(defName).append("=None");
-                    }
-                    else {
-                        str.append(p.getText());
-                    }
-                    if (i != size - 1) {
-                        str.append(", ");
-                    }
-                }
-                str.append("):\n\tpass");
-                PyIfStatement ifStatement = elementGenerator.createFromText(LanguageLevel.forElement(function), PyIfStatement.class,
-                    "if not " + defName + ": " + defName + " = " + defaultValue.getText()
-                );
+            PyNamedParameter newParam = generator.createParameter(defName, PyNames.NONE, null, languageLevel);
+            param.replace(newParam);
 
-                PyStatement firstStatement = list.getStatements()[0];
-                PyStringLiteralExpression docString = function.getDocStringExpression();
-                if (docString != null) {
-                    list.addAfter(ifStatement, firstStatement);
-                }
-                else {
-                    list.addBefore(ifStatement, firstStatement);
-                }
-                paramList.replace(elementGenerator.createFromText(LanguageLevel.forElement(defaultValue),
-                    PyFunction.class, str.toString()
-                ).getParameterList());
-            }
+            String conditionalText = "if " + defName + " is None:" +
+                    "\n\t" + defName + " = " + element.getText();
+            PyIfStatement conditionalAssignment = generator.createFromText(languageLevel, PyIfStatement.class, conditionalText);
+            PyPsiRefactoringUtil.addElementToStatementList(conditionalAssignment, function.getStatementList(), true);
         }
     }
 }

@@ -18,6 +18,7 @@
 package com.jetbrains.python.impl;
 
 import com.jetbrains.python.impl.codeInsight.intentions.DeclarationConflictChecker;
+import com.jetbrains.python.impl.codeInsight.intentions.PyAnnotateTypesIntention;
 import com.jetbrains.python.impl.inspections.PyRenameElementQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.PyImplementMethodsQuickFix;
 import com.jetbrains.python.psi.PyCallExpression;
@@ -153,7 +154,7 @@ public final class PythonUiServiceImpl extends PythonUiService {
 
     @Override
     public void annotateTypesIntention(Editor editor, PyFunction function) {
-        // TODO consulo: PyAnnotateTypesIntention missing - JB: PyAnnotateTypesIntention.annotateTypes(editor, function);
+        PyAnnotateTypesIntention.annotateTypes(editor, function);
     }
 
     /**

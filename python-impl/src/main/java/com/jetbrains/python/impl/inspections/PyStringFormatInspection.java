@@ -96,6 +96,11 @@ public class PyStringFormatInspection extends PyInspection {
     }
 
     @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
     public PsiElementVisitor buildVisitor(
         ProblemsHolder holder,
         boolean isOnTheFly,

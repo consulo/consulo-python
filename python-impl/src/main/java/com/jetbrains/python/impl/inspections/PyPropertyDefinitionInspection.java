@@ -69,6 +69,11 @@ public final class PyPropertyDefinitionInspection extends PyInspection {
         return PyLocalize.inspNamePropertyDefinition();
     }
 
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonProperties();
+    }
+
 
     private static final ImmutableList<String> SUFFIXES = ImmutableList.of(PyNames.SETTER, PyNames.DELETER);
 

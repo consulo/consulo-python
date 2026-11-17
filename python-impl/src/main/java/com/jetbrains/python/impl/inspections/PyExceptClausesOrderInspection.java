@@ -1,24 +1,17 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
+import com.jetbrains.python.impl.inspections.PyInspectionMessages.CodifiedParam;
 import com.jetbrains.python.impl.inspections.quickfix.PyMoveExceptQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExceptPart;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTryExceptStatement;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
@@ -28,30 +21,30 @@ import consulo.python.impl.localize.PyLocalize;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Alexey.Ivanov
- */
 @ExtensionImpl
-public class PyExceptClausesOrderInspection extends PyInspection {
+public final class PyExceptClausesOrderInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameBadExceptClausesOrder();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonExceptions();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -62,20 +55,18 @@ public class PyExceptClausesOrderInspection extends PyInspection {
                 for (PyExceptPart exceptPart : exceptParts) {
                     PyExpression exceptClass = exceptPart.getExceptClass();
                     if (exceptClass instanceof PyReferenceExpression) {
-                        PsiElement element = ((PyReferenceExpression) exceptClass).followAssignmentsChain(getResolveContext()).getElement();
-                        if (element instanceof PyClass) {
-                            PyClass pyClass = (PyClass) element;
+                        PsiElement element = ((PyReferenceExpression)exceptClass).followAssignmentsChain(getResolveContext()).getElement();
+                        if (element instanceof PyClass pyClass) {
                             if (exceptClasses.contains(pyClass)) {
-                                registerProblem(exceptClass, PyLocalize.inspClass$0AlreadyCaught(pyClass.getName()).get());
+                                registerProblem(exceptClass, PyInspectionMessages.problemMessage(a -> PyLocalize.inspBadExceptExceptionClassAlreadyCaught(a[0]), CodifiedParam.ofReference(pyClass)));
                             }
                             else {
                                 for (PyClass superClass : pyClass.getSuperClasses(null)) {
                                     if (exceptClasses.contains(superClass)) {
-                                        registerProblem(
-                                            exceptClass,
-                                            PyLocalize.inspClass$0Superclass$1AlreadyCaught(superClass.getName(), pyClass.getName()).get(),
-                                            new PyMoveExceptQuickFix()
-                                        );
+                                        registerProblem(exceptClass,
+                                                        PyInspectionMessages.problemMessage(a -> PyLocalize.inspBadExceptSuperclassOfExceptionClassAlreadyCaught(a[0], a[1]), CodifiedParam.ofReference(superClass), CodifiedParam.ofReference(pyClass)),
+                                                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                                        new PyMoveExceptQuickFix());
                                     }
                                 }
                             }

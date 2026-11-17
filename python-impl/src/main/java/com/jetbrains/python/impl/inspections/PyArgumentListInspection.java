@@ -54,6 +54,11 @@ public final class PyArgumentListInspection extends PyInspection {
     }
 
     @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonGeneral();
+    }
+
+    @Override
     public PsiElementVisitor buildVisitor(ProblemsHolder holder,
                                           boolean isOnTheFly,
                                           LocalInspectionToolSession session,

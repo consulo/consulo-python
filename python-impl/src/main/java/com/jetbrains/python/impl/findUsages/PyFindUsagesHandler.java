@@ -1,0 +1,75 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.jetbrains.python.impl.findUsages;
+
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.psi.PyElement;
+import consulo.dataContext.DataContext;
+import consulo.find.FindUsagesHandler;
+import consulo.find.FindUsagesOptions;
+import consulo.language.psi.PsiElement;
+import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Important note: please update PyFindUsagesHandlerFactory#proxy on any changes here.
+ */
+public abstract class PyFindUsagesHandler extends FindUsagesHandler {
+    protected PyFindUsagesHandler(PsiElement psiElement) {
+        super(psiElement);
+    }
+
+    @Override
+    public FindUsagesOptions getFindUsagesOptions(@Nullable DataContext dataContext) {
+        PyFindUsagesOptions sharedOpts = PyFindUsagesOptions.getInstance(getProject());
+        return !isSearchForTextOccurrencesAvailable(getPsiElement(), false) ? (PyFindUsagesOptions) sharedOpts.clone() : sharedOpts;
+    }
+
+    @Override
+    protected boolean isSearchForTextOccurrencesAvailable(PsiElement psiElement, boolean isSingleFile) {
+        return super.isSearchForTextOccurrencesAvailable(psiElement, isSingleFile);
+    }
+
+    @Override
+    public PsiElement[] getPrimaryElements() {
+        List<PsiElement> result = new ArrayList<>();
+        result.add(getPsiElement());
+
+        completePrimaryElementsWithStubAndOriginalElements(result);
+
+        return result.toArray(PsiElement.EMPTY_ARRAY);
+    }
+
+    protected void completePrimaryElementsWithStubAndOriginalElements(List<PsiElement> result) {
+        List<PsiElement> additionalElements = new ArrayList<>();
+        for (PsiElement element : result) {
+            PsiElement stubElement = tryGetStubElement(element);
+            if (stubElement != null) {
+                additionalElements.add(stubElement);
+            }
+
+            PsiElement originalElement = tryGetOriginalElement(element);
+            if (originalElement != null) {
+                additionalElements.add(originalElement);
+            }
+        }
+        result.addAll(additionalElements);
+    }
+
+    protected static @Nullable PsiElement tryGetStubElement(@Nullable PsiElement element) {
+        if (!(element instanceof PyElement)) {
+            return null;
+        }
+        PsiElement result = PyiUtil.getPythonStub((PyElement) element);
+        return result != element ? result : null;
+    }
+
+    protected static @Nullable PsiElement tryGetOriginalElement(@Nullable PsiElement element) {
+        if (!(element instanceof PyElement)) {
+            return null;
+        }
+        PsiElement result = PyiUtil.getOriginalElement((PyElement) element);
+        return result != element ? result : null;
+    }
+}

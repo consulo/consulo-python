@@ -1,65 +1,50 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import consulo.localize.LocalizeValue;
-import consulo.python.impl.localize.PyLocalize;
-
-import consulo.language.editor.CodeInsightUtilCore;
-import consulo.language.editor.template.TemplateBuilder;
-import consulo.language.editor.template.TemplateBuilderFactory;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.document.util.TextRange;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
+import com.jetbrains.python.impl.PythonTemplateRunner;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
+import consulo.annotation.access.RequiredWriteAction;
+import consulo.document.util.TextRange;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 
-/**
- * QuickFix to add parameter to unresolved reference
- *
- * @author ktisha
- */
 public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
-  private String myName;
-  public UnresolvedReferenceAddParameterQuickFix(String name) {
-    myName = name;
-  }
+    private final String myName;
 
-  @Override
-  public LocalizeValue getName() {
-    return PyLocalize.qfixUnresolvedReferenceAddParam$0(myName);
-  }
-
-  public void applyFix(Project project, ProblemDescriptor descriptor) {
-    PsiElement element = descriptor.getPsiElement();
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    PyNamedParameter parameter = elementGenerator.createParameter(element.getText() + "=None");
-    PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-    if (function != null) {
-      PyParameterList parameterList = function.getParameterList();
-      parameterList.addParameter(parameter);
-      CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(parameterList);
-      TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parameter);
-      builder.replaceRange(TextRange.create(parameter.getTextLength() - 4, parameter.getTextLength()), "None");
-      builder.run();
+    public UnresolvedReferenceAddParameterQuickFix(String name) {
+        myName = name;
     }
-  }
+
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixUnresolvedReferenceAddParam$0(myName);
+    }
+
+    @Override
+    @RequiredWriteAction
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        final PyNamedParameter parameter = elementGenerator.createParameter(element.getText() + "=None");
+        final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        if (function != null) {
+            final PyParameterList parameterList = function.getParameterList();
+            parameterList.addParameter(parameter);
+            CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(parameterList);
+            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parameter);
+            builder.replaceRange(TextRange.create(parameter.getTextLength() - 4, parameter.getTextLength()), "None");
+            PythonTemplateRunner.runTemplate(function.getContainingFile(), builder);
+        }
+    }
 }

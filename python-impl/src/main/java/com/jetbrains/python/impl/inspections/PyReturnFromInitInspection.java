@@ -1,24 +1,12 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.inspections.quickfix.PyRemoveStatementQuickFix;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReturnStatement;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -33,38 +21,39 @@ import java.util.Collection;
 
 /**
  * Checks that no value is returned from __init__().
- *
- * @author dcheryasov
- * @since 2009-11-12
  */
 @ExtensionImpl
-public class PyReturnFromInitInspection extends PyInspection {
+public final class PyReturnFromInitInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameInitReturn();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonClassStructure();
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        public Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
+        @Override
         public void visitPyFunction(PyFunction function) {
-            if (function.getContainingClass() != null && PyNames.INIT.equals(function.getName())) {
-                Collection<PsiElement> offenders = new ArrayList<PsiElement>();
+            if (PyUtil.isInitMethod(function)) {
+                Collection<PsiElement> offenders = new ArrayList<>();
                 findReturnValueInside(function, offenders);
                 for (PsiElement offender : offenders) {
-                    registerProblem(offender, PyLocalize.inspCantReturnValueFromInit().get());
+                    registerProblem(offender, PyLocalize.inspCantReturnValueFromInit().get(), new PyRemoveStatementQuickFix());
                 }
             }
         }
@@ -75,7 +64,7 @@ public class PyReturnFromInitInspection extends PyInspection {
                     continue; // ignore possible inner functions and classes
                 }
                 if (child instanceof PyReturnStatement) {
-                    if (((PyReturnStatement) child).getExpression() != null) {
+                    if (((PyReturnStatement)child).getExpression() != null) {
                         offenders.add(child);
                     }
                 }

@@ -1,0 +1,202 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.jetbrains.python.impl.codeInsight.intentions.convertToFString;
+
+import com.jetbrains.python.impl.PyStringFormatParser;
+import com.jetbrains.python.impl.codeInsight.PySubstitutionChunkReference;
+import com.jetbrains.python.impl.psi.PyUtil.StringNodeInfo;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyKeyValueExpression;
+import com.jetbrains.python.psi.PyKeywordArgument;
+import com.jetbrains.python.psi.PyLambdaExpression;
+import com.jetbrains.python.psi.PyStarArgument;
+import com.jetbrains.python.psi.PyStarExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PyStringLiteralUtil;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.StringUtil;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
+
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+
+/**
+ * @author Mikhail Golubev
+ */
+public abstract class BaseConvertToFStringProcessor<T extends PyStringFormatParser.SubstitutionChunk> {
+    protected final PyStringLiteralExpression myPyString;
+    protected final StringNodeInfo myNodeInfo;
+
+    protected BaseConvertToFStringProcessor(PyStringLiteralExpression pyString) {
+        myPyString = pyString;
+        myNodeInfo = new StringNodeInfo(pyString.getStringNodes().get(0));
+    }
+
+    public final boolean isRefactoringAvailable() {
+        // TODO support glued/concatenated string literal with multiple nodes
+        if (myPyString.getStringNodes().size() > 1 || myNodeInfo.isBytes() || myNodeInfo.isFormatted()) {
+            return false;
+        }
+        PsiElement valuesSource = getValuesSource();
+        if (valuesSource == null) {
+            return false;
+        }
+        List<T> chunks = extractAllSubstitutionChunks();
+        for (T chunk : chunks) {
+            if (!checkChunk(chunk)) {
+                return false;
+            }
+            PySubstitutionChunkReference reference = createReference(chunk);
+            PyExpression referencedExpr = adjustResolveResult(reference.resolve());
+            if (referencedExpr == null) {
+                return false;
+            }
+            if (!PsiTreeUtil.isAncestor(valuesSource, referencedExpr, false)) {
+                return false;
+            }
+            if (referencedExpr instanceof PyStarExpression || referencedExpr instanceof PyStarArgument) {
+                return false;
+            }
+            if (!checkReferencedExpression(chunks, chunk, valuesSource, referencedExpr)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean checkReferencedExpression(List<T> chunks,
+            T chunk,
+            PsiElement valueSource,
+            PyExpression expression) {
+        if (expression.textContains('\\') || expression.textContains('\n')) {
+            return false;
+        }
+        return adjustQuotesInsideInjectedExpression(expression) != null;
+    }
+
+    public final void doRefactoring() {
+        String stringText = myPyString.getText();
+        StringBuilder fStringText = new StringBuilder();
+        fStringText.append("f");
+        fStringText.append(StringUtil.replaceIgnoreCase(myNodeInfo.getPrefix(), "u", ""));
+        fStringText.append(myNodeInfo.getQuote());
+
+        TextRange contentRange = myNodeInfo.getContentRange();
+        int offset = contentRange.getStartOffset();
+
+        for (T chunk : extractTopLevelSubstitutionChunks()) {
+            processLiteralChunk(stringText.substring(offset, chunk.getStartIndex()), fStringText);
+            if (!processSubstitutionChunk(chunk, fStringText)) {
+                return;
+            }
+            offset = chunk.getEndIndex();
+        }
+
+        if (offset < contentRange.getEndOffset()) {
+            processLiteralChunk(stringText.substring(offset, contentRange.getEndOffset()), fStringText);
+        }
+
+        fStringText.append(myNodeInfo.getQuote());
+
+        PyExpression expressionToReplace = getWholeExpressionToReplace();
+
+        PyElementGenerator generator = PyElementGenerator.getInstance(myPyString.getProject());
+        PyExpression fString = generator.createExpressionFromText(LanguageLevel.forElement(myPyString), fStringText.toString());
+        expressionToReplace.replace(fString);
+    }
+
+    protected abstract List<T> extractAllSubstitutionChunks();
+
+    protected List<T> extractTopLevelSubstitutionChunks() {
+        return extractAllSubstitutionChunks();
+    }
+
+    protected abstract PySubstitutionChunkReference createReference(T chunk);
+
+    protected abstract boolean checkChunk(T chunk);
+
+    protected abstract boolean processSubstitutionChunk(T chunk, StringBuilder fStringText);
+
+    protected abstract void processLiteralChunk(String chunk, StringBuilder fStringText);
+
+    protected @Nullable PsiElement adjustQuotesInsideInjectedExpression(PsiElement expression) {
+        PsiElement copied = expression.copy();
+
+        char hostQuote = myNodeInfo.getSingleQuote();
+        PyElementGenerator generator = PyElementGenerator.getInstance(myPyString.getProject());
+
+        Collection<PyStringLiteralExpression> innerStrings = PsiTreeUtil.collectElementsOfType(copied, PyStringLiteralExpression.class);
+        for (PyStringLiteralExpression literal : innerStrings) {
+            List<ASTNode> nodes = literal.getStringNodes();
+            // TODO figure out what to do with those
+            if (nodes.size() > 1) {
+                return copied;
+            }
+            StringNodeInfo info = new StringNodeInfo(nodes.get(0));
+            // Nest string contain the same type of quote as host string inside, and we cannot escape inside f-string -- retreat
+            String content = info.getContent();
+            if (content.indexOf(hostQuote) >= 0) {
+                return null;
+            }
+            if (!info.isTerminated()) {
+                return null;
+            }
+            if (info.getQuote().startsWith(myNodeInfo.getQuote())) {
+                char targetSingleQuote = PyStringLiteralUtil.flipQuote(hostQuote);
+                if (content.indexOf(targetSingleQuote) >= 0) {
+                    return null;
+                }
+
+                String targetQuote = info.getQuote().replace(hostQuote, targetSingleQuote);
+                String stringWithSwappedQuotes = info.getPrefix() + targetQuote + content + targetQuote;
+                PsiElement replaced = literal.replace(generator.createStringLiteralAlreadyEscaped(stringWithSwappedQuotes));
+                if (literal == copied) {
+                    return replaced;
+                }
+            }
+        }
+        return copied;
+    }
+
+    protected abstract PyExpression getWholeExpressionToReplace();
+
+    protected abstract @Nullable PsiElement getValuesSource();
+
+    protected @Nullable PsiElement prepareExpressionToInject(PyExpression expression, T chunk) {
+        PsiElement quoted = adjustQuotesInsideInjectedExpression(expression);
+        if (quoted == null) {
+            return null;
+        }
+        if (quoted instanceof PyLambdaExpression) {
+            return wrapExpressionInParentheses(quoted);
+        }
+        return quoted;
+    }
+
+    protected final @Nullable PsiElement wrapExpressionInParentheses(PsiElement expression) {
+        PyElementGenerator generator = PyElementGenerator.getInstance(myPyString.getProject());
+        return generator.createExpressionFromText(LanguageLevel.forElement(myPyString), "(" + expression.getText() + ")");
+    }
+
+    protected static @Nullable PyExpression adjustResolveResult(@Nullable PsiElement resolveResult) {
+        if (resolveResult == null) {
+            return null;
+        }
+        PyKeywordArgument argument = as(resolveResult, PyKeywordArgument.class);
+        if (argument != null) {
+            return argument.getValueExpression();
+        }
+        PyKeyValueExpression parent = as(resolveResult.getParent(), PyKeyValueExpression.class);
+        if (parent != null && parent.getKey() == resolveResult) {
+            return parent.getValue();
+        }
+        return as(resolveResult, PyExpression.class);
+    }
+}
+

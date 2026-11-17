@@ -1,45 +1,32 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
-import java.util.List;
-import consulo.annotation.component.ExtensionImpl;
-import consulo.language.editor.intention.IntentionMetaData;
-import consulo.util.collection.ArrayUtil;
-import consulo.ui.ex.awt.Messages;
-import consulo.module.Module;
-import com.jetbrains.python.documentation.docstrings.DocStringParser;
-import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.documentation.PyDocumentationSettings;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.documentation.docstrings.DocStringParser;
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
-import com.jetbrains.python.impl.documentation.doctest.PyDocstringFile;
+import com.jetbrains.python.impl.documentation.doctest.PyDoctestFile;
+import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
+import consulo.module.Module;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.collection.ArrayUtil;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Intention to add documentation string for function (with checked format).
@@ -48,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyGenerateDocstringIntention", categories = "Python", fileExtensions = "py")
-public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
+public final class PyGenerateDocstringIntention extends PyBaseIntentionAction {
     private LocalizeValue myText = LocalizeValue.empty();
 
     @Override
@@ -59,7 +46,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
     @Override
     @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile) || file instanceof PyDocstringFile) {
+        if (!(file instanceof PyFile) || file instanceof PyDoctestFile) {
             return false;
         }
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
@@ -88,7 +75,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
             }
         }
         else {
-            myText = PyLocalize.intnDocStringStub();
+            myText = PyLocalize.intnInsertDocstringStub();
             return true;
         }
     }
@@ -134,12 +121,14 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
         if (settings.isPlain(file)) {
             List<String> values = DocStringFormat.ALL_NAMES_BUT_PLAIN;
-            // TODO consulo: PythonUiService missing - JB: PythonUiService.getInstance().showChooseDialog(null, null, PyPsiBundle.message("python.docstring.format"), PyPsiBundle.message("python.docstring.select.type"), ...)
-            int i =
-                Messages.showChooseDialog("Docstring format:", "Select Docstring Type", ArrayUtil.toStringArray(values), values.get(0), null);
+            int i = PythonUiService.getInstance().showChooseDialog(null, null,
+                PyLocalize.pythonDocstringFormat().get(),
+                PyLocalize.pythonDocstringSelectType().get(),
+                ArrayUtil.toStringArray(values), values.get(0), null);
             if (i < 0) {
                 return false;
             }
+            // TODO consulo: SideEffectGuard missing - JB: SideEffectGuard.checkSideEffectAllowed(SideEffectGuard.EffectType.SETTINGS)
             settings.setFormat(DocStringFormat.fromNameOrPlain(values.get(i)));
         }
         return true;

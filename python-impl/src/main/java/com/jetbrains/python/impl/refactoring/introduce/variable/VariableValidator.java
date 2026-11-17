@@ -19,8 +19,8 @@ package com.jetbrains.python.impl.refactoring.introduce.variable;
 import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,10 +29,10 @@ import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
  * Time: 4:45:40 PM
  */
 public class VariableValidator extends IntroduceValidator {
-  @Nullable
-  public String check(String name, PsiElement psiElement) {
+  @Override
+  public @Nullable String check(String name, PsiElement psiElement) {
     if (isDefinedInScope(name, psiElement)) {
-      return PyBundle.message("refactoring.introduce.variable.scope.error");
+      return PyLocalize.refactoringIntroduceVariableScopeError().get();
     }
     return null;
   }

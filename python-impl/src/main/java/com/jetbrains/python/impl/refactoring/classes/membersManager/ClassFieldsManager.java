@@ -1,24 +1,5 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 
 import com.google.common.collect.FluentIterable;
 import com.jetbrains.python.impl.NotNullPredicate;
@@ -31,99 +12,91 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Moves class attributes up
  *
  * @author Ilya.Kazakevich
  */
-class ClassFieldsManager extends FieldsManager
-{
+class ClassFieldsManager extends FieldsManager {
 
-	ClassFieldsManager()
-	{
-		super(true);
-	}
+    ClassFieldsManager() {
+        super(true);
+    }
 
-	@Override
-	public boolean hasConflict(PyTargetExpression member, PyClass aClass)
-	{
-		return NamePredicate.hasElementWithSameName(member, aClass.getClassAttributes());
-	}
+    @Override
+    public boolean hasConflict(PyTargetExpression member, PyClass aClass) {
+        return NamePredicate.hasElementWithSameName(member, aClass.getClassAttributes());
+    }
 
-	@Override
-	protected Collection<PyElement> moveAssignments(PyClass from, Collection<PyAssignmentStatement> statements, PyClass... to)
-	{
-		return moveAssignmentsImpl(from, statements, to);
-	}
+    @Override
+    protected Collection<PyElement> moveAssignments(PyClass from,
+                                                    Collection<PyAssignmentStatement> statements,
+                                                    PyClass ... to) {
+        return moveAssignmentsImpl(from, statements, to);
+    }
 
-	/**
-	 * Moves assignments from one class to anothers
-	 *
-	 * @param from       source
-	 * @param statements assignments
-	 * @param to         destination
-	 * @return newly created assignments
-	 */
-	static Collection<PyElement> moveAssignmentsImpl(PyClass from, Collection<PyAssignmentStatement> statements, PyClass... to)
-	{
-		//TODO: Copy/paste with InstanceFieldsManager. Move to parent?
-		Collection<PyElement> result = new ArrayList<>();
-		for(PyClass destClass : to)
-		{
-			result.addAll(PyClassRefactoringUtil.copyFieldDeclarationToStatement(statements, destClass.getStatementList(), destClass));
-		}
-		deleteElements(statements);
-		return result;
-	}
+    /**
+     * Moves assignments from one class to anothers
+     * @param from source
+     * @param statements assignments
+     * @param to destination
+     * @return newly created assignments
+     */
+    static Collection<PyElement> moveAssignmentsImpl(PyClass from,
+                                                     Collection<? extends PyAssignmentStatement> statements,
+                                                     PyClass ... to) {
+        //TODO: Copy/paste with InstanceFieldsManager. Move to parent?
+        Collection<PyElement> result = new ArrayList<>();
+        for (PyClass destClass : to) {
+            result.addAll(PyClassRefactoringUtil.copyFieldDeclarationToStatement(statements, destClass.getStatementList(), destClass));
+        }
+        deleteElements(statements);
+        return result;
+    }
 
-	@Override
-	protected boolean classHasField(PyClass pyClass, String fieldName)
-	{
-		return pyClass.findClassAttribute(fieldName, true, null) != null;
-	}
+    @Override
+    protected boolean classHasField(PyClass pyClass, String fieldName) {
+        return pyClass.findClassAttribute(fieldName, true, null) != null;
+    }
 
-	@Override
-	protected List<PyTargetExpression> getFieldsByClass(PyClass pyClass)
-	{
-		return FluentIterable.from(pyClass.getClassAttributes()).filter(new NoMetaAndProperties(pyClass)).toList();
-	}
+    @Override
+    protected List<PyTargetExpression> getFieldsByClass(PyClass pyClass) {
+        return FluentIterable.from(pyClass.getClassAttributes()).filter(new NoMetaAndProperties(pyClass)).toList();
+    }
 
-	/**
-	 * Exclude "__metaclass__" field and properties (there should be separate managers for them)
-	 * TODO: Check type and filter out any builtin element instead?
-	 */
-	private static class NoMetaAndProperties extends NotNullPredicate<PyTargetExpression>
-	{
-		private final PyClass myClass;
+    /**
+     * Exclude "__metaclass__" field and properties (there should be separate managers for them)
+     * TODO: Check type and filter out any builtin element instead?
+     */
+    private static final class NoMetaAndProperties extends NotNullPredicate<PyTargetExpression> {
+        private final PyClass myClass;
 
-		private NoMetaAndProperties(PyClass aClass)
-		{
-			myClass = aClass;
-		}
+        private NoMetaAndProperties(PyClass aClass) {
+            myClass = aClass;
+        }
 
-		@Override
-		public boolean applyNotNull(PyTargetExpression input)
-		{
-			String name = input.getName();
-			if(name == null)
-			{
-				return false;
-			}
-			if(name.equals(PyNames.DUNDER_METACLASS))
-			{
-				return false;
-			}
+        @Override
+        public boolean applyNotNull(PyTargetExpression input) {
+            String name = input.getName();
+            if (name == null) {
+                return false;
+            }
+            if (name.equals(PyNames.DUNDER_METACLASS)) {
+                return false;
+            }
 
-			PyExpression assignedValue = input.findAssignedValue();
-			if(assignedValue instanceof PyCallExpression)
-			{
-				PyExpression callee = ((PyCallExpression) assignedValue).getCallee();
-				if((callee != null) && PyNames.PROPERTY.equals(callee.getName()) && (myClass.findProperty(name, false, null) != null))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-	}
+            PyExpression assignedValue = input.findAssignedValue();
+            if (assignedValue instanceof PyCallExpression) {
+                PyExpression callee = ((PyCallExpression)assignedValue).getCallee();
+                if ((callee != null) && PyNames.PROPERTY.equals(callee.getName()) && (myClass.findProperty(name, false, null) != null)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }

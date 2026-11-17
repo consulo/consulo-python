@@ -8,7 +8,8 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 
 /**
- * Any magic literal extension point should imlement this interface
+ * Any magic literal extension point should implement this interface and be installed as extension point
+ * using {@link #EP_NAME}
  *
  * @author Ilya.Kazakevich
  */

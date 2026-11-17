@@ -1,25 +1,5 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
@@ -32,7 +12,15 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyPossibleClassMember;
 import com.jetbrains.python.psi.PyTargetExpression;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**
  * Plugin that moves class properties.
@@ -40,221 +28,204 @@ import com.jetbrains.python.psi.PyTargetExpression;
  *
  * @author Ilya.Kazakevich
  */
-class PropertiesManager extends MembersManager<PyElement>
-{
+class PropertiesManager extends MembersManager<PyElement> {
 
-	PropertiesManager()
-	{
-		super(PyElement.class);
-	}
+    PropertiesManager() {
+        super(PyElement.class);
+    }
 
+    @Override
+    protected Collection<? extends PyElement> getElementsToStoreReferences(Collection<PyElement> elements) {
+        List<PyElement> result = new ArrayList<>();
+        for (PyElement element : elements) {
+            PyPossibleClassMember classMember = as(element, PyPossibleClassMember.class);
+            if (classMember == null) {
+                continue;
+            }
+            PyClass pyClass = classMember.getContainingClass();
+            if (pyClass == null) {
+                continue;
+            }
+            Property property = getProperty(pyClass, element);
+            result.addAll(getAllFunctions(property));
+            PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(property.getDefinitionSite(), PyAssignmentStatement.class);
+            if (assignment != null) {
+                result.add(assignment);
+            }
+        }
+        return result;
+    }
 
-	@Override
-	protected List<? extends PyElement> getMembersCouldBeMoved(PyClass pyClass)
-	{
-		List<PyElement> elements = new ArrayList<>(pyClass.getProperties().size());
-		for(Property property : pyClass.getProperties().values())
-		{
-			elements.add(getElement(property));
-		}
-		return elements;
-	}
+    @Override
+    protected List<? extends PyElement> getMembersCouldBeMoved(PyClass pyClass) {
+        List<PyElement> elements = new ArrayList<>(pyClass.getProperties().size());
+        for (Property property : pyClass.getProperties().values()) {
+            elements.add(getElement(property));
+        }
+        return elements;
+    }
 
-	private static PyElement getElement(Property property)
-	{
-		PyCallable getter = property.getGetter().valueOrNull();
-		PyCallable setter = property.getSetter().valueOrNull();
-		PyCallable deleter = property.getDeleter().valueOrNull();
+    private static PyElement getElement(Property property) {
+        PyCallable getter = property.getGetter().valueOrNull();
+        PyCallable setter = property.getSetter().valueOrNull();
+        PyCallable deleter = property.getDeleter().valueOrNull();
 
-		if(getter != null)
-		{
-			return getter;
-		}
-		else if(setter != null)
-		{
-			return setter;
-		}
-		else if(deleter != null)
-		{
-			return deleter;
-		}
-		else
-		{
-			PyTargetExpression site = property.getDefinitionSite();
-			assert site != null : "Property has no methods nor declaration. That is not property";
-			return site;
-		}
-	}
+        if (getter != null) {
+            return getter;
+        }
+        else if (setter != null) {
+            return setter;
+        }
+        else if (deleter != null) {
+            return deleter;
+        }
+        else {
+            PyTargetExpression site = property.getDefinitionSite();
+            assert site != null : "Property has no methods nor declaration. That is not property";
+            return site;
+        }
+    }
 
-	private static Property getProperty(PyClass pyClass, PyElement element)
-	{
-		Collection<Property> properties = pyClass.getProperties().values();
-		if(element instanceof PyTargetExpression)
-		{
-			return getPropertyByTargetExpression(properties, (PyTargetExpression) element);
-		}
-		if(element instanceof PyFunction)
-		{
-			return getPropertyByFunction(properties, (PyFunction) element);
-		}
-		throw new IllegalArgumentException("Not function nor target");
-	}
+    private static Property getProperty(PyClass pyClass, PyElement element) {
+        Collection<Property> properties = pyClass.getProperties().values();
+        if (element instanceof PyTargetExpression) {
+            return getPropertyByTargetExpression(properties, (PyTargetExpression)element);
+        }
+        if (element instanceof PyFunction) {
+            return getPropertyByFunction(properties, (PyFunction)element);
+        }
+        throw new IllegalArgumentException("Not function nor target");
+    }
 
-	private static Property getPropertyByFunction(Collection<Property> properties, PyFunction functionToSearch)
-	{
-		for(Property property : properties)
-		{
-			for(PyFunction function : getAllFunctions(property))
-			{
-				if(function.equals(functionToSearch))
-				{
-					return property;
-				}
-			}
-		}
-		throw new IllegalArgumentException("No property found");
-	}
+    private static Property getPropertyByFunction(Collection<Property> properties,
+                                                           PyFunction functionToSearch) {
+        for (Property property : properties) {
+            for (PyFunction function : getAllFunctions(property)) {
+                if (function.equals(functionToSearch)) {
+                    return property;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No property found");
+    }
 
-	private static Property getPropertyByTargetExpression(Iterable<Property> properties, PyTargetExpression element)
-	{
-		for(Property property : properties)
-		{
-			if(element.equals(property.getDefinitionSite()))
-			{
-				return property;
-			}
-		}
-		throw new IllegalArgumentException("No property found");
-	}
+    private static Property getPropertyByTargetExpression(Iterable<Property> properties,
+                                                                   PyTargetExpression element) {
+        for (Property property : properties) {
+            if (element.equals(property.getDefinitionSite())) {
+                return property;
+            }
+        }
+        throw new IllegalArgumentException("No property found");
+    }
 
-	private static Collection<PyFunction> getAllFunctions(Property property)
-	{
-		Collection<PyFunction> result = new ArrayList<>(3);
-		PyCallable getter = property.getGetter().valueOrNull();
-		PyCallable setter = property.getSetter().valueOrNull();
-		PyCallable deleter = property.getDeleter().valueOrNull();
+    private static Collection<PyFunction> getAllFunctions(Property property) {
+        Collection<PyFunction> result = new ArrayList<>(3);
+        PyCallable getter = property.getGetter().valueOrNull();
+        PyCallable setter = property.getSetter().valueOrNull();
+        PyCallable deleter = property.getDeleter().valueOrNull();
 
-		if(getter instanceof PyFunction)
-		{
-			result.add((PyFunction) getter);
-		}
-		if(setter instanceof PyFunction)
-		{
-			result.add((PyFunction) setter);
-		}
-		if(deleter instanceof PyFunction)
-		{
-			result.add((PyFunction) deleter);
-		}
-		return result;
-	}
+        if (getter instanceof PyFunction) {
+            result.add((PyFunction)getter);
+        }
+        if (setter instanceof PyFunction) {
+            result.add((PyFunction)setter);
+        }
+        if (deleter instanceof PyFunction) {
+            result.add((PyFunction)deleter);
+        }
+        return result;
+    }
 
-	@Override
-	protected Collection<PyElement> moveMembers(PyClass from, Collection<PyMemberInfo<PyElement>> members, PyClass... to)
-	{
-		Collection<PyElement> result = new ArrayList<>();
+    @Override
+    protected Collection<PyElement> moveMembers(PyClass from,
+                                                Collection<PyMemberInfo<PyElement>> members,
+                                                PyClass ... to) {
+        Collection<PyElement> result = new ArrayList<>();
 
-		Collection<PyElement> elements = fetchElements(members);
-		for(PyElement element : elements)
-		{
-			Property property = getProperty(from, element);
-			Collection<PyFunction> functions = getAllFunctions(property);
-			MethodsManager.moveMethods(from, functions, false, to);
-			PyTargetExpression definitionSite = property.getDefinitionSite();
-			if(definitionSite != null)
-			{
-				PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(definitionSite, PyAssignmentStatement.class);
-				ClassFieldsManager.moveAssignmentsImpl(from, Collections.singleton(assignmentStatement), to);
-			}
-		}
-		return result;
-	}
+        Collection<PyElement> elements = fetchElements(members);
+        for (PyElement element : elements) {
+            Property property = getProperty(from, element);
+            Collection<PyFunction> functions = getAllFunctions(property);
+            result.addAll(MethodsManager.moveMethods(from, functions, false, to));
+            PyTargetExpression definitionSite = property.getDefinitionSite();
+            if (definitionSite != null) {
+                PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(definitionSite, PyAssignmentStatement.class);
+                result.addAll(ClassFieldsManager.moveAssignmentsImpl(from, Collections.singleton(assignmentStatement), to));
+            }
+        }
+        return result;
+    }
 
-	@Override
-	public PyMemberInfo<PyElement> apply(PyElement input)
-	{
-		return new PyMemberInfo<>(input, false, getName(input), false, this, false);
-	}
+    @Override
+    public PyMemberInfo<PyElement> apply(PyElement input) {
+        return new PyMemberInfo<>(input, false, getName(input), false, this, false);
+    }
 
-	private static String getName(PyElement input)
-	{
-		PyClass clazz = PsiTreeUtil.getParentOfType(input, PyClass.class);
-		assert clazz != null : "Element not declared in class";
-		Property property = getProperty(clazz, input);
-		return property.getName();
-	}
+    private static String getName(PyElement input) {
+        PyClass clazz = PsiTreeUtil.getParentOfType(input, PyClass.class);
+        assert clazz != null : "Element not declared in class";
+        Property property = getProperty(clazz, input);
+        return property.getName();
+    }
 
-	@Override
-	public boolean hasConflict(PyElement member, PyClass aClass)
-	{
-		return false;
-	}
+    @Override
+    public boolean hasConflict(PyElement member, PyClass aClass) {
+        return false;
+    }
 
-	@Override
-	protected MultiMap<PyClass, PyElement> getDependencies(PyElement member)
-	{
-		PyRecursiveElementVisitorWithResult visitor = new PyReferenceVisitor();
-		member.accept(visitor);
+    @Override
+    protected MultiMap<PyClass, PyElement> getDependencies(PyElement member) {
+        PyRecursiveElementVisitorWithResult visitor = new PyReferenceVisitor();
+        member.accept(visitor);
 
-		return visitor.myResult;
-	}
+        return visitor.myResult;
+    }
 
-	@Override
-	protected Collection<PyElement> getDependencies(MultiMap<PyClass, PyElement> usedElements)
-	{
-		return Collections.emptyList();
-	}
+    @Override
+    protected Collection<PyElement> getDependencies(MultiMap<PyClass, PyElement> usedElements) {
+        return Collections.emptyList();
+    }
 
-	private static class PyReferenceVisitor extends PyRecursiveElementVisitorWithResult
-	{
+    private static class PyReferenceVisitor extends PyRecursiveElementVisitorWithResult {
 
 
-		@Override
-		public void visitPyExpression(PyExpression node)
-		{
-			PsiReference reference = node.getReference();
-			if(reference == null)
-			{
-				return;
-			}
+        @Override
+        public void visitPyExpression(PyExpression node) {
+            PsiReference reference = node.getReference();
+            if (reference == null) {
+                return;
+            }
 
-			PsiElement declaration = reference.resolve();
-			if(!(declaration instanceof PyFunction))
-			{
-				return;
-			}
+            PsiElement declaration = reference.resolve();
+            if (!(declaration instanceof PyFunction function)) {
+                return;
+            }
 
-			PyFunction function = (PyFunction) declaration;
-			Property property = function.getProperty();
-			if(property == null)
-			{
-				return;
-			}
+            Property property = function.getProperty();
+            if (property == null) {
+                return;
+            }
 
-			PyClass aClass = function.getContainingClass();
-			if(aClass == null)
-			{
-				return;
-			}
-			Collection<PyFunction> functions = getAllFunctions(property);
-			for(PyFunction pyFunction : functions)
-			{
-				PyClass functionClass = pyFunction.getContainingClass();
-				if(functionClass != null)
-				{
-					myResult.putValue(functionClass, pyFunction);
-				}
-			}
+            PyClass aClass = function.getContainingClass();
+            if (aClass == null) {
+                return;
+            }
+            Collection<PyFunction> functions = getAllFunctions(property);
+            for (PyFunction pyFunction : functions) {
+                PyClass functionClass = pyFunction.getContainingClass();
+                if (functionClass != null) {
+                    myResult.putValue(functionClass, pyFunction);
+                }
+            }
 
-			PyTargetExpression definitionSite = property.getDefinitionSite();
-			if(definitionSite != null)
-			{
-				PyClass pyClass = PsiTreeUtil.getParentOfType(definitionSite, PyClass.class);
-				if(pyClass != null)
-				{
-					myResult.putValue(pyClass, definitionSite);
-				}
-			}
-		}
-	}
+            PyTargetExpression definitionSite = property.getDefinitionSite();
+            if (definitionSite != null) {
+                PyClass pyClass = PsiTreeUtil.getParentOfType(definitionSite, PyClass.class);
+                if (pyClass != null) {
+                    myResult.putValue(pyClass, definitionSite);
+                }
+            }
+        }
+    }
 }

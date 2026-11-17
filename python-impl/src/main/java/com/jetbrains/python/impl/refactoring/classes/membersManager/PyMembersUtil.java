@@ -2,8 +2,8 @@
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
 import com.google.common.collect.Collections2;
-import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.NotNullPredicate;
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 
@@ -17,7 +17,7 @@ public final class PyMembersUtil {
      * @param pyMemberInfos collection to sort
      * @return sorted collection
      */
-    public static Collection<PyMemberInfo<PyElement>> filterOutObject(final Collection<PyMemberInfo<PyElement>> pyMemberInfos) {
+    public static Collection<PyMemberInfo<PyElement>> filterOutObject(Collection<PyMemberInfo<PyElement>> pyMemberInfos) {
         return Collections2.filter(pyMemberInfos, new ObjectPredicate(false));
     }
 
@@ -27,17 +27,17 @@ public final class PyMembersUtil {
         /**
          * @param allowObjects allows only objects if true. Allows all but objects otherwise.
          */
-        public ObjectPredicate(final boolean allowObjects) {
+        public ObjectPredicate(boolean allowObjects) {
             myAllowObjects = allowObjects;
         }
 
         @Override
-        public boolean applyNotNull(final PyMemberInfo<PyElement> input) {
+        public boolean applyNotNull(PyMemberInfo<PyElement> input) {
             return myAllowObjects == isObject(input);
         }
 
-        private static boolean isObject(final PyMemberInfo<PyElement> classMemberInfo) {
-            final PyElement element = classMemberInfo.getMember();
+        private static boolean isObject(PyMemberInfo<PyElement> classMemberInfo) {
+            PyElement element = classMemberInfo.getMember();
             return (element instanceof PyClass) && PyNames.OBJECT.equals(element.getName());
         }
     }

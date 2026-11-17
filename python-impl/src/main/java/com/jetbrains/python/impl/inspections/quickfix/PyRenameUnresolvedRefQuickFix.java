@@ -1,51 +1,44 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PythonTemplateRunner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.psi.impl.references.PyReferenceImpl;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.references.PyReferenceBase;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyReferenceExpression;
-import consulo.codeEditor.Editor;
-import consulo.fileEditor.FileEditorManager;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.editor.template.*;
+import consulo.language.editor.template.Expression;
+import consulo.language.editor.template.ExpressionContext;
+import consulo.language.editor.template.Result;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.editor.template.TextResult;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.ResolveResult;
-import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
-import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.virtualFileSystem.VirtualFile;
-import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
+ * User : ktisha
+ * <p>
  * Quick fix to rename unresolved references
- *
- * @author ktisha
  */
 public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
 
@@ -55,10 +48,10 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
     }
 
     @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
-        PyReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
-        if (referenceExpression == null) {
+        if (!(element instanceof PyReferenceExpression referenceExpression)) {
             return;
         }
 
@@ -73,6 +66,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
         String name = referenceExpression.getReferencedName();
 
         ReferenceNameExpression refExpr = new ReferenceNameExpression(items, name);
+        // Consulo: TemplateBuilderImpl is internal, TemplateBuilder exposes the same replaceElement API
         TemplateBuilder builder = TemplateBuilderFactory.getInstance().
             createTemplateBuilder(parentScope);
         for (PyReferenceExpression expr : refs) {
@@ -84,18 +78,14 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
             }
         }
 
-        Editor editor = getEditor(project, element.getContainingFile(), parentScope.getTextRange().getStartOffset());
-        if (editor != null) {
-            Template template = builder.buildInlineTemplate();
-            TemplateManager.getInstance(project).startTemplate(editor, template);
-        }
+        PythonTemplateRunner.runInlineTemplate(project, element, builder, parentScope.getTextRange().getStartOffset());
     }
 
     public static boolean isValidReference(PsiReference reference) {
-        if (!(reference instanceof PyReferenceImpl)) {
+        if (!(reference instanceof PyReferenceBase pyReference)) {
             return false;
         }
-        ResolveResult[] results = ((PyReferenceImpl) reference).multiResolve(true);
+        ResolveResult[] results = pyReference.multiResolve(true);
         if (results.length == 0) {
             return false;
         }
@@ -107,13 +97,10 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
         return true;
     }
 
+    private static List<PyReferenceExpression> collectExpressionsToRename(PyReferenceExpression expression,
+            ScopeOwner parentScope) {
 
-    private static List<PyReferenceExpression> collectExpressionsToRename(
-        final PyReferenceExpression expression,
-        ScopeOwner parentScope
-    ) {
-
-        final List<PyReferenceExpression> result = new ArrayList<PyReferenceExpression>();
+        List<PyReferenceExpression> result = new ArrayList<>();
         PyRecursiveElementVisitor visitor = new PyRecursiveElementVisitor() {
             @Override
             public void visitPyReferenceExpression(PyReferenceExpression node) {
@@ -128,31 +115,20 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
         return result;
     }
 
-    @Nullable
-    private static Editor getEditor(Project project, PsiFile file, int offset) {
-        VirtualFile virtualFile = file.getVirtualFile();
-        if (virtualFile != null) {
-            return FileEditorManager.getInstance(project).openTextEditor(
-                OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).offset(offset).build(), true
-            );
-        }
-        return null;
-    }
-
     private static LookupElement[] collectLookupItems(ScopeOwner parentScope) {
-        Set<LookupElement> items = new LinkedHashSet<LookupElement>();
+        Set<LookupElement> items = new LinkedHashSet<>();
 
-        Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(parentScope);
+        Collection<String> usedNames = PyUtil.collectUsedNames(parentScope);
         for (String name : usedNames) {
             if (name != null) {
                 items.add(LookupElementBuilder.create(name));
             }
         }
 
-        return items.toArray(new LookupElement[items.size()]);
+        return items.toArray(LookupElement.EMPTY_ARRAY);
     }
 
-    private class ReferenceNameExpression extends Expression {
+    private static class ReferenceNameExpression extends Expression {
         class HammingComparator implements Comparator<LookupElement> {
             @Override
             public int compare(LookupElement lookupItem1, LookupElement lookupItem2) {

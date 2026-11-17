@@ -243,7 +243,7 @@ public final class PyQualifiedNameResolveContextImpl implements PyQualifiedNameR
    * The interpreter of a context without a module and a foothold, see {@link PyQualifiedNameResolveContextImpl#interpreter}.
    * {@link PyQualifiedNameResolveContextImpl} is the only implementation, so the cast always succeeds.
    */
-  static @Nullable Sdk getStoredInterpreter(PyQualifiedNameResolveContext context) {
+  public static @Nullable Sdk getStoredInterpreter(PyQualifiedNameResolveContext context) {
     return ((PyQualifiedNameResolveContextImpl)context).interpreter;
   }
 }

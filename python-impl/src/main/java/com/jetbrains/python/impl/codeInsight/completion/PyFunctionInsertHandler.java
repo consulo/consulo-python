@@ -1,74 +1,58 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import org.jspecify.annotations.Nullable;
-
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.editor.AutoPopupController;
 import consulo.language.editor.completion.lookup.InsertionContext;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElement>
-{
-	public static PyFunctionInsertHandler INSTANCE = new PyFunctionInsertHandler();
 
-	@Override
-	public void handleInsert(InsertionContext context, LookupElement item)
-	{
-		super.handleInsert(context, item);
-		if(hasParams(context, item))
-		{
-			AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(context.getEditor(), getFunction(item));
-		}
-	}
+public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElement> {
+    public static PyFunctionInsertHandler INSTANCE = new PyFunctionInsertHandler();
 
-	@Override
-	protected boolean placeCaretInsideParentheses(InsertionContext context, LookupElement item)
-	{
-		return hasParams(context, item);
-	}
+    @Override
+    public void handleInsert(InsertionContext context, LookupElement item) {
+        super.handleInsert(context, item);
+        if (hasParams(context, item)) {
+            AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(context.getEditor(), getFunction(item));
+        }
+    }
 
-	private static boolean hasParams(InsertionContext context, LookupElement item)
-	{
-		PyFunction function = getFunction(item);
-		return function != null && hasParams(context, function);
-	}
+    @Override
+    protected boolean placeCaretInsideParentheses(InsertionContext context, LookupElement item) {
+        return hasParams(context, item);
+    }
 
-	public static boolean hasParams(InsertionContext context, PyFunction function)
-	{
-		PsiElement element = context.getFile().findElementAt(context.getStartOffset());
-		PyReferenceExpression refExpr = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
-		int implicitArgsCount = refExpr != null ? PyCallExpressionHelper.getImplicitArgumentCount(refExpr, function, PyResolveContext.defaultContext()) : 0;
-		return function.getParameterList().getParameters().length > implicitArgsCount;
-	}
+    private static boolean hasParams(InsertionContext context, LookupElement item) {
+        PyFunction function = getFunction(item);
+        return function != null && hasParams(context, function);
+    }
 
-	@Nullable
-	private static PyFunction getFunction(LookupElement item)
-	{
-		return PyUtil.as(item.getPsiElement(), PyFunction.class);
-	}
+    public static boolean hasParams(InsertionContext context, PyFunction function) {
+        PsiElement element = context.getFile().findElementAt(context.getStartOffset());
+        PyReferenceExpression refExpr = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
+        int implicitArgsCount;
+        if (refExpr != null) {
+            TypeEvalContext typeEvalContext = TypeEvalContext.codeInsightFallback(refExpr.getProject());
+            PyResolveContext resolveContext = PyResolveContext.defaultContext(typeEvalContext);
+            implicitArgsCount = PyCallExpressionHelper.getImplicitArgumentCount(refExpr, function, resolveContext);
+        }
+        else {
+            implicitArgsCount = 0;
+        }
+        return function.getParameterList().getParameters().length > implicitArgsCount;
+    }
+
+    private static @Nullable PyFunction getFunction(LookupElement item) {
+        return PyUtil.as(item.getPsiElement(), PyFunction.class);
+    }
 }

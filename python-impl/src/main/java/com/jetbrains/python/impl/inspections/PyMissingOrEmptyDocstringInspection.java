@@ -1,28 +1,20 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
 import com.jetbrains.python.inspections.PyInspectionExtension;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
@@ -32,19 +24,29 @@ import consulo.util.lang.StringUtil;
  * @author Mikhail Golubev
  */
 @ExtensionImpl
-public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection {
+public final class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameMissingOrEmptyDocstring();
     }
 
     @Override
-    public Visitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonDocstrings();
+    }
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return false;
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    @Override
+    public Visitor buildVisitor(ProblemsHolder holder, boolean isOnTheFly, LocalInspectionToolSession session, Object state) {
         return new Visitor(holder, PyInspectionVisitor.getContext(session)) {
             @Override
             protected void checkDocString(PyDocStringOwner node) {
@@ -81,11 +83,16 @@ public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspecti
                     if (marker == null) {
                         marker = node;
                     }
-                    if (node instanceof PyFunction || (node instanceof PyClass && ((PyClass) node).findInitOrNew(false, null) != null)) {
+                    if (node instanceof PyFunction pyFunction && !superFunctionHasDoc(pyFunction, myTypeEvalContext)) {
                         registerProblem(marker, PyLocalize.inspNoDocstring().get(), new DocstringQuickFix(null, null));
                     }
-                    else {
-                        registerProblem(marker, PyLocalize.inspNoDocstring().get());
+                    else if (node instanceof PyClass pyClass && !superClassHasDoc(pyClass, myTypeEvalContext)) {
+                        if (pyClass.findInitOrNew(false, myTypeEvalContext) != null) {
+                            registerProblem(marker, PyLocalize.inspNoDocstring().get(), new DocstringQuickFix(null, null));
+                        }
+                        else {
+                            registerProblem(marker, PyLocalize.inspNoDocstring().get());
+                        }
                     }
                 }
                 else if (StringUtil.isEmptyOrSpaces(docStringExpression.getStringValue())) {
@@ -93,5 +100,29 @@ public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspecti
                 }
             }
         };
+    }
+
+    private static boolean superClassHasDoc(PyClass pyClass, TypeEvalContext context) {
+        for (PyClass ancestor : pyClass.getAncestorClasses(context)) {
+            if (StringUtil.isNotEmpty(ancestor.getDocStringValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean superFunctionHasDoc(PyFunction pyFunction, TypeEvalContext context) {
+        PyClass containingClass = pyFunction.getContainingClass();
+        if (containingClass == null) {
+            return false;
+        }
+
+        for (PyClass ancestor : containingClass.getAncestorClasses(context)) {
+            PyFunction superFunction = ancestor.findMethodByName(pyFunction.getName(), false, context);
+            if (superFunction != null && StringUtil.isNotEmpty(superFunction.getDocStringValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

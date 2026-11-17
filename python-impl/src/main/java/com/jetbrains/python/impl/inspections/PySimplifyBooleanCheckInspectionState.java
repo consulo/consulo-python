@@ -1,39 +1,34 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import consulo.configurable.ConfigurableBuilder;
 import consulo.configurable.ConfigurableBuilderState;
 import consulo.configurable.UnnamedConfigurable;
 import consulo.language.editor.inspection.InspectionToolState;
-import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.xml.serializer.XmlSerializerUtil;
-
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author VISTALL
- * @since 23/04/2023
+ * Options of {@link PySimplifyBooleanCheckInspection} (JB {@code getOptionsPane()}).
  */
 public class PySimplifyBooleanCheckInspectionState implements InspectionToolState<PySimplifyBooleanCheckInspectionState> {
-  public boolean ignoreComparisonToZero = true;
+    public boolean ignoreComparisonToZero = true;
 
-  @Nullable
-  @Override
-  public UnnamedConfigurable createConfigurable() {
-    ConfigurableBuilder<ConfigurableBuilderState> builder = ConfigurableBuilder.newBuilder();
-    builder.checkBox(LocalizeValue.localizeTODO("Ignore comparison to zero"),
-                     () -> ignoreComparisonToZero,
-                     c -> ignoreComparisonToZero = c);
-    return null;
-  }
+    @Override
+    public @Nullable UnnamedConfigurable createConfigurable() {
+        ConfigurableBuilder<ConfigurableBuilderState> builder = ConfigurableBuilder.newBuilder();
+        builder.checkBox(PyLocalize.inspSimplifyBooleanCheckIgnoreComparisonToZero(), () -> ignoreComparisonToZero, v -> ignoreComparisonToZero = v);
+        return builder.buildUnnamed();
+    }
 
-  @Nullable
-  @Override
-  public PySimplifyBooleanCheckInspectionState getState() {
-    return this;
-  }
+    @Override
+    public PySimplifyBooleanCheckInspectionState getState() {
+        return this;
+    }
 
-  @Override
-  public void loadState(PySimplifyBooleanCheckInspectionState state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
+    @Override
+    public void loadState(PySimplifyBooleanCheckInspectionState state) {
+        XmlSerializerUtil.copyBean(state, this);
+    }
 }

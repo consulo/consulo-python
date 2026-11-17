@@ -1,69 +1,60 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.PyCreatePropertyQuickFix;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.Property;
+import com.jetbrains.python.psi.PyAugAssignmentStatement;
+import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.Maybe;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.util.lang.Pair;
-
-import java.util.HashMap;
 
 /**
  * Checks that properties are accessed correctly.
- *
- * @author dcheryasov
- * @since 2010-06-29
  */
 @ExtensionImpl
-public class PyPropertyAccessInspection extends PyInspection {
+public final class PyPropertyAccessInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNamePropertyAccess();
     }
 
     @Override
-    public boolean isEnabledByDefault() {
-        return true;
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonProperties();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        TypeEvalContext context = PyInspectionVisitor.getContext(session);
+        if (context.getUsesExternalTypeEngine()) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
+        return new Visitor(holder, context);
     }
 
-    public static class Visitor extends PyInspectionVisitor {
-        private final HashMap<Pair<PyClass, String>, Property> myPropertyCache = new HashMap<>();
+    private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -83,24 +74,16 @@ public class PyPropertyAccessInspection extends PyInspection {
             if (qualifier != null) {
                 PyType type = myTypeEvalContext.getType(qualifier);
                 if (type instanceof PyClassType) {
-                    PyClass cls = ((PyClassType) type).getPyClass();
+                    PyClass cls = ((PyClassType)type).getPyClass();
                     String name = node.getName();
                     if (name != null) {
-                        Pair<PyClass, String> key = Pair.create(cls, name);
-                        Property property;
-                        if (myPropertyCache.containsKey(key)) {
-                            property = myPropertyCache.get(key);
-                        }
-                        else {
-                            property = cls.findProperty(name, true, myTypeEvalContext);
-                        }
-                        myPropertyCache.put(key, property); // we store nulls, too, to know that a property does not exist
+                        Property property = cls.findProperty(name, true, myTypeEvalContext);
                         if (property != null) {
                             AccessDirection dir = AccessDirection.of(node);
                             checkAccessor(node, name, dir, property);
                             if (dir == AccessDirection.READ) {
                                 PsiElement parent = node.getParent();
-                                if (parent instanceof PyAugAssignmentStatement && ((PyAugAssignmentStatement) parent).getTarget() == node) {
+                                if (parent instanceof PyAugAssignmentStatement && ((PyAugAssignmentStatement)parent).getTarget() == node) {
                                     checkAccessor(node, name, AccessDirection.WRITE, property);
                                 }
                             }
@@ -110,20 +93,23 @@ public class PyPropertyAccessInspection extends PyInspection {
             }
         }
 
-        private void checkAccessor(PyExpression node, String name, AccessDirection dir, Property property) {
+        private void checkAccessor(PyExpression node,
+                                   String name,
+                                   AccessDirection dir,
+                                   Property property) {
             Maybe<PyCallable> accessor = property.getByDirection(dir);
             if (accessor.isDefined() && accessor.value() == null) {
-                LocalizeValue message;
+                PyInspectionMessages.ProblemMessage message;
                 if (dir == AccessDirection.WRITE) {
-                    message = PyLocalize.inspProperty$0CantBeSet(name);
+                    message = PyInspectionMessages.problemMessage(a -> PyLocalize.inspPropertyCannotBeSet(a[0]), name);
                 }
                 else if (dir == AccessDirection.DELETE) {
-                    message = PyLocalize.inspProperty$0CantBeDeleted(name);
+                    message = PyInspectionMessages.problemMessage(a -> PyLocalize.inspPropertyCannotBeDeleted(a[0]), name);
                 }
                 else {
-                    message = PyLocalize.inspProperty$0CantBeRead(name);
+                    message = PyInspectionMessages.problemMessage(a -> PyLocalize.inspPropertyCannotBeRead(a[0]), name);
                 }
-                registerProblem(node, message.get(), new PyCreatePropertyQuickFix(dir));
+                registerProblem(node, message, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new PyCreatePropertyQuickFix(dir));
             }
         }
     }

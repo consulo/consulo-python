@@ -257,7 +257,7 @@ INSP.classic.class.usage.old.style.class:
 INSP.classic.class.usage.old.style.class.ancestors:
     text: Old-style class, because all classes from whom it inherits are old-style
 INSP.decorator.receives.unexpected.builtin:
-    text: This decorator will not receive a callable it may expect; the built-in decorator returns a special object
+    text: This decorator will not receive the callable it may expect; the previously called decorator `{0}` returns a special object
 INSP.deleter.should.not.return:
     text: Deleter should not return a value
 INSP.deleter.signature.advice:
@@ -469,7 +469,7 @@ INTN.flip.$0:
 INTN.flip.$0.to.$1:
     text: Flip ''{0}'' to ''{1}''
 INTN.flip.comparison:
-    text: Flip comparison
+    text: Flip ''{0}''
 INTN.format.operator.to.method:
     text: Convert format operator usage to str.format method call
 INTN.insert.assertion:
@@ -481,7 +481,7 @@ INTN.join.if.text:
 INTN.negate.$0.to.$1:
     text: Negate ''{0}'' to ''{1}''
 INTN.negate.comparison:
-    text: Negate comparison
+    text: Negate ''{0}'' to ''{1}''
 INTN.quoted.string:
     text: Convert between single-quoted and double-quoted strings
 INTN.quoted.string.double.to.single:
@@ -3696,3 +3696,9 @@ code.insight.select.methods.to.override:
     text: Select Methods to Override
 code.insight.select.methods.to.implement:
     text: Select Methods to Implement
+debugger.delete.signature.cache:
+    text: Delete Cache
+python.debugger.collection.signatures.deleted:
+    text: Collected signatures were deleted
+python.debugger.nothing.to.delete:
+    text: Nothing to delete

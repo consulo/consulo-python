@@ -1,0 +1,56 @@
+<html>
+<body>
+<p>
+  Reports invalid definition and usage of <a href="https://peps.python.org/pep-0435/">Enum</a>.
+</p>
+<p>
+  <b>Example:</b>
+</p>
+<pre><code>
+from enum import Enum
+
+
+class Shape(Enum):
+    SQUARE = 1
+    CIRCLE = 2
+
+
+class ExtendedShape(Shape):  # Enum class 'Shape' is final and cannot be subclassed
+    TRIANGLE = 3
+</code></pre>
+<pre><code>
+from enum import Enum
+
+
+class Color(Enum):
+    _value_: int
+    RED = 1
+    GREEN = "green"  # Type 'str' is not assignable to declared type 'int'
+</code></pre>
+<pre><code>
+from enum import Enum
+
+
+class Pet(Enum):
+    CAT = 1
+    DOG: int = 2  # Type annotations are not allowed for enum members
+</code></pre>
+<pre><code>
+from enum import Enum, unique
+
+
+class Mixin:
+    pass
+
+
+class Color(Enum, Mixin):  # Enum class 'Enum' must be the last base class
+    _red_ = 1  # The name '_red_' is reserved for future Enum use
+
+
+@unique
+class Size(Enum):
+    SMALL = 1
+    LITTLE = 1  # Unique enum member 'LITTLE' has the same value as 'SMALL'
+</code></pre>
+</body>
+</html>

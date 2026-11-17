@@ -1,29 +1,22 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
 import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
@@ -43,21 +36,23 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix {
     @Override
     @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        if (descriptor.getPsiElement() instanceof PyQualifiedExpression qExpr) {
-            PyExpression qualifier = qExpr.getQualifier();
+        PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyQualifiedExpression) {
+            PyExpression qualifier = ((PyQualifiedExpression)element).getQualifier();
             if (qualifier != null) {
-                PyType type = TypeEvalContext.codeAnalysis(qExpr.getProject(), qExpr.getContainingFile()).getType(qualifier);
-                if (type instanceof PyClassType classType) {
-                    PyClass cls = classType.getPyClass();
-                    String propertyName = qExpr.getName();
+                PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
+                if (type instanceof PyClassType) {
+                    PyClass cls = ((PyClassType)type).getPyClass();
+                    String propertyName = ((PyQualifiedExpression)element).getName();
                     if (propertyName == null) {
                         return;
                     }
                     String fieldName = "_" + propertyName;
                     PyElementGenerator generator = PyElementGenerator.getInstance(project);
-                    PyFunction property =
-                        generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
-                    PyPsiRefactoringUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
+                    PyFunction property = generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
+                    // Consulo: no ModPsiUpdater.getWritable, the fix runs on the physical file
+                    PyStatementList statementsList = cls.getStatementList();
+                    PyPsiRefactoringUtil.addElementToStatementList(property, statementsList, myAccessDirection == AccessDirection.READ);
                 }
             }
         }

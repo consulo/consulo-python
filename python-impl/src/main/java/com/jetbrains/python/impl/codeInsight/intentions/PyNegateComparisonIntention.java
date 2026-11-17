@@ -1,113 +1,62 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.codeInsight.ConditionUtil;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyFile;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.editor.intention.IntentionMetaData;
+import consulo.language.editor.intention.PsiElementBaseIntentionAction;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.Pair;
+import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * @author Alexey.Ivanov
- * @since 2010-03-12
- */
+// TODO consulo: ModCommand API (PsiUpdateModCommandAction) missing, JB logic adapted to PsiElementBaseIntentionAction
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyNegateComparisonIntention", categories = "Python", fileExtensions = "py")
-public class PyNegateComparisonIntention extends BaseIntentionAction {
-    private static final Map<PyElementType, String> comparisonStrings = new HashMap<PyElementType, String>(7);
-    private static final Map<PyElementType, PyElementType> invertedComparasions = new HashMap<PyElementType, PyElementType>(7);
-
-    static {
-        comparisonStrings.put(PyTokenTypes.LT, "<");
-        comparisonStrings.put(PyTokenTypes.GT, ">");
-        comparisonStrings.put(PyTokenTypes.EQEQ, "==");
-        comparisonStrings.put(PyTokenTypes.LE, "<=");
-        comparisonStrings.put(PyTokenTypes.GE, ">=");
-        comparisonStrings.put(PyTokenTypes.NE, "!=");
-        comparisonStrings.put(PyTokenTypes.NE_OLD, "<>");
-
-        invertedComparasions.put(PyTokenTypes.LT, PyTokenTypes.GE);
-        invertedComparasions.put(PyTokenTypes.GT, PyTokenTypes.LE);
-        invertedComparasions.put(PyTokenTypes.EQEQ, PyTokenTypes.NE);
-        invertedComparasions.put(PyTokenTypes.LE, PyTokenTypes.GT);
-        invertedComparasions.put(PyTokenTypes.GE, PyTokenTypes.LT);
-        invertedComparasions.put(PyTokenTypes.NE, PyTokenTypes.EQEQ);
-        invertedComparasions.put(PyTokenTypes.NE_OLD, PyTokenTypes.EQEQ);
+public final class PyNegateComparisonIntention extends PsiElementBaseIntentionAction {
+    public PyNegateComparisonIntention() {
+        setText(PyLocalize.intnNameNegateComparison());
     }
 
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    @Override
+    public boolean isAvailable(Project project, Editor editor, PsiElement leaf) {
+        PyBinaryExpression element = PsiTreeUtil.getParentOfType(leaf, PyBinaryExpression.class, false);
+        if (element == null) {
             return false;
         }
-
-        PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);
-        while (binaryExpression != null) {
-            PyElementType operator = binaryExpression.getOperator();
-            if (comparisonStrings.containsKey(operator)) {
-                setText(PyLocalize.intnNegate$0To$1(
-                    comparisonStrings.get(operator),
-                    comparisonStrings.get(invertedComparasions.get(operator))
-                ));
-                return true;
-            }
-            binaryExpression = PsiTreeUtil.getParentOfType(binaryExpression, PyBinaryExpression.class);
+        LocalizeValue text = getPresentation(element);
+        if (text == null) {
+            return false;
         }
-        return false;
+        setText(text);
+        return true;
     }
 
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-
-        PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);
-        while (binaryExpression != null) {
-            PyElementType operator = binaryExpression.getOperator();
-            if (comparisonStrings.containsKey(operator)) {
-                PsiElement parent = binaryExpression.getParent();
-                while (parent instanceof PyParenthesizedExpression) {
-                    parent = parent.getParent();
-                }
-
-                PyElementType invertedOperator = invertedComparasions.get(binaryExpression.getOperator());
-                PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-                PyBinaryExpression newElement = elementGenerator
-                    .createBinaryExpression(comparisonStrings.get(invertedOperator), binaryExpression.getLeftExpression(),
-                        binaryExpression.getRightExpression()
-                    );
-
-                if (parent instanceof PyPrefixExpression && ((PyPrefixExpression) parent).getOperator() == PyTokenTypes.NOT_KEYWORD) {
-                    parent.replace(newElement);
-                }
-                else {
-                    binaryExpression.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(binaryExpression), "not " + newElement.getText()));
-                }
-                return;
-            }
-            binaryExpression = PsiTreeUtil.getParentOfType(binaryExpression, PyBinaryExpression.class);
+    private static @Nullable LocalizeValue getPresentation(PyBinaryExpression element) {
+        if (!(element.getContainingFile() instanceof PyFile)) {
+            return null;
         }
+
+        Pair<String, String> negation = ConditionUtil.findComparisonNegationOperators(element);
+        if (negation != null) {
+            return PyLocalize.intnNegateComparison(negation.getFirst(), negation.getSecond());
+        }
+        return null;
+    }
+
+    @Override
+    public void invoke(Project project, Editor editor, PsiElement leaf) throws IncorrectOperationException {
+        PyBinaryExpression element = PsiTreeUtil.getParentOfType(leaf, PyBinaryExpression.class, false);
+        if (element == null) {
+            return;
+        }
+        ConditionUtil.negateComparisonExpression(project, element.getContainingFile(), element);
     }
 }

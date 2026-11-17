@@ -17,6 +17,9 @@ package com.jetbrains.python.impl.console;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.inspections.*;
+import com.jetbrains.python.impl.inspections.unusedLocal.PyUnusedFunctionInspection;
+import com.jetbrains.python.impl.inspections.unusedLocal.PyUnusedLocalVariableInspection;
+import com.jetbrains.python.impl.inspections.unusedLocal.PyUnusedParameterInspection;
 import com.jetbrains.python.impl.validation.PyDocStringHighlightingAnnotator;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
@@ -36,7 +39,8 @@ public class ConsoleVisitorFilter implements PythonVisitorFilter
     //if we're in console
     if (PydevConsoleRunner.isInPydevConsole(file)) {
       //inspections
-      if (visitorClass == PyUnusedLocalInspection.class || visitorClass == PyUnboundLocalVariableInspection.class ||
+      if (visitorClass == PyUnusedLocalVariableInspection.class || visitorClass == PyUnusedParameterInspection.class ||
+        visitorClass == PyUnusedFunctionInspection.class || visitorClass == PyUnboundLocalVariableInspection.class ||
         visitorClass == PyStatementEffectInspection.class || visitorClass == PySingleQuotedDocstringInspection.class ||
         visitorClass == PyIncorrectDocstringInspection.class || visitorClass == PyMissingOrEmptyDocstringInspection.class ||
         visitorClass == PyMandatoryEncodingInspection.class || visitorClass == PyPep8Inspection.class) {

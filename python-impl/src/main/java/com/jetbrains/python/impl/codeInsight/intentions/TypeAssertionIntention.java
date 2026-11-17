@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyNames;
@@ -26,10 +12,8 @@ import consulo.document.Document;
 import consulo.document.util.TextRange;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.intention.IntentionMetaData;
-import consulo.language.editor.template.Template;
 import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
-import consulo.language.editor.template.TemplateManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
@@ -39,6 +23,8 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
+
 /**
  * Helps to specify type by assertion
  *
@@ -46,7 +32,7 @@ import consulo.python.impl.localize.PyLocalize;
  */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.TypeAssertionIntention", categories = "Python", fileExtensions = "py")
-public class TypeAssertionIntention extends PyBaseIntentionAction {
+public final class TypeAssertionIntention extends PyBaseIntentionAction {
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnInsertAssertion();
@@ -78,20 +64,20 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
             return false;
         }
         PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(problemElement);
-        return type == null;
+        return isUnknown(type);
     }
 
     @Override
     public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-        PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
+        PyQualifiedExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
         if (problemElement != null) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
             String name = problemElement.getText();
-            PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+            PyExpression qualifier = problemElement.getQualifier();
             if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
-                String referencedName = ((PyQualifiedExpression) problemElement).getReferencedName();
+                String referencedName = problemElement.getReferencedName();
                 if (referencedName == null || PyNames.GETITEM.equals(referencedName)) {
                     name = qualifier.getText();
                 }
@@ -148,8 +134,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
             element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
             TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
             builder.replaceRange(TextRange.create(text.length() - 1, text.length() - 1), PyNames.OBJECT);
-            Template template = builder.buildInlineTemplate();
-            TemplateManager.getInstance(project).startTemplate(editor, template);
+            builder.run(editor, true);
         }
     }
 }

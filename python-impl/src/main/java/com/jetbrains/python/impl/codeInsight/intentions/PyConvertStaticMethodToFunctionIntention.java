@@ -1,29 +1,17 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.codeInsight.PyPsiIndexUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
-import com.jetbrains.python.psi.*;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -36,24 +24,21 @@ import consulo.usage.UsageInfo;
 
 import java.util.List;
 
-/**
- * @author ktisha
- */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyConvertStaticMethodToFunctionIntention", categories = "Python", fileExtensions = "py")
-public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionAction {
+public final class PyConvertStaticMethodToFunctionIntention extends PyBaseIntentionAction {
+
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertStaticMethodToFunction();
     }
 
     @Override
-    @RequiredReadAction
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
+        if (!(psiFile instanceof PyFile)) {
             return false;
         }
-        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(psiFile, editor.getCaretModel().getOffset());
         PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (function == null) {
             return false;
@@ -73,8 +58,7 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
     }
 
     @Override
-    @RequiredWriteAction
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
@@ -84,7 +68,7 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         if (containingClass == null) {
             return;
         }
-        List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
+        List<UsageInfo> usages = PyPsiIndexUtil.findUsages(problemFunction, false);
         PyDecoratorList decoratorList = problemFunction.getDecoratorList();
         if (decoratorList != null) {
             PyDecorator decorator = decoratorList.findDecorator(PyNames.STATICMETHOD);
@@ -92,20 +76,17 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
                 decorator.delete();
             }
         }
-        PyElementGenerator generator = PyElementGenerator.getInstance(project);
 
         PsiElement copy = problemFunction.copy();
-        PyStatementList classStatementList = containingClass.getStatementList();
-        classStatementList.deleteChildRange(problemFunction, problemFunction);
-        if (classStatementList.getStatements().length < 1) {
-            classStatementList.add(generator.createPassStatement());
-        }
+        problemFunction.delete();
         file.addAfter(copy, containingClass);
 
         for (UsageInfo usage : usages) {
-            if (usage.getElement() instanceof PyReferenceExpression refExpr) {
-                PyUtil.removeQualifier(refExpr);
+            PsiElement usageElement = usage.getElement();
+            if (usageElement instanceof PyReferenceExpression) {
+                PyUtil.removeQualifier((PyReferenceExpression)usageElement);
             }
         }
     }
 }
+

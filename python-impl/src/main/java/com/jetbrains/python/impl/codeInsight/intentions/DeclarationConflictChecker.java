@@ -1,5 +1,6 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +37,8 @@ import java.util.Set;
 
 /**
  * An utility class that checks local definitions of a given name and can show a conflicts panel.
- * User: dcheryasov
- * Date: Oct 11, 2009 5:59:12 AM
  */
-public class DeclarationConflictChecker {
+public final class DeclarationConflictChecker {
   private DeclarationConflictChecker() { /* Don't instantiate */ }
 
   /**
@@ -52,7 +51,7 @@ public class DeclarationConflictChecker {
    * @return a list of pairs (referring element, element that defines name).
    */
   public static List<Pair<PsiElement, PsiElement>> findDefinitions(String name,
-                                                                   Collection<PsiReference> references,
+                                                                   Collection<? extends PsiReference> references,
                                                                    Set<PsiElement> ignored) {
     List<Pair<PsiElement, PsiElement>> conflicts = new ArrayList<>();
     for (PsiReference ref : references) {

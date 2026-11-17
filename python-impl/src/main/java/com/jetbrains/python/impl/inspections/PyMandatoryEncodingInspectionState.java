@@ -1,81 +1,38 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
+import consulo.configurable.ConfigurableBuilder;
+import consulo.configurable.ConfigurableBuilderState;
+import consulo.configurable.UnnamedConfigurable;
 import consulo.language.editor.inspection.InspectionToolState;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.xml.serializer.XmlSerializerUtil;
-
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author VISTALL
- * @since 27/04/2023
+ * Options of {@link PyMandatoryEncodingInspection} (JB {@code getOptionsPane()}).
  */
-public class PyMandatoryEncodingInspectionState implements InspectionToolState<PyMandatoryEncodingInspectionState>
-{
-	public String myDefaultEncoding = "utf-8";
-	public int myEncodingFormatIndex = 0;
+public class PyMandatoryEncodingInspectionState implements InspectionToolState<PyMandatoryEncodingInspectionState> {
+    public String myDefaultEncoding = "utf-8";
+    public int myEncodingFormatIndex = 0;
+    public boolean myAllPythons = false;
 
-	public String getDefaultEncoding()
-	{
-		return myDefaultEncoding;
-	}
+    @Override
+    public @Nullable UnnamedConfigurable createConfigurable() {
+        ConfigurableBuilder<ConfigurableBuilderState> builder = ConfigurableBuilder.newBuilder();
+        builder.checkBox(PyLocalize.inspMandatoryEncodingCheckboxEnableInPython3(), () -> myAllPythons, b -> myAllPythons = b);
+        PyMandatoryEncodingInspection.defaultEncodingDropDown(builder, () -> myDefaultEncoding, v -> myDefaultEncoding = v);
+        PyMandatoryEncodingInspection.encodingFormatDropDown(builder, () -> myEncodingFormatIndex, v -> myEncodingFormatIndex = v);
+        return builder.buildUnnamed();
+    }
 
-	public void setDefaultEncoding(String defaultEncoding)
-	{
-		myDefaultEncoding = defaultEncoding;
-	}
+    @Override
+    public PyMandatoryEncodingInspectionState getState() {
+        return this;
+    }
 
-	public int getEncodingFormatIndex()
-	{
-		return myEncodingFormatIndex;
-	}
-
-	public void setEncodingFormatIndex(int encodingFormatIndex)
-	{
-		myEncodingFormatIndex = encodingFormatIndex;
-	}
-
-	//	@Override
-	//	public JComponent createOptionsPanel()
-	//	{
-	//		final JComboBox defaultEncoding = new JComboBox(PyEncodingUtil.POSSIBLE_ENCODINGS);
-	//		defaultEncoding.setSelectedItem(myDefaultEncoding);
-	//
-	//		defaultEncoding.addActionListener(new ActionListener()
-	//		{
-	//			@Override
-	//			public void actionPerformed(ActionEvent e)
-	//			{
-	//				JComboBox cb = (JComboBox) e.getSource();
-	//				myDefaultEncoding = (String) cb.getSelectedItem();
-	//			}
-	//		});
-	//
-	//		final JComboBox encodingFormat = new JComboBox(PyEncodingUtil.ENCODING_FORMAT);
-	//
-	//		encodingFormat.setSelectedIndex(myEncodingFormatIndex);
-	//		encodingFormat.addActionListener(new ActionListener()
-	//		{
-	//			@Override
-	//			public void actionPerformed(ActionEvent e)
-	//			{
-	//				JComboBox cb = (JComboBox) e.getSource();
-	//				myEncodingFormatIndex = cb.getSelectedIndex();
-	//			}
-	//		});
-	//
-	//		return PyEncodingUtil.createEncodingOptionsPanel(defaultEncoding, encodingFormat);
-	//	}
-
-	@Nullable
-	@Override
-	public PyMandatoryEncodingInspectionState getState()
-	{
-		return this;
-	}
-
-	@Override
-	public void loadState(PyMandatoryEncodingInspectionState state)
-	{
-		XmlSerializerUtil.copyBean(state, this);
-	}
+    @Override
+    public void loadState(PyMandatoryEncodingInspectionState state) {
+        XmlSerializerUtil.copyBean(state, this);
+    }
 }

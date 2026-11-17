@@ -1,28 +1,16 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.inspections.quickfix.ConvertDocstringQuickFix;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.PyStringLiteralUtil;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
@@ -30,36 +18,44 @@ import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
 /**
+ * User: catherine
+ * <p>
  * Inspection to detect docstrings not using triple double-quoted string
- *
- * @author catherine
  */
 @ExtensionImpl
-public class PySingleQuotedDocstringInspection extends PyInspection {
+public final class PySingleQuotedDocstringInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameSingleQuotedDocstring();
     }
 
     @Override
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session);
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.inspGroupPythonDocstrings();
+    }
+
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
+
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session));
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        public Visitor(@Nullable ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyStringLiteralExpression(PyStringLiteralExpression string) {
             String stringText = string.getText();
-            int length = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            int length = PyStringLiteralUtil.getPrefixLength(stringText);
             stringText = stringText.substring(length);
             PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
             if (docStringOwner != null) {
@@ -72,10 +68,8 @@ public class PySingleQuotedDocstringInspection extends PyInspection {
                                 quoteCount = 3;
                             }
                             TextRange trStart = new TextRange(length, length + quoteCount);
-                            TextRange trEnd = new TextRange(
-                                stringText.length() + length - quoteCount,
-                                stringText.length() + length
-                            );
+                            TextRange trEnd = new TextRange(stringText.length() + length - quoteCount,
+                                                            stringText.length() + length);
                             if (string.getStringValue().isEmpty()) {
                                 holder.newProblem(PyLocalize.inspMessageSingleQuotedDocstring())
                                     .range(string)

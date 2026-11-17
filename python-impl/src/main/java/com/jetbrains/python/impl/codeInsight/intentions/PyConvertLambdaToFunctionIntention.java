@@ -1,86 +1,78 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
-import com.jetbrains.python.psi.*;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyLambdaExpression;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyStatement;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.CodeInsightUtilCore;
-import consulo.language.editor.completion.lookup.LookupElement;
-import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.editor.intention.IntentionMetaData;
-import consulo.language.editor.template.*;
+import consulo.language.editor.template.ConstantNode;
+import consulo.language.editor.template.Expression;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-
 import consulo.python.impl.localize.PyLocalize;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
+ * User: catherine
  * Intention to convert lambda to function
- *
- * @author catherine
  */
 @ExtensionImpl
 @IntentionMetaData(ignoreId = "python.PyConvertLambdaToFunctionIntention", categories = "Python", fileExtensions = "py")
-public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
+public final class PyConvertLambdaToFunctionIntention extends PyBaseIntentionAction {
+
+
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertLambdaToFunction();
     }
 
     @Override
-    @RequiredReadAction
-    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof PyFile)) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
+        if (!(psiFile instanceof PyFile)) {
             return false;
         }
 
         PyLambdaExpression lambdaExpression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
+                PsiTreeUtil.getParentOfType(psiFile.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
         if (lambdaExpression != null) {
             if (lambdaExpression.getBody() != null) {
                 ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
                 List<Instruction> graph = Arrays.asList(flow.getInstructions());
                 List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
-                return elements.size() <= 0;
+                if (!elements.isEmpty()) {
+                    return false;
+                }
+                return true;
             }
         }
         return false;
     }
 
     @Override
-    @RequiredWriteAction
-    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyLambdaExpression lambdaExpression =
-            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
+                PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
         if (lambdaExpression != null) {
             String name = "function";
             while (IntroduceValidator.isDefinedInScope(name, lambdaExpression)) {
@@ -88,12 +80,14 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             }
 
             PsiElement parent = lambdaExpression.getParent();
-            if (parent instanceof PyAssignmentStatement assignment) {
-                name = assignment.getLeftHandSideExpression().getText();
+            if (parent instanceof PyAssignmentStatement) {
+                name = ((PyAssignmentStatement)parent).getLeftHandSideExpression().getText();
             }
 
             if (name.isEmpty()) {
+
                 return;
+
             }
             PyExpression body = lambdaExpression.getBody();
             PyFunctionBuilder functionBuilder = new PyFunctionBuilder(name, lambdaExpression);
@@ -103,14 +97,12 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             functionBuilder.statement("return " + body.getText());
             PyFunction function = functionBuilder.buildFunction();
 
-            PyStatement statement = PsiTreeUtil.getParentOfType(
-                lambdaExpression,
-                PyStatement.class
-            );
+            PyStatement statement = PsiTreeUtil.getParentOfType(lambdaExpression,
+                    PyStatement.class);
             if (statement != null) {
                 PsiElement statementParent = statement.getParent();
                 if (statementParent != null) {
-                    function = (PyFunction) statementParent.addBefore(function, statement);
+                    function = (PyFunction)statementParent.addBefore(function, statement);
                 }
             }
 
@@ -127,41 +119,16 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
                 functionName = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(functionName);
                 lambdaExpression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(lambdaExpression);
 
-                ReferenceNameExpression refExpr = new ReferenceNameExpression(name);
+                Expression refExpr = new ConstantNode(name);
 
                 builder.replaceElement(lambdaExpression, name, refExpr, true);
                 builder.replaceElement(functionName, name, name, false);
 
-                int textOffSet = functionName.getTextOffset();
                 editor.getCaretModel().moveToOffset(parentScope.getTextRange().getStartOffset());
 
-                Template template = builder.buildInlineTemplate();
-                TemplateManager.getInstance(project).startTemplate(editor, template);
-                editor.getCaretModel().moveToOffset(textOffSet);
+                builder.run(editor, true);
             }
         }
     }
-
-    private class ReferenceNameExpression extends Expression {
-        ReferenceNameExpression(String oldReferenceName) {
-            myOldReferenceName = oldReferenceName;
-        }
-
-        private final String myOldReferenceName;
-
-        @Override
-        public Result calculateResult(ExpressionContext context) {
-            return new TextResult(myOldReferenceName);
-        }
-
-        @Override
-        public Result calculateQuickResult(ExpressionContext context) {
-            return null;
-        }
-
-        @Override
-        public LookupElement[] calculateLookupItems(ExpressionContext context) {
-            return null;
-        }
-    }
 }
+
