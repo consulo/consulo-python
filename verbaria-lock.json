@@ -3,11 +3,31 @@
   "project" : "consulo-python",
   "projectVersion" : "master",
   "sourceLocale" : "en-US",
-  "generatedAt" : "2026-11-17T10:15:50.965536032Z",
+  "generatedAt" : "2026-11-17T12:15:37.637284468Z",
   "documents" : {
+    "consulo.python.impl.PyCodeInsightLocalize" : {
+      "source" : {
+        "sig" : "5f2afa6102588230298245ca88f99727"
+      }
+    },
     "consulo.python.impl.PyLocalize" : {
       "source" : {
-        "sig" : "3e2664420a50259d12a7fe6c8ffa43c7"
+        "sig" : "cea2800c0afa35a2fede463bdbde894a"
+      }
+    },
+    "consulo.python.impl.PyNavigationLocalize" : {
+      "source" : {
+        "sig" : "10f3868fd48be261e5e4417951f5cc21"
+      }
+    },
+    "consulo.python.impl.PySourceRootsLocalize" : {
+      "source" : {
+        "sig" : "8efdd8545840df7aa1ec8036e869cd3d"
+      }
+    },
+    "consulo.python.impl.PySyntaxLocalize" : {
+      "source" : {
+        "sig" : "ec390517e9f1911f25ed0c9eebad567a"
       }
     },
     "consulo.python.psi.PyParsingLocalize" : {
@@ -18,6 +38,16 @@
     "consulo.python.psi.PySyntaxCoreLocalize" : {
       "source" : {
         "sig" : "bca34525af67a2002d7005c6e00d7c20"
+      }
+    },
+    "consulo.python.rest.PythonRestLocalize" : {
+      "source" : {
+        "sig" : "dee34a514ed8abb99a0c199de2fc66dc"
+      }
+    },
+    "consulo.python.spellchecker.PySpellcheckerLocalize" : {
+      "source" : {
+        "sig" : "8f47fb3c3410b1494a8a98307dc9ac2e"
       }
     }
   }
