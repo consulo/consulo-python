@@ -27,7 +27,7 @@ import consulo.util.dataholder.Key;
  * @author oleg
  * @date 10/26/10
  */
-@ExtensionImpl(id = "pydevBlockAutoPopup", order = "before completionAutoPopup")
+@ExtensionImpl(id = "pydevBlockAutoPopup")
 public class PythonConsoleAutopopupBlockingHandler extends TypedHandlerDelegate {
   public static final Key<Object> REPL_KEY = new Key<Object>("python.repl.console.editor");
 
