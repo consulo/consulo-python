@@ -15,31 +15,26 @@
  */
 package com.jetbrains.python.impl.traceBackParsers;
 
-import org.jspecify.annotations.Nullable;
 import com.jetbrains.python.impl.run.PyTracebackParser;
 import com.jetbrains.python.impl.testing.pytest.PyTestTracebackParser;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Searches for line in stacktrace
  *
  * @author Ilya.Kazakevich
  */
-public interface TraceBackParser
-{
-	/**
-	 * Searches for link in line
-	 *
-	 * @param line line to search link in
-	 * @return line info (if found)
-	 */
-	@Nullable
-	LinkInTrace findLinkInTrace(String line);
+public interface TraceBackParser {
+    /**
+     * Searches for link in line
+     *
+     * @param line line to search link in
+     * @return line info (if found)
+     */
+    @Nullable
+    LinkInTrace findLinkInTrace(String line);
 
-	// TODO: use EP instead?
-	@SuppressWarnings("PublicStaticArrayField")
-	// Noone will change it, anyway.
-			TraceBackParser[] PARSERS = {
-			new PyTestTracebackParser(),
-			new PyTracebackParser()
-	};
+    // TODO: use EP instead?
+    @SuppressWarnings("PublicStaticArrayField") // Noone will change it, anyway.
+        TraceBackParser[] PARSERS = {new PyTestTracebackParser(), new PyTracebackParser()};
 }

@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.run;
 
 import com.google.common.collect.Lists;
 import com.jetbrains.python.impl.PythonHelper;
+import com.jetbrains.python.impl.actions.PyRunFileInConsoleAction;
 import com.jetbrains.python.impl.console.PyConsoleOptions;
 import com.jetbrains.python.impl.console.PyConsoleType;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
@@ -58,6 +59,8 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
   @Override
   public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
     if (myConfig.showCommandLineAfterwards()) {
+      PyRunFileInConsoleAction.configExecuted(myConfig);
+
       if (executor.getId().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
         return super.execute(executor, ArrayUtil.append(patchers,
                                                         commandLine -> commandLine.getParametersList()

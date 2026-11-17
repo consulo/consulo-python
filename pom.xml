@@ -49,6 +49,7 @@
         <module>python-xml</module>
         <module>python-spellchecker</module>
         <module>python-regexp-impl</module>
+        <module>python-requirements</module>
         
         <module>jython</module>
         <module>iron-python</module>

@@ -1,0 +1,6 @@
+filetype.requirements.txt.description:
+    text: Requirements.txt
+python.requirements.dependencies.file.widget.display.name:
+    text: Python Dependencies File
+python.requirements.dependencies.file.widget.tooltip.with.module:
+    text: Go to Python Dependencies File for {0} [{1}]

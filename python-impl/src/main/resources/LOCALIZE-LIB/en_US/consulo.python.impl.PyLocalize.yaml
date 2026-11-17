@@ -2822,6 +2822,8 @@ INSP.pep8.naming.column.name.ignored.errors:
     text: 'Ignored errors:'
 QFIX.NAME.ignore.errors.like.this:
     text: Ignore errors like this
+QFIX.pep8.edit.inspection.profile.setting:
+    text: Edit inspection profile setting
 INSP.pep8.naming.class.names.should.use.capwords.convention:
     text: Class names should use CapWords convention
 INSP.pep8.naming.function.name.should.be.lowercase:
@@ -3816,3 +3818,35 @@ surround.with.is.not.none.template:
     text: if expr is not None
 surround.with.len.template:
     text: len(expr)
+acton.run.file.in.python.console.title:
+    text: Run File in Python Console
+action.run.file.in.python.console.description:
+    text: Run current file in Python console
+configurable.PyIntegratedToolsModulesConfigurable.display.name:
+    text: Python Integrated Tools
+search.option.package.requirements.file:
+    text: Package requirements file
+search.option.default.test.runner:
+    text: Default test runner
+search.option.docstring.format:
+    text: Docstring format
+search.option.analyze.python.code.in.docstrings:
+    text: Analyze Python code in docstrings
+search.option.sphinx.working.directory:
+    text: Sphinx working directory
+search.option.treat.txt.files.as.restructuredtext:
+    text: Treat txt files as reStructuredText
+search.option.treat.txt.files.as.restructuredtext.hit:
+    text: Treat *.txt files as reStructuredText
+search.option.restructuredtext:
+    text: reStructuredText
+search.option.plain:
+    text: Plain
+search.option.unittests:
+    text: Unittests
+search.option.pytest:
+    text: pytest
+search.option.nosetests:
+    text: Nosetests
+search.option.attests:
+    text: Attests

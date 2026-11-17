@@ -20,6 +20,7 @@ package com.jetbrains.python.impl;
 import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
 import com.jetbrains.python.impl.console.PydevDocumentationProvider;
+import com.jetbrains.python.impl.documentation.PyRuntimeDocstringFormatter;
 import com.jetbrains.python.impl.console.completion.PydevConsoleReference;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -104,8 +105,8 @@ public final class PythonRuntimeServiceImpl extends PythonRuntimeService {
                                          DocStringFormat format,
                                          String input,
                                          List<String> formatterFlags) {
-    // TODO consulo: com.jetbrains.python.documentation.PyRuntimeDocstringFormatter missing
-    return null;
+    return PyRuntimeDocstringFormatter.runExternalTool(new PyRuntimeDocstringFormatter.ModuleOrSdk.TheModule((module)), format,
+                                                       input, formatterFlags);
   }
 
   @Override
