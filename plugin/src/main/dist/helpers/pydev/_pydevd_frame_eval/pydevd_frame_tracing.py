@@ -46,7 +46,20 @@ def suspend_at_builtin_breakpoint():
         debugger.set_suspend(t, CMD_SET_BREAK)
         debugger.do_wait_suspend(t, frame, 'line', None, "frame_eval")
         frame.f_trace = debugger.get_thread_local_trace_func()
+        _enable_monitoring_of_caller(frame)
         t.additional_info.is_tracing = False
+
+
+def _enable_monitoring_of_caller(frame):
+    # f_trace has no effect with sys.monitoring - the line and return events of the caller of breakpoint() are enabled for stepping
+    from _pydevd_bundle.pydevd_constants import USE_LOW_IMPACT_MONITORING
+    if USE_LOW_IMPACT_MONITORING:
+        from _pydevd_bundle.pydevd_pep_669_tracing_wrapper import mod
+        enable_line_tracing = getattr(mod, '_enable_line_tracing', None)
+        enable_return_tracing = getattr(mod, '_enable_return_tracing', None)
+        if enable_line_tracing is not None and enable_return_tracing is not None:
+            enable_line_tracing(frame.f_code)
+            enable_return_tracing(frame.f_code)
 
 
 def _pydev_stop_at_break(line):

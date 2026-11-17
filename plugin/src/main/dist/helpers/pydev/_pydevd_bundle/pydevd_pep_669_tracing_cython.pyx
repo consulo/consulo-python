@@ -942,6 +942,10 @@ def py_return_callback(code, instruction_offset, retval):
     if info is None:
         return
 
+    # the debugger itself is running (sending the suspend message of breakpoint() for example), not the program
+    if info.is_tracing:
+        return
+
     stop_frame = info.pydev_step_stop
     filename = _get_abs_path_real_path_and_base_from_frame(frame)[1]
     plugin_stop = False
