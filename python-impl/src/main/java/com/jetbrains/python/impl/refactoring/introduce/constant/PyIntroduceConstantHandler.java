@@ -22,20 +22,32 @@ import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyParameterList;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiUtilCore;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.StringUtil;
+import one.util.streamex.StreamEx;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
-/**
- * @author Alexey.Ivanov
- */
 public class PyIntroduceConstantHandler extends IntroduceHandler
 {
 	public PyIntroduceConstantHandler()
@@ -55,12 +67,23 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-    @RequiredWriteAction
+	@RequiredWriteAction
 	protected PsiElement addDeclaration(PsiElement expression, PsiElement declaration, IntroduceOperation operation)
 	{
-		PsiElement anchor = expression.getContainingFile();
-		assert anchor instanceof PyFile;
-		return anchor.addBefore(declaration, AddImportHelper.getFileInsertPosition((PyFile) anchor));
+		PsiElement containingFile = expression.getContainingFile();
+		assert containingFile instanceof PyFile;
+		PsiElement initialPosition = AddImportHelper.getFileInsertPosition((PyFile) containingFile);
+
+		List<PsiElement> sameFileRefs = collectReferencedDefinitionsInSameFile(operation.getElement(), operation.getFile());
+		PsiElement maxPosition = getLowermostTopLevelStatement(sameFileRefs);
+
+		if(maxPosition == null)
+		{
+			return containingFile.addBefore(declaration, initialPosition);
+		}
+
+		assert PyUtil.isTopLevel(maxPosition);
+		return containingFile.addAfter(declaration, maxPosition);
 	}
 
 	@Override
@@ -79,6 +102,56 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	protected boolean isValidIntroduceContext(PsiElement element)
 	{
 		return super.isValidIntroduceContext(element) || PsiTreeUtil.getParentOfType(element, PyParameterList.class) != null;
+	}
+
+	@Override
+	@RequiredReadAction
+	protected boolean checkEnabled(IntroduceOperation operation)
+	{
+		PsiElement selectionElement = getOriginalSelectionCoveringElement(operation.getElement());
+
+		PsiFile containingFile = selectionElement.getContainingFile();
+		if(!(containingFile instanceof PyFile))
+		{
+			return false;
+		}
+
+		Editor editor = operation.getEditor();
+		if(editor == null)
+		{
+			return false;
+		}
+
+		List<PsiElement> sameFileRefs = collectReferencedDefinitionsInSameFile(operation.getElement(), operation.getFile());
+		if(!ContainerUtil.all(sameFileRefs, it -> PyUtil.isTopLevel(it)))
+		{
+			return false;
+		}
+		PsiElement maxPosition = getLowermostTopLevelStatement(sameFileRefs);
+		if(maxPosition == null)
+		{
+			return true;
+		}
+		return PsiUtilCore.compareElementsByPosition(maxPosition, selectionElement) <= 0 &&
+			!PsiTreeUtil.isAncestor(maxPosition, selectionElement, false);
+	}
+
+	private static @Nullable PsiElement getLowermostTopLevelStatement(List<PsiElement> elements)
+	{
+		return StreamEx.of(elements)
+			.map(it -> PyPsiUtils.getParentRightBefore(it, it.getContainingFile()))
+			.select(PyStatement.class)
+			.max(PsiUtilCore::compareElementsByPosition)
+			.orElse(null);
+	}
+
+	@Override
+	@RequiredUIAccess
+	protected void showCanNotIntroduceErrorHint(Project project, Editor editor)
+	{
+		String message =
+			RefactoringBundle.getCannotRefactorMessage(PyLocalize.refactoringIntroduceConstantCannotExtractSelectedExpression().get());
+		CommonRefactoringUtil.showErrorHint(project, editor, LocalizeValue.of(message), myDialogTitle, getHelpId());
 	}
 
 	@Override

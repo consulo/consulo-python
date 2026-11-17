@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.editor;
 
-import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.ast.PyAstFile;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.action.EditorActionHandler;
@@ -28,11 +28,8 @@ import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiFile;
 import consulo.util.lang.ref.SimpleReference;
 
-/**
- * @author yole
- */
 @ExtensionImpl
-public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
+public final class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
     @Override
     public Result preprocessEnter(
         PsiFile file,
@@ -48,7 +45,7 @@ public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
             editor = EditorWindow.getTopLevelEditor(editor);
             offset = editor.getCaretModel().getOffset();
         }
-        if (!(file instanceof PyFile)) {
+        if (!(file instanceof PyAstFile)) {
             return Result.Continue;
         }
 

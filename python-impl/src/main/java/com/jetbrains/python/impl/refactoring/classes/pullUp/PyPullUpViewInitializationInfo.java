@@ -32,7 +32,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  *
  * @author Ilya.Kazakevich
  */
-class PyPullUpViewInitializationInfo extends MembersViewInitializationInfo
+public class PyPullUpViewInitializationInfo extends MembersViewInitializationInfo
 {
 	private final Collection<PyClass> myParents;
 

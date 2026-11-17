@@ -68,7 +68,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
     @Override
     protected PyParameterTableModelItem createRowItem(@Nullable PyParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new PyParameterInfo(-1);
+            parameterInfo = new PyParameterInfo(PyParameterInfo.NEW_PARAMETER);
         }
         String defaultValue = parameterInfo.getDefaultValue();
         PsiCodeFragment defaultValueFragment = new PyExpressionCodeFragment(myProject, StringUtil.notNullize(defaultValue),

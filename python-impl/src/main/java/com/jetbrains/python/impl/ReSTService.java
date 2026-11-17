@@ -1,75 +1,70 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl;
 
-import consulo.annotation.component.ComponentScope;
-import consulo.annotation.component.ServiceAPI;
-import consulo.annotation.component.ServiceImpl;
-import consulo.component.persist.PersistentStateComponent;
-import consulo.component.persist.State;
-import consulo.component.persist.Storage;
+import com.jetbrains.python.defaultProjectAwareService.PyDefaultProjectAwareModuleConfiguratorImpl;
+import com.jetbrains.python.defaultProjectAwareService.PyDefaultProjectAwareService;
+import com.jetbrains.python.defaultProjectAwareService.PyDefaultProjectAwareServiceClasses;
+import com.jetbrains.python.defaultProjectAwareService.PyDefaultProjectAwareServiceModuleConfigurator;
 import consulo.module.Module;
-import consulo.util.xml.serializer.XmlSerializerUtil;
-import jakarta.inject.Singleton;
-
+import org.jspecify.annotations.Nullable;
 
 /**
- * User: catherine
+ * Consulo: JB nested {@code ReSTService.AppService} / {@code ReSTService.ModuleService} are top-level classes
+ * {@link ReSTServiceAppService} / {@link ReSTServiceModuleService}, because the injecting annotation processor does not support
+ * nested {@code @ServiceImpl} classes.
  */
-@State(name = "ReSTService",
-  storages = {@Storage(file = "$MODULE_FILE$")}
-)
-@ServiceAPI(ComponentScope.MODULE)
-@ServiceImpl
-@Singleton
-public class ReSTService implements PersistentStateComponent<ReSTService> {
-  public String DOC_DIR = "";
-  public boolean TXT_IS_RST = false;
+public abstract class ReSTService extends PyDefaultProjectAwareService<
+    ReSTService.ServiceState, ReSTService, ReSTServiceAppService, ReSTServiceModuleService> {
 
-  public ReSTService() {
-  }
+    static final String MODULE_STATE_COMPONENT = "ReSTService";
 
-  @Override
-  public ReSTService getState() {
-    return this;
-  }
+    private static final PyDefaultProjectAwareServiceClasses<ServiceState, ReSTService, ReSTServiceAppService, ReSTServiceModuleService, ReSTServiceFactory>
+        SERVICE_CLASSES = new PyDefaultProjectAwareServiceClasses<>(ReSTServiceAppService.class, ReSTServiceFactory.class);
 
-  @Override
-  public void loadState(ReSTService state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
 
-  public void setWorkdir(String workDir) {
-    DOC_DIR = workDir;
-  }
+    protected ReSTService() {
+        super(new ServiceState());
+    }
 
-  public static ReSTService getInstance(Module module) {
-    return module.getInstance(ReSTService.class);
-  }
+    protected ReSTService(Module module) {
+        super(new ServiceState(), MODULE_STATE_COMPONENT, ReSTService.ServiceState.class, module);
+    }
 
-  public String getWorkdir() {
-    return DOC_DIR;
-  }
+    public final void setWorkdir(String workDir) {
+        ServiceState state = getState();
+        state.DOC_DIR = workDir;
+        if (myModule != null) {
+            loadState(state);
+        }
+    }
 
-  public boolean txtIsRst() {
-    return TXT_IS_RST;
-  }
+    public static ReSTService getInstance(@Nullable Module module) {
+        return SERVICE_CLASSES.getService(module);
+    }
 
-  public void setTxtIsRst(boolean isRst) {
-    TXT_IS_RST = isRst;
-  }
+
+    public static PyDefaultProjectAwareServiceModuleConfigurator getConfigurator() {
+        return new PyDefaultProjectAwareModuleConfiguratorImpl<>(SERVICE_CLASSES);
+    }
+
+    public final String getWorkdir() {
+        return getState().DOC_DIR;
+    }
+
+    public final boolean txtIsRst() {
+        return getState().TXT_IS_RST;
+    }
+
+    public final void setTxtIsRst(boolean isRst) {
+        ServiceState state = getState();
+        state.TXT_IS_RST = isRst;
+        if (myModule != null) {
+            loadState(state);
+        }
+    }
+
+    public static final class ServiceState {
+        public String DOC_DIR = "";
+        public boolean TXT_IS_RST = false;
+    }
 }

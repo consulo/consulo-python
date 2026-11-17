@@ -1,48 +1,32 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.enterProcessors;
 
-import consulo.annotation.access.RequiredReadAction;
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.SmartEnterUtil;
 
-/**
- * @author Alexey.Ivanov
- * @since 2010-04-15
- */
 public class PyCommentBreakerEnterProcessor implements EnterProcessor {
-  @Override
-  @RequiredReadAction
-  public boolean doEnter(Editor editor, PsiElement psiElement, boolean isModified) {
-    if (isModified) {
-      return false;
+    @Override
+    public boolean doEnter(Editor editor, PsiElement psiElement, boolean isModified) {
+        if (isModified) {
+            return false;
+        }
+        CaretModel caretModel = editor.getCaretModel();
+        PsiElement atCaret = psiElement.getContainingFile().findElementAt(caretModel.getOffset());
+        if (atCaret instanceof PsiWhiteSpace) {
+            atCaret = atCaret.getPrevSibling();
+        }
+        PsiElement comment = PsiTreeUtil.getParentOfType(atCaret, PsiComment.class, false);
+        if (comment != null) {
+            SmartEnterUtil.plainEnter(editor);
+            editor.getDocument().insertString(caretModel.getOffset(), "# ");
+            caretModel.moveToOffset(caretModel.getOffset() + 2);
+            return true;
+        }
+        return false;
     }
-    CaretModel caretModel = editor.getCaretModel();
-    PsiElement atCaret = psiElement.getContainingFile().findElementAt(caretModel.getOffset());
-    PsiElement comment = PsiTreeUtil.getParentOfType(atCaret, PsiComment.class, false);
-    if (comment != null) {
-      SmartEnterUtil.plainEnter(editor);
-      editor.getDocument().insertString(caretModel.getOffset(), "#");
-      caretModel.moveToOffset(caretModel.getOffset() + 1);
-      return true;
-    }
-    return false;
-  }
 }

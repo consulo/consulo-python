@@ -20,6 +20,7 @@ import consulo.language.editor.refactoring.rename.RenamePsiElementProcessor;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.MultiMap;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
@@ -39,47 +40,31 @@ public abstract class RenamePyElementProcessor extends RenamePsiElementProcessor
         if (container instanceof PyFile pyFile) {
             PyClass conflictingClass = pyFile.findTopLevelClass(newName);
             if (conflictingClass != null) {
-                conflicts.putValue(
-                    conflictingClass,
-                    LocalizeValue.localizeTODO("A class named '" + newName + "' is already defined in " + pyFile.getName())
-                );
+                conflicts.putValue(conflictingClass, PyLocalize.refactoringRenameClassAlreadyDefined(newName, pyFile.getName()));
             }
             PyFunction conflictingFunction = pyFile.findTopLevelFunction(newName);
             if (conflictingFunction != null) {
-                conflicts.putValue(
-                    conflictingFunction,
-                    LocalizeValue.localizeTODO("A function named '" + newName + "' is already defined in " + pyFile.getName())
-                );
+                conflicts.putValue(conflictingFunction, PyLocalize.refactoringRenameFunctionAlreadyDefined(newName, pyFile.getName()));
             }
             PyTargetExpression conflictingVariable = pyFile.findTopLevelAttribute(newName);
             if (conflictingVariable != null) {
-                conflicts.putValue(
-                    conflictingFunction,
-                    LocalizeValue.localizeTODO("A variable named '" + newName + "' is already defined in " + pyFile.getName())
-                );
+                conflicts.putValue(conflictingVariable, PyLocalize.refactoringRenameVariableAlreadyDefined(newName, pyFile.getName()));
             }
         }
-        else if (container instanceof PyClass) {
-            PyClass pyClass = (PyClass) container;
+        else if (container instanceof PyClass pyClass) {
             PyClass conflictingClass = pyClass.findNestedClass(newName, true);
             if (conflictingClass != null) {
-                conflicts.putValue(
-                    conflictingClass,
-                    LocalizeValue.localizeTODO("A class named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
-                );
+                conflicts.putValue(conflictingClass, PyLocalize.refactoringRenameNestedClassAlreadyDefined(newName, pyClass.getName()));
             }
             PyFunction conflictingFunction = pyClass.findMethodByName(newName, true, null);
             if (conflictingFunction != null) {
-                conflicts.putValue(
-                    conflictingFunction,
-                    LocalizeValue.localizeTODO("A function named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
-                );
+                conflicts.putValue(conflictingFunction, PyLocalize.refactoringRenameMethodAlreadyDefined(newName, pyClass.getName()));
             }
             PyTargetExpression conflictingAttribute = pyClass.findClassAttribute(newName, true, null);
             if (conflictingAttribute != null) {
                 conflicts.putValue(
                     conflictingAttribute,
-                    LocalizeValue.localizeTODO("An attribute named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
+                    PyLocalize.refactoringRenameClassAttributeAlreadyDefined(newName, pyClass.getName())
                 );
             }
         }
@@ -87,6 +72,6 @@ public abstract class RenamePyElementProcessor extends RenamePsiElementProcessor
 
     @Override
     public String getHelpID(PsiElement element) {
-        return "python.reference.rename";
+        return "refactoring.renameDialogs";
     }
 }

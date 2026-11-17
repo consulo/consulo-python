@@ -1,25 +1,10 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.editor.selectWord;
 
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.PyStatementList;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.ast.PyAstCallExpression;
+import com.jetbrains.python.ast.PyAstStatement;
+import com.jetbrains.python.ast.PyAstStatementList;
+import com.jetbrains.python.ast.PyAstStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
@@ -30,31 +15,28 @@ import consulo.language.psi.PsiWhiteSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
 @ExtensionImpl
-public class PyStatementSelectionHandler extends ExtendWordSelectionHandlerBase {
-  public boolean canSelect(PsiElement e) {
-    return e instanceof PyStringLiteralExpression || e instanceof PyCallExpression || e instanceof PyStatement ||
-      e instanceof PyStatementList;
-  }
-
-  public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
-    List<TextRange> result = new ArrayList<TextRange>();
-    PsiElement endElement = e;
-    while (endElement.getLastChild() != null) {
-      endElement = endElement.getLastChild();
+public final class PyStatementSelectionHandler extends ExtendWordSelectionHandlerBase {
+    @Override
+    public boolean canSelect(PsiElement e) {
+        return e instanceof PyAstStringLiteralExpression || e instanceof PyAstCallExpression || e instanceof PyAstStatement ||
+                      e instanceof PyAstStatementList;
     }
-    if (endElement instanceof PsiWhiteSpace) {
-      PsiElement prevSibling = endElement.getPrevSibling();
-      if (prevSibling != null) {
-        endElement = prevSibling;
-      }
-    }
-    result.addAll(expandToWholeLine(editorText, new TextRange(e.getTextRange().getStartOffset(),
-                                                              endElement.getTextRange().getEndOffset())));
 
-    return result;
-  }
+    @Override
+    public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
+        PsiElement endElement = e;
+        while(endElement.getLastChild() != null) {
+            endElement = endElement.getLastChild();
+        }
+        if (endElement instanceof PsiWhiteSpace) {
+            PsiElement prevSibling = endElement.getPrevSibling();
+            if (prevSibling != null) {
+                endElement = prevSibling;
+            }
+        }
+
+        return new ArrayList<>(expandToWholeLine(editorText, new TextRange(e.getTextRange().getStartOffset(),
+                                                                                   endElement.getTextRange().getEndOffset())));
+    }
 }

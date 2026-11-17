@@ -1,52 +1,38 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.findUsages;
 
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
 import consulo.usage.PsiNamedElementUsageGroupBase;
 import consulo.usage.Usage;
 import consulo.usage.UsageGroup;
+import consulo.usage.UsageTarget;
 import consulo.usage.rule.FileStructureGroupRuleProvider;
 import consulo.usage.rule.PsiElementUsage;
+import consulo.usage.rule.SingleParentUsageGroupingRule;
 import consulo.usage.rule.UsageGroupingRule;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
 @ExtensionImpl(id = "py-function")
-public class PyFunctionGroupingRuleProvider implements FileStructureGroupRuleProvider {
+public final class PyFunctionGroupingRuleProvider implements FileStructureGroupRuleProvider {
     @Override
     public UsageGroupingRule getUsageGroupingRule(Project project) {
         return new PyFunctionGroupingRule();
     }
 
-    private static class PyFunctionGroupingRule implements UsageGroupingRule {
+    private static class PyFunctionGroupingRule extends SingleParentUsageGroupingRule {
         @Override
         @RequiredReadAction
-        public UsageGroup groupUsage(Usage usage) {
-            if (!(usage instanceof PsiElementUsage elementUsage)) {
+        protected @Nullable UsageGroup getParentGroupFor(Usage usage, UsageTarget[] targets) {
+            if (!(usage instanceof PsiElementUsage)) {
                 return null;
             }
-            PsiElement psiElement = elementUsage.getElement();
+            PsiElement psiElement = ((PsiElementUsage)usage).getElement();
             PyFunction pyFunction = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class, false, PyClass.class);
             if (pyFunction != null) {
                 return new PsiNamedElementUsageGroupBase<>(pyFunction);

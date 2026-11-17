@@ -18,6 +18,11 @@ package com.jetbrains.python.impl.refactoring.surround;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyIfExpressionSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyIsNoneSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyIsNotNoneSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyLenExpressionStatementSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyWhileExpressionSurrounder;
 import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyWithParenthesesSurrounder;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
@@ -33,7 +38,8 @@ import consulo.language.psi.PsiFile;
  */
 @ExtensionImpl
 public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
-    private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder()};
+    private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder(), new PyIfExpressionSurrounder(),
+        new PyWhileExpressionSurrounder(), new PyIsNoneSurrounder(), new PyIsNotNoneSurrounder(), new PyLenExpressionStatementSurrounder()};
 
     @Override
     @RequiredReadAction

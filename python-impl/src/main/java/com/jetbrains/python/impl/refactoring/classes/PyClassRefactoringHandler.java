@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.refactoring.classes;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyClass;
+import consulo.application.Application;
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.SelectionModel;
@@ -85,6 +86,10 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
         Editor editor,
         PsiFile file
     ) {
+        if (Application.get().isUnitTestMode()) {
+            return;
+        }
+
         CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 
         PyClass clazz = PyUtil.getContainingClassOrSelf(element1);

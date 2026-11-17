@@ -17,7 +17,6 @@ package com.jetbrains.python.rest.quickfixes;
 
 import com.jetbrains.python.rest.inspections.RestRoleInspection;
 import com.jetbrains.python.rest.inspections.RestRoleInspectionState;
-import com.jetbrains.rest.RestBundle;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.inspection.scheme.InspectionProfile;
@@ -25,6 +24,7 @@ import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager
 import consulo.language.editor.intention.LowPriorityAction;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.reStructuredText.localize.RestLocalize;
 
 /**
  * @author catherine
@@ -38,7 +38,7 @@ public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
 
     @Override
     public LocalizeValue getName() {
-        return LocalizeValue.localizeTODO(RestBundle.message("QFIX.ignore.role", myRole));
+        return RestLocalize.qfixIgnoreRole(myRole);
     }
 
     @Override

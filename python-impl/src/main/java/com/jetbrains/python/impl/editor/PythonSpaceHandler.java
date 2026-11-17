@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.editor;
 
 import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
 import com.jetbrains.python.impl.editor.PythonEnterHandler.DocstringState;
-import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.ast.PyAstDocStringOwner;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
@@ -35,7 +35,7 @@ import consulo.util.lang.StringUtil;
  * User : catherine
  */
 @ExtensionImpl
-public class PythonSpaceHandler extends TypedHandlerDelegate {
+public final class PythonSpaceHandler extends TypedHandlerDelegate {
   @Override
   public Result charTyped(char c, Project project, Editor editor, PsiFile file) {
     CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
@@ -51,7 +51,7 @@ public class PythonSpaceHandler extends TypedHandlerDelegate {
       int expectedStringStart = offset - 4;        // """ or ''' plus space char
       Document document = editor.getDocument();
       if (PythonEnterHandler.canGenerateDocstring(element, expectedStringStart, document) == DocstringState.INCOMPLETE) {
-        PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
+        PyAstDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyAstDocStringOwner.class);
         if (docOwner != null) {
           String quotes = document.getText(TextRange.from(expectedStringStart, 3));
           String docString = PyDocstringGenerator.forDocStringOwner(docOwner)

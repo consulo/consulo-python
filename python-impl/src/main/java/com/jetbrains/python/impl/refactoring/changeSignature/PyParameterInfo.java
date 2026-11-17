@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
+import consulo.util.lang.StringUtil;
 import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
 
 import org.jspecify.annotations.Nullable;
@@ -99,5 +100,23 @@ public class PyParameterInfo implements ParameterInfo
 
   public boolean isRenamed() {
     return !myOldName.equals(myName);
+  }
+
+  // TODO consulo: ParameterInfo#NEW_PARAMETER missing
+  public static final int NEW_PARAMETER = -1;
+
+  // TODO consulo: ParameterInfo#isNew() default method missing
+  public boolean isNew() {
+    return getOldIndex() == NEW_PARAMETER;
+  }
+
+  @Override
+  public String toString() {
+    final String defaultValueType = myDefaultInSignature ? "signature" : "call";
+    return "PyParameterInfo(" +
+           (isNew() ? "<new>" : "oldIndex: " + myOldIndex) + ", " +
+           "name: " + (isRenamed() ? myOldName + " -> " + myName : myName) + ", " +
+           "default: " + (StringUtil.isEmpty(myDefaultValue) ? "<empty>" : "'" + myDefaultValue + "' (" + defaultValueType + ")") +
+           ")";
   }
 }

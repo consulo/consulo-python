@@ -1,0 +1,12 @@
+python.find.module.usages.dialog.label.prefix.package:
+    text: Package
+python.find.module.usages.dialog.label.prefix.module:
+    text: Module
+python.project.view.remote.libraries:
+    text: Remote Libraries
+python.project.view.py.skeletons:
+    text: Binary Skeletons
+python.project.view.typeshed.stubs:
+    text: Typeshed Stubs
+python.project.view.bundled.stubs:
+    text: Bundled Stubs

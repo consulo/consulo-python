@@ -1,130 +1,170 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.highlighting;
 
-import com.jetbrains.python.highlighting.PyHighlighter;
 import com.google.common.collect.ImmutableMap;
-import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.highlighting.PyHighlighter;
+import com.jetbrains.python.psi.LanguageLevel;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.colorScheme.setting.AttributesDescriptor;
-import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
+import consulo.colorScheme.setting.ColorDescriptor;
+import consulo.language.Language;
+import consulo.language.editor.colorScheme.setting.RainbowColorSettingsPage;
 import consulo.language.editor.highlight.SyntaxHighlighter;
 import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import consulo.language.editor.rawHighlight.RainbowHighlighter;
 import consulo.localize.LocalizeValue;
-import consulo.python.impl.localize.PyLocalize;
+import consulo.python.impl.localize.PySyntaxLocalize;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
-/**
- * @author yole
- */
+// TODO consulo: InspectionColorSettingsPage, DisplayPrioritySortable missing
 @ExtensionImpl
-public class PythonColorsPage implements ColorSettingsPage {
-  private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
-    new AttributesDescriptor("Keyword", PyHighlighter.PY_KEYWORD),
-    new AttributesDescriptor("String (bytes)", PyHighlighter.PY_BYTE_STRING),
-    new AttributesDescriptor("String (Unicode)", PyHighlighter.PY_UNICODE_STRING),
-    new AttributesDescriptor("Number", PyHighlighter.PY_NUMBER),
-    new AttributesDescriptor("Line Comment", PyHighlighter.PY_LINE_COMMENT),
-    new AttributesDescriptor("Operation Sign", PyHighlighter.PY_OPERATION_SIGN),
-    new AttributesDescriptor("Parentheses", PyHighlighter.PY_PARENTHS),
-    new AttributesDescriptor("Brackets", PyHighlighter.PY_BRACKETS),
-    new AttributesDescriptor("Braces", PyHighlighter.PY_BRACES),
-    new AttributesDescriptor("Comma", PyHighlighter.PY_COMMA),
-    new AttributesDescriptor("Dot", PyHighlighter.PY_DOT),
-    new AttributesDescriptor("Function definition", PyHighlighter.PY_FUNC_DEFINITION),
-    new AttributesDescriptor("Class definition", PyHighlighter.PY_CLASS_DEFINITION),
-    new AttributesDescriptor("Docstring", PyHighlighter.PY_DOC_COMMENT),
-    new AttributesDescriptor("Docstring tag", PyHighlighter.PY_DOC_COMMENT_TAG),
-    new AttributesDescriptor("Predefined item definition", PyHighlighter.PY_PREDEFINED_DEFINITION),
-    new AttributesDescriptor("Decorator", PyHighlighter.PY_DECORATOR),
-    new AttributesDescriptor("Built-in name", PyHighlighter.PY_BUILTIN_NAME),
-    new AttributesDescriptor("Predefined name", PyHighlighter.PY_PREDEFINED_USAGE),
-    new AttributesDescriptor("Parameter", PyHighlighter.PY_PARAMETER),
-    new AttributesDescriptor("'self' parameter", PyHighlighter.PY_SELF_PARAMETER),
-    new AttributesDescriptor("Keyword argument", PyHighlighter.PY_KEYWORD_ARGUMENT),
-    new AttributesDescriptor("Valid escape sequence", PyHighlighter.PY_VALID_STRING_ESCAPE),
-    new AttributesDescriptor("Invalid escape sequence", PyHighlighter.PY_INVALID_STRING_ESCAPE),
-    new AttributesDescriptor("String//f-string//Expression braces", PyHighlighter.PY_FSTRING_FRAGMENT_BRACES),
-    new AttributesDescriptor("String//f-string//Type conversion", PyHighlighter.PY_FSTRING_FRAGMENT_TYPE_CONVERSION),
-    new AttributesDescriptor("String//f-string//Format specifier start", PyHighlighter.PY_FSTRING_FRAGMENT_COLON),
-    new AttributesDescriptor("String//f-string//Format spec special character", PyHighlighter.PY_FSTRING_FORMAT_SPEC_SPECIAL_CHAR),
-    new AttributesDescriptor("String//f-string//Format spec number", PyHighlighter.PY_FSTRING_FORMAT_SPEC_NUMBER),
-    new AttributesDescriptor("Functions//Nested function definition", PyHighlighter.PY_NESTED_FUNC_DEFINITION),
-    new AttributesDescriptor("Functions//Function call", PyHighlighter.PY_FUNCTION_CALL),
-    new AttributesDescriptor("Functions//Method call", PyHighlighter.PY_METHOD_CALL),
-    new AttributesDescriptor("Type annotation", PyHighlighter.PY_ANNOTATION),
-    new AttributesDescriptor("Local variables", PyHighlighter.PY_LOCAL_VARIABLE),
-    new AttributesDescriptor("Type parameters", PyHighlighter.PY_TYPE_PARAMETER),
-  };
+public class PythonColorsPage implements RainbowColorSettingsPage {
+    private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsNumber(), PyHighlighter.PY_NUMBER),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsKeyword(), PyHighlighter.PY_KEYWORD),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsLineComment(), PyHighlighter.PY_LINE_COMMENT),
 
-  private static final Map<String, TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()
-    .put("docComment", PyHighlighter.PY_DOC_COMMENT)
-    .put("docCommentTag", PyHighlighter.PY_DOC_COMMENT_TAG)
-    .put("decorator", PyHighlighter.PY_DECORATOR)
-    .put("predefined", PyHighlighter.PY_PREDEFINED_DEFINITION)
-    .put("predefinedUsage", PyHighlighter.PY_PREDEFINED_USAGE)
-    .put("funcDef", PyHighlighter.PY_FUNC_DEFINITION)
-    .put("classDef", PyHighlighter.PY_CLASS_DEFINITION)
-    .put("builtin", PyHighlighter.PY_BUILTIN_NAME)
-    .put("self", PyHighlighter.PY_SELF_PARAMETER)
-    .put("param", PyHighlighter.PY_PARAMETER)
-    .put("kwarg", PyHighlighter.PY_KEYWORD_ARGUMENT)
-    .build();
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringBinaryBytes(), PyHighlighter.PY_BYTE_STRING),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringTextUnicode(), PyHighlighter.PY_UNICODE_STRING),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringEscapeSequenceValid(), PyHighlighter.PY_VALID_STRING_ESCAPE),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringEscapeSequenceInvalid(), PyHighlighter.PY_INVALID_STRING_ESCAPE),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringFStringExpressionBraces(), PyHighlighter.PY_FSTRING_FRAGMENT_BRACES),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringFStringTypeConversion(), PyHighlighter.PY_FSTRING_FRAGMENT_TYPE_CONVERSION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringFStringFormatSpecifierStart(), PyHighlighter.PY_FSTRING_FRAGMENT_COLON),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringFStringSpecSpecial(), PyHighlighter.PY_FSTRING_FORMAT_SPEC_SPECIAL_CHAR),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsStringFStringSpecNumber(), PyHighlighter.PY_FSTRING_FORMAT_SPEC_NUMBER),
 
-  public LocalizeValue getDisplayName() {
-    return PyLocalize.python();
-  }
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsDocstringText(), PyHighlighter.PY_DOC_COMMENT),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsDocstringTag(), PyHighlighter.PY_DOC_COMMENT_TAG),
 
-  public AttributesDescriptor[] getAttributeDescriptors() {
-    return ATTRS;
-  }
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsOperationSign(), PyHighlighter.PY_OPERATION_SIGN),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsParentheses(), PyHighlighter.PY_PARENTHS),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsBrackets(), PyHighlighter.PY_BRACKETS),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsBraces(), PyHighlighter.PY_BRACES),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsComma(), PyHighlighter.PY_COMMA),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBracesAndOperatorsDot(), PyHighlighter.PY_DOT),
 
-  public SyntaxHighlighter getHighlighter() {
-    SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(PythonFileType.INSTANCE, null, null);
-    assert highlighter != null;
-    return highlighter;
-  }
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsFunctionsFunctionDefinition(), PyHighlighter.PY_FUNC_DEFINITION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsFunctionsNestedFunctionDefinition(), PyHighlighter.PY_NESTED_FUNC_DEFINITION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsFunctionsFunctionCall(), PyHighlighter.PY_FUNCTION_CALL),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsFunctionsMethodCall(), PyHighlighter.PY_METHOD_CALL),
 
-  public String getDemoText() {
-    return
-      "@<decorator>decorator</decorator>(param=1)\n" +
-        "def f(<param>x</param>):\n" +
-        "    <docComment>\"\"\" Syntax Highlighting Demo\n" +
-        "        <docCommentTag>@param</docCommentTag> x Parameter\"\"\"</docComment>\n" +
-        "    s = (\"Test\", 2+3, {'a': 'b'}, <param>x</param>)   # Comment\n" +
-        "    print s[0].lower()\n" +
-        "\n" +
-        "class <classDef>Foo</classDef>:\n" +
-        "    def <predefined>__init__</predefined>(<self>self</self>):\n" +
-        "        byte_string = 'newline:\\n also newline:\\x0a'\n" +
-        "        text_string = u\"Cyrillic \u042f is \\u042f. Oops: \\u042g\"\n" +
-        "        <self>self</self>.makeSense(<kwarg>whatever</kwarg>=1)\n" +
-        "    \n" +
-        "    def <funcDef>makeSense</funcDef>(<self>self</self>, <param>whatever</param>):\n" +
-        "        <self>self</self>.sense = <param>whatever</param>\n" +
-        "\n" +
-        "x = <builtin>len</builtin>('abc')\n" +
-        "print(f.<predefinedUsage>__doc__</predefinedUsage>)"
-      ;
-  }
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsParametersParameter(), PyHighlighter.PY_PARAMETER),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsParametersSelfParameter(), PyHighlighter.PY_SELF_PARAMETER),
 
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return ourTagToDescriptorMap;
-  }
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsKeywordArgument(), PyHighlighter.PY_KEYWORD_ARGUMENT),
+
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsSpecialNamesDefinition(), PyHighlighter.PY_PREDEFINED_DEFINITION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsSpecialNamesUsage(), PyHighlighter.PY_PREDEFINED_USAGE),
+
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsBuiltInName(), PyHighlighter.PY_BUILTIN_NAME),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsDecorator(), PyHighlighter.PY_DECORATOR),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsClassDefinition(), PyHighlighter.PY_CLASS_DEFINITION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsTypeAnnotation(), PyHighlighter.PY_ANNOTATION),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsLocalVariables(), PyHighlighter.PY_LOCAL_VARIABLE),
+        new AttributesDescriptor(PySyntaxLocalize.pythonColorsTypeParameters(), PyHighlighter.PY_TYPE_PARAMETER),
+    };
+
+    private static final Map<String, TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()
+        .put("docComment", PyHighlighter.PY_DOC_COMMENT)
+        .put("docCommentTag", PyHighlighter.PY_DOC_COMMENT_TAG)
+        .put("decorator", PyHighlighter.PY_DECORATOR)
+        .put("predefined", PyHighlighter.PY_PREDEFINED_DEFINITION)
+        .put("predefinedUsage", PyHighlighter.PY_PREDEFINED_USAGE)
+        .put("funcDef", PyHighlighter.PY_FUNC_DEFINITION)
+        .put("nestedFuncDef", PyHighlighter.PY_NESTED_FUNC_DEFINITION)
+        .put("classDef", PyHighlighter.PY_CLASS_DEFINITION)
+        .put("builtin", PyHighlighter.PY_BUILTIN_NAME)
+        .put("self", PyHighlighter.PY_SELF_PARAMETER)
+        .put("param", PyHighlighter.PY_PARAMETER)
+        .put("kwarg", PyHighlighter.PY_KEYWORD_ARGUMENT)
+        .put("call", PyHighlighter.PY_FUNCTION_CALL)
+        .put("mcall", PyHighlighter.PY_METHOD_CALL)
+        .put("annotation", PyHighlighter.PY_ANNOTATION)
+        .put("localVar", PyHighlighter.PY_LOCAL_VARIABLE)
+        .put("typeParam", PyHighlighter.PY_TYPE_PARAMETER)
+        .put("fspecSpecial", PyHighlighter.PY_FSTRING_FORMAT_SPEC_SPECIAL_CHAR)
+        .put("fspecNumber", PyHighlighter.PY_FSTRING_FORMAT_SPEC_NUMBER)
+        .putAll(RainbowHighlighter.createRainbowHLM())
+        .build();
+
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PySyntaxLocalize.pythonColorsPython();
+    }
+
+    @Override
+    public AttributesDescriptor[] getAttributeDescriptors() {
+        return ATTRS;
+    }
+
+    @Override
+    public ColorDescriptor[] getColorDescriptors() {
+        return ColorDescriptor.EMPTY_ARRAY;
+    }
+
+    @Override
+    public SyntaxHighlighter getHighlighter() {
+        SyntaxHighlighterFactory factory = Application.get().getExtensionPoint(SyntaxHighlighterFactory.class)
+            .findFirstSafe(it -> it.getLanguage() == PythonLanguage.getInstance());
+        if (factory instanceof PySyntaxHighlighterFactoryBase) {
+            return ((PySyntaxHighlighterFactoryBase) factory).getSyntaxHighlighterForLanguageLevel(LanguageLevel.getLatest());
+        }
+        return SyntaxHighlighterFactory.getSyntaxHighlighter(PythonLanguage.getInstance(), null, null);
+    }
+
+    @Override
+    public String getDemoText() {
+        //noinspection NonAsciiCharacters
+        return """
+             @<decorator>decorator</decorator>(<kwarg>param</kwarg>=1)def f(<param>x</param>):
+                 <docComment>\"""
+                             Syntax Highlighting Demo
+                             <docCommentTag>@param</docCommentTag> x Parameter
+                         """ + RainbowHighlighter.generatePaletteExample() /* TODO consulo: RainbowHighlighter#generatePaletteExample(String) missing */ + """
+             
+                 \"""</docComment>
+
+                             def <nestedFuncDef>nested_func</nestedFuncDef>(<param>y</param>):
+                                 <call>print</call>(<param>y</param> + 1)
+
+                             <localVar>s</localVar> = ("Test", 2+3, {'a': 'b'}, f'{<param>x</param>!s:{"^10"}}', f"{1:<fspecSpecial>0</fspecSpecial><fspecNumber>1</fspecNumber><fspecSpecial>d</fspecSpecial>}")   # Comment
+                             <call>f</call>(<localVar>s</localVar>[0].<mcall>lower</mcall>())
+                             <call>nested_func</call>(42)
+
+                         class <classDef>Foo</classDef>:
+                             tags: <annotation>List[<builtin>str</builtin>]</annotation>
+
+                             def <predefined>__init__</predefined>(<self>self</self>: <annotation>Foo</annotation>):
+                                 <localVar>byte_string</localVar>: <annotation><builtin>bytes</builtin></annotation> = b'newline:\\n also newline:\\x0a'
+                                 <localVar>text_string</localVar> = u"Cyrillic Я is \\u042f. Oops: \\u042g"
+                                 <self>self</self>.<mcall>make_sense</mcall>(<kwarg>whatever</kwarg>=1)
+
+                             def <funcDef>make_sense</funcDef>[<typeParam>T</typeParam>](<self>self</self>, <param>whatever:</param> <annotation>T</annotation>):
+                                 <self>self</self>.sense = <param>whatever</param>
+
+                         x = <builtin>len</builtin>('abc')
+                         type my_int = <builtin>int</builtin>
+                         print(f.<predefinedUsage>__doc__</predefinedUsage>)""";
+    }
+
+    @Override
+    public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+        return ourTagToDescriptorMap;
+    }
+
+    @Override
+    public boolean isRainbowType(TextAttributesKey type) {
+        return PyHighlighter.PY_PARAMETER.equals(type) || PyHighlighter.PY_LOCAL_VARIABLE.equals(type);
+    }
+
+    @Override
+    public @Nullable Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

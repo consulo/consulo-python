@@ -37,7 +37,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  * @param <M> Type of model {@link #myModel}
  * @author Ilya.Kazakevich
  */
-abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extends MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements MembersBasedPresenter
+public abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extends MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements MembersBasedPresenter
 {
 	protected final T myView;
 	protected final PyClass myClassUnderRefactoring;

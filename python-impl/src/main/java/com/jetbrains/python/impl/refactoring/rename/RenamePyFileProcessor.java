@@ -16,6 +16,8 @@
 package com.jetbrains.python.impl.refactoring.rename;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.pyi.PyiFile;
+import com.jetbrains.python.impl.pyi.PyiUtil;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
@@ -25,11 +27,13 @@ import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.rename.RenamePsiFileProcessorBase;
 import consulo.language.editor.refactoring.rename.UnresolvableCollisionUsageInfo;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.ResolveResult;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
 import consulo.util.io.FileUtil;
 
@@ -54,7 +58,7 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
     @RequiredReadAction
     public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
         PyFile file = (PyFile) element;
-        if (PyNames.INIT_DOT_PY.equals(file.getName())) {
+        if (file.getName().equals(PyNames.INIT_DOT_PY) && editor != null) {
             return file.getParent();
         }
         return element;
@@ -90,15 +94,34 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
                     result.add(new UnresolvableCollisionUsageInfo(importStatement, element) {
                         @Override
                         public LocalizeValue getDescription() {
-                            return LocalizeValue.localizeTODO(
-                                "The name '" + newFileName + "' is not a valid Python identifier. Cannot update import statement in '" +
-                                    importStatement.getContainingFile().getName() + "'"
+                            return PyLocalize.refactoringRenameNotValidIdentifier(
+                                newFileName,
+                                importStatement.getContainingFile().getName()
                             );
                         }
                     });
                 }
             }
         }
+    }
+
+    @Override
+    @RequiredReadAction
+    public void prepareRenaming(PsiElement element, String newName, Map<PsiElement, String> allRenames) {
+        final PsiFile file = (PsiFile) element;
+        if (file instanceof PyiFile) {
+            final PsiElement originalElement = PyiUtil.getOriginalElement((PyiFile) file);
+            if (originalElement != null) {
+                allRenames.put(originalElement, newName.substring(0, newName.length() - 1));
+            }
+        }
+        else if (file instanceof PyFile) {
+            final PsiElement stubElement = PyiUtil.getPythonStub((PyFile) file);
+            if (stubElement != null) {
+                allRenames.put(stubElement, newName + "i");
+            }
+        }
+        super.prepareRenaming(element, newName, allRenames);
     }
 
     @RequiredReadAction
@@ -111,5 +134,10 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
             }
         }
         return true;
+    }
+
+    @Override
+    public @Nullable String getHelpID(PsiElement element) {
+        return "procedures.refactoring.renameRefactorings";
     }
 }

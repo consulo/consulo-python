@@ -20,7 +20,7 @@ import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.project.Project;
 import consulo.language.editor.refactoring.RefactoringBundle;
-import com.jetbrains.python.impl.PyBundle;
+import consulo.python.impl.localize.PyLocalize;
 import com.jetbrains.python.psi.PyClass;
 
 /**
@@ -52,7 +52,7 @@ class PyPullUpNothingToRefactorMessage
 	 */
 	void showNothingToRefactor()
 	{
-		CommonRefactoringUtil.showErrorHint(myProject, myEditor, PyBundle.message("refactoring.pull.up.error.cannot.perform.refactoring.no.base.classes", myClassUnderRefactoring.getName()),
+		CommonRefactoringUtil.showErrorHint(myProject, myEditor, PyLocalize.refactoringPullUpErrorCannotPerformRefactoringNoBaseClasses(myClassUnderRefactoring.getName()).get(),
 				RefactoringBundle.message("pull.members.up.title"), "members.pull.up");
 	}
 }

@@ -1,40 +1,45 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.hierarchy;
 
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.ide.localize.IdeLocalize;
 import consulo.language.editor.hierarchy.HierarchyNodeDescriptor;
 import consulo.language.editor.localize.LanguageEditorLocalize;
 import consulo.language.psi.NavigatablePsiElement;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.SmartPointerManager;
+import consulo.language.psi.SmartPsiElementPointer;
 import consulo.navigation.ItemPresentation;
+import consulo.navigation.Navigatable;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.tree.NodeDescriptor;
 import consulo.ui.ex.util.CompositeAppearance;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Comparing;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author Alexey.Ivanov
- * @since 2009-07-31
- */
-public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
-    public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, PsiElement element, boolean isBase) {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+
+public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor implements Navigatable {
+
+    private final List<SmartPsiElementPointer<PsiElement>> myUsages;
+
+    public PyHierarchyNodeDescriptor(@Nullable NodeDescriptor parentDescriptor, PsiElement element, boolean isBase) {
+        this(parentDescriptor, element, Collections.emptySet(), isBase);
+    }
+
+    public PyHierarchyNodeDescriptor(@Nullable NodeDescriptor parentDescriptor,
+                                     PsiElement element,
+                                     Collection<? extends PsiElement> usages,
+                                     boolean isBase) {
         super(element.getProject(), parentDescriptor, element, isBase);
+        SmartPointerManager pointerManager = SmartPointerManager.getInstance(element.getProject());
+        myUsages = ContainerUtil.map(usages, it -> pointerManager.createSmartPsiElementPointer((PsiElement) it));
     }
 
     @RequiredUIAccess
@@ -45,8 +50,9 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
 
         myHighlightedText = new CompositeAppearance();
 
-        NavigatablePsiElement element = (NavigatablePsiElement)getPsiElement();
+        NavigatablePsiElement element = (NavigatablePsiElement) getPsiElement();
         if (element == null) {
+            // Consulo: inlined HierarchyNodeDescriptor#invalidElement()
             String invalidPrefix = LanguageEditorLocalize.nodeHierarchyInvalid().get();
             if (!myHighlightedText.getText().startsWith(invalidPrefix)) {
                 myHighlightedText.getBeginning().addText(invalidPrefix, HierarchyNodeDescriptor.getInvalidPrefixAttributes());
@@ -56,15 +62,22 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
 
         ItemPresentation presentation = element.getPresentation();
         if (presentation != null) {
-            if (element instanceof PyFunction function) {
-                PyClass cls = function.getContainingClass();
+            if (element instanceof PyFunction) {
+                PyClass cls = ((PyFunction) element).getContainingClass();
                 if (cls != null) {
                     myHighlightedText.getEnding().addText(cls.getName() + ".");
                 }
             }
             myHighlightedText.getEnding().addText(presentation.getPresentableText());
-            myHighlightedText.getEnding()
-                .addText(" " + presentation.getLocationString(), HierarchyNodeDescriptor.getPackageNameAttributes());
+            int count = myUsages.size();
+            if (count > 1) {
+                String text = IdeLocalize.nodeCallHierarchyNUsages(count).get();
+                myHighlightedText.getEnding().addText(text, HierarchyNodeDescriptor.getUsageCountPrefixAttributes());
+            }
+            String locationString = presentation.getLocationString();
+            if (locationString != null) {
+                myHighlightedText.getEnding().addText(" " + locationString, HierarchyNodeDescriptor.getPackageNameAttributes());
+            }
         }
         myName = myHighlightedText.getText();
 
@@ -74,6 +87,36 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         return changes;
     }
 
+    @Override
+    public void navigate(boolean requestFocus) {
+        Navigatable element = getNavigationTarget();
+        if (element != null && element.canNavigate()) {
+            element.navigate(requestFocus);
+        }
+    }
+
+    @Override
+    public boolean canNavigate() {
+        Navigatable element = getNavigationTarget();
+        return element != null && element.canNavigate();
+    }
+
+    @Override
+    public boolean canNavigateToSource() {
+        return canNavigate();
+    }
+
+    private @Nullable Navigatable getNavigationTarget() {
+        if (!myUsages.isEmpty()) {
+            Navigatable firstUsage = as(myUsages.get(0).getElement(), Navigatable.class);
+            if (firstUsage != null) {
+                return firstUsage;
+            }
+        }
+        return as(getPsiElement(), Navigatable.class);
+    }
+
+    // Consulo: HierarchyNodeDescriptor extras
     @Override
     public boolean canBeDeleted() {
         return getPsiElement() instanceof PyClass;

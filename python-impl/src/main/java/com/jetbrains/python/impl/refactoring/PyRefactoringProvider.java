@@ -24,9 +24,7 @@ import com.jetbrains.python.impl.refactoring.changeSignature.PyChangeSignatureHa
 import com.jetbrains.python.impl.refactoring.classes.extractSuperclass.PyExtractSuperclassHandler;
 import com.jetbrains.python.impl.refactoring.classes.pullUp.PyPullUpHandler;
 import com.jetbrains.python.impl.refactoring.classes.pushDown.PyPushDownHandler;
-import com.jetbrains.python.impl.refactoring.extractmethod.PyExtractMethodHandler;
 import com.jetbrains.python.impl.refactoring.introduce.constant.PyIntroduceConstantHandler;
-import com.jetbrains.python.impl.refactoring.introduce.field.PyIntroduceFieldHandler;
 import com.jetbrains.python.impl.refactoring.introduce.parameter.PyIntroduceParameterHandler;
 import com.jetbrains.python.impl.refactoring.introduce.variable.PyIntroduceVariableHandler;
 import consulo.annotation.component.ExtensionImpl;
@@ -54,10 +52,8 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
     return new PyIntroduceConstantHandler();
   }
 
-  @Override
-  public RefactoringActionHandler getIntroduceFieldHandler() {
-    return new PyIntroduceFieldHandler();
-  }
+  // Introduce Field is exposed through the Python-specific PyIntroduceAttributeAction ("Introduce Attribute"),
+  // so the platform IntroduceField action is intentionally hidden for Python by not overriding getIntroduceFieldHandler().
 
   @Override
   public RefactoringActionHandler getPullUpHandler() {
@@ -74,10 +70,8 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
     return new PyExtractSuperclassHandler();
   }
 
-  @Override
-  public RefactoringActionHandler getExtractMethodHandler() {
-    return new PyExtractMethodHandler();
-  }
+  // Extract Method is exposed through the Python-specific PyExtractFunctionAction ("Extract Function"),
+  // so the platform ExtractMethod action is intentionally hidden for Python by not overriding getExtractMethodHandler().
 
   @Override
   public boolean isInplaceRenameAvailable(PsiElement element, PsiElement context) {
@@ -88,6 +82,11 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
         return true;
       }
     }
+    return false;
+  }
+
+  @Override
+  public boolean isMemberInplaceRenameAvailable(PsiElement element, @Nullable PsiElement context) {
     return false;
   }
 

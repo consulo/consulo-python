@@ -18,6 +18,9 @@ package com.jetbrains.python.impl.refactoring.changeSignature;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.ast.PyAstSingleStarParameter;
+import com.jetbrains.python.ast.PyAstSlashParameter;
+import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
@@ -84,7 +87,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected BaseRefactoringProcessor createRefactoringProcessor() {
+  public BaseRefactoringProcessor createRefactoringProcessor() {
     List<PyParameterInfo> parameters = getParameters();
     return new PyChangeSignatureProcessor(myProject, myMethod.getMethod(), getMethodName(),
                                           parameters.toArray(new PyParameterInfo[parameters.size()]));
@@ -112,10 +115,10 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   @Nullable
   @Override
   @RequiredReadAction
-  protected String validateAndCommitData() {
-    String functionName = myNameField.getText().trim();
+  public String validateAndCommitData() {
+    final String functionName = myNameField.getText().trim();
     if (!functionName.equals(myMethod.getName())) {
-      boolean defined = IntroduceValidator.isDefinedInScope(functionName, myMethod.getMethod());
+      final boolean defined = IntroduceValidator.isDefinedInScope(functionName, myMethod.getMethod());
       if (defined) {
         return PyLocalize.refactoringChangeSignatureDialogValidationNameDefined().get();
       }
@@ -123,46 +126,78 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         return PyLocalize.refactoringChangeSignatureDialogValidationFunctionName().get();
       }
     }
-    List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
-    Set<String> parameterNames = new HashSet<>();
+    final List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
+    final Set<String> parameterNames = new HashSet<>();
     boolean hadPositionalContainer = false;
     boolean hadKeywordContainer = false;
     boolean hadDefaultValue = false;
+    boolean hadSlash = false;
     boolean hadSingleStar = false;
     boolean hadParamsAfterSingleStar = false;
-    LanguageLevel languageLevel = LanguageLevel.forElement(myMethod.getMethod());
+    final LanguageLevel languageLevel = LanguageLevel.forElement(myMethod.getMethod());
 
-    int parametersLength = parameters.size();
+    final int parametersLength = parameters.size();
 
-    for (int index = 0; index != parametersLength; ++index) {
-      PyParameterTableModelItem info = parameters.get(index);
-      PyParameterInfo parameter = info.parameter;
-      String name = parameter.getName();
-      if (parameterNames.contains(name)) {
-        return PyLocalize.annDuplicateParamName().get();
+    for (int index = 0; index < parametersLength; index++) {
+      final PyParameterTableModelItem info = parameters.get(index);
+      final PyParameterInfo parameter = info.parameter;
+      final String name = parameter.getName();
+      final boolean isMarkerParameter = name.equals(PyAstSlashParameter.TEXT) || name.equals(PyAstSingleStarParameter.TEXT);
+      if (!isMarkerParameter) {
+        final String nameWithoutStars = StringUtil.trimLeading(name, '*').trim();
+        if (parameterNames.contains(nameWithoutStars)) {
+          return PyLocalize.annDuplicateParamName().get();
+        }
+        parameterNames.add(nameWithoutStars);
       }
-      parameterNames.add(name);
 
-      if (name.equals("*")) {
+      if (name.equals(PyAstSingleStarParameter.TEXT)) {
+        if (hadSingleStar) {
+          return PyLocalize.refactoringChangeSignatureDialogValidationMultipleStar().get();
+        }
         hadSingleStar = true;
         if (index == parametersLength - 1) {
-          return PyLocalize.annNamedArgumentsAfterStar().get();
+          return PyLocalize.annNamedParametersAfterStar().get();
         }
       }
-      else if (name.startsWith("*") && !name.startsWith("**")) {
+      else if (name.equals(PyAstSlashParameter.TEXT)) {
+        if (hadSlash) {
+          return PyLocalize.annMultipleSlash().get();
+        }
+        hadSlash = true;
+        if (hadPositionalContainer || hadSingleStar) {
+          return PyLocalize.annSlashParamAfterVararg().get();
+        }
+        else if (hadKeywordContainer) {
+          return PyLocalize.annSlashParamAfterKeyword().get();
+        }
+        if (index == 0) {
+          return PyLocalize.annNamedParametersBeforeSlash().get();
+        }
+      }
+      else if (name.startsWith(PyAstSingleStarParameter.TEXT) && !name.startsWith("**")) {
         if (hadKeywordContainer) {
           return PyLocalize.annStarredParamAfterKwparam().get();
         }
-        if (hadSingleStar) {
+        if (hadSingleStar || hadPositionalContainer) {
           return PyLocalize.refactoringChangeSignatureDialogValidationMultipleStar().get();
+        }
+        if (!isNameValid(name.substring(1), myProject)) {
+          return PyLocalize.refactoringChangeSignatureDialogValidationParameterName().get();
         }
         hadPositionalContainer = true;
       }
       else if (name.startsWith("**")) {
-        hadKeywordContainer = true;
         if (hadSingleStar && !hadParamsAfterSingleStar) {
-          return PyLocalize.annNamedArgumentsAfterStar().get();
+          return PyLocalize.annNamedParametersAfterStar().get();
         }
+        if (hadKeywordContainer) {
+          return PyLocalize.refactoringChangeSignatureDialogValidationMultipleDoubleStar().get();
+        }
+        if (!isNameValid(name.substring(2), myProject)) {
+          return PyLocalize.refactoringChangeSignatureDialogValidationParameterName().get();
+        }
+        hadKeywordContainer = true;
       }
       else {
         if (!isNameValid(name, myProject)) {
@@ -171,30 +206,37 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         if (hadSingleStar) {
           hadParamsAfterSingleStar = true;
         }
-        if (hadPositionalContainer && !languageLevel.isPy3K()) {
+        if (hadPositionalContainer && languageLevel.isPython2()) {
           return PyLocalize.annRegularParamAfterVararg().get();
         }
         else if (hadKeywordContainer) {
           return PyLocalize.annRegularParamAfterKeyword().get();
         }
-        String defaultValue = info.getDefaultValue();
+        final String defaultValue = info.getDefaultValue();
         if (defaultValue != null && !StringUtil.isEmptyOrSpaces(defaultValue) && parameter.getDefaultInSignature()) {
           hadDefaultValue = true;
         }
         else {
-          if (hadDefaultValue && !hadSingleStar && (!languageLevel.isPy3K() || !hadPositionalContainer)) {
+          if (hadDefaultValue && !hadSingleStar && (languageLevel.isPython2() || !hadPositionalContainer)) {
             return PyLocalize.annNonDefaultParamAfterDefault().get();
           }
         }
       }
-      if (parameter.getOldIndex() < 0 && !parameter.getName().startsWith("*")) {
-        if (StringUtil.isEmpty(info.defaultValueCodeFragment.getText()))
-          return PyLocalize.refactoringChangeSignatureDialogValidationDefaultMissing().get();
-        if (StringUtil.isEmptyOrSpaces(parameter.getName()))
-          return PyLocalize.refactoringChangeSignatureDialogValidationParameterMissing().get();
+      if (parameter.getOldIndex() < 0) {
+        if (ParamHelper.couldHaveDefaultValue(name)) {
+          if (StringUtil.isEmpty(info.defaultValueCodeFragment.getText())) {
+            return PyLocalize.refactoringChangeSignatureDialogValidationDefaultMissing().get();
+          }
+          if (StringUtil.isEmptyOrSpaces(name)) {
+            return PyLocalize.refactoringChangeSignatureDialogValidationParameterMissing().get();
+          }
+        }
+      }
+      else if (myMethod.getParameters().get(parameter.getOldIndex()).getDefaultInSignature() &&
+               StringUtil.isEmptyOrSpaces(parameter.getDefaultValue())) {
+        return PyLocalize.refactoringChangeSignatureDialogValidationDefaultMissing().get();
       }
     }
-
 
     return null;
   }

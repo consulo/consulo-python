@@ -19,8 +19,9 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.python.impl.codeInsight.intentions.DeclarationConflictChecker;
 import com.jetbrains.python.impl.codeInsight.intentions.PyAnnotateTypesIntention;
-import com.jetbrains.python.impl.inspections.PyRenameElementQuickFix;
+import com.jetbrains.python.impl.inspections.quickfix.PyChangeSignatureQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.PyImplementMethodsQuickFix;
+import com.jetbrains.python.impl.inspections.quickfix.PyRenameElementQuickFix;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -58,7 +59,6 @@ import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -111,8 +111,7 @@ public final class PythonUiServiceImpl extends PythonUiService {
 
     @Override
     public @Nullable LocalQuickFix createPyRenameElementQuickFix(PsiElement element) {
-        // TODO consulo: PyRenameElementQuickFix(PsiElement) missing - the quick fix renames the element of the problem descriptor
-        return new PyRenameElementQuickFix();
+        return new PyRenameElementQuickFix(element);
     }
 
     @Override
@@ -135,21 +134,17 @@ public final class PythonUiServiceImpl extends PythonUiService {
 
     @Override
     public @Nullable LocalQuickFix createPyChangeSignatureQuickFixForMismatchingMethods(PyFunction function, PyFunction method) {
-        // TODO consulo: PyChangeSignatureQuickFix.forMismatchingMethods missing -
-        //  JB: return PyChangeSignatureQuickFix.forMismatchingMethods(function, method);
-        return null;
+        return PyChangeSignatureQuickFix.forMismatchingMethods(function, method);
     }
 
     @Override
     public @Nullable LocalQuickFix createPyChangeSignatureQuickFixForMismatchedCall(PyCallExpression.PyArgumentsMapping mapping) {
-        // TODO consulo: PyChangeSignatureQuickFix.forMismatchedCall missing - JB: return PyChangeSignatureQuickFix.forMismatchedCall(mapping);
-        return null;
+        return PyChangeSignatureQuickFix.forMismatchedCall(mapping);
     }
 
     @Override
     public @Nullable LocalQuickFix createPyImplementMethodsQuickFix(PyClass aClass, List<PyFunction> toImplement) {
-        // TODO consulo: PyImplementMethodsQuickFix(PyClass, List) missing - the Set constructor is used
-        return new PyImplementMethodsQuickFix(aClass, new LinkedHashSet<>(toImplement));
+        return new PyImplementMethodsQuickFix(aClass, toImplement);
     }
 
     @Override

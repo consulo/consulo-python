@@ -8,6 +8,7 @@ import consulo.language.editor.refactoring.introduce.inplace.InplaceVariableIntr
 import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
 
 import java.util.LinkedHashSet;
@@ -64,7 +65,7 @@ public final class PyIntroduceHandlerUi {
             List<PsiElement> occurrences
         ) {
             // TODO consulo: JB uses PyRefactoringBundle "python.introduce.variable.refactoring.name"; no localize key yet
-            super(target, operation.getEditor(), operation.getProject(), "Introduce Variable",
+            super(target, operation.getEditor(), operation.getProject(), PyLocalize.pythonIntroduceVariableRefactoringName().get(),
                 occurrences.toArray(PsiElement.EMPTY_ARRAY), null);
             myTarget = target;
         }

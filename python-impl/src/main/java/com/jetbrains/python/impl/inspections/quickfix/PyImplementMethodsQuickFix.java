@@ -1,77 +1,52 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.codeInsight.override.PyMethodMember;
 import com.jetbrains.python.impl.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
-import consulo.codeEditor.EditorFactory;
-import consulo.document.Document;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.psi.PsiDocumentManager;
+import consulo.language.editor.inspection.LocalQuickFixOnPsiElement;
+import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.ui.annotation.RequiredUIAccess;
-import org.jspecify.annotations.Nullable;
+import consulo.util.collection.ContainerUtil;
 
-import java.util.Set;
+import java.util.Collection;
 
-/**
- * @author ktisha
- */
-public class PyImplementMethodsQuickFix implements LocalQuickFix {
-    private final PyClass myClass;
-    private final Set<PyFunction> myToImplement;
+public class PyImplementMethodsQuickFix extends LocalQuickFixOnPsiElement {
 
-    public PyImplementMethodsQuickFix(PyClass aClass, Set<PyFunction> toBeImplemented) {
-        myClass = aClass;
-        myToImplement = toBeImplemented;
+    private final Collection<PyFunction> myToImplement;
+
+    public PyImplementMethodsQuickFix(PyClass cls, Collection<PyFunction> toImplement) {
+        super(cls);
+        myToImplement = toImplement;
     }
 
     @Override
-    public LocalizeValue getName() {
+    public LocalizeValue getText() {
         return PyLocalize.qfixNameImplementMethods();
     }
 
     @Override
-    @RequiredUIAccess
-    public void applyFix(Project project, ProblemDescriptor descriptor) {
-        Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
-        if (editor != null) {
-            PyOverrideImplementUtil.chooseAndImplementMethods(project, editor, myClass, myToImplement);
+    public void invoke(Project project, PsiFile psiFile, PsiElement startElement, PsiElement endElement) {
+        Editor editor = PyQuickFixUtil.getEditor(psiFile);
+
+        if (editor != null && startElement instanceof PyClass) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                PyOverrideImplementUtil.overrideMethods(editor, (PyClass) startElement, ContainerUtil.map(myToImplement, PyMethodMember::new), true);
+            }
+            else {
+                PyOverrideImplementUtil.chooseAndImplementMethods(project, editor, (PyClass) startElement, myToImplement);
+            }
         }
     }
 
-    @Nullable
-    private static Editor getEditor(Project project, PsiFile file) {
-        Document document = PsiDocumentManager.getInstance(project).getDocument(file);
-        if (document != null) {
-            EditorFactory instance = EditorFactory.getInstance();
-            if (instance == null) {
-                return null;
-            }
-            Editor[] editors = instance.getEditors(document);
-            if (editors.length > 0) {
-                return editors[0];
-            }
-        }
-        return null;
+    @Override
+    public boolean startInWriteAction() {
+        return false;
     }
 }

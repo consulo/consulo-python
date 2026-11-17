@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
-import com.jetbrains.python.impl.psi.impl.PyNamedParameterImpl;
+import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.psi.*;
 import consulo.language.editor.refactoring.changeSignature.MethodDescriptor;
 import consulo.util.lang.StringUtil;
@@ -41,14 +41,18 @@ public class PyMethodDescriptor implements MethodDescriptor<PyParameterInfo, Str
 
     @Override
     public List<PyParameterInfo> getParameters() {
-        List<PyParameterInfo> parameterInfos = new ArrayList<PyParameterInfo>();
+        List<PyParameterInfo> parameterInfos = new ArrayList<>();
         PyParameter[] parameters = myFunction.getParameterList().getParameters();
         for (int i = 0; i < parameters.length; i++) {
             PyParameter parameter = parameters[i];
             PyExpression defaultValue = parameter.getDefaultValue();
-            String name = parameter instanceof PySingleStarParameter || parameter instanceof PyTupleParameter ||
-                ((PyNamedParameterImpl) parameter).isPositionalContainer() ||
-                ((PyNamedParameterImpl) parameter).isKeywordContainer() ? parameter.getText() : parameter.getName();
+            String name;
+            if (parameter instanceof PyNamedParameter) {
+                name = ParamHelper.getNameInSignature((PyNamedParameter) parameter);
+            }
+            else {
+                name = parameter.getText();
+            }
             parameterInfos.add(new PyParameterInfo(i, name, defaultValue == null ? null : defaultValue.getText(),
                 defaultValue != null && !StringUtil.isEmptyOrSpaces(defaultValue.getText())));
         }

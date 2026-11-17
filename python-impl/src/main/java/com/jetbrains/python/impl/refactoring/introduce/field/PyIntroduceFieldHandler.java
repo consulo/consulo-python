@@ -36,19 +36,19 @@ import consulo.codeEditor.Editor;
 import consulo.codeEditor.SelectionModel;
 import consulo.dataContext.DataContext;
 import consulo.document.Document;
-import consulo.ide.impl.idea.util.FunctionUtil;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.refactoring.introduce.inplace.InplaceVariableIntroducer;
-import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
+import consulo.language.psi.SmartPointerManager;
+import consulo.language.psi.SmartPsiElementPointer;
 import consulo.language.psi.scope.LocalSearchScope;
 import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
 import org.jspecify.annotations.Nullable;
 
@@ -64,7 +64,7 @@ import java.util.function.Function;
  */
 public class PyIntroduceFieldHandler extends IntroduceHandler {
   public PyIntroduceFieldHandler() {
-    super(new IntroduceFieldValidator(), RefactoringLocalize.introduceFieldTitle());
+    super(new IntroduceFieldValidator(), PyLocalize.refactoringIntroduceAttributeTitle());
   }
 
   @Override
@@ -118,7 +118,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
       CommonRefactoringUtil.showErrorHint(
         operation.getProject(),
         operation.getEditor(),
-        LocalizeValue.localizeTODO("Cannot introduce field: not in class"),
+        PyLocalize.refactoringIntroduceFieldNotInClass(),
         myDialogTitle,
         getHelpId()
       );
@@ -284,8 +284,8 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
       CommonRefactoringUtil.showErrorHint(
         file.getProject(),
         editor,
-        LocalizeValue.localizeTODO("Introduce Field refactoring cannot be used in static methods"),
-        RefactoringLocalize.introduceFieldTitle(),
+        PyLocalize.refactoringIntroduceFieldCannotBeUsedInStaticMethods(),
+        PyLocalize.refactoringIntroduceAttributeTitle(),
         "refactoring.extractMethod"
       );
       return false;
@@ -363,18 +363,18 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   private static class PyInplaceFieldIntroducer extends InplaceVariableIntroducer<PsiElement> {
     private final PyTargetExpression myTarget;
+    private final SmartPsiElementPointer<PyTargetExpression> myTargetSmartPointer;
     private final IntroduceOperation myOperation;
     private final PyIntroduceFieldPanel myPanel;
 
     @RequiredUIAccess
-    public PyInplaceFieldIntroducer(PyTargetExpression target, IntroduceOperation operation, List<PsiElement> occurrences) {
-      super(target,
-            operation.getEditor(),
-            operation.getProject(),
-            "Introduce Field",
-            occurrences.toArray(new PsiElement[occurrences.size()]),
-            null);
+    PyInplaceFieldIntroducer(PyTargetExpression target,
+                             IntroduceOperation operation,
+                             List<PsiElement> occurrences) {
+      super(target, operation.getEditor(), operation.getProject(), PyLocalize.refactoringIntroduceAttributeTitle().get(),
+            occurrences.toArray(PsiElement.EMPTY_ARRAY), null);
       myTarget = target;
+      myTargetSmartPointer = SmartPointerManager.createPointer(target);
       myOperation = operation;
       if (operation.getAvailableInitPlaces().size() > 1) {
         myPanel = new PyIntroduceFieldPanel(myProject, operation.getAvailableInitPlaces());
@@ -399,10 +399,10 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     protected void moveOffsetAfter(boolean success) {
       if (success && (myPanel != null && myPanel.getInitPlace() != InitPlace.SAME_METHOD) || myOperation.getInplaceInitPlace() != InitPlace.SAME_METHOD) {
         WriteAction.run(() -> {
-          PyAssignmentStatement initializer = PsiTreeUtil.getParentOfType(myTarget, PyAssignmentStatement.class);
+          final PyAssignmentStatement initializer = PsiTreeUtil.getParentOfType(myTargetSmartPointer.getElement(), PyAssignmentStatement.class);
           assert initializer != null;
-          Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(initializer);
-          PyClass pyClass = PyUtil.getContainingClassOrSelf(initializer);
+          final Function<String, PyStatement> callback = s -> initializer;
+          final PyClass pyClass = PyUtil.getContainingClassOrSelf(initializer);
           InitPlace initPlace = myPanel != null ? myPanel.getInitPlace() : myOperation.getInplaceInitPlace();
           if (initPlace == InitPlace.CONSTRUCTOR) {
             AddFieldQuickFix.addFieldToInit(myProject, pyClass, "", callback);
@@ -410,7 +410,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
           else if (initPlace == InitPlace.SET_UP) {
             addFieldToSetUp(pyClass, callback);
           }
-          if (myOperation.getOccurrences().size() > 0) {
+          if (!myOperation.getOccurrences().isEmpty()) {
             initializer.delete();
           }
           else {

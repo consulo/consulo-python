@@ -1,27 +1,14 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.documentation;
 
+import com.google.common.collect.Maps;
+import consulo.python.impl.localize.PyCodeInsightLocalize;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.JBList;
 
-import com.google.common.collect.Maps;
-
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,6 +18,7 @@ import java.util.Map;
 /**
  * @author yole
  */
+// Consulo: the GUI is bound from PythonDocumentationEntryEditor.form (JB inlines the GUI Designer generated code)
 public class PythonDocumentationEntryEditor extends DialogWrapper {
   private JPanel myPanel;
   private JTextField myNameField;
@@ -41,7 +29,7 @@ public class PythonDocumentationEntryEditor extends DialogWrapper {
   public PythonDocumentationEntryEditor(Component parent) {
     super(parent, true);
     init();
-    setTitle("Edit Documentation URL");
+    setTitle(PyCodeInsightLocalize.externalDocumentationEditDocumentationUrl());
     myInsertButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -60,6 +48,17 @@ public class PythonDocumentationEntryEditor extends DialogWrapper {
         }
       }
     });
+    myMacroList.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        updateButtonEnabled();
+      }
+    });
+    updateButtonEnabled();
+  }
+
+  private void updateButtonEnabled() {
+    myInsertButton.setEnabled(myMacroList.getSelectedValue() != null);
   }
 
   @Override

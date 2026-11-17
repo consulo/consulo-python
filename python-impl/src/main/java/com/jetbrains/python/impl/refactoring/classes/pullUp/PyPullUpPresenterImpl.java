@@ -34,7 +34,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBa
  *
  * @author Ilya.Kazakevich
  */
-class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullUpView, PyPullUpInfoModel> implements PyPullUpPresenter
+public class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullUpView, PyPullUpInfoModel> implements PyPullUpPresenter
 {
 	private final Collection<PyClass> myParents;
 
@@ -43,7 +43,7 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 	 * @param infoStorage member storage
 	 * @param clazz       class to refactor
 	 */
-	PyPullUpPresenterImpl(PyPullUpView view, PyMemberInfoStorage infoStorage, PyClass clazz)
+	public PyPullUpPresenterImpl(PyPullUpView view, PyMemberInfoStorage infoStorage, PyClass clazz)
 	{
 		super(view, clazz, infoStorage, new PyPullUpInfoModel(clazz, view));
 		myParents = PyAncestorsUtils.getAncestorsUnderUserControl(clazz);

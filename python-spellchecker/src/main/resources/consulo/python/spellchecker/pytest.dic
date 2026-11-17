@@ -1,0 +1,5 @@
+addopts
+capsys
+conftest
+pytestmark
+tracebackhide

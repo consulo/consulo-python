@@ -31,17 +31,17 @@ import consulo.project.Project;
  */
 @ExtensionImpl
 public class PythonNamesValidator implements NamesValidator {
+  private static final PythonLexer ourLexer = new PythonLexer();
 
   @Override
-  public boolean isKeyword(String name, Project project) {
+  public synchronized boolean isKeyword(String name, Project project) {
     try {
-      PythonLexer lexer = new PythonLexer();
-      lexer.start(name);
-      if (!PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(lexer.getTokenType())) {
+      ourLexer.start(name);
+      if (!PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(ourLexer.getTokenType())) {
         return false;
       }
-      lexer.advance();
-      return lexer.getTokenType() == null;
+      ourLexer.advance();
+      return ourLexer.getTokenType() == null;
     }
     catch (StringIndexOutOfBoundsException e) {
       return false;
@@ -49,15 +49,14 @@ public class PythonNamesValidator implements NamesValidator {
   }
 
   @Override
-  public boolean isIdentifier(String name, Project project) {
+  public synchronized boolean isIdentifier(String name, Project project) {
     try {
-      PythonLexer lexer = new PythonLexer();
-      lexer.start(name);
-      if (lexer.getTokenType() != PyTokenTypes.IDENTIFIER) {
+      ourLexer.start(name);
+      if (ourLexer.getTokenType() != PyTokenTypes.IDENTIFIER) {
         return false;
       }
-      lexer.advance();
-      return lexer.getTokenType() == null;
+      ourLexer.advance();
+      return ourLexer.getTokenType() == null;
     }
     catch (StringIndexOutOfBoundsException e) {
       return false;

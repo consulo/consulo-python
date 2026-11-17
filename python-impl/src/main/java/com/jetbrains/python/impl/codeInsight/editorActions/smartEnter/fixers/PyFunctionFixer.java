@@ -1,18 +1,18 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+  * Copyright 2000-2014 JetBrains s.r.o.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
 import consulo.codeEditor.Editor;
@@ -25,53 +25,40 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 
-/**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   16.04.2010
- * Time:   16:59:07
- */
-public class PyFunctionFixer extends PyFixer<PyFunction>
-{
-	public PyFunctionFixer()
-	{
-		super(PyFunction.class);
-	}
+public class PyFunctionFixer extends PyFixer<PyFunction> {
+    public PyFunctionFixer() {
+        super(PyFunction.class);
+    }
 
-	@Override
-	public void doApply(Editor editor, PySmartEnterProcessor processor, PyFunction function) throws IncorrectOperationException
-	{
-		PsiElement colon = PyPsiUtils.getFirstChildOfType(function, PyTokenTypes.COLON);
-		if(!isFakeFunction(function) && colon == null)
-		{
-			PyParameterList parameterList = function.getParameterList();
-			if(function.getNameNode() == null)
-			{
-				processor.registerUnresolvedError(parameterList.getTextOffset());
-			}
-			int colonOffset;
-			PyAnnotation annotation = function.getAnnotation();
-			if(annotation != null)
-			{
-				colonOffset = annotation.getTextRange().getEndOffset();
-			}
-			else
-			{
-				colonOffset = parameterList.getTextRange().getEndOffset();
-			}
-			editor.getDocument().insertString(colonOffset, ":");
-		}
-	}
+    @Override
+    public void doApply(Editor editor, PySmartEnterProcessor processor, PyFunction function)
+        throws IncorrectOperationException {
+        PsiElement colon = PyPsiUtils.getFirstChildOfType(function, PyTokenTypes.COLON);
+        if (!isFakeFunction(function) && colon == null) {
+            PyParameterList parameterList = function.getParameterList();
+            if (function.getNameNode() == null) {
+                processor.registerUnresolvedError(parameterList.getTextOffset());
+            }
+            int colonOffset;
+            PyAnnotation annotation = function.getAnnotation();
+            if (annotation != null) {
+                colonOffset = annotation.getTextRange().getEndOffset();
+            }
+            else {
+                colonOffset = parameterList.getTextRange().getEndOffset();
+            }
+            editor.getDocument().insertString(colonOffset, ":");
+        }
+    }
 
-	/**
-	 * Python parser can create empty function element without header and body solely to enclose {@link com.jetbrains.python.psi.PyDecoratorList}.
-	 * Attempting to operate in the context of such "fake" function definition may lead to various kinds of malformed code and we want to
-	 * avoid it.
-	 *
-	 * @return whether it's more or less proper function definition, i.e. it contains at least {@code def} keyword
-	 */
-	static boolean isFakeFunction(PyFunction function)
-	{
-		return function.getNode().findChildByType(PyTokenTypes.DEF_KEYWORD) == null;
-	}
+    /**
+      * Python parser can create empty function element without header and body solely to enclose {@link com.jetbrains.python.psi.PyDecoratorList}.
+      * Attempting to operate in the context of such "fake" function definition may lead to various kinds of malformed code and we want to
+      * avoid it.
+      *
+      * @return whether it's more or less proper function definition, i.e. it contains at least {@code def} keyword
+      */
+    static boolean isFakeFunction(PyFunction function) {
+        return function.getNode().findChildByType(PyTokenTypes.DEF_KEYWORD) == null;
+    }
 }

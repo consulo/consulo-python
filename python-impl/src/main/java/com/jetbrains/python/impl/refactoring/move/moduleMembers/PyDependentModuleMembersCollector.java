@@ -22,6 +22,7 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**
  * Collects dependencies of the top-level symbols in the given module. This information is used then to highlight them
@@ -45,7 +46,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 	{
 		if(member.getContainingFile() == myModule)
 		{
-			final PyResolveContext resolveContext = PyResolveContext.defaultContext();
+			final PyResolveContext resolveContext = PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(member.getProject()));
 			PsiElement memberBody = PyMoveModuleMembersHelper.expandNamedElementBody(member);
 			assert memberBody != null;
 			memberBody.accept(new PyRecursiveElementVisitor()

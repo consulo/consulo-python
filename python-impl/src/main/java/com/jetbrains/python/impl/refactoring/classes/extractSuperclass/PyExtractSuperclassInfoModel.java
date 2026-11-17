@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 import consulo.language.editor.refactoring.classMember.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 
 /**
@@ -34,7 +35,20 @@ class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel
 	@Override
 	public boolean isAbstractEnabled(PyMemberInfo<PyElement> member)
 	{
+		if (propertyDependsOnThisMethod(member))
+		{
+			return false;
+		}
 		return member.isCouldBeAbstract() && isMemberEnabled(member);
+	}
+
+	/**
+	 * If property depends on method, this method can't be made abstract
+	 */
+	private boolean propertyDependsOnThisMethod(PyMemberInfo<PyElement> member)
+	{
+		var dependencies = myMemberDependencyGraph.getDependenciesOf(member.getMember());
+		return (dependencies != null && dependencies.stream().anyMatch(o -> o instanceof PyTargetExpression));
 	}
 
 	@Override

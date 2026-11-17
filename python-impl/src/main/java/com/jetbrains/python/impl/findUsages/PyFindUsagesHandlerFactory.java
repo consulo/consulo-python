@@ -1,139 +1,65 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.findUsages;
 
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.psi.impl.PyImportedModule;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
+import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.find.FindUsagesHandler;
 import consulo.find.FindUsagesHandlerFactory;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFileSystemItem;
-import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.MessageBoxBuilder;
 import consulo.ui.MessageButtonRole;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.awt.Messages;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * @author yole
- */
 @ExtensionImpl(id = "Python", order = "before default")
-public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
-  @Override
-  public boolean canFindUsages(PsiElement element) {
-    return element instanceof PyClass ||
-      (element instanceof PyFile && PyUtil.isPackage((PyFile)element)) ||
-      element instanceof PyImportedModule ||
-      element instanceof PyFunction ||
-      element instanceof PyTargetExpression;
-  }
+public final class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory implements PyPsiFindUsagesHandlerFactory {
 
-  @Nullable
-  @Override
-  public FindUsagesHandler createFindUsagesHandler(PsiElement element, boolean forHighlightUsages) {
-    if (element instanceof PyImportedModule) {
-      PsiElement resolved = ((PyImportedModule)element).resolve();
-      if (resolved != null) {
-        element = resolved;
-      }
+    @Override
+    public boolean canFindUsages(PsiElement element) {
+        return PyPsiFindUsagesHandlerFactory.super.canFindUsages(element);
     }
-    if (element instanceof PsiFileSystemItem) {
-      return new PyModuleFindUsagesHandler((PsiFileSystemItem)element);
+
+    @Override
+    public @Nullable FindUsagesHandler createFindUsagesHandler(PsiElement element, boolean forHighlightUsages) {
+        // Consulo: PyFindUsagesHandler is a FindUsagesHandler (no FindUsagesHandlerBase / FindUsagesHandlerUi split),
+        // so JB's proxy() wrapping is not needed; PyModuleFindUsagesHandler provides the dialog itself
+        return PyPsiFindUsagesHandlerFactory.super.createFindUsagesHandler(element, forHighlightUsages);
     }
-    if (element instanceof PyFunction) {
-      if (!forHighlightUsages) {
+
+    // Consulo: asynchronous variant that asks about the base method without a modal dialog
+    @Override
+    @RequiredUIAccess
+    public CompletableFuture<@Nullable FindUsagesHandler> createFindUsagesHandlerAsync(PsiElement element, boolean forHighlightUsages) {
+        if (forHighlightUsages || !(element instanceof PyFunction function)) {
+            return CompletableFuture.completedFuture(createFindUsagesHandler(element, forHighlightUsages));
+        }
         TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), null);
-        Collection<PsiElement> superMethods = PySuperMethodsSearch.search((PyFunction)element, true, context).findAll();
-        if (superMethods.size() > 0) {
-          PsiElement next = superMethods.iterator().next();
-          // TODO should do this for Jython functions overriding Java methods too
-          if (next instanceof PyFunction && !isInObject((PyFunction)next)) {
-            int rc = Messages.showYesNoDialog(element.getProject(), "Method " +
-              ((PyFunction)element).getName() +
-              " overrides method of class " +
-              ((PyFunction)next).getContainingClass().getName() +
-              ".\nDo you want to find usages of the base method?", "Find Usages", Messages.getQuestionIcon());
-            if (rc == Messages.YES) {
-              List<PsiElement> allMethods = new ArrayList<>();
-              allMethods.add(element);
-              allMethods.addAll(superMethods);
-              return new PyFunctionFindUsagesHandler(element, allMethods);
-            }
-            else {
-              return new PyFunctionFindUsagesHandler(element);
-            }
-          }
+        Collection<PsiElement> superMethods = PySuperMethodsSearch.search(function, true, context).findAll();
+        if (superMethods.isEmpty()
+            || !(superMethods.iterator().next() instanceof PyFunction next)
+            || PyPsiFindUsagesHandlerFactory.isInObject(next)) {
+            return CompletableFuture.completedFuture(new PyFunctionFindUsagesHandler(element));
         }
 
-      }
-      return new PyFunctionFindUsagesHandler(element);
+        List<PsiElement> allMethods = new ArrayList<>();
+        allMethods.add(element);
+        allMethods.addAll(superMethods);
+        return MessageBoxBuilder.<@Nullable FindUsagesHandler>create()
+            .asQuestion()
+            .title(PyLocalize.pythonFindUsages())
+            .text(PyLocalize.pythonFindUsagesBaseMethodQuestion(function.getName(), next.getContainingClass().getName()))
+            .button(MessageButtonRole.YES, new PyFunctionFindUsagesHandler(element, allMethods))
+            .asDefaultButton()
+            .button(MessageButtonRole.NO, new PyFunctionFindUsagesHandler(element))
+            .asExitButton()
+            .showAsync(element.getProject());
     }
-    if (element instanceof PyClass) {
-      return new PyClassFindUsagesHandler((PyClass)element);
-    }
-    if (element instanceof PyTargetExpression) {
-      return new PyTargetExpressionFindUsagesHandler(((PyTargetExpression)element));
-    }
-    return null;
-  }
-
-  @Override
-  @RequiredUIAccess
-  public CompletableFuture<@Nullable FindUsagesHandler> createFindUsagesHandlerAsync(PsiElement element, boolean forHighlightUsages) {
-    if (forHighlightUsages || !(element instanceof PyFunction function)) {
-      return CompletableFuture.completedFuture(createFindUsagesHandler(element, forHighlightUsages));
-    }
-    TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), null);
-    Collection<PsiElement> superMethods = PySuperMethodsSearch.search(function, true, context).findAll();
-    if (superMethods.isEmpty()
-      || !(superMethods.iterator().next() instanceof PyFunction next)
-      || isInObject(next)) {
-      return CompletableFuture.completedFuture(new PyFunctionFindUsagesHandler(element));
-    }
-
-    List<PsiElement> allMethods = new ArrayList<>();
-    allMethods.add(element);
-    allMethods.addAll(superMethods);
-    return MessageBoxBuilder.<@Nullable FindUsagesHandler>create()
-      .asQuestion()
-      .title(LocalizeValue.localizeTODO("Find Usages"))
-      .text(LocalizeValue.localizeTODO("Method " + function.getName() + " overrides method of class " +
-        next.getContainingClass().getName() + ".\nDo you want to find usages of the base method?"))
-      .button(MessageButtonRole.YES, new PyFunctionFindUsagesHandler(element, allMethods))
-      .asDefaultButton()
-      .button(MessageButtonRole.NO, new PyFunctionFindUsagesHandler(element))
-      .asExitButton()
-      .showAsync(element.getProject());
-  }
-
-  private static boolean isInObject(PyFunction fun) {
-    PyClass containingClass = fun.getContainingClass();
-    if (containingClass == null) {
-      return false;
-    }
-    return PyUtil.isObjectClass(containingClass);
-  }
 }

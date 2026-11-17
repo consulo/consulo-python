@@ -45,7 +45,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 {
 	public PyIntroduceParameterHandler()
 	{
-		super(new VariableValidator(), PyLocalize.refactoringIntroduceParameterDialogTitle());
+		super(new VariableValidator(), PyLocalize.refactoringExtractParameterDialogTitle());
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 		@RequiredUIAccess
         public PyInplaceParameterIntroducer(PyNamedParameter target, IntroduceOperation operation, List<PsiElement> occurrences)
 		{
-			super(target, operation.getEditor(), operation.getProject(), "Introduce Parameter", occurrences.toArray(new PsiElement[occurrences.size()]), null);
+			super(target, operation.getEditor(), operation.getProject(), PyLocalize.refactoringIntroduceParameterDialogTitle().get(), occurrences.toArray(PsiElement.EMPTY_ARRAY), null);
 			myTarget = target;
 		}
 

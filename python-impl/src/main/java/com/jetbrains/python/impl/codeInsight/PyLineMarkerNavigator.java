@@ -1,20 +1,7 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.impl.pyi.PyiUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.application.Application;
@@ -62,7 +49,7 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
     }
 
     private @Nullable List<NavigatablePsiElement> collect(T elt) {
-        Query<T> query = ReadAction.compute(
+        Query<? extends PsiElement> query = ReadAction.compute(
             () -> search(elt, TypeEvalContext.userInitiated(elt.getProject(), elt.getContainingFile()))
         );
         if (query == null) {
@@ -72,7 +59,12 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
         List<NavigatablePsiElement> targets = new ArrayList<>();
         query.forEach(element -> {
             if (element instanceof NavigatablePsiElement navigatable) {
-                targets.add(navigatable);
+                NavigatablePsiElement target = ReadAction.compute(
+                    () -> PyiUtil.getNavigationTarget(navigatable, elt) instanceof NavigatablePsiElement original ? original : navigatable
+                );
+                if (!targets.contains(target)) {
+                    targets.add(target);
+                }
             }
             return true;
         });
@@ -88,5 +80,5 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
     protected abstract LocalizeValue getTitle(T elt);
 
     @RequiredReadAction
-    protected abstract @Nullable Query<T> search(T elt, TypeEvalContext context);
+    protected abstract @Nullable Query<? extends PsiElement> search(T elt, TypeEvalContext context);
 }

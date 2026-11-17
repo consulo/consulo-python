@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.refactoring.rename;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Comparing;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -49,7 +50,7 @@ public class PyParametersRenameFactory implements AutomaticRenamerFactory {
 
   @Override
   public LocalizeValue getOptionName() {
-    return LocalizeValue.localizeTODO("Rename parameters in hierarchy");
+    return PyLocalize.refactoringRenameParametersInHierarchy();
   }
 
   @Override
@@ -90,17 +91,17 @@ public class PyParametersRenameFactory implements AutomaticRenamerFactory {
 
     @Override
     public String getDialogTitle() {
-      return "Rename parameters";
+      return PyLocalize.refactoringRenameParametersTitle().get();
     }
 
     @Override
     public String getDialogDescription() {
-      return "Rename parameter in hierarchy to:";
+      return PyLocalize.refactoringRenameParameterInHierarchyTo().get();
     }
 
     @Override
     public String entityName() {
-      return "Parameter";
+      return PyLocalize.refactoringRenameParameterEntityName().get();
     }
 
     @Override

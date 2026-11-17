@@ -1,0 +1,176 @@
+formatter.imports.panel.title:
+    text: Imports
+formatter.left.bracket:
+    text: Left bracket
+formatter.around.eq.in.named.parameter:
+    text: Around = in named parameter
+formatter.around.eq.in.keyword.argument:
+    text: Around = in keyword argument
+formatter.braces:
+    text: Braces
+formatter.before.backslash:
+    text: Before '\'
+formatter.before.hash:
+    text: Before '#'
+formatter.after.hash:
+    text: After '#'
+formatter.around.top.level.imports:
+    text: 'After top-level imports:'
+formatter.after.local.imports:
+    text: 'After local imports:'
+formatter.before.first.method:
+    text: 'Before the first method:'
+formatter.around.top.level.classes.and.function:
+    text: 'Around top-level classes and functions:'
+formatter.around.nested.classes:
+    text: 'Around nested classes:'
+formatter.around.methods.and.nested.functions:
+    text: 'Around methods and nested functions:'
+formatter.keep.around.declarations:
+    text: 'Around declarations:'
+formatter.keep.in.rest.of.code:
+    text: 'In the rest of the code:'
+formatter.around.multiplicative.operators:
+    text: Multiplicative operators (*, @, /, %)
+formatter.around.power.operator:
+    text: Power operator (**)
+formatter.single.clause.statements:
+    text: Single-clause statements
+formatter.multi.clause.statements:
+    text: Multi-clause statements
+formatter.force.new.line.after.colon:
+    text: Force new line after colon
+formatter.align.when.multiline:
+    text: Align when multiline
+formatter.collections.and.comprehensions:
+    text: Collections and Comprehensions
+formatter.from.import.statements:
+    text: '"From" Import Statements'
+formatter.from.import.statements.force.parentheses.if.multiline:
+    text: Force parentheses if multiline
+formatter.dictionary.literals:
+    text: Dictionary literals
+formatter.hang.closing.brackets:
+    text: Hang closing brackets
+formatter.list.literals:
+    text: List literals
+formatter.set.literals:
+    text: Set literals
+formatter.parenthesized.tuples:
+    text: Parenthesized tuple expressions
+formatter.imports.panel.optimize.imports:
+    text: Optimize Imports
+formatter.imports.panel.sort.imports:
+    text: Sort import statements
+formatter.imports.panel.sort.names.in.from.imports:
+    text: Sort imported names in "from" imports
+formatter.imports.panel.from.imports.structure.title:
+    text: Structure of "from" imports
+formatter.imports.panel.from.imports.leave.as.is:
+    text: Leave as is
+formatter.imports.panel.from.imports.join.with.same.source:
+    text: Join imports with the same source
+formatter.imports.panel.from.imports.always.split:
+    text: Always split imports
+formatter.imports.panel.sort.by.type:
+    text: Sort plain and "from" imports separately within a group
+formatter.imports.panel.sort.case.insensitively:
+    text: Sort case-insensitively
+formatter.panel.dict.alignment.label:
+    text: 'Dict alignment:'
+formatter.panel.add.trailing.line.feed:
+    text: Add line feed at the end of file
+formatter.panel.injected.fragments:
+    text: 'Injected fragments:'
+formatter.panel.format.injected.fragments:
+    text: Format injected fragments
+formatter.panel.injected.fragments.use.continuation.indent:
+    text: Add indent
+formatter.use.continuation.indent:
+    text: Use continuation indent
+formatter.function.declaration.parameters:
+    text: Function declaration parameters
+formatter.function.call.arguments:
+    text: Function call arguments
+formatter.align.consecutive.assignments:
+    text: Align consecutive assignments
+configurable.PyLanguageCodeStyleSettingsProvider.display.name:
+    text: Python
+formatter.force.trailing.comma.if.multiline:
+    text: Force trailing comma if multiline
+python.colors.python:
+    text: Python
+python.colors.type.annotation:
+    text: Type annotation
+python.colors.class.definition:
+    text: Class definition
+python.colors.decorator:
+    text: Decorator
+python.colors.built.in.name:
+    text: Built-in name
+python.colors.special.names.usage:
+    text: Special names//Usage
+python.colors.special.names.definition:
+    text: Special names//Definition
+python.colors.keyword.argument:
+    text: Keyword argument
+python.colors.parameters.self.parameter:
+    text: Parameters//'self' parameter
+python.colors.parameters.parameter:
+    text: Parameters//Parameter
+python.colors.functions.method.call:
+    text: Functions//Method call
+python.colors.functions.nested.function.definition:
+    text: Functions//Nested function definition
+python.colors.functions.function.call:
+    text: Functions//Function call
+python.colors.functions.function.definition:
+    text: Functions//Function definition
+python.colors.braces.and.operators.dot:
+    text: Braces and Operators//Dot
+python.colors.braces.and.operators.comma:
+    text: Braces and Operators//Comma
+python.colors.braces.and.operators.braces:
+    text: Braces and Operators//Braces
+python.colors.braces.and.operators.brackets:
+    text: Braces and Operators//Brackets
+python.colors.braces.and.operators.parentheses:
+    text: Braces and Operators//Parentheses
+python.colors.braces.and.operators.operation.sign:
+    text: Braces and Operators//Operation sign
+python.colors.docstring.tag:
+    text: Docstring//Tag
+python.colors.docstring.text:
+    text: Docstring//Text
+python.colors.string.f.string.format.specifier.start:
+    text: String//f-string//Format specifier start
+python.colors.string.f.string.type.conversion:
+    text: String//f-string//Type conversion
+python.colors.string.f.string.expression.braces:
+    text: String//f-string//Expression braces
+python.colors.string.f.string.spec.special:
+    text: String//f-string//Format spec special character
+python.colors.string.f.string.spec.number:
+    text: String//f-string//Format spec number
+python.colors.string.escape.sequence.invalid:
+    text: String//Escape sequence//Invalid
+python.colors.string.escape.sequence.valid:
+    text: String//Escape sequence//Valid
+python.colors.string.text.unicode:
+    text: String//Text (unicode)
+python.colors.string.binary.bytes:
+    text: String//Binary (bytes)
+python.colors.line.comment:
+    text: Line comment
+python.colors.keyword:
+    text: Keyword
+python.colors.number:
+    text: Number
+python.colors.local.variables:
+    text: Local variables
+python.colors.type.parameters:
+    text: Type parameters
+wrapping.new.line.after.lbracket:
+    text: New line after '['
+wrapping.rbracket.on.new.line:
+    text: Place ']' on new line

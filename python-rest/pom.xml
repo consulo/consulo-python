@@ -40,6 +40,24 @@
     </repository>
   </repositories>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>consulo.maven</groupId>
+        <artifactId>maven-consulo-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-localize</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -232,6 +250,29 @@
       <groupId>consulo.internal</groupId>
       <artifactId>forms_rt</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>consulo</groupId>
+      <artifactId>consulo-module-content-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>consulo</groupId>
+      <artifactId>consulo-disposer-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>consulo</groupId>
+      <artifactId>consulo-component-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.17.2</version>
     </dependency>
   </dependencies>
 </project>

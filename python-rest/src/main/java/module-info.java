@@ -6,6 +6,8 @@ module consulo.python.rest {
   requires consulo.application.api;
   requires consulo.application.content.api;
   requires consulo.code.editor.api;
+  requires consulo.component.api;
+  requires consulo.disposer.api;
   requires consulo.color.scheme.api;
   requires consulo.configurable.api;
   requires consulo.document.api;
@@ -17,6 +19,7 @@ module consulo.python.rest {
   requires consulo.language.impl;
   requires consulo.localize.api;
   requires consulo.module.api;
+  requires consulo.module.content.api;
   requires consulo.platform.api;
   requires consulo.process.api;
   requires consulo.project.api;
@@ -38,8 +41,12 @@ module consulo.python.rest {
   requires forms.rt;
   requires java.desktop;
   requires org.jdom;
+  requires org.jsoup;
 
   requires consulo.repository.ui.api;
 
+  exports consulo.python.rest.localize;
+
+  opens com.jetbrains.python.rest.editor to consulo.util.xml.serializer;
   opens com.jetbrains.python.rest.run to consulo.util.xml.serializer, consulo.execution.api;
 }

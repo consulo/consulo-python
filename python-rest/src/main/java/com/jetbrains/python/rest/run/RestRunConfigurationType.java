@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.rest.run;
 
 import com.jetbrains.python.rest.run.docutils.DocutilsRunConfiguration;
@@ -25,6 +10,7 @@ import consulo.execution.configuration.ConfigurationType;
 import consulo.execution.configuration.ConfigurationTypeUtil;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.project.Project;
 import consulo.reStructuredText.localize.RestLocalize;
 import consulo.ui.image.Image;
@@ -34,7 +20,7 @@ import consulo.ui.image.Image;
  * User : catherine
  */
 @ExtensionImpl
-public class RestRunConfigurationType implements ConfigurationType {
+public final class RestRunConfigurationType implements ConfigurationType {
   public final ConfigurationFactory DOCUTILS_FACTORY = new DocutilsRunConfigurationFactory(this);
   public final ConfigurationFactory SPHINX_FACTORY = new SphinxRunConfigurationFactory(this);
 
@@ -67,6 +53,11 @@ public class RestRunConfigurationType implements ConfigurationType {
     return new ConfigurationFactory[] {DOCUTILS_FACTORY, SPHINX_FACTORY};
   }
 
+  @Override
+  public boolean isDumbAware() {
+    return true;
+  }
+
   private static abstract class RestConfigurationFactory extends ConfigurationFactory {
     private final String myId;
     private final LocalizeValue myDisplayName;
@@ -90,7 +81,7 @@ public class RestRunConfigurationType implements ConfigurationType {
 
   private static class DocutilsRunConfigurationFactory extends RestConfigurationFactory {
     protected DocutilsRunConfigurationFactory(ConfigurationType type) {
-      super(type, "Docutils", LocalizeValue.localizeTODO("Docutils task"));
+      super(type, "Docutils", PyLocalize.runcfgRestDocutilsTask());
     }
 
     @Override
@@ -101,7 +92,7 @@ public class RestRunConfigurationType implements ConfigurationType {
 
   private static class SphinxRunConfigurationFactory extends RestConfigurationFactory {
     protected SphinxRunConfigurationFactory(ConfigurationType type) {
-      super(type, "Sphinx", LocalizeValue.localizeTODO("Sphinx task"));
+      super(type, "Sphinx", PyLocalize.runcfgRestSphinxTask());
     }
 
     @Override

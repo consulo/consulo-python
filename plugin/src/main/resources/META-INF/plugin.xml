@@ -202,11 +202,13 @@
       <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
     </action>
 
-    <action id="CleanPyc" class="com.jetbrains.python.impl.actions.CleanPycAction" text="Clean .pyc"
-            description="Delete compiled bytecode files in selected directory and its subdirectories"
+    <action id="CleanPyc" class="com.jetbrains.python.impl.actions.CleanPycAction"
             require-module-extensions="@@pythonExtensions">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
     </action>
+
+    <action id="CollapsePythonTypeAnnotations" class="com.jetbrains.python.impl.actions.PyCollapseTypeAnnotationsAction"/>
+    <action id="ExpandPythonTypeAnnotations" class="com.jetbrains.python.impl.actions.PyExpandTypeAnnotationsAction"/>
 
     <group id="PyPackagingMenu" text="Packaging">
       <action id="CreateSetupPy" class="com.jetbrains.python.impl.packaging.setupPy.CreateSetupPyAction"/>

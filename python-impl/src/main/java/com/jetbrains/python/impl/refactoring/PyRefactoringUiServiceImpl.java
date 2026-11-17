@@ -5,6 +5,8 @@ import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import com.jetbrains.python.impl.refactoring.introduce.PyIntroduceHandlerUi;
 import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.impl.refactoring.inline.PyInlineFunctionDialog;
 import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragment;
 import com.jetbrains.python.impl.refactoring.extractmethod.PyExtractMethodSettings;
 import com.jetbrains.python.impl.refactoring.extractmethod.PyExtractMethodUtil;
@@ -18,6 +20,7 @@ import consulo.language.editor.refactoring.extractMethod.ExtractMethodValidator;
 import consulo.language.editor.refactoring.introduce.IntroduceTargetChooser;
 import consulo.language.editor.refactoring.introduce.inplace.OccurrencesChooser;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -81,7 +84,8 @@ public final class PyRefactoringUiServiceImpl extends PyRefactoringUiService {
         String helpId
     ) {
         // TODO consulo: JB shows PyExtractMethodDialog (python-refactoring, with the "add type annotations" checkbox) here;
-        // it is not ported yet, so the platform AbstractExtractMethodDialog used by Consulo before is kept
+        // it needs the generic AbstractExtractMethodDialog<T> API (innerCreateVariableDataByNames, getParameterColumns,
+        // updateSignature hooks) missing in Consulo, so the platform AbstractExtractMethodDialog used by Consulo before is kept
         AbstractExtractMethodDialog dialog = new AbstractExtractMethodDialog(project, defaultName, fragment, validator, decorator, type) {
             @Override
             protected String getHelpId() {
@@ -116,5 +120,9 @@ public final class PyRefactoringUiServiceImpl extends PyRefactoringUiService {
         );
     }
 
-    // TODO consulo: JB overrides showPyInlineFunctionDialog (PyInlineFunctionDialog from python-refactoring) here; not ported yet
+    @Override
+    @RequiredUIAccess
+    public void showPyInlineFunctionDialog(Project project, Editor editor, PyFunction function, @Nullable PsiReference reference) {
+        new PyInlineFunctionDialog(project, editor, function, reference).show();
+    }
 }

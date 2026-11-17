@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.refactoring.introduce.field;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import consulo.language.editor.refactoring.introduce.inplace.KeyboardComboSwitcher;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 
 import javax.swing.*;
 import java.util.EnumSet;
@@ -33,7 +34,7 @@ public class PyIntroduceFieldPanel {
   public PyIntroduceFieldPanel(Project project, EnumSet<IntroduceHandler.InitPlace> initPlaces) {
     KeyboardComboSwitcher.setupActions(myInitializerPlaceCombo, project);
     if (initPlaces.contains(IntroduceHandler.InitPlace.SET_UP)) {
-      ((DefaultComboBoxModel) myInitializerPlaceCombo.getModel()).addElement("setUp() method");
+      ((DefaultComboBoxModel) myInitializerPlaceCombo.getModel()).addElement(PyLocalize.refactoringIntroduceFieldSetupMethod().get());
     }
   }
 

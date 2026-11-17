@@ -16,7 +16,10 @@
 
 package com.jetbrains.python.impl.projectView;
 
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
+import consulo.util.lang.ref.SimpleReference;
 import consulo.project.ui.view.tree.PsiFileNode;
 import consulo.project.ui.view.tree.SelectableTreeStructureProvider;
 import consulo.project.ui.view.tree.ViewSettings;
@@ -40,7 +43,10 @@ import java.util.List;
 public class PyTreeStructureProvider implements SelectableTreeStructureProvider, DumbAware {
   @Override
   public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
-    if (settings.isShowMembers()) {
+    // TODO consulo: PythonInterpreter / PythonInterpreterRegistry / EvoPyProject API missing - JB adds PySkeletonsNode,
+    //  PyRemoteLibrariesNode, PyTypeShedNode, PyBundledStubsNode under the interpreter library node, hides skeleton
+    //  directories (hideSkeletons) and draws interpreter libraries via PyInterpreterLibraryNode
+    if (settings != null && settings.isShowMembers()) {
       List<AbstractTreeNode> newChildren = new ArrayList<AbstractTreeNode>();
       for (AbstractTreeNode child : children) {
         if (child instanceof PsiFileNode && ((PsiFileNode)child).getValue() instanceof PyFile) {
@@ -57,7 +63,10 @@ public class PyTreeStructureProvider implements SelectableTreeStructureProvider,
 
   @Override
   public PsiElement getTopLevelElement(PsiElement element) {
-    PsiFile containingFile = element.getContainingFile();
+    PyPsiUtils.assertValid(element);
+    SimpleReference<PsiFile> containingFileRef = SimpleReference.create();
+    ReadAction.run(() -> containingFileRef.set(element.getContainingFile()));
+    PsiFile containingFile = containingFileRef.get();
     if (!(containingFile instanceof PyFile)) {
       return null;
     }
@@ -75,7 +84,7 @@ public class PyTreeStructureProvider implements SelectableTreeStructureProvider,
         return parent;     // we don't display any nodes under functions
       }
     }
-    if (parents.size() > 0) {
+    if (!parents.isEmpty()) {
       return parents.get(parents.size()-1);
     }
     return element.getContainingFile();    

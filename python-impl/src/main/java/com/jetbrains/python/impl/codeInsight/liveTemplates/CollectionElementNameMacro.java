@@ -1,39 +1,25 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.liveTemplates;
 
-import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.editor.template.Expression;
 import consulo.language.editor.template.ExpressionContext;
-import consulo.language.editor.template.Result;
-import consulo.language.editor.template.TextResult;
 import consulo.language.editor.template.macro.Macro;
-import consulo.localize.LocalizeValue;
+import consulo.language.editor.template.Result;
+import consulo.language.editor.template.context.TemplateContextType;
+import consulo.language.editor.template.TextResult;
 import consulo.util.lang.StringUtil;
+import com.jetbrains.python.PyNames;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.localize.LocalizeValue;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
 @ExtensionImpl
-public class CollectionElementNameMacro extends Macro {
+public final class CollectionElementNameMacro extends Macro {
     @Override
     public String getName() {
         return "collectionElementName";
@@ -50,7 +36,7 @@ public class CollectionElementNameMacro extends Macro {
     }
 
     @Override
-    public Result calculateResult(Expression[] params, ExpressionContext context) {
+    public @Nullable Result calculateResult(Expression[] params, ExpressionContext context) {
         if (params.length != 1) {
             return null;
         }
@@ -69,20 +55,19 @@ public class CollectionElementNameMacro extends Macro {
                 param = param.substring(0, lastParen);
             }
         }
-        String result = smartUnpluralize(param);
-        return new TextResult(result);
+        String result = smartUnPluralize(param);
+        return result != null && PyNames.isIdentifier(result) ? new TextResult(result) : null;
     }
 
-    private static String smartUnpluralize(String param) {
+    private static @Nullable String smartUnPluralize(String param) {
         if (param.endsWith("_list")) {
             return param.substring(0, param.length() - 5);
         }
-        String result = StringUtil.unpluralize(param);
-        return result == null ? param : result;
+        return StringUtil.unpluralize(param);
     }
 
     @Override
-    public LookupElement[] calculateLookupItems(Expression[] params, ExpressionContext context) {
+    public LookupElement @Nullable [] calculateLookupItems(Expression[] params, ExpressionContext context) {
         Result result = calculateResult(params, context);
         if (result == null) {
             return null;
@@ -94,8 +79,13 @@ public class CollectionElementNameMacro extends Macro {
                 String element = StringUtil.join(words, i, words.length, "_");
                 lookup.add(LookupElementBuilder.create(element));
             }
-            return lookup.toArray(new LookupElement[lookup.size()]);
+            return lookup.toArray(LookupElement.EMPTY_ARRAY);
         }
         return null;
+    }
+
+    @Override
+    public boolean isAcceptableInContext(TemplateContextType context) {
+        return context instanceof PythonTemplateContextType;
     }
 }

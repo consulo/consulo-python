@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.rest.inspections;
 
-import com.jetbrains.rest.RestBundle;
+import consulo.reStructuredText.localize.RestLocalize;
 import consulo.language.editor.inspection.CustomSuppressableInspectionTool;
 import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.intention.SuppressIntentionAction;
@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
 public abstract class RestInspection extends LocalInspectionTool implements CustomSuppressableInspectionTool {
     @Override
     public LocalizeValue getGroupDisplayName() {
-        return LocalizeValue.localizeTODO(RestBundle.message("INSP.GROUP.rest"));
+        return RestLocalize.inspGroupRest();
     }
 
     @Override

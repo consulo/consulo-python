@@ -26,12 +26,12 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  *
  * @author Ilya.Kazakevich
  */
-class PyPullUpInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
+public class PyPullUpInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
 {
 	private final PyPullUpView myView;
 
 
-	PyPullUpInfoModel(PyClass classUnderRefactoring, PyPullUpView view)
+	public PyPullUpInfoModel(PyClass classUnderRefactoring, PyPullUpView view)
 	{
 		super(classUnderRefactoring, null, false);
 		myView = view;

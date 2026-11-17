@@ -16,11 +16,14 @@
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
 import consulo.util.collection.ContainerUtil;
+import com.jetbrains.python.impl.codeInsight.PyPsiIndexUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.pyi.PyiUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
 import consulo.language.editor.refactoring.RefactoringBundle;
@@ -30,14 +33,11 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
-import consulo.module.content.ProjectFileIndex;
-import consulo.module.content.ProjectRootManager;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awt.UIUtil;
-import consulo.virtualFileSystem.VirtualFile;
 
 import org.jspecify.annotations.Nullable;
 
@@ -58,12 +58,30 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	@Override
 	public PsiElement findTargetMember(@Nullable PsiElement element)
 	{
-		PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
+		if (element == null)
+		{
+			return null;
+		}
+		final TypeEvalContext context = TypeEvalContext.codeInsightFallback(element.getProject());
+
+		final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if (callExpression != null)
 		{
-			return ContainerUtil.getFirstItem(callExpression.multiResolveCalleeFunction(PyResolveContext.defaultContext()));
+			final PyResolveContext resolveContext = PyResolveContext.implicitContext(context);
+			final PyCallable resolved = ContainerUtil.getFirstItem(callExpression.multiResolveCalleeFunction(resolveContext));
+
+			return resolved instanceof PyFunction && PyiUtil.isOverload(resolved, context)
+				? PyiUtil.getImplementation((PyFunction) resolved, context)
+				: resolved;
 		}
-		return PsiTreeUtil.getParentOfType(element, PyFunction.class);
+
+		final PyFunction parent = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+		if (parent != null && PyiUtil.isOverload(parent, context))
+		{
+			return null;
+		}
+
+		return parent;
 	}
 
 	@Override
@@ -111,7 +129,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 			return;
 		}
 
-		if (isNotUnderSourceRoot(project, element.getContainingFile()))
+		if (PyPsiIndexUtil.isNotUnderSourceRoot(project, element.getContainingFile()))
 		{
 			showCannotRefactorErrorHint(project, editor, PyLocalize.refactoringChangeSignatureErrorNotUnderSourceRoot().get());
 			return;
@@ -125,7 +143,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		if (!superMethod.equals(element))
 		{
 			element = superMethod;
-			if (isNotUnderSourceRoot(project, superMethod.getContainingFile()))
+			if (PyPsiIndexUtil.isNotUnderSourceRoot(project, superMethod.getContainingFile()))
 			{
 				return;
 			}
@@ -151,30 +169,12 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	private static void showCannotRefactorErrorHint(Project project, @Nullable Editor editor, String details)
 	{
 		String message = RefactoringBundle.getCannotRefactorMessage(details);
-		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME.get(), REFACTORING_NAME.get());
-	}
-
-	private static boolean isNotUnderSourceRoot(Project project, @Nullable PsiFile psiFile)
-	{
-		if (psiFile == null)
-		{
-			return true;
-		}
-		VirtualFile virtualFile = psiFile.getVirtualFile();
-		if (virtualFile != null)
-		{
-			ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-			if (fileIndex.isExcluded(virtualFile) || (fileIndex.isInLibraryClasses(virtualFile) && !fileIndex.isInContent(virtualFile)))
-			{
-				return true;
-			}
-		}
-		return false;
+		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME.get(), "refactoring.renameRefactorings");
 	}
 
 	@Nullable
 	@RequiredUIAccess
-	protected static PyFunction getSuperMethod(@Nullable PyFunction function)
+	public static PyFunction getSuperMethod(@Nullable PyFunction function)
 	{
 		if (function == null)
 		{
@@ -182,6 +182,10 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		}
 		PyClass containingClass = function.getContainingClass();
 		if (containingClass == null)
+		{
+			return function;
+		}
+		if (PyUtil.isConstructorLikeMethod(function))
 		{
 			return function;
 		}

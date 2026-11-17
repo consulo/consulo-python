@@ -18,6 +18,7 @@ package com.jetbrains.python.intelliLang;
 import com.jetbrains.python.impl.patterns.PythonPatterns;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.PythonFileType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.Language;
@@ -25,9 +26,13 @@ import consulo.language.inject.advanced.AbstractLanguageInjectionSupport;
 import consulo.language.inject.advanced.BaseInjection;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnAction;
 import org.jdom.Element;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author yole
@@ -52,8 +57,17 @@ public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport
   }
 
   @Override
-  public boolean useDefaultInjector(PsiLanguageInjectionHost host) {
-    return true;
+  public AnAction[] createAddActions(Project project, Consumer<BaseInjection> consumer) {
+    // The default action resolves its icon via the file type registered for the support id ("python"),
+    // but the Python file type is registered under the "py" extension, so the lookup fails. Set it explicitly.
+    AnAction defaultAddAction = createDefaultAddAction(project, consumer, this);
+    defaultAddAction.getTemplatePresentation().setIcon(PythonFileType.INSTANCE.getIcon());
+    return new AnAction[]{defaultAddAction};
+  }
+
+  @Override
+  public @Nullable String getHelpId() {
+    return "reference.settings.language.injection.generic.python";
   }
 
   @Override

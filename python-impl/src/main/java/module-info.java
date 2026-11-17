@@ -30,6 +30,7 @@ open module consulo.python.impl {
   requires consulo.ide.api;
   requires consulo.index.io;
   requires consulo.language.api;
+  requires consulo.language.copyright.api;
   requires consulo.language.code.style.api;
   requires consulo.language.code.style.ui.api;
   requires consulo.language.editor.api;
@@ -65,6 +66,7 @@ open module consulo.python.impl {
   requires consulo.util.jdom;
   requires consulo.util.lang;
   requires consulo.util.xml.serializer;
+  requires consulo.version.control.system.api;
   requires consulo.virtual.file.system.api;
 
   requires consulo.python.language.api;
@@ -97,6 +99,7 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.buildout.config.ref;
   exports com.jetbrains.python.impl.codeInsight;
   exports com.jetbrains.python.impl.codeInsight.codeFragment;
+  exports com.jetbrains.python.impl.codeInsight.codeVision;
   exports com.jetbrains.python.impl.codeInsight.completion;
   exports com.jetbrains.python.impl.codeInsight.controlflow;
   exports com.jetbrains.python.impl.codeInsight.dataflow;
@@ -107,12 +110,14 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.enterProcessors;
   exports com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
   exports com.jetbrains.python.impl.codeInsight.highlighting;
+  exports com.jetbrains.python.impl.codeInsight.implement;
   exports com.jetbrains.python.impl.codeInsight.imports;
   exports com.jetbrains.python.impl.codeInsight.intentions;
   exports com.jetbrains.python.impl.codeInsight.intentions.convertToFString;
   exports com.jetbrains.python.impl.codeInsight.liveTemplates;
   exports com.jetbrains.python.impl.codeInsight.mlcompletion;
   exports com.jetbrains.python.impl.codeInsight.override;
+  exports com.jetbrains.python.impl.codeInsight.postfix;
   exports com.jetbrains.python.impl.codeInsight.stdlib;
   exports com.jetbrains.python.impl.codeInsight.testIntegration;
   exports com.jetbrains.python.impl.codeInsight.functionTypeComments;
@@ -139,13 +144,17 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.findUsages;
   exports com.jetbrains.python.impl.formatter;
   exports com.jetbrains.python.impl.hierarchy;
+  exports com.jetbrains.python.impl.hierarchy.call;
   exports com.jetbrains.python.impl.hierarchy.treestructures;
   exports com.jetbrains.python.impl.highlighting;
+  exports com.jetbrains.python.impl.inlayHints;
   exports com.jetbrains.python.impl.inspections;
   exports com.jetbrains.python.impl.inspections.quickfix;
   exports com.jetbrains.python.impl.inspections.unresolvedReference;
   exports com.jetbrains.python.impl.lexer;
   exports com.jetbrains.python.impl.magicLiteral;
+  exports com.jetbrains.python.impl.module;
+  exports com.jetbrains.python.impl.namespacePackages;
   exports com.jetbrains.python.impl.packaging;
   exports com.jetbrains.python.impl.packaging.setupPy;
   exports com.jetbrains.python.impl.packaging.ui;
@@ -162,6 +171,7 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.psi.types.functionalParser;
   exports com.jetbrains.python.impl.refactoring;
   exports com.jetbrains.python.impl.refactoring.changeSignature;
+  exports com.jetbrains.python.impl.refactoring.convertModulePackage;
   exports com.jetbrains.python.impl.refactoring.classes;
   exports com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
   exports com.jetbrains.python.impl.refactoring.classes.membersManager;
@@ -178,8 +188,10 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.refactoring.introduce.variable;
   exports com.jetbrains.python.impl.refactoring.invertBoolean;
   exports com.jetbrains.python.impl.refactoring.move;
+  exports com.jetbrains.python.impl.refactoring.move.makeFunctionTopLevel;
   exports com.jetbrains.python.impl.refactoring.move.moduleMembers;
   exports com.jetbrains.python.impl.refactoring.rename;
+  exports com.jetbrains.python.impl.refactoring.suggested;
   exports com.jetbrains.python.impl.refactoring.surround;
   exports com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
   exports com.jetbrains.python.impl.refactoring.surround.surrounders.statements;

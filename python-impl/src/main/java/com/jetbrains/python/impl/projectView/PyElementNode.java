@@ -30,6 +30,11 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.language.icon.IconDescriptorUpdaters;
+import com.jetbrains.python.PyNames;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.localize.LocalizeValue;
+import consulo.navigation.ItemPresentation;
+import consulo.ui.image.Image;
 
 /**
  * @author yole
@@ -59,15 +64,25 @@ public class PyElementNode extends BasePsiNode<PyElement>
   }
 
   @Override
+  @RequiredReadAction
   protected void updateImpl(PresentationData data) {
     PyElement value = getValue();
     String name = value.getName();
-    StringBuilder presentableText = new StringBuilder(name != null ? name : "<unnamed>");
-    if (value instanceof PyFunction) {
-      presentableText.append(((PyFunction) value).getParameterList().getPresentableText(false));
+    ItemPresentation presentation = value.getPresentation();
+    String presentableText = name != null ? name : PyNames.UNNAMED_ELEMENT;
+    Image presentableIcon = IconDescriptorUpdaters.getIcon(value, 0);
+    if (presentation != null) {
+      LocalizeValue text = presentation.getPresentableText();
+      if (!text.isEmpty()) {
+        presentableText = text.get();
+      }
+      Image icon = presentation.getIcon();
+      if (icon != null) {
+        presentableIcon = icon;
+      }
     }
-    data.setPresentableText(presentableText.toString());
-    data.setIcon(IconDescriptorUpdaters.getIcon(value, 0));
+    data.setPresentableText(presentableText);
+    data.setIcon(presentableIcon);
   }
 
   @Override

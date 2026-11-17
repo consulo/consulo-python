@@ -1,55 +1,26 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.highlighting;
 
-import com.jetbrains.python.PyLanguageFacade;
-import com.jetbrains.python.highlighting.PyHighlighter;
-import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.parsing.console.PyConsoleHighlightingLexer;
-import com.jetbrains.python.lexer.PythonHighlightingLexer;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.PythonRuntimeService;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.language.Language;
-import consulo.language.editor.highlight.SyntaxHighlighter;
-import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import consulo.application.ReadAction;
+import consulo.language.file.inject.VirtualFileWindow;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
 import consulo.project.Project;
-import consulo.util.collection.FactoryMap;
 import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author yole
- */
 @ExtensionImpl
-public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory {
-  private final Map<LanguageLevel, PyHighlighter> myMap = new ConcurrentHashMap<>();
-
-  @Override
-  public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
-    LanguageLevel level =
-      project != null && virtualFile != null ? PyLanguageFacade.getInstance().getEffectiveLanguageLevel(project, virtualFile) : LanguageLevel.getDefault();
-    return myMap.computeIfAbsent(level, PyHighlighter::new);
-  }
-
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
+public final class PySyntaxHighlighterFactory extends PySyntaxHighlighterFactoryBase {
+    @Override
+    protected boolean useConsoleLexer(final @Nullable Project project, final @Nullable VirtualFile virtualFile) {
+        if (virtualFile == null || project == null || virtualFile instanceof VirtualFileWindow) {
+            return false;
+        }
+        return ReadAction.compute(() -> {
+            PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+            return psiFile != null && PythonRuntimeService.getInstance().isInPydevConsole(psiFile);
+        });
+    }
 }

@@ -3702,3 +3702,117 @@ python.debugger.collection.signatures.deleted:
     text: Collected signatures were deleted
 python.debugger.nothing.to.delete:
     text: Nothing to delete
+refactoring.rename.containing.file.with.the.following.name.to:
+    text: 'Rename a containing file with the following name to: '
+refactoring.rename.containing.file.title:
+    text: Rename Containing File
+refactoring.rename.containing.file:
+    text: Rename a containing file
+refactoring.rename.containing.file.entity.name:
+    text: Containing File
+refactoring.rename.parameter.in.hierarchy.to:
+    text: 'Rename a parameter in hierarchy to:'
+refactoring.rename.parameter.entity.name:
+    text: Parameter
+refactoring.rename.parameters.title:
+    text: Rename Parameters
+refactoring.rename.parameters.in.hierarchy:
+    text: Rename parameters in the hierarchy
+refactoring.rename:
+    text: Rename
+refactoring.rename.not.valid.identifier:
+    text: The name ''{0}'' is not a valid Python identifier. Cannot update an import statement in ''{1}''
+refactoring.rename.inheritor.classes.with.the.following.names.to:
+    text: 'Rename inheritor classes with the following names to:'
+refactoring.rename.inheritors.title:
+    text: Rename Inheritors
+refactoring.rename.inheritors:
+    text: Rename inheritors
+refactoring.rename.inheritor.class.entity.name:
+    text: Inheritor Class
+refactoring.rename.class.already.defined:
+    text: A class named ''{0}'' is already defined in {1}
+refactoring.rename.function.already.defined:
+    text: A function named ''{0}'' is already defined in {1}
+refactoring.rename.variable.already.defined:
+    text: A variable named ''{0}'' is already defined in {1}
+refactoring.rename.nested.class.already.defined:
+    text: A class named ''{0}'' is already defined in class ''{1}''
+refactoring.rename.method.already.defined:
+    text: A function named ''{0}'' is already defined in class ''{1}''
+refactoring.rename.class.attribute.already.defined:
+    text: An attribute named ''{0}'' is already defined in class ''{1}''
+action.PyConvertPackageToModuleAction.text:
+    text: Convert to Python Module
+action.PyConvertPackageToModuleAction.description:
+    text: Create module with the same name and move content of __init__.py to that module
+action.PyConvertModuleToPackage.text:
+    text: Convert to Python Package
+action.PyConvertModuleToPackage.description:
+    text: Create package with the same name and move content of the module to its __init__.py
+python.rename.processor.override.message:
+    text: "Method {0} of class {1}\noverrides method of class {2}.\nDo you want to rename the base method?"
+python.rename.processor.property:
+    text: Do you want to rename the property ''{0}'' instead of its accessor function ''{1}''?
+QFIX.change.signature.of:
+    text: Change the signature of {0}
+QFIX.bold.html.text:
+    text: <b>{0}</b>
+refactoring.move.error.destination.file.contains.class:
+    text: The destination file already contains a class named ''{0}''
+refactoring.move.error.destination.file.contains.function:
+    text: The destination file already contains a function named ''{0}''
+refactoring.move.error.destination.file.contains.global.variable:
+    text: The destination file already contains a global variable named ''{0}''
+refactoring.move.error.cannot.use.module.name:
+    text: Cannot use a module name ''{0}'' in imports
+refactoring.move.module.members.error.selection.empty:
+    text: No members selected
+form.move.module.members.from:
+    text: 'From:'
+form.move.module.members.to:
+    text: 'To:'
+refactoring.change.signature.suggested.callSite.value:
+    text: The value of a call site
+refactoring.change.signature.suggested.callSite.value.optional:
+    text: An optional value of a call site
+refactoring.extract.parameter.dialog.title:
+    text: Extract Parameter
+refactoring.extract.method.addTypeAnnotations:
+    text: Add parameter and return types
+refactoring.extract.method.title.type:
+    text: Type
+refactoring.occurrences.count:
+    text: '{0} ({1} occurrences)'
+refactoring.introduce.attribute.title:
+    text: Introduce Attribute
+refactoring.introduce.field.setup.method:
+    text: setUp() method
+refactoring.introduce.field.cannot.be.used.in.static.methods:
+    text: Introduce Attribute refactoring cannot be used in static methods
+refactoring.introduce.field.not.in.class:
+    text: 'Cannot introduce the attribute: not in the class'
+action.PyExtractFunction.text:
+    text: Extract _Function…
+action.PyExtractFunction.description:
+    text: Extract the selected code fragment into a function
+action.PyIntroduceAttribute.text:
+    text: Introduce _Attribute…
+action.PyIntroduceAttribute.description:
+    text: Introduce a new attribute initialized with the selected expression
+form.introduce.name:
+    text: '&Name:'
+form.introduce.field.initialize.in:
+    text: '&Initialize in'
+python.introduce.variable.refactoring.name:
+    text: Introduce Variable
+surround.with.if.expr.template:
+    text: if expr
+surround.with.while.expr.template:
+    text: while expr
+surround.with.is.none.template:
+    text: if expr is None
+surround.with.is.not.none.template:
+    text: if expr is not None
+surround.with.len.template:
+    text: len(expr)

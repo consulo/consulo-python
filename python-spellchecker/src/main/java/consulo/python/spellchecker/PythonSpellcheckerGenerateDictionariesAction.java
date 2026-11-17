@@ -1,28 +1,16 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package consulo.python.spellchecker;
 
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.annotation.component.ActionImpl;
+import consulo.annotation.component.ActionParentRef;
 import consulo.annotation.component.ActionRef;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.ModuleRootManager;
+import consulo.python.spellchecker.localize.PySpellcheckerLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
@@ -31,10 +19,10 @@ import consulo.virtualFileSystem.VirtualFile;
 /**
  * @author yole
  */
-@ActionImpl(id = "PythonGenerateDictionaries", children = @ActionRef(id = "Internal"))
+@ActionImpl(id = "PythonGenerateDictionaries", parents = @ActionParentRef(@ActionRef(id = "Internal")))
 public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
     public PythonSpellcheckerGenerateDictionariesAction() {
-        super(LocalizeValue.localizeTODO("Generate Python Spellchecker Dictionaries"));
+        super(PySpellcheckerLocalize.actionPythongeneratedictionariesText());
     }
 
     @Override
@@ -48,6 +36,7 @@ public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
         if (contentRoots.length == 0) {
             return;
         }
+        // TODO consulo: JB resolves the interpreter via EvoPyProject (python.pyproject model), Consulo uses the module SDK
         Sdk sdk = PythonSdkType.findPythonSdk(module);
         if (sdk == null) {
             return;
@@ -63,9 +52,9 @@ public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
             if (root.getName().equals("Lib")) {
                 generator.addFolder("python", root);
                 generator.excludeFolder(root.findChild("test"));
-                generator.excludeFolder(root.findChild("site-packages"));
+                generator.excludeFolder(root.findChild(PyNames.SITE_PACKAGES));
             }
-            else if (root.getName().equals("site-packages")) {
+            else if (root.getName().equals(PyNames.SITE_PACKAGES)) {
                 VirtualFile djangoRoot = root.findChild("django");
                 if (djangoRoot != null) {
                     generator.addFolder("django", djangoRoot);

@@ -1,0 +1,46 @@
+QFIX.mark.as.namespace.package:
+    text: Mark directory ''{0}'' as namespace package
+QFIX.change.to.same.directory.import:
+    text: Change to the same directory import
+action.NewPythonPackage.text:
+    text: Python Package
+action.NewPythonPackage.description:
+    text: Create a new directory and __init__.py inside it
+action.MarkNamespacePackageDirectory.text:
+    text: Namespace package
+python.unmark.as.namespace.package:
+    text: Unmark as Namespace Package
+python.unmark.as.python.namespace.package:
+    text: Unmark as Python Namespace Package
+python.namespace.package.folder:
+    text: Namespace Package
+python.python.namespace.package.folder:
+    text: Python Namespace Package
+python.namespace.packages.name:
+    text: Namespace packages
+python.namespace.packages.description:
+    text: Namespace Package Folders
+dialog.title.can.t.create.package:
+    text: Create Package Error
+command.name.create.new.package:
+    text: Create New Package {0}
+dialog.title.new.python.package:
+    text: New Python Package
+new.package.list.item.ordinary.package:
+    text: Package
+new.package.list.item.namespace.package:
+    text: Namespace package
+python.source.root.detection.confirm.notification.group:
+    text: Python source root detection
+python.source.root.detection.confirm.notification.title:
+    text: '''''{0}'''' is now a source root'
+python.source.root.detection.confirm.notification.action.ok:
+    text: Ok
+python.source.root.detection.confirm.notification.action.revert:
+    text: Revert
+python.source.root.detection.confirm.notification.action.mute:
+    text: Don't show again
+sdk.paths.interpreter.root.suffix:
+    text: (from interpreter)
+sdk.paths.interpreter.root.tooltip:
+    text: This folder is on the sys.path of the interpreter, so it is a source root of the module. Change it in the paths of the interpreter.

@@ -28,8 +28,8 @@ import java.util.Collection;
 /**
  * @author Ilya.Kazakevich
  */
-class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor {
-    PyPullUpProcessor(
+public class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor {
+    public PyPullUpProcessor(
         PyClass from,
         PyClass to,
         Collection<PyMemberInfo<PyElement>> membersToMove

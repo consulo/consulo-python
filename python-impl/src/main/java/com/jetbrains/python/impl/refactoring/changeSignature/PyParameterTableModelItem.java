@@ -22,7 +22,7 @@ import consulo.language.psi.PsiCodeFragment;
 /**
  * User : ktisha
  */
-class PyParameterTableModelItem extends ParameterTableModelItemBase<PyParameterInfo> {
+public final class PyParameterTableModelItem extends ParameterTableModelItemBase<PyParameterInfo> {
 
     public PyParameterTableModelItem(PyParameterInfo parameter,
                                      PsiCodeFragment typeCodeFragment,

@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.formatter;
 import consulo.language.codeStyle.CodeStyleSettings;
 import consulo.language.codeStyle.ui.setting.TabbedLanguageCodeStylePanel;
 import com.jetbrains.python.PythonLanguage;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author Rustam Vishnyakov
@@ -29,4 +30,11 @@ public class PyCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
     super(PythonLanguage.getInstance(), currentSettings, settings);
   }
 
+  @Override
+  @RequiredUIAccess
+  protected void initTabs(CodeStyleSettings settings) {
+    super.initTabs(settings);
+    addTab(new PyImportsCodeStylePanel(settings));
+    addTab(new PyOtherCodeStylePanel(settings));
+  }
 }

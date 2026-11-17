@@ -13,6 +13,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.search.ReferencesSearch;
+import consulo.python.impl.localize.PyNavigationLocalize;
 import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.SimpleColoredComponent;
 
@@ -50,7 +51,10 @@ public class PyModuleFindUsagesHandler extends PyFindUsagesHandler {
             this) {
             @Override
             public void configureLabelComponent(SimpleColoredComponent coloredComponent) {
-                coloredComponent.append(myElement instanceof PsiDirectory ? "Package " : "Module ");
+                coloredComponent.append(myElement instanceof PsiDirectory
+                    ? PyNavigationLocalize.pythonFindModuleUsagesDialogLabelPrefixPackage().get()
+                    : PyNavigationLocalize.pythonFindModuleUsagesDialogLabelPrefixModule().get());
+                coloredComponent.append(" ");
                 coloredComponent.append(myElement.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
             }
         };

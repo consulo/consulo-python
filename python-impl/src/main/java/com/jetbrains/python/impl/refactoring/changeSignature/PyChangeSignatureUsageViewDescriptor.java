@@ -20,7 +20,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiUtilCore;
 import consulo.language.editor.refactoring.ui.UsageViewDescriptorAdapter;
 import consulo.usage.UsageInfo;
-import com.jetbrains.python.impl.PyBundle;
+import consulo.python.impl.localize.PyLocalize;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +47,6 @@ public class PyChangeSignatureUsageViewDescriptor extends UsageViewDescriptorAda
 
   @Override
   public String getProcessedElementsHeader() {
-    return PyBundle.message("refactoring.change.signature.usage.view.declarations.header");
+    return PyLocalize.refactoringChangeSignatureUsageViewDeclarationsHeader().get();
   }
 }

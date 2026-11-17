@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,17 @@
 package consulo.python.regexp.impl.internal;
 
 import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
 import org.intellij.lang.regexp.RegExpSyntaxHighlighterFactory;
 
 @ExtensionImpl
-public class PythonVerboseRegexpSyntaxHighlighterFactory extends RegExpSyntaxHighlighterFactory {
-  public PythonVerboseRegexpSyntaxHighlighterFactory() {
-    super(PythonVerboseRegexpLanguage.INSTANCE);
-  }
+public final class PythonVerboseRegexpSyntaxHighlighterFactory extends RegExpSyntaxHighlighterFactory {
+    public PythonVerboseRegexpSyntaxHighlighterFactory() {
+        super(PythonVerboseRegexpLanguage.INSTANCE);
+    }
+
+    @Override
+    public Language getLanguage() {
+        return PythonVerboseRegexpLanguage.INSTANCE;
+    }
 }

@@ -1,27 +1,10 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
-
-import consulo.language.psi.util.PsiTreeUtil;
-import static com.jetbrains.python.impl.psi.PyUtil.sure;
-
 
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 import consulo.language.ast.TokenSet;
+import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
@@ -29,34 +12,25 @@ import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElsePart;
 import com.jetbrains.python.psi.PyFinallyPart;
 import com.jetbrains.python.psi.PyTryPart;
-import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 
-/**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   16.04.2010
- * Time:   14:25:20
- */
-public class PyUnconditionalStatementPartFixer extends PyFixer<PyElement>
-{
-	public PyUnconditionalStatementPartFixer()
-	{
-		super(PyElement.class);
-	}
+import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
-	@Override
-	public void doApply(Editor editor, PySmartEnterProcessor processor, PyElement psiElement) throws IncorrectOperationException
-	{
-		if(PsiTreeUtil.instanceOf(psiElement, PyElsePart.class, PyTryPart.class, PyFinallyPart.class))
-		{
-			PsiElement colon = PyPsiUtils.getFirstChildOfType(psiElement, PyTokenTypes.COLON);
-			if(colon == null)
-			{
-				TokenSet keywords = TokenSet.create(PyTokenTypes.ELSE_KEYWORD, PyTokenTypes.TRY_KEYWORD, PyTokenTypes.FINALLY_KEYWORD);
-				PsiElement keywordToken = PyPsiUtils.getChildByFilter(psiElement, keywords, 0);
-				editor.getDocument().insertString(sure(keywordToken).getTextRange().getEndOffset(), ":");
-			}
-		}
-	}
+public class PyUnconditionalStatementPartFixer extends PyFixer<PyElement> {
+    public PyUnconditionalStatementPartFixer() {
+        super(PyElement.class);
+    }
+
+    @Override
+    public void doApply(Editor editor, PySmartEnterProcessor processor, PyElement psiElement)
+        throws IncorrectOperationException {
+        if (PsiTreeUtil.instanceOf(psiElement, PyElsePart.class, PyTryPart.class, PyFinallyPart.class)) {
+            PsiElement colon = PyPsiUtils.getFirstChildOfType(psiElement, PyTokenTypes.COLON);
+            if (colon == null) {
+                TokenSet keywords = TokenSet.create(PyTokenTypes.ELSE_KEYWORD, PyTokenTypes.TRY_KEYWORD, PyTokenTypes.FINALLY_KEYWORD);
+                PsiElement keywordToken = PyPsiUtils.getChildByFilter(psiElement, keywords, 0);
+                editor.getDocument().insertString(sure(keywordToken).getTextRange().getEndOffset(), ":");
+            }
+        }
+    }
 }

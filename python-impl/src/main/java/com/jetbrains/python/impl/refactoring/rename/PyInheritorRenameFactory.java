@@ -21,6 +21,7 @@ import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyClass;
@@ -41,7 +42,7 @@ public class PyInheritorRenameFactory implements AutomaticRenamerFactory
 
   @Override
   public LocalizeValue getOptionName() {
-    return LocalizeValue.localizeTODO("Rename inheritors");
+    return PyLocalize.refactoringRenameInheritors();
   }
 
   @Override
@@ -67,17 +68,17 @@ public class PyInheritorRenameFactory implements AutomaticRenamerFactory
 
     @Override
     public String getDialogTitle() {
-      return "Rename Inheritors";
+      return PyLocalize.refactoringRenameInheritorsTitle().get();
     }
 
     @Override
     public String getDialogDescription() {
-      return "Rename inheritor classes with the following names to:";
+      return PyLocalize.refactoringRenameInheritorClassesWithTheFollowingNamesTo().get();
     }
 
     @Override
     public String entityName() {
-      return "Inheritor Class";
+      return PyLocalize.refactoringRenameInheritorClassEntityName().get();
     }
   }
 }

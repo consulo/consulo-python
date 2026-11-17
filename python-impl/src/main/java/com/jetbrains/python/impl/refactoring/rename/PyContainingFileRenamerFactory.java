@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.refactoring.rename;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
 import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.io.FileUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
@@ -53,7 +54,7 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
 
   @Override
   public LocalizeValue getOptionName() {
-    return LocalizeValue.localizeTODO("Rename containing file");
+    return PyLocalize.refactoringRenameContainingFile();
   }
 
   @Override
@@ -83,17 +84,17 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
 
     @Override
     public String getDialogTitle() {
-      return "Rename Containing File";
+      return PyLocalize.refactoringRenameContainingFileTitle().get();
     }
 
     @Override
     public String getDialogDescription() {
-      return "Rename containing file with the following name to: ";
+      return PyLocalize.refactoringRenameContainingFileWithTheFollowingNameTo().get();
     }
 
     @Override
     public String entityName() {
-      return "Containing File";
+      return PyLocalize.refactoringRenameContainingFileEntityName().get();
     }
 
     @Override
@@ -110,5 +111,11 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
     public boolean isSelectedByDefault() {
       return true;
     }
+
+    // TODO consulo: AutomaticRenamer#suggestNameForElement(PsiNamedElement, NameSuggester, String, String) missing, JB overrides it:
+    //  if (element instanceof PyFile && element.getName().equals(StringUtil.toLowerCase(oldClassName) + ".py")) {
+    //    return StringUtil.toLowerCase(newClassName) + ".py";
+    //  }
+    //  return super.suggestNameForElement(element, suggester, newClassName, oldClassName);
   }
 }

@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.refactoring.introduce.field;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
+import consulo.python.impl.localize.PyLocalize;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 
@@ -33,7 +33,7 @@ public class IntroduceFieldValidator extends IntroduceValidator {
       return null;
     }
     if (containingClass.findInstanceAttribute(name, true) != null) {
-      return PyBundle.message("refactoring.introduce.constant.scope.error");
+      return PyLocalize.refactoringIntroduceConstantScopeError().get();
     }
     return null;
   }

@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.rename;
 
+import consulo.python.impl.localize.PyLocalize;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.rename.PsiElementRenameHandler;
@@ -25,8 +26,10 @@ import consulo.project.Project;
 import consulo.ui.MessageBoxBuilder;
 import consulo.ui.MessageButtonRole;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.application.util.function.Processor;
-import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.util.lang.ObjectUtil;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
@@ -91,26 +94,30 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
 
   @RequiredUIAccess
   private static CompletableFuture<@Nullable PsiElement> substitute(PsiElement element) {
-    PyFunction function = (PyFunction) element;
+    final TypeEvalContext context = TypeEvalContext.codeInsightFallback(element.getProject());
+    final PyFunction function = ObjectUtil.notNull(PyiUtil.getImplementation((PyFunction) element, context), (PyFunction) element);
+
     PyClass containingClass = function.getContainingClass();
     if (containingClass == null) {
       return CompletableFuture.completedFuture(function);
     }
-    if (PyNames.INIT.equals(function.getName())) {
+    if (PyUtil.isInitMethod(function)) {
       return CompletableFuture.completedFuture(containingClass);
     }
     PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
     if (!deepestSuperMethod.equals(function)) {
-      String message = "Method " + function.getName() + " of class " + containingClass.getQualifiedName() + "\noverrides method of class "
-                       + deepestSuperMethod.getContainingClass().getQualifiedName() + ".\nDo you want to rename the base method?";
+      String message = PyLocalize.pythonRenameProcessorOverrideMessage(
+        function.getName(),
+        containingClass.getQualifiedName(),
+        deepestSuperMethod.getContainingClass().getQualifiedName()
+      ).get();
       return ask(element.getProject(), message, deepestSuperMethod, function);
     }
     Property property = containingClass.findPropertyByCallable(function);
     if (property != null) {
       PyTargetExpression site = property.getDefinitionSite();
       if (site != null) {
-        String message = String.format("Do you want to rename the property '%s' instead of its accessor function '%s'?",
-                                       property.getName(), function.getName());
+        String message = PyLocalize.pythonRenameProcessorProperty(property.getName(), function.getName()).get();
         return ask(element.getProject(), message, site, function);
       }
     }
@@ -124,7 +131,7 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
     }
     return MessageBoxBuilder.<@Nullable PsiElement>create()
       .asQuestion()
-      .title(LocalizeValue.of("Rename"))
+      .title(PyLocalize.refactoringRename())
       .text(LocalizeValue.of(message))
       .button(MessageButtonRole.YES, yes)
       .asDefaultButton()
@@ -137,13 +144,30 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   @Override
   public void prepareRenaming(PsiElement element, final String newName, final Map<PsiElement, String> allRenames) {
     PyFunction function = (PyFunction) element;
-    PyOverridingMethodsSearch.search(function, true).forEach(new Processor<PyFunction>() {
-      @Override
-      public boolean process(PyFunction pyFunction) {
-        allRenames.put(pyFunction, newName);
-        return true;
-      }
-    });
+
+    PyOverridingMethodsSearch
+      .search(function, true)
+      .forEach(
+        f -> {
+          allRenames.put(f, newName);
+          return true;
+        }
+      );
+
+    PyiUtil
+      .getOverloads(function, TypeEvalContext.codeInsightFallback(element.getProject()))
+      .forEach(overload -> allRenames.put(overload, newName));
+
+    final PsiElement originalElement = PyiUtil.getOriginalElement(function);
+    if (originalElement != null) {
+      allRenames.put(originalElement, newName);
+    }
+
+    final PsiElement stubElement = PyiUtil.getPythonStub(function);
+    if (stubElement != null) {
+      allRenames.put(stubElement, newName);
+    }
+
     PyClass containingClass = function.getContainingClass();
     if (containingClass != null) {
       Property property = containingClass.findPropertyByCallable(function);

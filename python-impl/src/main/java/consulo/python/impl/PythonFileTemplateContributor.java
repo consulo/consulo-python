@@ -15,5 +15,6 @@ public class PythonFileTemplateContributor implements FileTemplateContributor {
     fileTemplateRegistrator.registerInternalTemplate("Python Script");
     fileTemplateRegistrator.registerInternalTemplate("Python Unit Test");
     fileTemplateRegistrator.registerInternalTemplate("Setup Script");
+    fileTemplateRegistrator.registerInternalTemplate("Python Stub");
   }
 }

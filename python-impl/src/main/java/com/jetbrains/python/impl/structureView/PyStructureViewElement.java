@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.structureView;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.codeEditor.CodeInsightColors;
 import consulo.colorScheme.TextAttributesKey;
@@ -50,11 +51,11 @@ public class PyStructureViewElement implements StructureViewTreeElement {
         PREDEFINED // like "__init__"; only if really visible
     }
 
-    private PyElement myElement;
-    private Visibility myVisibility;
-    private Image myIcon;
-    private boolean myInherited;
-    private boolean myField;
+    private final PyElement myElement;
+    private final Visibility myVisibility;
+    private @Nullable Image myIcon;
+    private final boolean myInherited;
+    private final boolean myField;
 
     protected PyStructureViewElement(PyElement element, Visibility visibility, boolean inherited, boolean field) {
         myElement = element;
@@ -72,8 +73,8 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     }
 
     @Override
-    public PyElement getValue() {
-        return myElement;
+    public @Nullable PyElement getValue() {
+        return myElement.isValid() ? myElement : null;
     }
 
     public boolean isInherited() {
@@ -87,19 +88,22 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     @Override
     @RequiredReadAction
     public void navigate(boolean requestFocus) {
-        myElement.navigate(requestFocus);
+        PyElement element = getValue();
+        if (element != null) {
+            myElement.navigate(requestFocus);
+        }
     }
 
     @Override
     @RequiredReadAction
     public boolean canNavigate() {
-        return myElement.canNavigate();
+        return myElement.isValid() && myElement.canNavigate();
     }
 
     @Override
     @RequiredReadAction
     public boolean canNavigateToSource() {
-        return myElement.canNavigateToSource();
+        return myElement.isValid() && myElement.canNavigateToSource();
     }
 
     public void setIcon(Image icon) {
@@ -127,13 +131,19 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     @Override
     @RequiredReadAction
     public StructureViewTreeElement[] getChildren() {
-        Collection<StructureViewTreeElement> children = new ArrayList<>();
-        for (PyElement e : getElementChildren(myElement)) {
-            children.add(createChild(e, getElementVisibility(e), false, elementIsField(e)));
+        PyElement element = getValue();
+        if (element == null) {
+            return EMPTY_ARRAY;
         }
-        PyPsiUtils.assertValid(myElement);
-        if (myElement instanceof PyClass) {
-            for (PyClass c : ((PyClass) myElement).getAncestorClasses(null)) {
+
+        Collection<StructureViewTreeElement> children = new ArrayList<>();
+        for (PyElement e : getElementChildren(element)) {
+            children.add(createChild(e, getElementVisibility(e), myInherited, elementIsField(e)));
+        }
+        PyPsiUtils.assertValid(element);
+        if (element instanceof PyClass) {
+            TypeEvalContext context = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile());
+            for (PyClass c : ((PyClass) element).getAncestorClasses(context)) {
                 for (PyElement e : getElementChildren(c)) {
                     StructureViewTreeElement inherited = createChild(e, getElementVisibility(e), true, elementIsField(e));
                     if (!children.contains(inherited)) {
@@ -142,7 +152,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
                 }
             }
         }
-        return children.toArray(new StructureViewTreeElement[children.size()]);
+        return children.toArray(StructureViewTreeElement.EMPTY_ARRAY);
     }
 
     protected boolean elementIsField(PyElement element) {
@@ -159,8 +169,8 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     }
 
     @RequiredReadAction
-    private Collection<PyElement> getElementChildren(final PyElement element) {
-        final Collection<PyElement> children = new ArrayList<>();
+    private Collection<PyElement> getElementChildren(PyElement element) {
+        Collection<PyElement> children = new LinkedHashSet<>();
         PyPsiUtils.assertValid(element);
         element.acceptChildren(new PyElementVisitor() {
             @Override
@@ -190,7 +200,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
                 String n2 = e2.getName();
                 return (n1 != null && n2 != null) ? n1.compareTo(n2) : 0;
             };
-            Collections.sort(filtered, comparator);
+            filtered.sort(comparator);
             children.addAll(filtered);
         }
         return children;
@@ -221,7 +231,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     }
 
     protected boolean isWorthyItem(@Nullable PsiElement element, @Nullable PsiElement parent) {
-        if (element instanceof PyClass || element instanceof PyFunction) {
+        if (element instanceof PyClass || element instanceof PyFunction || element instanceof PyTypeAliasStatement) {
             return true;
         }
         if (!(parent instanceof PyClass) && element instanceof PyTargetExpression target && !target.isQualified()) {
@@ -238,12 +248,14 @@ public class PyStructureViewElement implements StructureViewTreeElement {
 
     @Override
     public ItemPresentation getPresentation() {
-        final ItemPresentation presentation = myElement.getPresentation();
+        PyElement element = getValue();
+        ItemPresentation presentation = element != null ? element.getPresentation() : null;
+
         return new ColoredItemPresentation() {
             @Override
             public LocalizeValue getPresentableText() {
-                if (myElement instanceof PyFile) {
-                    return LocalizeValue.ofNullable(myElement.getName());
+                if (element instanceof PyFile) {
+                    return LocalizeValue.ofNullable(element.getName());
                 }
                 return presentation != null ? presentation.getPresentableText() : LocalizeValue.of(PyNames.UNNAMED_ELEMENT);
             }
@@ -265,8 +277,12 @@ public class PyStructureViewElement implements StructureViewTreeElement {
 
             @Override
             @RequiredReadAction
-            public Image getIcon() {
-                Image normalIcon = IconDescriptorUpdaters.getIcon(myElement, 0);
+            public @Nullable Image getIcon() {
+                if (element == null) {
+                    return null;
+                }
+
+                Image normalIcon = IconDescriptorUpdaters.getIcon(element, 0);
                 if (myIcon != null) {
                     normalIcon = myIcon; // override normal
                 }

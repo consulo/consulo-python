@@ -1,26 +1,15 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.editor;
 
+import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.impl.PyExpressionCodeFragmentImpl;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyIndentUtil;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyStatementListContainer;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
 import consulo.codeEditor.CaretModel;
@@ -30,190 +19,300 @@ import consulo.codeEditor.SelectionModel;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
 import consulo.language.ast.IElementType;
-import consulo.language.codeStyle.CodeStyleSettings;
-import consulo.language.codeStyle.CodeStyleSettingsManager;
 import consulo.language.editor.CodeInsightSettings;
 import consulo.language.editor.action.CopyPastePreProcessor;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiErrorElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
-import consulo.util.lang.CharFilter;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
-import java.util.List;
+
+import java.util.Set;
+
+import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**
  * User : catherine
  */
 @ExtensionImpl
-public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
+public final class PythonCopyPasteProcessor implements CopyPastePreProcessor {
 
-  @Nullable
-  @Override
-  public String preprocessOnCopy(PsiFile file, int[] startOffsets, int[] endOffsets, String text) {
-    return null;
-  }
+    /**
+     * Keywords that start multiline block statements
+     */
+    private static final Set<String> START_KEYWORDS = ImmutableSet.of("async",
+        "def",
+        "class",
+        "with",
+        "if", "elif", "else",
+        "while", "for",
+        "try", "except", "finally",
+        "match", "case");
 
-  @Override
-  public String preprocessOnPaste(Project project,
-                                  PsiFile file,
-                                  Editor editor,
-                                  String text,
-                                  RawText rawText) {
-    if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || file.getLanguage() != PythonLanguage.getInstance()) {
-      return text;
-    }
-    CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-    final boolean useTabs = codeStyleSettings.useTabCharacter(PythonFileType.INSTANCE);
-    int indentSize = codeStyleSettings.getIndentSize(PythonFileType.INSTANCE);
-    CharFilter NOT_INDENT_FILTER = new CharFilter() {
-      public boolean accept(char ch) {
-        return useTabs? ch != '\t' : ch != ' ';
-      }
-    };
-    String indentChar = useTabs ? "\t" : " ";
-
-    CaretModel caretModel = editor.getCaretModel();
-    SelectionModel selectionModel = editor.getSelectionModel();
-    final Document document = editor.getDocument();
-    int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd() ?
-                            selectionModel.getSelectionStart() : caretModel.getOffset();
-    int lineNumber = document.getLineNumber(caretOffset);
-    final int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
-    final int lineEndOffset = document.getLineEndOffset(lineNumber);
-
-    PsiElement element = file.findElementAt(caretOffset);
-    if (PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class) != null) return text;
-
-    text = addLeadingSpaces(text, NOT_INDENT_FILTER, indentSize, indentChar);
-    int firstLineIndent = StringUtil.findFirst(text, NOT_INDENT_FILTER);
-    String indentText = getIndentText(file, document, caretOffset, lineNumber, firstLineIndent);
-
-    int toRemove = calculateIndentToRemove(text, NOT_INDENT_FILTER);
-
-    String toString = document.getText(TextRange.create(lineStartOffset, lineEndOffset));
-    if (StringUtil.isEmptyOrSpaces(indentText) && isApplicable(file, text, caretOffset)) {
-      caretModel.moveToOffset(lineStartOffset);
-
-      if (StringUtil.isEmptyOrSpaces(toString)) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            document.deleteString(lineStartOffset, lineEndOffset);
-          }
-        });
-      }
-      editor.getSelectionModel().setSelection(lineStartOffset, selectionModel.getSelectionEnd());
-    }
-
-    List<String> strings = StringUtil.split(text, "\n", false);
-    String newText = "";
-    if (StringUtil.isEmptyOrSpaces(indentText)) {
-      for (String s : strings) {
-        newText += indentText + StringUtil.trimStart(s, StringUtil.repeat(indentChar, toRemove));
-      }
-    }
-    else {
-      newText = text;
-    }
-
-    if (addLinebreak(text, toString, useTabs) && selectionModel.getSelectionStart() == selectionModel.getSelectionEnd())
-      newText += "\n";
-    return newText;
-  }
-
-  private static String addLeadingSpaces(String text, CharFilter filter, int indentSize, String indentChar) {
-    List<String> strings = StringUtil.split(text, "\n", false);
-    if (strings.size() > 1) {
-      int firstLineIndent = StringUtil.findFirst(strings.get(0), filter);
-      int secondLineIndent = StringUtil.findFirst(strings.get(1), filter);
-      int diff = secondLineIndent - firstLineIndent;
-      if (diff > indentSize) {
-        text = StringUtil.repeat(indentChar, diff - indentSize) + text;
-      }
-    }
-    return text;
-  }
-
-  private static String getIndentText(PsiFile file,
-                                      Document document,
-                                      int caretOffset,
-                                      int lineNumber, int firstLineIndent) {
-
-    PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
-    if (nonWS != null) {
-      IElementType nonWSType = nonWS.getNode().getElementType();
-      if (nonWSType == PyTokenTypes.ELSE_KEYWORD || nonWSType == PyTokenTypes.ELIF_KEYWORD ||
-          nonWSType == PyTokenTypes.EXCEPT_KEYWORD || nonWSType == PyTokenTypes.FINALLY_KEYWORD) {
-        lineNumber -= 1;
-        nonWS = PyUtil.findNextAtOffset(file, getLineStartSafeOffset(document, lineNumber), PsiWhiteSpace.class);
-      }
-    }
-
-    int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
-    String indentText = document.getText(TextRange.create(lineStartOffset, caretOffset));
-
-    if (nonWS != null && document.getLineNumber(nonWS.getTextOffset()) == lineNumber) {
-      indentText = document.getText(TextRange.create(lineStartOffset, nonWS.getTextOffset()));
-    }
-    else if (caretOffset == lineStartOffset) {
-      PsiElement ws = file.findElementAt(lineStartOffset);
-      if (ws != null) {
-        String wsText = ws.getText();
-        List<String> strings = StringUtil.split(wsText, "\n");
-        if (strings.size() >= 1) {
-          indentText = strings.get(0);
+    @Override
+    public @Nullable String preprocessOnCopy(PsiFile file, int[] startOffsets, int[] endOffsets, String text) {
+        if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || !isSupportedFile(file)) {
+            return null;
         }
-      }
-      if (indentText.length() == firstLineIndent)
-        return "";
+        // Expand copied text if it can cause indentation ambiguity
+
+        // Text was selected with a single caret and might begin with a block statement or a comment
+        if (startOffsets.length == 1 && endOffsets.length == 1) {
+            int start = startOffsets[0];
+            int end = endOffsets[0];
+
+            Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+            if (document != null) {
+                int startLine = document.getLineNumber(start);
+                int startLineOffset = getLineStartSafeOffset(document, startLine);
+                if (start != startLineOffset && startLine != document.getLineNumber(end)) {
+                    String linePrefix = document.getText(TextRange.create(startLineOffset, start));
+                    if (StringUtil.isEmptyOrSpaces(linePrefix) &&
+                            (selectionBeginsWithComment(file, start) || selectionBeginsWithBlockStatementAndItsBody(file, start, end, text))) {
+                        return linePrefix + text;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
-    return indentText;
-  }
 
-  private static int calculateIndentToRemove(String text, CharFilter filter) {
-    List<String> strings = StringUtil.split(text, "\n", false);
-    int minIndent = StringUtil.findFirst(text, filter);
-    for (String  s : strings) {
-      int indent = StringUtil.findFirst(s, filter);
-      if (indent < minIndent && !StringUtil.isEmptyOrSpaces(s))
-        minIndent = indent;
+    /**
+     * The first line of the copied text loses its indent. The lines after a comment keep their indent,
+     * so the paste cannot find the common indent without the indent of the comment.
+     */
+    private static boolean selectionBeginsWithComment(PsiFile file, int start) {
+        return file.findElementAt(start) instanceof PsiComment comment && comment.getTextOffset() == start;
     }
-    return minIndent;
-  }
 
-  private static boolean isApplicable(PsiFile file, String text, int caretOffset) {
-    boolean useTabs =
-      CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
-    PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
-    if (nonWS == null || text.endsWith("\n"))
-      return true;
-    if (inStatementList(file, caretOffset) && (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1))
-      return true;
-    return false;
-  }
+    private static boolean selectionBeginsWithBlockStatementAndItsBody(PsiFile file, int start, int end, String text) {
+        if (!fragmentBeginsWithBlockStatement(text)) {
+            return false;
+        }
+        PsiElement keyword = file.findElementAt(start);
+        if (keyword == null || !START_KEYWORDS.contains(keyword.getText())) {
+            return false;
+        }
+        PyStatementListContainer block = PsiTreeUtil.getParentOfType(keyword, PyStatementListContainer.class);
+        return block != null && end > block.getStatementList().getTextOffset();
+    }
 
-  private static boolean inStatementList(PsiFile file, int caretOffset) {
-    PsiElement element = file.findElementAt(caretOffset);
-    return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null ||
-           PsiTreeUtil.getParentOfType(element, PyFunction.class) != null ||
-           PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
-  }
+    @Override
+    public String preprocessOnPaste(Project project,
+                                    PsiFile file,
+                                    Editor editor,
+                                    String text,
+                                    RawText rawText) {
+        if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || !isSupportedFile(file)) {
+            return text;
+        }
 
-  private static boolean addLinebreak(String text, String toString, boolean useTabs) {
-    if ((text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
-        && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(toString))
-      return true;
-    return false;
-  }
+        CaretModel caretModel = editor.getCaretModel();
+        SelectionModel selectionModel = editor.getSelectionModel();
+        Document document = editor.getDocument();
+        int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd() ?
+                                                        selectionModel.getSelectionStart() : caretModel.getOffset();
+        int lineNumber = document.getLineNumber(caretOffset);
+        int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
+        int lineEndOffset = document.getLineEndOffset(lineNumber);
 
-  public static int getLineStartSafeOffset(Document document, int line) {
-    if (line == document.getLineCount()) return document.getTextLength();
-    if (line < 0) return 0;
-    return document.getLineStartOffset(line);
-  }
+        String line = document.getText(TextRange.create(lineStartOffset, lineEndOffset));
+
+        String linePrefix = document.getText(TextRange.create(lineStartOffset, caretOffset));
+        if (!StringUtil.isEmptyOrSpaces(linePrefix)) {
+            return text;
+        }
+
+        PsiElement element = file.findElementAt(caretOffset);
+        if (PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class) != null) {
+            return text;
+        }
+
+        text = addLeadingSpacesToNormalizeSelection(file, text);
+        String fragmentIndent = PyIndentUtil.findCommonIndent(text, false);
+        String newIndent = inferBestIndent(file, document, caretOffset, lineNumber, fragmentIndent);
+        String newText = PyIndentUtil.changeIndent(text, false, newIndent);
+
+        if (!selectionModel.hasSelection() && shouldPasteOnPreviousLine(file, text, caretOffset)) {
+            caretModel.moveToOffset(lineStartOffset);
+            if (StringUtil.isEmptyOrSpaces(line)) {
+                ApplicationManager.getApplication().runWriteAction(() -> document.deleteString(lineStartOffset, lineEndOffset));
+            }
+        }
+        else {
+            // Don't duplicate the existing whitespace prefix of the line
+            newText = StringUtil.trimStart(newText, linePrefix);
+        }
+
+        boolean useTabs = PyIndentUtil.areTabsUsedForIndentation(file);
+        // TODO Combine shouldPasteOnPreviousLine() check with addLineBreak() as they really complement each other
+        if (addLinebreak(text, line, useTabs) && selectionModel.getSelectionStart() == selectionModel.getSelectionEnd()) {
+            newText += "\n";
+        }
+        return newText;
+    }
+
+    private static boolean isSupportedFile(PsiFile file) {
+        return file instanceof PyFile;
+    }
+
+    private static String addLeadingSpacesToNormalizeSelection(PsiFile file, String text) {
+        if (!fragmentBeginsWithBlockStatement(text)) {
+            return text;
+        }
+
+        PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(file.getProject(), "dummy.py", text, false);
+        //fragment.setContext(file);
+        PyStatementListContainer statement = as(fragment.getFirstChild(), PyStatementListContainer.class);
+        if (statement == null) {
+            return text;
+        }
+
+        String statementIndent = PyIndentUtil.getElementIndent(statement);
+        if (!statementIndent.isEmpty()) {
+            return text;
+        }
+
+        String indentStep = PyIndentUtil.getIndentFromSettings(file);
+        String bodyIndent = PyIndentUtil.getElementIndent(statement.getStatementList());
+        String expectedBodyIndent = statementIndent + indentStep;
+        if (bodyIndent.startsWith(expectedBodyIndent)) {
+            return bodyIndent.substring(0, bodyIndent.length() - indentStep.length()) + text;
+        }
+        return text;
+    }
+
+    private static boolean fragmentBeginsWithBlockStatement(String text) {
+        return ContainerUtil.exists(START_KEYWORDS, keyword -> text.startsWith(keyword + " ") || text.startsWith(keyword + ":"));
+    }
+
+    private static String inferBestIndent(PsiFile file,
+                                          Document document,
+                                          int caretOffset,
+                                          int lineNumber,
+                                          String fragmentIndent) {
+
+        PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
+        if (nonWS != null) {
+            IElementType nonWSType = nonWS.getNode().getElementType();
+            if (nonWSType == PyTokenTypes.ELSE_KEYWORD || nonWSType == PyTokenTypes.ELIF_KEYWORD ||
+                    nonWSType == PyTokenTypes.EXCEPT_KEYWORD || nonWSType == PyTokenTypes.FINALLY_KEYWORD) {
+                lineNumber -= 1;
+                nonWS = PyUtil.findNextAtOffset(file, getLineStartSafeOffset(document, lineNumber), PsiWhiteSpace.class);
+            }
+        }
+
+        if (nonWS != null && document.getLineNumber(nonWS.getTextOffset()) == lineNumber) {
+            return PyIndentUtil.getLineIndent(document, lineNumber);
+        }
+
+        int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
+        PsiElement ws = file.findElementAt(lineStartOffset);
+        String userIndent = document.getText(TextRange.create(lineStartOffset, caretOffset));
+
+        PyStatementList statementList = findEmptyStatementListNearby(file, lineStartOffset);
+        if (statementList != null) {
+            return PyIndentUtil.getElementIndent(statementList);
+        }
+
+        String smallestIndent = ws == null ? "" : PyIndentUtil.getElementIndent(ws);
+        PyStatementListContainer parentBlock = PsiTreeUtil.getParentOfType(ws, PyStatementListContainer.class);
+        PyStatementListContainer deepestBlock = getDeepestPossibleParentBlock(file, caretOffset);
+        String greatestIndent;
+        if (deepestBlock != null && (parentBlock == null || PsiTreeUtil.isAncestor(parentBlock, deepestBlock, true))) {
+            greatestIndent = PyIndentUtil.getElementIndent(deepestBlock.getStatementList());
+        }
+        else {
+            greatestIndent = smallestIndent;
+        }
+        if (caretOffset == lineStartOffset && fragmentIndent.startsWith(smallestIndent) && greatestIndent.startsWith(fragmentIndent)) {
+            return fragmentIndent;
+        }
+        if (smallestIndent.startsWith(userIndent)) {
+            return smallestIndent;
+        }
+        if (userIndent.startsWith(greatestIndent)) {
+            return greatestIndent;
+        }
+        return userIndent;
+    }
+
+    private static @Nullable PyStatementList findEmptyStatementListNearby(PsiFile file, int offset) {
+        PsiWhiteSpace whitespace = findWhitespaceAtCaret(file, offset);
+        if (whitespace == null) {
+            return null;
+        }
+
+        PyStatementList statementList = ObjectUtil.chooseNotNull(as(whitespace.getNextSibling(), PyStatementList.class),
+                                                                                                                            as(whitespace.getPrevSibling(), PyStatementList.class));
+        if (statementList == null) {
+            PsiElement prevLeaf = getPrevNonCommentLeaf(whitespace);
+            if (prevLeaf instanceof PsiErrorElement) {
+                statementList = as(prevLeaf.getParent(), PyStatementList.class);
+            }
+        }
+        return statementList != null && statementList.getStatements().length == 0 ? statementList : null;
+    }
+
+    private static @Nullable PsiWhiteSpace findWhitespaceAtCaret(PsiFile file, int offset) {
+        return as(file.findElementAt(offset == file.getTextLength() && offset > 0 ? offset - 1 : offset), PsiWhiteSpace.class);
+    }
+
+    private static @Nullable PyStatementListContainer getDeepestPossibleParentBlock(PsiFile file, int offset) {
+        PsiWhiteSpace whitespace = findWhitespaceAtCaret(file, offset);
+        if (whitespace == null) {
+            return null;
+        }
+        PsiElement prevLeaf = getPrevNonCommentLeaf(whitespace);
+        return PsiTreeUtil.getParentOfType(prevLeaf, PyStatementListContainer.class);
+    }
+
+    private static boolean shouldPasteOnPreviousLine(PsiFile file, String text, int caretOffset) {
+        boolean useTabs = PyIndentUtil.areTabsUsedForIndentation(file);
+        PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
+        if (nonWS == null || text.endsWith("\n")) {
+            return true;
+        }
+        if (inStatementList(file, caretOffset) && (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static @Nullable PsiElement getPrevNonCommentLeaf(PsiElement element) {
+        PsiElement anchor = PsiTreeUtil.prevLeaf(element);
+        while (anchor instanceof PsiComment || anchor instanceof PsiWhiteSpace) {
+            anchor = PsiTreeUtil.prevLeaf(anchor, false);
+        }
+        return anchor;
+    }
+
+    private static boolean inStatementList(PsiFile file, int caretOffset) {
+        PsiElement element = file.findElementAt(caretOffset);
+        return PsiTreeUtil.getParentOfType(element, PyStatementListContainer.class) != null;
+    }
+
+    private static boolean addLinebreak(String text, String line, boolean useTabs) {
+        return (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
+                      && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(line);
+    }
+
+    private static int getLineStartSafeOffset(Document document, int line) {
+        if (line >= document.getLineCount()) {
+            return document.getTextLength();
+        }
+        if (line < 0) {
+            return 0;
+        }
+        return document.getLineStartOffset(line);
+    }
 
 }

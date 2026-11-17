@@ -29,7 +29,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  *
  * @author Ilya.Kazakevich
  */
-class PyExtractSuperclassInitializationInfo extends MembersViewInitializationInfo
+public class PyExtractSuperclassInitializationInfo extends MembersViewInitializationInfo
 {
 
 	private final String myDefaultFilePath;

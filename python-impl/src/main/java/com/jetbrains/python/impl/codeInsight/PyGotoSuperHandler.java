@@ -1,27 +1,13 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight;
 
-import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.pyi.PyiUtil;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
@@ -36,6 +22,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyCodeInsightLocalize;
 import consulo.ui.ex.popup.JBPopup;
 
 import java.util.ArrayList;
@@ -47,123 +34,106 @@ import java.util.List;
  * @author Alexey.Ivanov
  */
 @ExtensionImpl
-public class PyGotoSuperHandler implements GotoSuperActionHander
-{
-	@Override
+public final class PyGotoSuperHandler implements GotoSuperActionHander {
+
+    @Override
     @RequiredReadAction
-    public void invoke(Project project, Editor editor, PsiFile file)
-	{
-		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
-		if(pyClass != null)
-		{
-			PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class, false, PyClass.class);
-			if(function != null)
-			{
-				gotoSuperFunctions(editor, function, pyClass);
-			}
-			else
-			{
-				PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class, false, PyClass.class);
-				if(assignment != null && assignment.getTargets()[0] instanceof PyTargetExpression)
-				{
-					gotoSuperClassAttributes(editor, (PyTargetExpression) assignment.getTargets()[0], pyClass);
-				}
-				else
-				{
-					TypeEvalContext context = TypeEvalContext.codeAnalysis(project, file);
-					navigateOrChoose(editor, pyClass.getAncestorClasses(context), LocalizeValue.localizeTODO("Choose superclass"));
-				}
-			}
-		}
-	}
+    public void invoke(Project project, Editor editor, PsiFile psiFile) {
+        PsiElement element = psiFile.findElementAt(editor.getCaretModel().getOffset());
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        if (pyClass != null) {
+            PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class, false, PyClass.class);
+            if (function != null) {
+                gotoSuperFunctions(editor, function, pyClass);
+            }
+            else {
+                PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class, false, PyClass.class);
+                if (assignment != null && assignment.getTargets()[0] instanceof PyTargetExpression) {
+                    gotoSuperClassAttributes(editor, (PyTargetExpression) assignment.getTargets()[0], pyClass);
+                }
+                else {
+                    TypeEvalContext context = TypeEvalContext.codeAnalysis(project, psiFile);
+                    navigateOrChoose(editor, psiFile, pyClass.getAncestorClasses(context), PyCodeInsightLocalize.gotoSuperclassChoose());
+                }
+            }
+        }
+    }
 
-	@RequiredReadAction
-    private static void gotoSuperFunctions(Editor editor, PyFunction function, PyClass pyClass)
-	{
-		Collection<PyFunction> superFunctions = getAllSuperMethodsByName(function, pyClass);
-		navigateOrChoose(editor, superFunctions, CodeInsightLocalize.gotoSuperMethodChooserTitle());
-	}
+    @RequiredReadAction
+    private static void gotoSuperFunctions(Editor editor, PyFunction function, PyClass pyClass) {
+        Collection<PyFunction> superFunctions = getAllSuperMethodsByName(function, pyClass);
+        navigateOrChoose(editor, function, superFunctions, CodeInsightLocalize.gotoSuperMethodChooserTitle());
+    }
 
-	@RequiredReadAction
-    private static void gotoSuperClassAttributes(Editor editor, PyTargetExpression attr, PyClass pyClass)
-	{
-		Collection<PyTargetExpression> attrs = getAllSuperAttributesByName(attr, pyClass);
-		navigateOrChoose(editor, attrs, LocalizeValue.localizeTODO("Choose superclass attribute"));
-	}
+    @RequiredReadAction
+    private static void gotoSuperClassAttributes(Editor editor, PyTargetExpression attr, PyClass pyClass) {
+        Collection<PyTargetExpression> attrs = getAllSuperAttributesByName(attr, pyClass);
+        navigateOrChoose(editor, attr, attrs, PyCodeInsightLocalize.codeInsightGotoSuperclassAttributeChooserTitle());
+    }
 
-	@RequiredReadAction
-    private static void navigateOrChoose(Editor editor, Collection<? extends NavigatablePsiElement> superElements, LocalizeValue title)
-	{
-		if(!superElements.isEmpty())
-		{
-			NavigatablePsiElement[] superElementArray = superElements.toArray(new NavigatablePsiElement[superElements.size()]);
-			if(superElementArray.length == 1)
-			{
-				superElementArray[0].navigate(true);
-			}
-			else
-			{
-				JBPopup popup = PopupNavigationUtil.getPsiElementPopup(superElementArray, title.get());
-				EditorPopupHelper.getInstance().showPopupInBestPositionFor(editor, popup);
-			}
-		}
-	}
+    @RequiredReadAction
+    private static void navigateOrChoose(
+        Editor editor,
+        PsiElement source,
+        Collection<? extends NavigatablePsiElement> superElements,
+        LocalizeValue title
+    ) {
+        NavigatablePsiElement[] superElementArray = superElements.stream()
+            .map(element -> PyiUtil.getNavigationTarget(element, source) instanceof NavigatablePsiElement target ? target : element)
+            .distinct()
+            .toArray(NavigatablePsiElement[]::new);
+        if (superElementArray.length == 1) {
+            superElementArray[0].navigate(true);
+        }
+        else if (superElementArray.length > 1) {
+            JBPopup popup = PopupNavigationUtil.getPsiElementPopup(superElementArray, title.get());
+            EditorPopupHelper.getInstance().showPopupInBestPositionFor(editor, popup);
+        }
+    }
 
-	private static Collection<PyTargetExpression> getAllSuperAttributesByName(PyTargetExpression classAttr, PyClass pyClass)
-	{
-		String name = classAttr.getName();
-		if(name == null)
-		{
-			return Collections.emptyList();
-		}
-		List<PyTargetExpression> result = new ArrayList<>();
-		for(PyClass aClass : pyClass.getAncestorClasses(null))
-		{
-			PyTargetExpression superAttr = aClass.findClassAttribute(name, false, null);
-			if(superAttr != null)
-			{
-				result.add(superAttr);
-			}
-		}
-		return result;
-	}
+    private static Collection<PyTargetExpression> getAllSuperAttributesByName(PyTargetExpression classAttr, PyClass pyClass) {
+        String name = classAttr.getName();
+        if (name == null) {
+            return Collections.emptyList();
+        }
+        List<PyTargetExpression> result = new ArrayList<>();
+        for (PyClass aClass : pyClass.getAncestorClasses(null)) {
+            PyTargetExpression superAttr = aClass.findClassAttribute(name, false, null);
+            if (superAttr != null) {
+                result.add(superAttr);
+            }
+        }
+        return result;
+    }
 
-	@RequiredReadAction
-    private static Collection<PyFunction> getAllSuperMethodsByName(PyFunction method, PyClass pyClass)
-	{
-		String name = method.getName();
-		if(name == null)
-		{
-			return Collections.emptyList();
-		}
-		List<PyFunction> result = new ArrayList<>();
-		for(PyClass aClass : pyClass.getAncestorClasses(null))
-		{
-			PyFunction byName = aClass.findMethodByName(name, false, null);
-			if(byName != null)
-			{
-				result.add(byName);
-			}
-		}
-		return result;
-	}
+    @RequiredReadAction
+    private static Collection<PyFunction> getAllSuperMethodsByName(PyFunction method, PyClass pyClass) {
+        String name = method.getName();
+        if (name == null) {
+            return Collections.emptyList();
+        }
+        List<PyFunction> result = new ArrayList<>();
+        for (PyClass aClass : pyClass.getAncestorClasses(null)) {
+            PyFunction byName = aClass.findMethodByName(name, false, null);
+            if (byName != null) {
+                result.add(byName);
+            }
+        }
+        return result;
+    }
 
-	@Override
-    public boolean startInWriteAction()
-	{
-		return false;
-	}
+    @Override
+    public boolean startInWriteAction() {
+        return false;
+    }
 
-	@Override
-	public boolean isValidFor(Editor editor, PsiFile file)
-	{
-		return true;
-	}
+    @Override
+    public boolean isValidFor(Editor editor, PsiFile file) {
+        return true;
+    }
 
-	@Override
-	public Language getLanguage()
-	{
-		return PythonLanguage.INSTANCE;
-	}
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

@@ -1,0 +1,217 @@
+group.advanced.settings.python:
+  text: Python
+advanced.setting.python.code.vision.usages.limit:
+  text: 'Code Vision: maximum number of usages to search'
+inlay.hints.usages.text:
+  # Consulo: ICU MessageFormat formats the nested choice without JB's quotes; the trailing empty '{1,choice,0#|1#}' exposes argument {1} to the localize generator
+  text: '{0,choice, 0#no usages|1#1 usage|2#{0,number}{1,choice,0#|1#+} usages}{1,choice,0#|1#}'
+inlay.hints.usages.with.dynamic.text:
+  text: '{0,choice, 0#no usages|1#1 usage|2#{0,number} usages} ({1,choice, 1#1 dynamic|2#{1,number} dynamic})'
+inlay.parameters.python.show.class.constructor.call.parameter.names:
+  text: Class constructor calls
+inlay.parameters.python.show.hints.for.non.literal.arguments:
+  text: Non-literal arguments
+inlay.parameters.python.hints.blacklist.explanation:
+  text: <p>To disable hints for a method or a function, use one of the following patterns:</p><ul><li><code><b>(*info)</b></code> - all functions with a single parameter whose name ends with <em>info</em><br></li><li><code><b>(a, b)</b></code> - all functions with parameters <em>a</em> and <em>b</em><br></li><li><code><b>*.put(self, key, value)</b></code> - all <em>put</em> methods with parameters <em>key</em> and <em>value</em><br></li><li><code><b>Foo.bar(self, a, b)</b></code> - method <em>bar</em> of class <em>Foo</em> with parameters <em>a</em> and <em>b</em><br></li><li><code><b>foo(\&lt;star\&gt;\&lt;star\&gt;kwargs)</b></code> - function <em>foo</em> with parameter <em>**kwargs</em><br></li></ul><p>Names or placeholders must be provided for all parameters, including the optional ones.<br>Qualified method names must include class names or placeholders for them.<br>Use the "Do not show hints for current method" {0} action to add patterns from the editor.</p>
+param.info.show.less:
+  text: Show less
+param.info.show.more.n.overloads:
+  text: Show {0} more {1, choice, 0#overloads|1#overload}
+form.auto.import.from.module.import.name:
+  text: from <module> import <name>
+form.auto.import.import.module.name:
+  text: import <module>.<name>
+form.auto.import.preferred.import.style:
+  text: 'Preferred import style:'
+form.auto.import.python:
+  text: Python
+form.auto.import.auto.import.show.popup:
+  text: Show auto-import tooltip
+live.template.context.class:
+  text: Class
+live.template.context.top.level:
+  text: Top-level
+live.template.propsd.description:
+  text: Property getter/setter/deleter
+live.template.props.description:
+  text: Property getter/setter
+live.template.prop.description:
+  text: Property getter
+live.template.compdi.description:
+  text: Dict comprehension with 'if'
+live.template.compd.description:
+  text: Dict comprehension
+live.template.compsi.description:
+  text: Set comprehension with 'if'
+live.template.comps.description:
+  text: Set comprehension
+live.template.compgi.description:
+  text: Generator comprehension with 'if'
+live.template.compg.description:
+  text: Generator comprehension
+live.template.compli.description:
+  text: List comprehension with 'if'
+live.template.compl.description:
+  text: List comprehension
+live.template.itere.description:
+  text: Iterate (for ... in enumerate)
+live.template.iter.description:
+  text: Iterate (for ... in ...)
+live.template.main.description:
+  text: if __name__ == '__main__'
+live.template.super.description:
+  text: '''super(...)'' call'
+postfix.template.provider.name:
+  text: Python
+postfix.template.condition.iterable.name:
+  text: iterable
+postfix.template.condition.list.name:
+  text: list
+postfix.template.condition.set.name:
+  text: set
+postfix.template.condition.tuple.name:
+  text: tuple
+postfix.template.condition.dict.name:
+  text: dict
+postfix.template.condition.builtin.len.applicable.name:
+  text: builtin len applicable
+postfix.template.condition.non.none.name:
+  text: non None
+postfix.template.condition.exception.name:
+  text: exception
+postfix.template.condition.number.name:
+  text: number
+postfix.template.condition.boolean.name:
+  text: boolean
+postfix.template.condition.string.name:
+  text: string
+settings.postfix.choose.class.action.name:
+  text: Choose Class…
+settings.postfix.choose.class.prompt.text:
+  text: Choose class
+settings.postfix.enter.class.action.name:
+  text: Enter Class Name…
+settings.postfix.enter.class.dialog.name:
+  text: Choose Class
+settings.postfix.enter.fully.qualified.class.name:
+  text: Enter fully qualified class name
+filetype.py.typed.description:
+  text: py.typed marker file
+filetype.py.typed.display.name:
+  text: py.typed
+settings.completion.ml.python.display.name:
+  text: Python
+smartKeys.wrap.in.parentheses.instead.of.backslash:
+  text: Use parentheses instead of backslashes for breaking lines
+show.expression.type.no.expression.found:
+  text: No expression found
+action.CollapsePythonTypeAnnotations.text:
+  text: Collapse Python Type Annotations
+action.CollapsePythonTypeAnnotations.description:
+  text: Collapse python type annotations
+action.ExpandPythonTypeAnnotations.text:
+  text: Expand Python Type Annotations
+action.ExpandPythonTypeAnnotations.description:
+  text: Expand python type annotations
+action.CleanPyc.text:
+  text: Clean Python Compiled Files
+action.CleanPyc.description:
+  text: Delete compiled bytecode files in selected directory and its subdirectories
+action.CleanPyc.progress.title.cleaning.up.pyc.files:
+  text: Cleaning Up .pyc Files…
+configurable.PySmartKeysOptions.display.name:
+  text: Python
+action.create.python.file.title:
+  text: Python File
+action.create.python.file.description:
+  text: Creates a Python file from the specified template
+code.insight.goto.superclass.attribute.chooser.title:
+  text: Choose superclass attribute
+create.python.file.action.new.python.file:
+  text: New Python File
+create.python.file.action.python.file:
+  text: Python file
+create.python.file.action.python.unit.test:
+  text: Python unit test
+create.python.file.action.python.stub:
+  text: Python stub
+create.python.file.script.action:
+  text: Create Python Script {0}
+form.edit.smart.indent.pasted.lines:
+  text: Smart indent pasted lines
+python.folding.options.title:
+  text: Python
+python.long.string.literals:
+  text: Long string literals
+python.long.collection.literals:
+  text: Long collection literals
+python.sequential.comments:
+  text: Sequential comments
+python.type.annotations:
+  text: Type annotations
+python.type.annotations.hint:
+  text: When unchecked, type annotations remain expanded on first "Collapse All" action
+line.markers.popup.title.choose.super.method:
+  text: Choose Super Method of {0}
+line.markers.popup.title.choose.super.attribute:
+  text: Choose Super Attribute of {0}
+line.markers.popup.title.choose.subclass:
+  text: Choose Subclass of {0}
+line.markers.popup.title.choose.overriding.method:
+  text: Choose Overriding Method of {0}
+line.markers.tooltip.header.is.subclassed.by:
+  text: 'Is subclassed by:'
+line.markers.tooltip.has.subclasses:
+  text: Has subclasses
+line.markers.tooltip.header.is.overridden.in:
+  text: 'Is overridden in:'
+line.markers.tooltip.has.overridden.methods:
+  text: Has overridden methods
+line.markers.tooltip.overrides.method.in.class:
+  text: Overrides method in {0}
+line.markers.tooltip.overrides.attribute.in.class:
+  text: Overrides attribute in {0}
+goto.superclass.choose:
+  text: Choose superclass
+configurable.PythonCodeCompletionConfigurable.display.name.python:
+  text: Python
+configurable.PythonCodeCompletionConfigurable.border.title:
+  text: Python
+configurable.PythonCodeCompletionConfigurable.checkbox.suggest.importable.names:
+  text: Suggest importable names in basic completion
+configurable.PythonCodeCompletionConfigurable.checkbox.suggest.importable.names.help:
+  text: When disabled, such variants can be displayed by invoking the basic completion twice
+configurable.PythonCodeCompletionConfigurable.checkbox.copy.annotations.from.stubs:
+  text: Copy type annotations from stubs when overriding methods
+QFIX.FAMILY.NAME.rename.element:
+  text: Rename an element
+external.documentation.configurable.name:
+  text: External Documentation
+external.documentation.description:
+  text: Configure URLs for Python external documentation to enable quick access to relevant resources.
+external.documentation.edit.documentation.url:
+  text: Edit Documentation URL
+external.documentation.title:
+  text: Python External Documentation
+external.documentation.configure.description:
+  text: 'No external documentation URL is configured for module {0}.
+
+    Would you like to configure it now?'
+external.documentation.column.name.module:
+  text: Module Name
+external.documentation.column.name.url.path.pattern:
+  text: URL/Path Pattern
+form.documentation.entry.insert:
+  text: '&Insert'
+form.documentation.entry.module.name:
+  text: '&Module Name:'
+form.documentation.entry.url.path.pattern:
+  text: '&URL/Path Pattern:'
+form.documentation.entry.available.macros:
+  text: Available Macros
+python.compatibility.inspection.advertiser.notifications.group.title:
+  text: Python compatibility inspection recommended
+python.compatibility.inspection.advertiser.notifications.title:
+  text: Python versions compatibility
+python.compatibility.inspection.advertiser.version.stale.python3.version.warning.message:
+  text: Code compatibility inspection is configured for Python versions up to {0}.<br/>Would you like to enable it for Python {1}?<br/><a href="#yes">Yes</a>\&nbsp;\&nbsp;<a href="#no">No</a>
