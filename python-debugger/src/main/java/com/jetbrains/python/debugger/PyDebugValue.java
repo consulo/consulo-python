@@ -8,6 +8,7 @@ import consulo.application.Application;
 import consulo.application.ReadAction;
 import consulo.logging.Logger;
 import consulo.execution.debug.frame.XCompositeNode;
+import consulo.execution.debug.frame.XDebuggerTreeNodeHyperlink;
 import consulo.execution.debug.frame.XFullValueEvaluator;
 import consulo.execution.debug.frame.XNamedValue;
 import consulo.execution.debug.frame.XNavigatable;
@@ -425,8 +426,17 @@ public class PyDebugValue extends XNamedValue implements PyXDebugValue {
     }
 
     private void setAdditionalLinks(XValueNode node) {
-        // TODO consulo: XValueNodeEx#addAdditionalHyperlink(XDebuggerTreeNodeHyperlink) missing -
-        //  JB adds the "configure type renderer" link from myFrameAccessor.getUserTypeRenderersLink(getTypeRendererId())
+        addConfigureTypeRendererLink(node);
+    }
+
+    private void addConfigureTypeRendererLink(XValueNode valueNode) {
+        String typeRendererId = getTypeRendererId();
+        if (typeRendererId != null) {
+            XDebuggerTreeNodeHyperlink link = myFrameAccessor.getUserTypeRenderersLink(typeRendererId);
+            if (link != null) {
+                valueNode.addAdditionalHyperlink(link);
+            }
+        }
     }
 
     public void updateNodeValueAfterLoading(XValueNode node,
@@ -541,7 +551,7 @@ public class PyDebugValue extends XNamedValue implements PyXDebugValue {
     }
 
     private void addAdditionalHyperlinks(XValueNode valueNode) {
-        // TODO consulo: XValueNodeEx missing - JB calls PyDebugValueAdditionalHyperlinkProvider.computeHyperlink(this, valueNodeEx)
+        PyDebugValueAdditionalHyperlinkProvider.computeHyperlink(this, valueNode);
     }
 
     @Override

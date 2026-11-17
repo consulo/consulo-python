@@ -4094,6 +4094,8 @@ action.EditorToggleUseSoftWraps.text:
     text: Soft-Wrap
 action.EditorToggleUseSoftWraps.description:
     text: Toggle using soft wraps in the current editor
+group.PyDebugger.ViewAsGroup.text:
+    text: View as
 action.PyDebugger.CustomizeDataView.text:
     text: Customize Data View
 form.debugger.variables.view.user.type.renderers.unnamed:

@@ -1011,11 +1011,8 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
                             if (e.getMessage().startsWith("Timeout")) {
                                 value.updateNodeValueAfterLoading(node, " ", LocalizeValue.empty(), PyLocalize.debuggerVariablesViewLoadingTimedOut().get());
                                 ConfigureTypeRenderersHyperLink configureLink = new ConfigureTypeRenderersHyperLink(null, getProject(), value);
-                                // TODO consulo: XValueNodeEx (clearAdditionalHyperlinks, addAdditionalHyperlink) missing in execution-debug-api:
-                                //  if (node instanceof XValueNodeEx valueNode) {
-                                //      valueNode.clearAdditionalHyperlinks();
-                                //      valueNode.addAdditionalHyperlink(configureLink);
-                                //  }
+                                node.clearAdditionalHyperlinks();
+                                node.addAdditionalHyperlink(configureLink);
                             }
                             else {
                                 LOG.error(e);

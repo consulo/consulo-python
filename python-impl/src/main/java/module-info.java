@@ -129,6 +129,7 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.console.actions;
   exports com.jetbrains.python.impl.console.completion;
   exports com.jetbrains.python.impl.debugger;
+  exports com.jetbrains.python.impl.debugger.actions;
   exports com.jetbrains.python.impl.debugger.array;
   exports com.jetbrains.python.impl.debugger.containerview;
   exports com.jetbrains.python.impl.debugger.dataframe;

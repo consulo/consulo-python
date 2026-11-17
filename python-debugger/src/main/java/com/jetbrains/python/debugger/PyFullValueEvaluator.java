@@ -32,7 +32,7 @@ public class PyFullValueEvaluator extends XFullValueEvaluator {
     }
 
     protected boolean isCopyValueCallback(XFullValueEvaluationCallback callback) {
-        // TODO consulo: PyCopyValueEvaluationCallback missing (AbstractXFetchValueAction.ValueCollector and XValueNodeImpl are not API)
+        // Copy Value does not go through this evaluator - PyDebugProcess copies by HasCopyValue
         return false;
     }
 
