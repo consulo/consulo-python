@@ -1,357 +1,298 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.codeInsight;
 
-import org.jspecify.annotations.Nullable;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyPsiFacade;
+import com.jetbrains.python.psi.PyRecursiveElementVisitor;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public abstract class PyPsiPath
-{
-	@Nullable
-	public abstract PsiElement resolve(PsiElement module);
+public abstract class PyPsiPath {
 
-	public static class ToFile extends PyPsiPath
-	{
-		private final QualifiedName myQualifiedName;
+    /**
+     * Resolves psi path in specified context.
+     *
+     * @param context        psi element to be used as psi context
+     * @param resolveContext context to be used in resolve
+     * @return resolved element
+     */
+    public abstract @Nullable PsiElement resolve(PsiElement context, PyResolveContext resolveContext);
 
-		public ToFile(String qualifiedName)
-		{
-			myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
-		}
+    public static class ToFile extends PyPsiPath {
+        private final QualifiedName myQualifiedName;
 
-		@Nullable
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PyPsiFacade pyPsiFacade = PyPsiFacade.getInstance(context.getProject());
-			QualifiedNameResolver visitor = pyPsiFacade.qualifiedNameResolver(myQualifiedName).fromElement(context);
-			return visitor.firstResult();
-		}
-	}
+        public ToFile(String qualifiedName) {
+            myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
+        }
 
-	public static class ToClassQName extends PyPsiPath
-	{
-		private final QualifiedName myQualifiedName;
+        @Override
+        public @Nullable PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PyPsiFacade facade = PyPsiFacade.getInstance(context.getProject());
+            return facade.resolveQualifiedName(myQualifiedName, facade.createResolveContextFromFoothold(context))
+                .stream().findFirst().orElse(null);
+        }
+    }
 
-		public ToClassQName(String qualifiedName)
-		{
-			myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
-		}
+    public static class ToClassQName extends PyPsiPath {
+        private final QualifiedName myQualifiedName;
 
-		@Nullable
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			return PyPsiFacade.getInstance(context.getProject()).findClass(myQualifiedName.toString());
-		}
-	}
+        public ToClassQName(String qualifiedName) {
+            myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
+        }
 
-	public static class ToClass extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myClassName;
+        @Override
+        public @Nullable PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            return PyPsiFacade.getInstance(context.getProject()).createClassByQName(myQualifiedName, context);
+        }
+    }
 
-		public ToClass(PyPsiPath parent, String className)
-		{
-			myParent = parent;
-			myClassName = className;
-		}
+    public static class ToClass extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myClassName;
 
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(parent == null)
-			{
-				return null;
-			}
-			if(parent instanceof PyFile)
-			{
-				return ((PyFile) parent).findTopLevelClass(myClassName);
-			}
-			if(parent instanceof PyClass)
-			{
-				for(PsiElement element : parent.getChildren())
-				{
-					if(element instanceof PyClass && myClassName.equals(((PyClass) element).getName()))
-					{
-						return element;
-					}
-				}
-			}
-			ClassFinder finder = new ClassFinder(myClassName);
-			parent.acceptChildren(finder);
-			return finder.myResult != null ? finder.myResult : parent;
-		}
-	}
+        public ToClass(PyPsiPath parent, String className) {
+            myParent = parent;
+            myClassName = className;
+        }
 
-	private static class ClassFinder extends PyRecursiveElementVisitor
-	{
-		private final String myName;
-		private PyClass myResult;
+        @Override
+        public PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (parent == null) {
+                return null;
+            }
+            if (parent instanceof PyFile) {
+                return ((PyFile)parent).findTopLevelClass(myClassName);
+            }
+            if (resolveContext.getTypeEvalContext().maySwitchToAST(parent)) {
+                if (parent instanceof PyClass) {
+                    for (PsiElement element : parent.getChildren()) {
+                        if (element instanceof PyClass && myClassName.equals(((PyClass)element).getName())) {
+                            return element;
+                        }
+                    }
+                }
+                ClassFinder finder = new ClassFinder(myClassName);
+                parent.acceptChildren(finder);
+                return finder.myResult != null ? finder.myResult : parent;
+            }
+            return parent;
+        }
+    }
 
-		public ClassFinder(String name)
-		{
-			myName = name;
-		}
+    private static class ClassFinder extends PyRecursiveElementVisitor {
+        private final String myName;
+        private @Nullable PyClass myResult;
 
-		@Override
-		public void visitPyClass(PyClass node)
-		{
-			super.visitPyClass(node);
-			if(myName.equals(node.getName()))
-			{
-				myResult = node;
-			}
-		}
-	}
+        ClassFinder(String name) {
+            myName = name;
+        }
 
-	public static class ToFunction extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myFunctionName;
+        @Override
+        public void visitPyClass(PyClass node) {
+            super.visitPyClass(node);
+            if (myName.equals(node.getName())) {
+                myResult = node;
+            }
+        }
+    }
 
-		public ToFunction(PyPsiPath parent, String functionName)
-		{
-			myParent = parent;
-			myFunctionName = functionName;
-		}
+    public static class ToFunction extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myFunctionName;
 
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(parent == null)
-			{
-				return null;
-			}
-			if(parent instanceof PyFile)
-			{
-				return ((PyFile) parent).findTopLevelFunction(myFunctionName);
-			}
-			if(parent instanceof PyClass)
-			{
-				return ((PyClass) parent).findMethodByName(myFunctionName, false, null);
-			}
-			for(PsiElement element : parent.getChildren())
-			{
-				if(element instanceof PyFunction && myFunctionName.equals(((PyFunction) element).getName()))
-				{
-					return element;
-				}
-			}
-			return parent;
-		}
-	}
+        public ToFunction(PyPsiPath parent, String functionName) {
+            myParent = parent;
+            myFunctionName = functionName;
+        }
 
-	private static class FunctionFinder extends PyRecursiveElementVisitor
-	{
-		private final String myName;
-		private PyFunction myResult;
+        @Override
+        public PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (parent == null) {
+                return null;
+            }
+            if (parent instanceof PyFile) {
+                return ((PyFile)parent).findTopLevelFunction(myFunctionName);
+            }
+            if (parent instanceof PyClass) {
+                return ((PyClass)parent).findMethodByName(myFunctionName, false, resolveContext.getTypeEvalContext());
+            }
+            if (resolveContext.getTypeEvalContext().maySwitchToAST(parent)) {
+                for (PsiElement element : parent.getChildren()) {
+                    if (element instanceof PyFunction && myFunctionName.equals(((PyFunction)element).getName())) {
+                        return element;
+                    }
+                }
+            }
+            return parent;
+        }
+    }
 
-		public FunctionFinder(String name)
-		{
-			myName = name;
-		}
+    private static class FunctionFinder extends PyRecursiveElementVisitor {
+        private final String myName;
+        private @Nullable PyFunction myResult;
 
-		@Override
-		public void visitPyFunction(PyFunction node)
-		{
-			super.visitPyFunction(node);
-			if(myName.equals(node.getName()))
-			{
-				myResult = node;
-			}
-		}
-	}
+        FunctionFinder(String name) {
+            myName = name;
+        }
 
-	public static class ToFunctionRecursive extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myFunctionName;
+        @Override
+        public void visitPyFunction(PyFunction node) {
+            super.visitPyFunction(node);
+            if (myName.equals(node.getName())) {
+                myResult = node;
+            }
+        }
+    }
 
-		public ToFunctionRecursive(PyPsiPath parent, String functionName)
-		{
-			myParent = parent;
-			myFunctionName = functionName;
-		}
+    public static class ToFunctionRecursive extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myFunctionName;
 
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(parent == null)
-			{
-				return null;
-			}
-			FunctionFinder finder = new FunctionFinder(myFunctionName);
-			parent.acceptChildren(finder);
-			return finder.myResult != null ? finder.myResult : parent;
-		}
-	}
+        public ToFunctionRecursive(PyPsiPath parent, String functionName) {
+            myParent = parent;
+            myFunctionName = functionName;
+        }
 
-	public static class ToClassAttribute extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myAttributeName;
+        @Override
+        public PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (parent == null || !resolveContext.getTypeEvalContext().maySwitchToAST(parent)) {
+                return null;
+            }
+            FunctionFinder finder = new FunctionFinder(myFunctionName);
+            parent.acceptChildren(finder);
+            return finder.myResult != null ? finder.myResult : parent;
+        }
+    }
 
-		public ToClassAttribute(PyPsiPath parent, String attributeName)
-		{
-			myAttributeName = attributeName;
-			myParent = parent;
-		}
+    public static class ToClassAttribute extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myAttributeName;
 
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(!(parent instanceof PyClass))
-			{
-				return null;
-			}
-			return ((PyClass) parent).findClassAttribute(myAttributeName, true, null);
-		}
-	}
+        public ToClassAttribute(PyPsiPath parent, String attributeName) {
+            myAttributeName = attributeName;
+            myParent = parent;
+        }
 
-	public static class ToCall extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myCallName;
-		private final String[] myArgs;
+        @Override
+        public PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (!(parent instanceof PyClass)) {
+                return null;
+            }
+            return ((PyClass)parent).findClassAttribute(myAttributeName, true, resolveContext.getTypeEvalContext());
+        }
+    }
 
-		public ToCall(PyPsiPath parent, String callName, String... args)
-		{
-			myParent = parent;
-			myCallName = callName;
-			myArgs = args;
-		}
+    public static class ToCall extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myCallName;
+        private final String[] myArgs;
 
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(parent == null)
-			{
-				return null;
-			}
-			CallFinder finder = new CallFinder(myCallName, myArgs);
-			parent.accept(finder);
-			return finder.myResult != null ? finder.myResult : parent;
-		}
-	}
+        public ToCall(PyPsiPath parent, String callName, String... args) {
+            myParent = parent;
+            myCallName = callName;
+            myArgs = args;
+        }
 
-	private static class CallFinder extends PyRecursiveElementVisitor
-	{
-		private PsiElement myResult;
-		private final String myCallName;
-		private final String[] myArgs;
+        @Override
+        public PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (parent == null || !resolveContext.getTypeEvalContext().maySwitchToAST(parent)) {
+                return null;
+            }
+            CallFinder finder = new CallFinder(myCallName, myArgs);
+            parent.accept(finder);
+            return finder.myResult != null ? finder.myResult : parent;
+        }
+    }
 
-		public CallFinder(String callName, String[] args)
-		{
-			myCallName = callName;
-			myArgs = args;
-		}
+    private static class CallFinder extends PyRecursiveElementVisitor {
+        private @Nullable PsiElement myResult;
+        private final String myCallName;
+        private final String[] myArgs;
 
-		@Override
-		public void visitPyCallExpression(PyCallExpression node)
-		{
-			if(myResult != null)
-			{
-				return;
-			}
-			super.visitPyCallExpression(node);
+        CallFinder(String callName, String[] args) {
+            myCallName = callName;
+            myArgs = args;
+        }
 
-			PyExpression callee = node.getCallee();
-			if(callee instanceof PyReferenceExpression)
-			{
-				String calleeName = ((PyReferenceExpression) callee).getReferencedName();
-				if(myCallName.equals(calleeName))
-				{
-					PyExpression[] args = node.getArguments();
-					if(myArgs.length <= args.length)
-					{
-						boolean argsMatch = true;
-						for(int i = 0; i < myArgs.length; i++)
-						{
-							if(!(args[i] instanceof PyStringLiteralExpression) || !myArgs[i].equals(((PyStringLiteralExpression) args[i]).getStringValue()))
-							{
-								argsMatch = false;
-								break;
-							}
-						}
-						if(argsMatch)
-						{
-							myResult = node;
-						}
-					}
-				}
-			}
-		}
-	}
+        @Override
+        public void visitPyCallExpression(PyCallExpression node) {
+            if (myResult != null) {
+                return;
+            }
+            super.visitPyCallExpression(node);
 
-	public static class ToAssignment extends PyPsiPath
-	{
-		private final PyPsiPath myParent;
-		private final String myAssignee;
+            PyExpression callee = node.getCallee();
+            if (callee instanceof PyReferenceExpression) {
+                String calleeName = ((PyReferenceExpression)callee).getReferencedName();
+                if (myCallName.equals(calleeName)) {
+                    PyExpression[] args = node.getArguments();
+                    if (myArgs.length <= args.length) {
+                        boolean argsMatch = true;
+                        for (int i = 0; i < myArgs.length; i++) {
+                            if (!(args[i] instanceof PyStringLiteralExpression) ||
+                                !myArgs[i].equals(((PyStringLiteralExpression)args[i]).getStringValue())) {
+                                argsMatch = false;
+                                break;
+                            }
+                        }
+                        if (argsMatch) {
+                            myResult = node;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-		public ToAssignment(PyPsiPath parent, String assignee)
-		{
-			myParent = parent;
-			myAssignee = assignee;
-		}
+    public static class ToAssignment extends PyPsiPath {
+        private final PyPsiPath myParent;
+        private final String myAssignee;
 
-		@Nullable
-		@Override
-		public PsiElement resolve(PsiElement context)
-		{
-			PsiElement parent = myParent.resolve(context);
-			if(parent == null)
-			{
-				return null;
-			}
-			AssignmentFinder finder = new AssignmentFinder(myAssignee);
-			parent.accept(finder);
-			return finder.myResult != null ? finder.myResult : parent;
-		}
-	}
+        public ToAssignment(PyPsiPath parent, String assignee) {
+            myParent = parent;
+            myAssignee = assignee;
+        }
 
-	private static class AssignmentFinder extends PyRecursiveElementVisitor
-	{
-		private final String myAssignee;
-		private PsiElement myResult;
+        @Override
+        public @Nullable PsiElement resolve(PsiElement context, PyResolveContext resolveContext) {
+            PsiElement parent = myParent.resolve(context, resolveContext);
+            if (parent == null || !resolveContext.getTypeEvalContext().maySwitchToAST(parent)) {
+                return null;
+            }
+            AssignmentFinder finder = new AssignmentFinder(myAssignee);
+            parent.accept(finder);
+            return finder.myResult != null ? finder.myResult : parent;
+        }
+    }
 
-		public AssignmentFinder(String assignee)
-		{
-			myAssignee = assignee;
-		}
+    private static class AssignmentFinder extends PyRecursiveElementVisitor {
+        private final String myAssignee;
+        private @Nullable PsiElement myResult;
 
-		@Override
-		public void visitPyAssignmentStatement(PyAssignmentStatement node)
-		{
-			PyExpression lhs = node.getLeftHandSideExpression();
-			if(lhs != null && myAssignee.equals(lhs.getText()))
-			{
-				myResult = node;
-			}
-		}
-	}
+        AssignmentFinder(String assignee) {
+            myAssignee = assignee;
+        }
+
+        @Override
+        public void visitPyAssignmentStatement(PyAssignmentStatement node) {
+            PyExpression lhs = node.getLeftHandSideExpression();
+            if (lhs != null && myAssignee.equals(lhs.getText())) {
+                myResult = node;
+            }
+        }
+    }
 }

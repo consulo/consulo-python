@@ -19,11 +19,14 @@ package com.jetbrains.python.impl.documentation;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.JBList;
 
+import com.google.common.collect.Maps;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 /**
  * @author yole
@@ -64,13 +67,13 @@ public class PythonDocumentationEntryEditor extends DialogWrapper {
     return myPanel;
   }
 
-  public PythonDocumentationMap.Entry getEntry() {
-    return new PythonDocumentationMap.Entry(myNameField.getText(), myURLPatternTextField.getText());
+  public Map.Entry<String, String> getEntry() {
+    return Maps.immutableEntry(myNameField.getText(), myURLPatternTextField.getText());
   }
 
-  public void setEntry(PythonDocumentationMap.Entry entry) {
-    myNameField.setText(entry.getPrefix());
-    myURLPatternTextField.setText(entry.getUrlPattern());
+  public void setEntry(Map.Entry<String, String> entry) {
+    myNameField.setText(entry.getKey());
+    myURLPatternTextField.setText(entry.getValue());
   }
 
   @Override

@@ -1,5 +1,6 @@
 package consulo.python.impl;
 
+import com.jetbrains.python.PyLanguageFacade;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -40,7 +41,7 @@ public class PythonLanguageVersionResolver implements LanguageVersionResolver {
   @Override
   public LanguageVersion getLanguageVersion(Language language, @Nullable Project project, @Nullable VirtualFile virtualFile) {
     if (project != null && virtualFile != null) {
-      LanguageLevel level = PyUtil.getLanguageLevelForVirtualFile(project, virtualFile);
+      LanguageLevel level = PyLanguageFacade.getInstance().getEffectiveLanguageLevel(project, virtualFile);
       return PythonLanguage.INSTANCE.getVersion(level);
     }
 

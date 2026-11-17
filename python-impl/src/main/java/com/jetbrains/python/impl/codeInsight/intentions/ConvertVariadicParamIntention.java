@@ -18,9 +18,11 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -48,6 +50,8 @@ import java.util.List;
  *
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ConvertVariadicParamIntention", categories = "Python", fileExtensions = "py")
 public class ConvertVariadicParamIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {

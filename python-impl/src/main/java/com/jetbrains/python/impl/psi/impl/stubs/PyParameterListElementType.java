@@ -1,25 +1,6 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*
- * @author max
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
@@ -27,6 +8,7 @@ import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.stub.StubInputStream;
 import consulo.language.psi.stub.StubOutputStream;
 import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyParameterListImpl;
@@ -35,44 +17,49 @@ import com.jetbrains.python.psi.stubs.PyParameterListStub;
 import java.io.IOException;
 
 public class PyParameterListElementType extends PyStubElementType<PyParameterListStub, PyParameterList> {
-  public PyParameterListElementType() {
-    this("PARAMETER_LIST");
-  }
-
-  public PyParameterListElementType(String debugName) {
-    super(debugName);
-  }
-
-  public PyParameterList createPsi(PyParameterListStub stub) {
-    return new PyParameterListImpl(stub);
-  }
-
-  public PyParameterListStub createStub(PyParameterList psi, StubElement parentStub) {
-    return new PyParameterListStubImpl(parentStub, getStubElementType());
-  }
-
-  public PsiElement createElement(ASTNode node) {
-    return new PyParameterListImpl(node);
-  }
-
-  public void serialize(PyParameterListStub stub, StubOutputStream dataStream)
-      throws IOException {
-  }
-
-  public PyParameterListStub deserialize(StubInputStream dataStream, StubElement parentStub)
-      throws IOException {
-    return new PyParameterListStubImpl(parentStub, getStubElementType());
-  }
-
-  protected IStubElementType getStubElementType() {
-    return PyStubElementTypes.PARAMETER_LIST;
-  }
-
-  @Override
-  public boolean shouldCreateStub(ASTNode node) {
-    if (node.getTreeParent().getElementType() == PyElementTypes.LAMBDA_EXPRESSION) {
-      return false;
+    public PyParameterListElementType() {
+        this("PARAMETER_LIST");
     }
-    return super.shouldCreateStub(node);
-  }
+
+    public PyParameterListElementType(String debugName) {
+        super(debugName);
+    }
+
+    @Override
+    public PyParameterList createPsi(PyParameterListStub stub) {
+        return new PyParameterListImpl(stub);
+    }
+
+    @Override
+    public PyParameterListStub createStub(PyParameterList psi, StubElement parentStub) {
+        return new PyParameterListStubImpl(parentStub, getStubElementType());
+    }
+
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyParameterListImpl(node);
+    }
+
+    @Override
+    public void serialize(PyParameterListStub stub, StubOutputStream dataStream)
+        throws IOException {
+    }
+
+    @Override
+    public PyParameterListStub deserialize(StubInputStream dataStream, StubElement parentStub)
+        throws IOException {
+        return new PyParameterListStubImpl(parentStub, getStubElementType());
+    }
+
+    protected IStubElementType getStubElementType() {
+        return PyStubElementTypes.PARAMETER_LIST;
+    }
+
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        if (node.getTreeParent().getElementType() == PyElementTypes.LAMBDA_EXPRESSION) {
+            return false;
+        }
+        return super.shouldCreateStub(node);
+    }
 }

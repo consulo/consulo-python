@@ -17,8 +17,10 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -33,6 +35,8 @@ import java.util.Map;
  * @author Alexey.Ivanov
  * @since 2010-03-12
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyNegateComparisonIntention", categories = "Python", fileExtensions = "py")
 public class PyNegateComparisonIntention extends BaseIntentionAction {
     private static final Map<PyElementType, String> comparisonStrings = new HashMap<PyElementType, String>(7);
     private static final Map<PyElementType, PyElementType> invertedComparasions = new HashMap<PyElementType, PyElementType>(7);
@@ -99,7 +103,7 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
                     parent.replace(newElement);
                 }
                 else {
-                    binaryExpression.replace(elementGenerator.createExpressionFromText("not " + newElement.getText()));
+                    binaryExpression.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(binaryExpression), "not " + newElement.getText()));
                 }
                 return;
             }

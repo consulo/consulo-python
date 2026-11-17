@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.packaging.setupPy;
 
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.util.collection.ContainerUtil;
 import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.packaging.PyPackageUtil;
@@ -91,7 +93,7 @@ public class SetupTaskIntrospector
 	{
 		String name = (setuptools ? "setuptools" : "distutils") + ".command.install.install";
 		Map<String, List<SetupTask>> cache = setuptools ? ourSetuptoolsTaskCache : ourDistutilsTaskCache;
-		PyClass installClass = PyClassNameIndex.findClass(name, module.getProject());
+		PyClass installClass = ContainerUtil.getFirstItem(PyClassNameIndex.findByQualifiedName(name, module.getProject(), GlobalSearchScope.allScope(module.getProject())));
 		if(installClass != null)
 		{
 			PsiDirectory distutilsCommandDir = installClass.getContainingFile().getParent();
@@ -130,7 +132,7 @@ public class SetupTaskIntrospector
 	{
 		SetupTask task = new SetupTask(name);
 		// setuptools wraps the build_ext command class in a way that we cannot understand; use the distutils class which it delegates to
-		PyClass taskClass = (name.equals("build_ext") && setuptools) ? PyClassNameIndex.findClass("distutils.command.build_ext.build_ext", file.getProject()) : file.findTopLevelClass(name);
+		PyClass taskClass = (name.equals("build_ext") && setuptools) ? ContainerUtil.getFirstItem(PyClassNameIndex.findByQualifiedName("distutils.command.build_ext.build_ext", file.getProject(), GlobalSearchScope.allScope(file.getProject()))) : file.findTopLevelClass(name);
 		if(taskClass != null)
 		{
 			PyTargetExpression description = taskClass.findClassAttribute("description", true, null);
@@ -195,7 +197,7 @@ public class SetupTaskIntrospector
 		}
 		else if(value instanceof PyReferenceExpression)
 		{
-			PsiElement resolveResult = ((PyReferenceExpression) value).getReference(PyResolveContext.noImplicits()).resolve();
+			PsiElement resolveResult = ((PyReferenceExpression) value).getReference(PyResolveContext.defaultContext()).resolve();
 			collectSequenceElements(resolveResult, result);
 		}
 		else if(value instanceof PyTargetExpression)

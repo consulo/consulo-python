@@ -16,7 +16,9 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -30,6 +32,8 @@ import java.util.List;
 /**
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ReplaceListComprehensionWithForIntention", categories = "Python", fileExtensions = "py")
 public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAction {
     @Override
     public LocalizeValue getText() {

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyAssignmentStatement;
@@ -70,7 +71,8 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 				}
 				else
 				{
-					navigateOrChoose(editor, PyUtil.getAllSuperClasses(pyClass), LocalizeValue.localizeTODO("Choose superclass"));
+					TypeEvalContext context = TypeEvalContext.codeAnalysis(project, file);
+					navigateOrChoose(editor, pyClass.getAncestorClasses(context), LocalizeValue.localizeTODO("Choose superclass"));
 				}
 			}
 		}

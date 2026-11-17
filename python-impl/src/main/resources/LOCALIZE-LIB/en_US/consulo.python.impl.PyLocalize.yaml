@@ -1365,6 +1365,8 @@ surround.with.whileelse.template:
     text: while / else
 unable.to.stop:
     text: Currently running process can't be stopped. Kill it manually first.
+unresolved.import.reference:
+    text: No module named ''{0}''
 unwrap.elif:
     text: Unwrap elif...
 unwrap.else:
@@ -1383,3 +1385,2314 @@ windowWithActions.closeWindow:
     text: Close window
 windowWithActions.stopProcess:
     text: Stop currently running process
+element.presentation.location.string.in.class:
+    text: '({0} in {1})'
+element.presentation.location.string.in.class.stub:
+    text: '({0} in {1} stub)'
+element.presentation.location.string.module:
+    text: '({0})'
+element.presentation.location.string.module.stub:
+    text: '({0} stub)'
+filetype.python.function.type.annotation.description:
+    text: Python PEP-484 function type comment
+filetype.python.type.representation.description:
+    text: Type representation language
+INSP.type.checker.invalid.self.argument.to.method.with.type:
+    text: 'Invalid self argument `{0}` to method with type `{1}`'
+INSP.type.checker.invalid.self.argument.to.named.method.with.type:
+    text: 'Invalid self argument `{0}` to method `{1}` with type `{2}`'
+INSP.type.checker.expected.type.got.type.instead:
+    text: 'Expected type `{0}`, got `{1}` instead'
+INSP.type.checker.unsupported.operator.between.types:
+    text: '`{0}` is not supported between `{1}` and `{2}`'
+INSP.type.checker.strict.union.unsupported.operator.member:
+    text: 'Member `{0}` of `{1}` does not support `{2}` with `{3}`'
+INSP.type.checker.strict.union.unsupported.operator.member.not.assignable:
+    text: 'Member `{0}` of `{1}` is not assignable to parameter `{2}` of `{3}` with type `{4}`'
+INSP.type.checker.strict.union.unsupported.operator.operand.not.assignable:
+    text: '`{0}` is not assignable to parameter `{1}` of `{2}` with type `{3}`'
+INSP.type.checker.strict.union.unsupported.operator.no.overloads:
+    text: '`{0}` does not define {1} and `{2}` does not define {3}'
+INSP.type.checker.strict.union.unsupported.operator.not.defined:
+    text: '`{0}` does not define {1}'
+INSP.type.checker.strict.union.unsupported.operator.missing.argument:
+    text: '`{0}` also requires parameter {1}'
+INSP.type.checker.overridden.attribute.type.not.invariant:
+    text: 'Type `{1}` of the overridden attribute must be the inherited type `{0}`, because a mutable attribute is invariant'
+INSP.type.checker.overridden.attribute.type.incompatible:
+    text: 'Type `{1}` of the overridden attribute is not compatible with the inherited type `{0}`'
+INSP.type.checker.overridden.named.tuple.field.type.not.invariant:
+    text: 'Type `{1}` of the overridden NamedTuple field must be the inherited type `{0}`, because the subclass keeps the NamedTuple constructor'
+INSP.type.checker.allow.covariant.attribute.overrides:
+    text: 'Allow unsafe subtype overrides of mutable attributes'
+INSP.type.checker.check.inferred.attribute.overrides:
+    text: 'Check overrides of base class attributes without a type annotation'
+INSP.type.checker.unpack.expected.iterable:
+    text: 'Expected an iterable, got `{0}`'
+INSP.type.checker.unpack.expected.mapping:
+    text: 'Expected a mapping, got `{0}`'
+INSP.type.checker.yield.type.mismatch:
+    text: 'Expected yield type `{0}`, got `{1}` instead'
+INSP.type.checker.yield.from.send.type.mismatch:
+    text: 'Expected send type `{0}`, got `{1}` instead'
+INSP.type.checker.yield.from.async.generator:
+    text: 'Cannot yield from `{0}`, use `async for` instead'
+INSP.type.checker.typed.dict.extra.key:
+    text: 'Extra key `{0}` for TypedDict `{1}`'
+INSP.type.checker.typed.dict.missing.keys:
+    text: 'TypedDict `{0}` has missing {1,choice,1#key|2#keys}: {2}'
+INSP.type.checker.init.should.return.none:
+    text: '__init__ should return None'
+INSP.type.checker.type.does.not.have.expected.attribute:
+    text: 'Type `{0}` doesn''''t have expected {1,choice,1#attribute|2#attributes} {2}'
+INSP.type.checker.only.concrete.class.can.be.used.where.matched.protocol.expected:
+    text: 'Only a concrete class can be used where `{0}` (matched generic type `{1}`) protocol is expected'
+INSP.type.checker.only.concrete.class.can.be.used.where.protocol.expected:
+    text: 'Only a concrete class can be used where `{0}` protocol is expected'
+INSP.type.checker.expected.matched.type.got.type.instead:
+    text: 'Expected type `{0}` (matched generic type `{1}`), got `{2}` instead'
+INSP.type.checker.no.overload.matches.arguments:
+    text: 'No overload of `{0}` matches the arguments'
+INSP.type.checker.no.signature.matches.arguments:
+    text: 'No signature matches the arguments'
+INSP.type.checker.type.mismatch.header:
+    text: 'The provided value does not match the expected type:'
+INSP.type.checker.type.mismatch.header.named.expected:
+    text: 'The provided value does not match the expected `{0}`:'
+INSP.type.checker.type.mismatch.header.named.provided:
+    text: '`{0}` does not match the expected type:'
+INSP.type.checker.type.mismatch.header.named.both:
+    text: '`{0}` does not match the expected `{1}`:'
+INSP.type.checker.diff.actual.label:
+    text: 'Provided:'
+INSP.type.checker.diff.expected.label:
+    text: 'Expected:'
+INSP.type.checker.argument.types.label:
+    text: 'Argument types:'
+INSP.type.checker.expected.one.of.label:
+    text: 'Expected one of:'
+INSP.type.checker.unexpected.argument.from.paramspec:
+    text: 'Unexpected argument (from ParamSpec `{0}`)'
+INSP.type.checker.unfilled.parameter.for.paramspec:
+    text: 'Parameter `{0}` unfilled (from ParamSpec `{1}`)'
+INSP.type.checker.unfilled.vararg:
+    text: 'Parameter `{0}` unfilled, expected `{1}`'
+INSP.type.checker.expected.type.from.dunder.set.got.type.instead:
+    text: 'Expected type `{0}` (from `__set__`), got `{1}` instead'
+INSP.type.checker.expected.type.from.aug.assignment.got.type.instead:
+    text: 'Expected type `{0}` for augmented assignment, got `{1}` from operation instead'
+INSP.type.checker.tuple.index.out.of.range:
+    text: 'Tuple index out of range'
+INSP.type.checker.access.to.generic.instance.variables.via.class.is.ambiguous:
+    text: 'Access to generic instance variables via class is ambiguous'
+INSP.type.checker.type.not.assignable:
+    text: '`{0}` is not assignable to `{1}`'
+INSP.type.checker.breakdown.incompatible.with.protocol:
+    text: '`{0}` is incompatible with protocol `{1}`'
+INSP.type.checker.breakdown.member.incompatible:
+    text: 'Attribute `{0}` has an incompatible type'
+INSP.type.checker.breakdown.member.not.writable:
+    text: 'Attribute `{0}` is not writable'
+INSP.type.checker.breakdown.member.classvar.mismatch:
+    text: 'Attribute `{0}` has an inconsistent ClassVar declaration'
+INSP.type.checker.breakdown.member.missing:
+    text: 'Attribute `{0}` is missing'
+INSP.type.checker.breakdown.method.missing:
+    text: 'Method `{0}` is missing'
+INSP.type.checker.breakdown.not.assignable.to.union:
+    text: '`{0}` is not assignable to any member of `{1}`'
+INSP.type.checker.breakdown.union.member.not.assignable:
+    text: 'Not all members of `{0}` are assignable to `{1}`'
+INSP.type.checker.breakdown.union.member.incompatible:
+    text: '`{0}` is not assignable to `{1}`'
+INSP.type.checker.breakdown.not.assignable.to.intersection:
+    text: '`{0}` does not satisfy every member of `{1}`'
+INSP.type.checker.breakdown.intersection.member.not.assignable:
+    text: 'No member of `{0}` is assignable to `{1}`'
+INSP.type.checker.breakdown.intersection.member.incompatible:
+    text: '`{0}` is not assignable to `{1}`'
+INSP.type.checker.breakdown.type.argument:
+    text: 'Type parameter {0} has an incompatible type'
+INSP.type.checker.breakdown.type.argument.named:
+    text: 'Type parameter `{0}` of `{1}` has an incompatible type'
+INSP.type.checker.breakdown.type.argument.invariant:
+    text: 'Type parameter `{0}` of `{1}` is invariant, so `{2}` must be the same type as `{3}`'
+INSP.type.checker.breakdown.return.type.incompatible:
+    text: 'Return type is incompatible'
+INSP.type.checker.breakdown.parameter.type.incompatible:
+    text: 'Parameter type is incompatible'
+INSP.type.checker.breakdown.parameter.type.incompatible.named:
+    text: 'Parameter `{0}` has an incompatible type'
+INSP.type.checker.breakdown.parameter.list.incompatible:
+    text: 'The parameter lists are incompatible'
+INSP.type.checker.breakdown.parameter.default.required:
+    text: 'Parameter `{0}` must have a default value'
+INSP.type.checker.breakdown.parameter.name.mismatch:
+    text: 'Expected a parameter named `{0}`, but found `{1}`'
+INSP.type.checker.breakdown.parameter.missing:
+    text: 'Parameter `{0}` is missing'
+INSP.type.checker.breakdown.parameter.unexpected:
+    text: 'Unexpected required parameter `{0}`'
+INSP.type.checker.breakdown.parameter.kind.incompatible:
+    text: 'Parameter `{0}` has an incompatible kind'
+INSP.type.checker.breakdown.typed.dict.incompatible:
+    text: '`{0}` is incompatible with TypedDict `{1}`'
+INSP.type.checker.breakdown.typed.dict.key.missing:
+    text: 'Key `{0}` is missing'
+INSP.type.checker.breakdown.typed.dict.key.type:
+    text: 'Value of key `{0}` has an incompatible type'
+INSP.type.checker.breakdown.typed.dict.key.readonly:
+    text: 'Key `{0}` is read-only'
+INSP.type.checker.breakdown.typed.dict.key.required:
+    text: 'Key `{0}` has an inconsistent required qualifier'
+INSP.type.checker.prose.member.nominal:
+    text: 'Attribute `{1}` of `{0}` is `{2}`, but `{3}` was expected'
+INSP.type.checker.prose.member.missing:
+    text: '`{0}` has no attribute `{1}`'
+INSP.type.checker.prose.method.missing:
+    text: '`{0}` has no method `{1}`'
+INSP.type.checker.prose.path.nominal:
+    text: 'Type argument `{0}` is `{1}`, but `{2}` was expected'
+INSP.type.checker.prose.type.arg.diff:
+    text: 'expected `{0}`, but got `{1}`'
+INSP.type.checker.prose.return.nominal:
+    text: 'The return type is `{0}`, but `{1}` was expected'
+INSP.type.checker.prose.invariant:
+    text: '`{0}` is invariant in `{1}`, so `{2}` cannot be used where `{3}` is required, even though `{2}` is a subtype of `{3}`'
+INSP.type.checker.prose.invariant.suggest:
+    text: '`{0}` is invariant in `{1}`, so `{2}` cannot be used where `{3}` is required, even though `{2}` is a subtype of `{3}`; use `{4}` if you only read from it'
+INSP.type.checker.prose.plain.type:
+    text: '`{0}`'
+INSP.type.checker.prose.protocol.type:
+    text: 'protocol `{0}`'
+INSP.type.checker.prose.contravariant:
+    text: 'Parameter `{0}` is called with {1}, but only accepts {2}'
+INSP.type.checker.prose.contravariant.indexed:
+    text: 'Parameter {0} is called with {1}, but only accepts {2}'
+INSP.type.checker.prose.contravariant.unnamed:
+    text: 'A parameter is called with {0}, but only accepts {1}'
+INSP.type.checker.prose.union.member.attribute:
+    text: '`{0}` needs `{1}` to be `{2}`, but `{3}` has `{4}`'
+INSP.type.checker.prose.union.member.missing:
+    text: '`{0}` lacks attribute `{1}`, which `{2}` requires'
+INSP.type.checker.prose.union.method.missing:
+    text: '`{0}` lacks method `{1}`, which `{2}` requires'
+INSP.type.checker.prose.typed.dict.missing:
+    text: '`{0}` has no key `{1}`'
+INSP.type.checker.prose.typed.dict.type:
+    text: 'Key `{1}` of `{0}` is `{2}`, but `{3}` was expected'
+INSP.type.checker.prose.typed.dict.type.plain:
+    text: 'Key `{1}` of `{0}` has an incompatible type'
+INSP.type.checker.prose.typed.dict.readonly:
+    text: 'Key `{1}` of `{0}` is read-only, but a writable value is required'
+INSP.type.checker.prose.typed.dict.required:
+    text: 'Key `{1}` of `{0}` has an inconsistent required qualifier'
+INSP.type.checker.prose.arg.param.named:
+    text: 'parameter `{0}` of type `{1}`'
+INSP.type.checker.prose.arg.param.unnamed:
+    text: 'an argument of type `{0}`'
+INSP.type.checker.prose.arg.req.missing:
+    text: '`{0}` needs {1} to have attribute `{2}`'
+INSP.type.checker.prose.arg.req.attribute:
+    text: '`{0}` needs {1} to have `{2}` of type `{3}`'
+INSP.type.checker.prose.arg.req.nominal:
+    text: '`{0}` needs {1}'
+INSP.type.checker.prose.arg.req.union.named:
+    text: '`{0}` needs parameter `{1}` to match `{2}`'
+INSP.type.checker.prose.arg.req.union.unnamed:
+    text: '`{0}` needs an argument matching `{1}`'
+INSP.type.checker.prose.arg.act.union:
+    text: '`{0}` is `{1}`, which matches no member'
+INSP.type.checker.prose.arg.act.missing:
+    text: '`{0}` is `{1}`, which has no `{2}`'
+INSP.type.checker.prose.arg.act.attribute:
+    text: '`{0}` is `{1}`, whose `{2}` is `{3}`'
+INSP.type.checker.prose.arg.act.nominal:
+    text: '`{0}` is `{1}`'
+INSP.type.checker.prose.arg.line.join:
+    text: '{0}, but {1}'
+ANN.assignment.expression.as.a.target:
+    text: 'Assignment expression cannot be used as a target here'
+ANN.assignment.expression.in.an.iterable:
+    text: 'Assignment expression cannot be used in a comprehension iterable'
+ANN.assignment.expressions.within.a.comprehension.cannot.be.used.in.a.class.body:
+    text: 'Assignment expressions within a comprehension cannot be used in a class body'
+ANN.assignment.to.keyword:
+    text: 'Assignment to keyword'
+ANN.async.for.outside.function:
+    text: '''async for'' outside async function'
+ANN.async.with.outside.function:
+    text: '''async with'' outside async function'
+ANN.await.outside.async.function:
+    text: '''await'' outside async function'
+ANN.cannot.assign.to.debug:
+    text: 'Cannot assign to ''__debug__'''
+ANN.cant.assign.to.await.expr:
+    text: 'Cannot assign to await expression'
+ANN.cant.aug.assign.starred.assignment.target.must.be.in.list.or.tuple:
+    text: 'Starred assignment target must be in a list or tuple'
+ANN.can.t.use.starred.expression.here:
+    text: 'Cannot use starred expression here'
+ANN.continue.break.or.return.in.star.except:
+    text: '''break'', ''continue'' and ''return'' cannot appear in an except* block'
+ANN.exception.group.in.star.except:
+    text: 'ExceptionGroup cannot be used in except*'
+ANN.fstrings.illegal.conversion.character:
+    text: 'An illegal conversion character ''''{0}'''': should be one of ''''s'''', ''''r'''', ''''a'''''
+ANN.fstrings.missing.conversion.character:
+    text: 'A conversion character is expected: should be one of ''s'', ''r'', ''a'''
+ANN.fstrings.single.right.brace.not.allowed.inside.fstrings:
+    text: 'A single ''}'' is not allowed inside f-strings'
+ANN.function.cannot.be.async:
+    text: 'Function "{0}" cannot be async'
+ANN.generator.expression.must.be.parenthesized.if.not.sole.argument:
+    text: 'Generator expression must be parenthesized if not sole argument'
+ANN.illegal.target.for.variable.annotation:
+    text: 'An illegal target for a variable annotation'
+ANN.multiple.args:
+    text: 'multiple * parameters are not allowed'
+ANN.multiple.kwargs:
+    text: 'multiple ** parameters are not allowed'
+ANN.multiple.slash:
+    text: 'multiple / parameters are not allowed'
+ANN.named.parameters.after.star:
+    text: 'named parameters must follow bare *'
+ANN.named.parameters.before.slash:
+    text: 'named parameters must precede bare /'
+ANN.name.used.both.as.global.and.param:
+    text: 'Name ''''{0}'''' is used both as a parameter and as a global'
+ANN.no.exception.to.reraise:
+    text: 'No exception to reraise'
+ANN.non.empty.return.inside.asynchronous.generator:
+    text: 'non-empty ''return'' inside asynchronous generator'
+ANN.patterns.attribute.name.is.repeated:
+    text: 'Attribute name ''''{0}'''' is repeated'
+ANN.patterns.double.star.pattern.cannot.be.used.outside.mapping.patterns:
+    text: 'Double star pattern cannot be used outside mapping patterns'
+ANN.patterns.invalid.complex.number.literal:
+    text: 'Invalid complex number literal'
+ANN.patterns.key.pattern.can.only.be.value.or.literal.pattern:
+    text: 'Key pattern can only be a value pattern or a literal pattern'
+ANN.patterns.name.already.bound:
+    text: 'Name ''''{0}'''' is already bound'
+ANN.patterns.pattern.does.not.bind.names:
+    text: 'Pattern does not bind {0,choice,1#name|2#names} {1}'
+ANN.patterns.pattern.makes.remaining.alternatives.unreachable:
+    text: 'Pattern makes remaining alternatives unreachable'
+ANN.patterns.pattern.makes.remaining.case.clauses.unreachable:
+    text: 'Pattern makes remaining case clauses unreachable'
+ANN.patterns.positional.pattern.must.appear.before.keyword.pattern:
+    text: 'Positional pattern must appear before keyword patterns'
+ANN.patterns.repeated.star.pattern:
+    text: 'Repeated star pattern'
+ANN.patterns.single.star.pattern.cannot.be.used.outside.sequence.patterns:
+    text: 'Single star pattern cannot be used outside sequence patterns'
+ANN.positional.only.param.after.keyword:
+    text: 'Positional-only parameter follows parameter that is not positional-only'
+ANN.python.does.not.support.yield.from.inside.async.functions:
+    text: 'Python does not support ''yield from'' inside async functions'
+ANN.return.outside.of.function:
+    text: '''return'' outside of function'
+ANN.slash.param.after.keyword:
+    text: '/ parameter must precede ** parameter'
+ANN.slash.param.after.vararg:
+    text: '/ parameter must precede * parameter'
+ANN.try.except.can.not.have.except.and.star.except:
+    text: 'Try statement cannot contain both except and except*'
+ANN.unparenthesized.assignment.expression.statement:
+    text: 'Unparenthesized assignment expressions are prohibited at the top level of an expression statement'
+ANN.unparenthesized.assignment.expression.value:
+    text: 'Unparenthesized assignment expressions are prohibited at the top level of the right-hand side of an assignment statement'
+ANN.variable.annotation.cannot.be.combined.with.tuple.unpacking:
+    text: 'A variable annotation cannot be combined with tuple unpacking'
+ANN.variable.annotation.cannot.be.used.in.assignment.with.multiple.targets:
+    text: 'A variable annotation cannot be used in assignment with multiple targets'
+ANN.yield.outside.of.function:
+    text: '''yield'' outside of function'
+INSP.compatibility.feature.allow.duplicate.kwargs:
+    text: 'allow duplicate **expressions'
+INSP.compatibility.feature.allow.duplicate.positional.varargs:
+    text: 'allow duplicate *expressions'
+INSP.compatibility.feature.allow.keyword.arguments.after.kwargs:
+    text: 'allow keyword arguments after **expression'
+INSP.compatibility.feature.allow.positional.arguments.after.expression:
+    text: 'allow positional arguments after *expression'
+INSP.compatibility.feature.allow.to.mix.bytes.and.non.bytes.literals:
+    text: 'allow to mix bytes and non-bytes literals'
+INSP.compatibility.feature.allow.trailing.comma.after.kwargs:
+    text: 'allow a trailing comma after **expression'
+INSP.compatibility.feature.allow.trailing.comma.after.positional.vararg:
+    text: 'allow a trailing comma after *expression'
+INSP.compatibility.feature.have.module.builtin:
+    text: 'have module ''__builtin__'''
+INSP.compatibility.feature.have.module.builtins:
+    text: 'have module ''builtins'''
+INSP.compatibility.feature.have.nonlocal.keyword:
+    text: 'have nonlocal keyword'
+INSP.compatibility.feature.support.arbitrary.expressions.as.decorator:
+    text: 'support arbitrary expressions as a decorator'
+INSP.compatibility.feature.support.assignment.expressions:
+    text: 'support assignment expressions'
+INSP.compatibility.feature.support.backquotes:
+    text: 'support backquotes, use repr() instead'
+INSP.compatibility.feature.support.break.inside.finally.clause:
+    text: 'support ''break'' inside ''finally'' clause'
+INSP.compatibility.feature.support.continue.inside.finally.clause:
+    text: 'support ''continue'' inside ''finally'' clause'
+INSP.compatibility.feature.support.diamond.operator:
+    text: 'support <>, use != instead'
+INSP.compatibility.feature.support.ellipsis.outside.slices:
+    text: 'support ''...'' outside of sequence slicings'
+INSP.compatibility.feature.support.lazy.imports:
+    text: 'support lazy imports'
+INSP.compatibility.feature.support.long.integer.literal.suffix:
+    text: 'support a trailing ''''{0}'''''
+INSP.compatibility.feature.support.match.statements:
+    text: 'support match statements'
+INSP.compatibility.feature.support.matrix.multiplication.operators:
+    text: 'support matrix multiplication operators'
+INSP.compatibility.feature.support.old.style.octal.literals:
+    text: 'support this syntax. It requires ''0o'' prefix for octal literals'
+INSP.compatibility.feature.support.parenthesized.context.expressions:
+    text: 'support parenthesized context expressions'
+INSP.compatibility.feature.support.positional.only.parameters:
+    text: 'support positional-only parameters'
+INSP.compatibility.feature.support.print.statement:
+    text: 'support this syntax. The print statement has been replaced with a print() function'
+INSP.compatibility.feature.support.raise.with.no.arguments.outside.except.block:
+    text: 'support this syntax. Raise with no arguments can only be used in an except block'
+INSP.compatibility.feature.support.return.inside.finally.clause:
+    text: 'support ''return'' inside ''finally'' clause'
+INSP.compatibility.feature.support.starred.except.part:
+    text: 'support except* part'
+INSP.compatibility.feature.support.starred.expressions.as.assignment.targets:
+    text: 'support starred expressions as assignment targets'
+INSP.compatibility.feature.support.starred.expressions.in.dicts:
+    text: 'support starred expressions in dicts'
+INSP.compatibility.feature.support.starred.expressions.in.subscriptions:
+    text: 'support starred expressions in subscriptions'
+INSP.compatibility.feature.support.starred.expressions.in.tuples.lists.and.sets:
+    text: 'support starred expressions in tuples, lists, and sets'
+INSP.compatibility.feature.support.starred.expressions.in.type.annotations:
+    text: 'support starred expressions in type annotations'
+INSP.compatibility.feature.support.string.literal.prefix:
+    text: 'support a ''''{0}'''' prefix'
+INSP.compatibility.feature.support.super.without.arguments:
+    text: 'support this syntax. super() should have arguments in Python 2'
+INSP.compatibility.feature.support.this.syntax:
+    text: 'support this syntax'
+INSP.compatibility.feature.support.this.syntax.in.list.comprehensions:
+    text: 'support this syntax in list comprehensions'
+INSP.compatibility.feature.support.type.alias.statements:
+    text: 'support type alias statements'
+INSP.compatibility.feature.support.underscores.in.numeric.literals:
+    text: 'support underscores in numeric literals'
+INSP.compatibility.feature.support.unpacking.in.comprehensions:
+    text: 'support unpacking in comprehensions'
+INSP.compatibility.feature.support.unpacking.without.parentheses.in.return.statements:
+    text: 'support unpacking without parentheses in return statements'
+INSP.compatibility.feature.support.unpacking.without.parentheses.in.yield.statements:
+    text: 'support unpacking without parentheses in yield statements'
+INSP.compatibility.feature.support.variable.annotations:
+    text: 'support variable annotations'
+INSP.compatibility.feature.support.yield.from:
+    text: 'support this syntax. Delegating to a subgenerator is available since Python 3.3; use explicit iteration over subgenerator instead.'
+INSP.compatibility.inspection.unsupported.feature.prefix:
+    text: 'Python {0,choice,1#version|2#versions} {1} {0,choice,1#does|2#do} not {2}'
+INSP.compatibility.keyword.argument.repeated:
+    text: 'Keyword argument repeated'
+INSP.compatibility.new.union.syntax.not.available.in.earlier.version:
+    text: 'allow writing union types as X | Y'
+INSP.compatibility.positional.argument.after.keyword.argument:
+    text: 'Positional argument after keyword argument'
+INSP.compatibility.positional.argument.after.kwargs:
+    text: 'Positional argument after **expression'
+INSP.compatibility.pre35.versions.do.not.allow.return.with.argument.inside.generator:
+    text: 'Python versions < 3.3 do not allow ''return'' with argument inside generator.'
+INSP.compatibility.support.equality.signs.in.fstrings:
+    text: 'support equality signs in f-strings'
+INSP.except.clause.missing.parens:
+    text: 'Parentheses are required when specifying a target for multiple exception classes'
+QFIX.add.from.future.import.annotations:
+    text: 'Add ''from __future__ import annotations'''
+QFIX.convert.into.async.function:
+    text: 'Convert to async function'
+QFIX.replace.with.old.union.style:
+    text: 'Replace with an old-style Union'
+type.param.list.annotator.two.or.more.types.required:
+    text: 'Two or more types required'
+type.param.list.annotator.type.parameter.already.defined:
+    text: 'Type parameter with name ''''{0}'''' is already defined in this type parameter list'
+type.param.list.annotator.type.var.tuple.and.param.spec.can.not.have.bounds:
+    text: '{0} cannot have constraints or upper bounds'
+refactoring.introduce.constant.cannot.extract.selected.expression:
+    text: Selected expression cannot be extracted into a constant
+refactoring.extract.function.title:
+    text: Extract Function
+refactoring.inline.function.title:
+    text: Inline Function
+refactoring.inline.this.only:
+    text: Inline this invocation only and keep the declaration
+refactoring.inline.function:
+    text: Inline the function {0}
+refactoring.inline.method:
+    text: Inline the function {0}
+refactoring.inline.all.keep.declaration:
+    text: Inline all invocations and keep the declaration
+refactoring.inline.all.remove.declaration:
+    text: Inline all invocations and remove the declaration
+refactoring.inline.all.border.title:
+    text: Inline
+refactoring.inline.label.function:
+    text: Function {0}
+refactoring.inline.label.method:
+    text: Function {0}
+refactoring.name.label.text:
+    text: '{0} has {1} occurrence{2, choice, 0#|1#s}'
+refactoring.inline.function.command.name:
+    text: Inlining {0}
+refactoring.inline.function.function.to.inline:
+    text: Function to inline
+refactoring.inline.function.invocations.to.be.inlined:
+    text: Invocations to be inlined in {0} files
+refactoring.inline.function.is.decorator:
+    text: The function {0} is used as a decorator and cannot be inlined. The function definition will not be removed
+refactoring.inline.function.is.reference:
+    text: The function {0} is used as a reference and cannot be inlined. The function definition will not be removed
+refactoring.inline.function.uses.unpacking:
+    text: The function {0} uses argument unpacking and cannot be inlined. The function definition will not be removed
+refactoring.inline.function.generator:
+    text: Cannot inline generators
+refactoring.inline.function.async:
+    text: Cannot inline async functions
+refactoring.inline.function.constructor:
+    text: Cannot inline constructor calls
+refactoring.inline.function.builtin:
+    text: Cannot inline builtin functions
+refactoring.inline.function.special.method:
+    text: Cannot inline special methods
+refactoring.inline.function.skeleton.only:
+    text: Cannot inline a function from the binary module
+refactoring.inline.function.decorator:
+    text: Cannot inline functions with decorators
+refactoring.inline.function.self.referrent:
+    text: Cannot inline functions that reference themselves
+refactoring.inline.function.star:
+    text: Cannot inline functions with * arguments
+refactoring.inline.function.overrides.method:
+    text: Cannot inline methods that override other methods
+refactoring.inline.function.is.overridden:
+    text: Cannot inline overridden methods
+refactoring.inline.function.global:
+    text: Cannot inline functions with global variables
+refactoring.inline.function.nonlocal:
+    text: Cannot inline functions with nonlocal variables
+refactoring.inline.function.nested:
+    text: Cannot inline functions with another function declaration
+refactoring.inline.function.interrupts.flow:
+    text: Cannot inline functions that interrupt control flow
+refactoring.inline.can.not.string.with.backslashes.or.quotes.to.f.string:
+    text: Cannot inline string with backslashes and quotes to f-string
+refactoring.inline.can.not.string.to.nested.f.string:
+    text: Cannot inline string to nested f-string
+refactoring.inline.can.not.multiline.string.to.f.string:
+    text: Cannot inline multiline string to f-string
+refactoring.progress.title.updating.existing.usages:
+    text: Updating existing usages…
+INLAY.type.hints:
+    text: Python type hints
+INLAY.reveal.type:
+    text: '''reveal_type'' argument type'
+INLAY.function.return:
+    text: Function return types
+INLAY.variance:
+    text: Type parameter variance
+INLAY.variance.description:
+    text: 'Shows inferred variance for type parameters: ''out'' (covariant), and ''in'' (contravariant).'
+INLAY.parameter.type.annotations:
+    text: Parameter type annotations
+INLAY.solved.type.parameters.class:
+    text: Generic class type arguments
+INLAY.solved.type.parameters.class.description:
+    text: Shows the type arguments inferred when a generic class is instantiated, e.g. 'A[int]' for 'A(1)'.
+INLAY.solved.type.parameters.function:
+    text: Generic function call type arguments
+INLAY.solved.type.parameters.function.description:
+    text: Shows the type arguments inferred for a call to a generic function, e.g. 'f[int]' for 'f(1)'.
+INLAY.pytest.parametrize.tuple:
+    text: Pytest parametrize names
+INLAY.positional.args.patterns:
+    text: Positional arguments in class patterns
+INLAY.numeric.promotion:
+    text: Numeric type promotions
+INLAY.enum.auto.value:
+    text: Enum auto values
+INLAY.enum.auto.value.description:
+    text: 'Shows the value that <code>enum.auto()</code> generates for each enum member: consecutive integers for a plain Enum, successive powers of two for a Flag, and the lower-cased member name for a StrEnum.'
+INLAY.enum.auto.value.tooltip:
+    text: Value generated by <code>enum.auto()</code>
+ANN.ignore.errors.like.this:
+    text: Ignore errors like this
+QDOC.python.3.sdk.needed.to.render.docstrings:
+    text: A configured local Python 3 SDK is needed to render docstrings.
+QDOC.assigned.to:
+    text: 'Assigned to:'
+QDOC.copied.from:
+    text: 'Copied from:'
+QDOC.accessor.kind:
+    text: 'Accessor kind:'
+QDOC.raises:
+    text: 'Raises:'
+QDOC.keyword.args:
+    text: 'Keyword args:'
+QDOC.returns:
+    text: 'Returns:'
+QDOC.params:
+    text: 'Params:'
+QDOC.attributes:
+    text: 'Attributes:'
+QDOC.class:
+    text: class
+QDOC.parameter.name.of.link:
+    text: Parameter {0} of {1}
+QDOC.property.name.of.link:
+    text: Property {0} of {1}
+QDOC.property.getter:
+    text: property getter
+QDOC.not.defined.in.parentheses:
+    text: (not defined)
+QDOC.instance.attribute:
+    text: Instance attribute {0} of {1}
+QDOC.class.attribute:
+    text: Class attribute {0} of {1}
+QDOC.built.in.description:
+    text: built-in description
+QDOC.package.name:
+    text: Package {0}
+QDOC.module.name:
+    text: Module {0}
+QDOC.inferred.type.name:
+    text: 'Inferred type: {0}'
+QDOC.variable.name:
+    text: Variable "{0}"
+QDOC.file.name:
+    text: File "{0}"
+QDOC.directory.name:
+    text: Directory "{0}"
+QDOC.parameter.of.function.name:
+    text: Parameter "{0}" of function "{1}"
+QDOC.parameter.of.method.name:
+    text: Parameter "{0}" of method "{1}"
+QDOC.parameter.name:
+    text: Parameter "{0}"
+QDOC.type.parameter.name.of.link:
+    text: Type parameter {0} of {1}
+QDOC.type.parameter.name:
+    text: Type parameter {0}
+QDOC.type.parameter.kind:
+    text: 'kind:'
+QDOC.type.alias.statement.name.of.link:
+    text: Type alias statement {0} of {1}
+ignore.overridden.functions:
+    text: Ignore overridden functions
+INTN.category.python:
+    text: Python
+QFIX.NAME.convert.builtin:
+    text: Convert builtin module import
+INTN.NAME.convert.import.unqualify:
+    text: Convert 'import module' to 'from module import'
+INTN.convert.to.from.import:
+    text: Convert to ''from {0} import {1}''
+INTN.NAME.convert.import.qualify:
+    text: Convert 'from module import' to 'import module'
+INTN.convert.to.plain.import:
+    text: Convert to ''import {0}''
+INTN.add.qualifier:
+    text: Add ''{0}'' qualifier
+INTN.remove.qualifier:
+    text: Remove ''{0}'' qualifier
+INTN.multiple.usages.of.import.found:
+    text: Multiple Usages of the Import Found
+INTN.remove.qualifier.from.this.name:
+    text: Remove qualifier from this name
+INTN.remove.qualifier.from.all.usages:
+    text: Remove qualifier from all usages
+INTN.NAME.toggle.import.alias:
+    text: Switch using import aliases
+INTN.add.import.alias:
+    text: Add alias
+INTN.add.import.alias.to.name:
+    text: Add alias to ''{0}''
+INTN.add.import.alias.dialog.message:
+    text: 'Alias for ''''{0}'''':'
+INTN.add.import.alias.title:
+    text: Add Alias
+INTN.remove.import.alias:
+    text: Remove alias ''{0}''
+QFIX.NAME.remove.string.prefix:
+    text: Remove prefix
+QFIX.remove.string.prefix:
+    text: Remove leading {0}
+INTN.NAME.split.if:
+    text: Split 'if' statement
+INTN.NAME.negate.comparison:
+    text: Negate comparison
+INTN.NAME.flip.comparison:
+    text: Flip comparison
+INTN.flip.comparison.to.operator:
+    text: Flip ''{0}'' to ''{1}''
+INTN.NAME.join.if:
+    text: Join 'if' statements
+INTN.NAME.convert.collection.literal:
+    text: Convert collection to {0}
+INTN.convert.collection.literal:
+    text: Convert {0} to {1}
+INTN.NAME.convert.type.comment.to.variable.annotation:
+    text: Convert type comment to variable annotation
+INTN.convert.type.comment.to.variable.annotation:
+    text: Convert to a variable annotation
+INTN.NAME.demorgan.law:
+    text: Swap 'and' with 'or' preserving semantics (De Morgan's law)
+INTN.NAME.insert.docstring.stub:
+    text: Insert docstring stub
+INTN.insert.docstring.stub:
+    text: Insert a documentation string stub
+INTN.NAME.specify.type.in.docstring:
+    text: Specify type for reference in docstring
+INTN.specify.type.in.docstring:
+    text: Specify type for the reference in docstring
+INTN.specify.return.type.in.docstring:
+    text: Specify return type in docstring
+INTN.NAME.hide.type.annotations:
+    text: Hide type annotations
+INTN.hide.type.annotations:
+    text: Hide type annotations
+INTN.NAME.specify.type.in.annotation:
+    text: Specify type for reference using annotation
+INTN.NAME.add.type.hints.for.function:
+    text: Add type hints for function
+INTN.add.type.hints.for.function:
+    text: Add type hints for function ''{0}''
+INTN.NAME.add.type.hint.for.variable:
+    text: Add type hint for variable
+INTN.add.type.hint.for.variable:
+    text: Add type hint for variable ''{0}''
+INTN.add.type.hint.for.variable.PEP484.incompatible.type:
+    text: Type ''{0}'' cannot be expressed inline as a type annotation
+INTN.NAME.copy.string.to.clipboard:
+    text: Copy string literal content to clipboard
+INTN.convert.relative.to.absolute:
+    text: Convert relative import to absolute
+INTN.convert.absolute.to.relative:
+    text: Convert absolute import to relative
+INTN.invert.if.condition:
+    text: Invert 'if' condition
+INTN.NAME.convert.between.f.string.t.string:
+    text: Convert between f-string and t-string
+INTN.convert.f.string.to.t.string:
+    text: Convert f-string to t-string
+INTN.convert.t.string.to.f.string:
+    text: Convert t-string to f-string
+INTN.NAME.add.keyword.argument.names:
+    text: Add keyword argument names
+INTN.add.keyword.argument.names:
+    text: Add names to this and the following arguments
+INTN.NAME.remove.keyword.argument.names:
+    text: Remove keyword argument names
+INTN.remove.keyword.argument.names:
+    text: Remove names from this argument and those for preceding parameters
+QFIX.add.qualifier:
+    text: Add qualifier
+QFIX.NAME.auto.import:
+    text: Import
+QFIX.NAME.local.auto.import:
+    text: Import locally
+QFIX.NAME.add.field.to.class:
+    text: Add field to class
+QFIX.add.field.to.class:
+    text: Add field ''{0}'' to class {1}
+QFIX.add.field.to.class.popup.content.added.init:
+    text: Added '__init__' to class <code>{0}</code><br/>to accommodate new field <code>{1}</code>
+QFIX.NAME.remove.type.parameter:
+    text: Remove type parameter
+QFIX.NAME.rename.parameter:
+    text: Rename parameter
+QFIX.rename.parameter:
+    text: Rename to ''{0}''
+QFIX.NAME.remove.with.target:
+    text: Remove 'with' target
+QFIX.NAME.remove.exception.target:
+    text: Remove exception target
+QFIX.NAME.remove.assignment.target:
+    text: Remove assignment target
+QFIX.NAME.simplify.boolean.expression:
+    text: Simplify boolean expression
+QFIX.simplify.boolean.expression:
+    text: Replace boolean expression with ''{0}''
+QFIX.remove.trailing.suffix:
+    text: Remove trailing suffix
+QFIX.create.class:
+    text: Create class
+QFIX.create.class.0:
+    text: Create class ''{0}''
+QFIX.create.class.in.module:
+    text: Create class ''{0}'' in module {1}
+QFIX.optimize.imports:
+    text: Optimize imports
+QFIX.NAME.unresolved.reference.add.param:
+    text: Create parameter for reference
+QFIX.unresolved.reference.create.function:
+    text: Create function
+QFIX.NAME.unresolved.reference.create.function:
+    text: Create function ''{0}''
+QFIX.NAME.replace.with.true.or.false:
+    text: Replace with True or False
+QFIX.replace.with.true.or.false:
+    text: Replace with {0}
+QFIX.NAME.docstring:
+    text: Fix docstring
+QFIX.docstring.add.parameter:
+    text: Add docstring parameter ''{0}''
+QFIX.docstring.remove.parameter:
+    text: Remove docstring parameter ''{0}''
+QFIX.convert.indents:
+    text: Convert indents
+QFIX.convert.indents.to.tabs:
+    text: Convert indents to tabs
+QFIX.convert.indents.to.spaces:
+    text: Convert indents to spaces
+QFIX.NAME.make.function.return.type:
+    text: Make function return inferred type
+QFIX.make.function.return.type:
+    text: Make ''{0}'' return ''{1}''
+QFIX.add.explicit.return.none:
+    text: Add explicit 'return None'
+QFIX.replace.with.return.none:
+    text: Replace with 'return None'
+QFIX.NAME.add.method.to.class:
+    text: Add method to class
+QFIX.add.method.to.class:
+    text: Add method {0}() to class {1}
+QFIX.NAME.create.function.in.module:
+    text: Create function in module
+QFIX.create.function.in.module:
+    text: Create function {0}() in module {1}
+QFIX.install.and.import.package:
+    text: Install and import package
+QFIX.NAME.install.and.import.package:
+    text: Install and import package ''{0}''
+QFIX.coroutine.is.not.awaited:
+    text: Coroutine is not awaited
+INSP.NAME.pytest.unpassed.fixture:
+    text: Fixture is not requested by test functions
+INSP.use.fixture.without.declaration.in.test.function:
+    text: Fixture ''{0}'' is not requested by test functions or '@pytest.mark.usefixtures' marker
+QFIX.add.fixture.to.test.function.parameters.list:
+    text: Add fixture to test function parameters
+QFIX.replace.star.by.unpack:
+    text: Replace by typing_extensions.Unpack
+filetype.python.docstring.description:
+    text: Python doctest
+filetype.python.docstring.codeblock.description:
+    text: Python code block in a docstring
+filetype.python.type.hint.description:
+    text: Python PEP-484 type hint
+python.docstring.format:
+    text: 'Docstring format:'
+python.docstring.select.type:
+    text: Select Docstring Type
+INSP.GROUP.python.unused.symbols:
+    text: Unused symbols
+INSP.GROUP.python.code.style.issues:
+    text: Code style issues
+INSP.GROUP.python.control.flow.issues:
+    text: Control flow issues
+INSP.GROUP.python.assignment.issues:
+    text: Assignment issues
+INSP.GROUP.python.asynchronous.code:
+    text: Asynchronous code
+INSP.GROUP.python.class.structure:
+    text: Class structure
+INSP.GROUP.python.exceptions:
+    text: Exceptions
+INSP.GROUP.python.type.hinting:
+    text: Type hinting
+INSP.GROUP.python.general:
+    text: General
+INSP.GROUP.python.docstrings:
+    text: Docstrings
+INSP.GROUP.python.inheritance:
+    text: Inheritance
+INSP.GROUP.python.properties:
+    text: Properties
+INSP.GROUP.python.test.frameworks:
+    text: Test frameworks
+INSP.GROUP.python.packaging:
+    text: Packaging
+INSP.GROUP.python.python2:
+    text: Python 2
+INSP.GROUP.python.notebooks:
+    text: Notebooks
+INSP.GROUP.python.dataclasses:
+    text: Data classes
+INSP.abstract.class.set.as.metaclass:
+    text: Set ''{0}'' as metaclass
+INSP.abstract.class.add.to.superclasses:
+    text: Add ''{0}'' as base class
+INSP.named.tuple:
+    text: Invalid definition of a named tuple using 'typing.NamedTuple'
+INSP.named.tuple.default.value.order.local:
+    text: Fields with a default value must come after any fields without a default.
+INSP.named.tuple.default.value.order.superclass:
+    text: Non-default argument(s) follows default argument(s) defined in {0}
+INSP.named.tuple.default.value.order.inherited:
+    text: Inherited non-default argument(s) defined in {0} follows inherited default argument defined in {1}
+INSP.shadows.name.from.outer.scope:
+    text: Shadows name `{0}` from outer scope
+INSP.trailing.semicolon:
+    text: Trailing semicolon in the statement
+INSP.protected.member.ignore.annotations:
+    text: Ignore annotations
+INSP.protected.member.ignore.test.functions:
+    text: Ignore test functions
+INSP.docstring.types.fix.docstring:
+    text: Fix docstring
+INSP.docstring.types.change.type:
+    text: Change {0} type from {1} to {2}
+INSP.method.parameters.metaclass.method.first.argument.name:
+    text: Metaclass method first argument name
+INSP.package.requirements.requirements.have.been.ignored:
+    text: Requirements have been ignored
+INSP.package.requirements.requirement.has.been.ignored:
+    text: '''''{0}'''' has been ignored'
+INSP.package.requirements.add.import:
+    text: Add Import
+INSP.package.requirements.administrator.privileges.required:
+    text: Administrator Privileges Required
+INSP.package.requirements.administrator.privileges.required.description:
+    text: 'Installing packages into ''''{0}'''' requires administrator privileges.
+    
+    
+      Configure a per-project virtual environment as your project interpreter
+    
+      to avoid installing packages to a protected area of the file system.'
+INSP.package.requirements.administrator.privileges.required.button.configure:
+    text: Configure
+INSP.package.requirements.administrator.privileges.required.button.install.anyway:
+    text: Install Anyway
+INSP.package.requirements.requirements.file.empty:
+    text: Requirements file is empty
+QFIX.add.imported.packages.to.requirements:
+    text: Add imported packages to requirements…
+QFIX.add.imported.package.to.declared.packages:
+    text: Add "{0}" package to requirements…
+QFIX.add.source.root.for.unresolved.import.name:
+    text: Mark ''{0}'' as a source root
+QFIX.add.source.root.for.unresolved.import.family.name:
+    text: Add source root
+INSP.pep8.ignore.base.class:
+    text: Ignore Base Class
+INSP.pep8.ignore.method.names.for.descendants.of.class:
+    text: Ignore method names for descendants of class
+INSP.stub.packages.compatibility.ignore:
+    text: Ignore
+INSP.stub.packages.compatibility.install:
+    text: Install
+INSP.stub.packages.compatibility.ignored.packages.label:
+    text: 'Ignored stub packages:'
+INSP.stub.packages.compatibility.incompatible.packages.message:
+    text: Stub ''{0}'' is incompatible with the original package.
+INSP.arguments.not.declared.but.provided.by.decorator:
+    text: 'Following arguments are not declared but provided by decorator: {0}'
+INSP.pep8.coding.style.violation:
+    text: PEP 8 coding style violation
+INSP.settings.pep8.ignore.errors.label:
+    text: 'Ignored errors:'
+INSP.shadowing.names:
+    text: Shadowing names from outer scopes
+INSP.stub.packages.compatibility:
+    text: Incompatible stub packages
+INSP.stub.packages:
+    text: Stub packages advertiser
+INSP.NAME.calling.non.callable:
+    text: Attempt to call a non-callable object
+INSP.class.object.is.not.callable:
+    text: '`{0}` object is not callable'
+INSP.symbol.is.not.callable:
+    text: '`{0}` is not callable'
+INSP.expression.is.not.callable:
+    text: Expression is not callable
+INSP.member.is.not.callable:
+    text: Member `{0}` of `{1}` is not callable
+INSP.members.are.not.callable:
+    text: Members `{0}` of `{1}` are not callable
+INSP.NAME.string.conversion.without.dunder:
+    text: String conversion without dunder method
+INSP.string.conversion.without.dunder.repr:
+    text: Type `{0}` doesn''t define `__repr__`, so the result might not be useful
+INSP.string.conversion.without.dunder.str:
+    text: Type `{0}` doesn''t define `__str__` or `__repr__`, so the result might not be useful
+INSP.string.conversion.without.dunder.format:
+    text: Type `{0}` doesn''t define `__str__`, `__repr__`, or `__format__`, so the result might not be useful
+INSP.string.not.helpful:
+    text: Type `{0}` string value might not be useful
+INSP.string.conversion.ignored.types:
+    text: 'Ignored types:'
+INSP.string.conversion.reported.types:
+    text: 'Reported types:'
+INSP.string.conversion.add.to.ignored.types:
+    text: Add ''{0}'' to ignored types
+INSP.string.conversion.remove.from.reported.types:
+    text: Remove ''{0}'' from reported types
+INSP.unexpected.args:
+    text: Unexpected argument(s)
+INSP.parameter.unfilled:
+    text: Parameter `{0}` unfilled
+INSP.parameters.unfilled:
+    text: Parameter(s) unfilled
+INSP.incorrect.arguments:
+    text: Incorrect argument(s)
+INSP.possible.callees:
+    text: Possible callees
+INSP.function.lacks.positional.argument:
+    text: Function `{0}` lacks a positional argument
+INSP.usually.named:
+    text: Usually first parameter of such methods is named `{0}`
+INSP.NAME.type.alias.redeclaration:
+    text: Redeclared type alias
+INSP.redeclared.type.alias:
+    text: Name `{0}` already defined
+INSP.str.format.key.has.no.argument:
+    text: Key `{0}` has no corresponding argument
+INSP.str.format.unexpected.argument.type:
+    text: Unexpected type {0}
+INSP.str.format.code.not.supported:
+    text: Format code `{0}` not supported for `{1}`
+INSP.str.format.default.object.format:
+    text: Format spec is not supported for `{0}` (`object.__format__` only accepts empty string)
+INSP.str.format.invalid.format.spec:
+    text: Invalid format specifier `{0}`
+QFIX.NAME.add.dunder.method.to.class:
+    text: Add ''{0}'' method
+QFIX.add.dunder.method.to.class:
+    text: Add ''{0}'' method to ''{1}''
+INSP.incompatible.options:
+    text: The format options in chunk "{0}" are incompatible
+INSP.unsupported.format.character:
+    text: Unsupported format character `{0}`
+INSP.manual.to.auto.field.numbering:
+    text: Cannot switch from manual field specification to automatic field numbering
+INSP.auto.to.manual.field.numbering:
+    text: Cannot switch from automatic field numbering to manual field specification
+INSP.str.format.unsupported.format.character.b:
+    text: Unsupported format character 'b'
+INSP.str.format.can.not.use.star.in.formats.when.using.mapping:
+    text: Cannot use '*' in formats when using a mapping
+INSP.overridden.method.return.type.mismatch:
+    text: Return type of method `{0}` does not match return type the base method in class `{1}`
+INSP.unbound.name.undefined:
+    text: Name `{0}` can be undefined
+INSP.list.creation.this.list.creation.could.be.rewritten.as.list.literal:
+    text: Multi-step list initialization can be replaced with a list literal
+INSP.tuple.assignment.balance.only.one.starred.expression.allowed.in.assignment:
+    text: Only one starred expression allowed in assignment
+INSP.tuple.assignment.balance.need.more.values.to.unpack:
+    text: 'Not enough values to unpack from `{2}`: expected {0}, got {1}'
+INSP.tuple.assignment.balance.too.many.values.to.unpack:
+    text: 'Too many values to unpack from `{2}`: expected {0}, got {1}'
+INSP.exception.inheritance.exception.does.not.inherit.from.base.exception.class:
+    text: Exception doesn't inherit from base 'Exception' class
+INSP.default.arguments.default.argument.value.mutable:
+    text: Default argument value is mutable
+INSP.docstring.types.dynamically.inferred.type.does.not.match.specified.type:
+    text: Dynamically inferred type ''{0}'' doesn''t match specified type ''{1}''
+INSP.statement.effect.statement.seems.to.have.no.effect:
+    text: Statement seems to have no effect
+INSP.statement.effect.statement.having.no.effect.can.be.replaced.with.function.call:
+    text: Statement seems to have no effect and can be replaced with a function call to have effect
+INSP.class.is.not.subtype.of.class:
+    text: '`{0}` is not an instance or a subclass of `{1}`'
+INSP.non.ascii.char.non.ascii.character.in.file.but.no.encoding.declared:
+    text: Non-ASCII character `{0}` in the file, but no encoding declared
+INSP.mandatory.encoding.label.encoding.comment.format:
+    text: 'Encoding comment format:'
+INSP.mandatory.encoding.label.select.default.encoding:
+    text: 'Select default encoding:'
+INSP.mandatory.encoding.checkbox.enable.in.python.3:
+    text: Enable in Python 3+
+INSP.mandatory.encoding.no.encoding.specified.for.file:
+    text: No encoding specified for file
+INSP.property.cannot.be.set:
+    text: Property `{0}` cannot be set
+INSP.property.cannot.be.read:
+    text: Property `{0}` cannot be read
+INSP.property.cannot.be.deleted:
+    text: Property `{0}` cannot be deleted
+INSP.NAME.protected.member:
+    text: Accessing a protected member of a class or a module
+INSP.protected.member.access.to.protected.member.of.class:
+    text: Access to a protected member {0} of a class
+INSP.protected.member.access.to.protected.member.of.module:
+    text: Access to a protected member {0} of a module
+INSP.protected.member.name.not.declared.in.all:
+    text: '`{0}` is not declared in ''__all__'''
+INSP.compatibility.this.syntax.available.only.since.py3:
+    text: This syntax available only since Python 3
+INSP.compatibility.check.for.compatibility.with.python.versions:
+    text: 'Check for compatibility with python versions:'
+INSP.compatibility.feature.allow.quote.reuse.in.f.strings:
+    text: allow nesting of string literals with the same quote type inside f-strings
+INSP.compatibility.feature.allow.new.lines.in.f.strings:
+    text: allow new lines in expression parts of non-triple-quoted f-strings
+INSP.compatibility.feature.allow.deep.expression.nesting.in.f.strings:
+    text: allow nesting expressions in format specifiers this deep
+INSP.compatibility.feature.allow.backslashes.in.f.strings:
+    text: allow backslashes inside expression parts of f-strings
+INSP.compatibility.feature.line.comments.in.f.strings:
+    text: allow comments inside expression parts of f-strings
+INSP.compatibility.feature.have.type.long:
+    text: have type long. Use int instead.
+INSP.compatibility.feature.have.method:
+    text: have method {0}
+INSP.compatibility.feature.have.module:
+    text: have module {0}
+INSP.compatibility.feature.allow.async.and.await.as.names:
+    text: allow 'async' and 'await' as names
+INSP.compatibility.old.dict.methods.not.available.in.py3:
+    text: dict.iterkeys(), dict.iteritems(), and dict.itervalues() methods are not available in Python 3
+INSP.compatibility.basestring.type.not.available.in.py3:
+    text: basestring type is not available in Python 3
+INSP.compatibility.except.clause.different.semantics:
+    text: Different semantics of comma-separated elements in Python versions {0}.
+INSP.compatibility.except.clause.missing.parens:
+    text: support missing parentheses in except clauses
+INSP.unnecessary.backslash.unnecessary.backslash.in.expression:
+    text: Unnecessary backslash in the expression
+INSP.decorators.method.only.decorator.on.method.outside.class:
+    text: Decorator {0} on a method outside the class
+INSP.requirements.ignore.packages.label:
+    text: 'Ignored packages:'
+INSP.requirements.package.requirements.not.satisfied:
+    text: Package {1,choice,1#requirement|2#requirements} {0} {1,choice,1#is|2#are} not satisfied
+INSP.requirements.package.containing.module.not.listed.in.project.requirements:
+    text: Package containing module ''{0}'' is not listed in the project requirements
+QFIX.NAME.install.requirements:
+    text: Install {0,choice,1#requirement|2#requirements}
+QFIX.NAME.ignore.requirements:
+    text: Ignore {0,choice,1#requirement|2#requirements}
+INSP.NAME.pytest.parametrized:
+    text: Incorrect arguments in @pytest.mark.parametrize
+INSP.NAME.mock.patch.argument.count:
+    text: Incorrect number of parameters for @patch decorated function
+INSP.mock.patch.too.few.params:
+    text: Function needs {0} more parameter(s) for @patch injected mocks
+INSP.mock.patch.too.many.params:
+    text: Function has {0} extra parameter(s) not matched by @patch decorators
+INSP.NAME.mock.patch.target:
+    text: Invalid patch() target
+INSP.mock.patch.target.is.module:
+    text: Cannot patch module ''{0}''. Target must be an attribute (e.g., ''{0}.ClassName'' or ''{0}.function_name'')
+INSP.mock.patch.target.has.no.dot:
+    text: Cannot patch ''{0}''. Target must be a dotted path to an attribute, such as ''module.{0}''
+INSP.NAME.type.ignore.without.code:
+    text: '''# type: ignore'' comment without a known inspection code'
+INSP.type.ignore.without.code.line:
+    text: The comment names no known inspection code. It suppresses every inspection on the line.
+INSP.type.ignore.without.code.file:
+    text: The comment names no known inspection code. It suppresses every inspection in the file.
+INSP.type.ignore.add.code.fix:
+    text: Specify inspection codes
+INSP.NAME.unknown.ignore.code:
+    text: Unknown inspection code in an 'ignore' comment
+INSP.unknown.ignore.code:
+    text: Unknown inspection code ''{0}''
+INSP.unknown.ignore.code.remove.fix:
+    text: Remove the unknown code
+INSP.NAME.unused.parameter:
+    text: Unused parameter
+INSP.NAME.unused.function:
+    text: Unused function
+INSP.unused.locals.type.alias.isnot.used:
+    text: Local type alias `{0}` is not used
+INSP.unused.locals.type.parameter.isnot.used:
+    text: Type parameter `{0}` is not used
+INSP.unused.locals.ignore.variables.starting.with:
+    text: Ignore variables starting with '_'
+INSP.unused.locals.ignore.range.iteration.variables:
+    text: Ignore range iteration variables
+INSP.unused.locals.ignore.lambda.parameters:
+    text: Ignore lambda parameters
+INSP.unused.locals.ignore.variables.used.in.tuple.unpacking:
+    text: Ignore variables used in tuple unpacking
+INSP.chained.comparisons.ignore.statements.with.constant.in.the.middle:
+    text: Ignore statements with a constant in the middle
+INSP.simplify.chained.comparison:
+    text: Simplify chained comparison
+INSP.assignment.can.be.replaced.with.augmented.assignment:
+    text: Assignment can be replaced with an augmented assignment
+INSP.too.broad.exception.clause:
+    text: Too broad exception clause
+INSP.byte.literal.contains.illegal.characters:
+    text: Byte literal contains characters > 255
+INSP.comparison.with.none.performed.with.equality.operators:
+    text: Comparison with None performed with equality operators
+INSP.dict.creation.this.dictionary.creation.could.be.rewritten.as.dictionary.literal:
+    text: This dictionary creation could be rewritten as a dictionary literal
+INSP.duplicate.keys.dictionary.contains.duplicate.keys:
+    text: Dictionary contains duplicate keys `{0}`
+INSP.NAME.unhashable.elements:
+    text: Unhashable values in dictionary keys and set elements
+INSP.argument.not.hashable:
+    text: Cannot hash ''{0}''
+INSP.dict.key.not.hashable:
+    text: Cannot use unhashable type ''{0}'' as a dict key
+INSP.set.element.not.hashable:
+    text: Cannot use unhashable type ''{0}'' as a set element
+INSP.from.future.import.from.future.imports.must.occur.at.beginning.file:
+    text: from '__future__' imports must occur at the beginning of the file
+INSP.NAME.lazy.import:
+    text: Invalid use of 'lazy' import
+INSP.lazy.import.must.appear.at.module.level:
+    text: lazy imports must appear at module level
+INSP.lazy.import.cannot.be.star.import:
+    text: Lazy imports cannot be 'from ... import *'
+INSP.lazy.import.cannot.import.from.future:
+    text: Lazy imports cannot be 'from __future__ import ...'
+INSP.first.arg.assign.method.parameter.reassigned:
+    text: Method''s parameter `{0}` reassigned
+INSP.abstract.class.class.must.implement.all.abstract.methods:
+    text: Class {0} must implement all abstract methods
+INSP.abstract.class.cannot.instantiate.abstract.class:
+    text: Cannot instantiate abstract class `{0}`
+INSP.abstract.class.abstract.methods.are.allowed.in.classes.whose.metaclass.is.abcmeta:
+    text: Abstract methods are allowed in classes whose metaclass is 'ABCMeta'
+INSP.NAME.assignment.to.loop.or.with.parameter:
+    text: Assignments to 'for' loop or 'with' statement parameter
+INSP.assignment.to.loop.or.with.parameter:
+    text: Variable `{0}` is already declared in `for` loop or `with` statement above
+INSP.NAME.coroutine.is.not.awaited:
+    text: Coroutine `{0}` is not awaited
+QFIX.add.await:
+    text: Add 'await'
+INSP.async.call:
+    text: Missing 'await' in coroutine calls
+INSP.await.call.on.imported.untyped.function:
+    text: Function ''{0}'' neither declared as ''async'' nor with ''Awaitable'' as return type
+INSP.NAME.suspicious.boolean.condition:
+    text: Using coroutine objects in boolean context
+INSP.suspicious.boolean.condition.coroutine:
+    text: Coroutine not awaited in boolean context
+INSP.attribute.outside.init:
+    text: Instance attribute `{0}` defined outside '__init__'
+INSP.unresolved.refs.module.not.found:
+    text: Module `{0}` not found
+INSP.unresolved.refs.unresolved.reference:
+    text: Unresolved reference `{0}`
+INSP.unresolved.refs.unresolved.attribute.for.class:
+    text: Unresolved attribute reference `{0}` for class `{1}`
+INSP.unresolved.refs.cannot.find.reference.in.type:
+    text: Cannot find reference `{0}` in `{1}`
+INSP.unresolved.refs.class.object.has.no.attribute:
+    text: '`{0}` object has no attribute `{1}`'
+INSP.unresolved.refs.import.resolves.to.its.containing.file:
+    text: Import resolves to its containing file
+INSP.unresolved.refs.class.does.not.define.operator:
+    text: Class `{0}` does not define `{1}`, so the `{2}` operator cannot be used on its instances
+INSP.unresolved.refs.ignore.references.label:
+    text: 'Ignored references:'
+INSP.unresolved.refs.strict.class.attr.option:
+    text: Strict checking of class attributes
+INSP.unresolved.refs.strict.instance.attr.option:
+    text: Strict checking of instance attributes
+INSP.unresolved.refs.unresolved.attribute.in.union.type:
+    text: Member `{0}` of `{1}` does not have attribute `{2}`
+unresolved.docstring.param.reference:
+    text: Function `{0}` does not have a parameter `{1}`
+INSP.NAME.unused.imports:
+    text: Unused imports
+INSP.unused.imports.try.except.import.error:
+    text: '`{0}` in the try block with `except ImportError` should also be defined in the except block'
+INSP.unused.imports.unused.import.statement:
+    text: Unused import statement <code>#ref</code>
+INSP.redundant.parens.ignore.empty.lists.of.base.classes:
+    text: Ignore empty lists of base classes
+INSP.redundant.parens.ignore.tuples:
+    text: Ignore tuples
+INSP.redundant.parens.ignore.argument.of.operator:
+    text: Ignore argument of % operator
+INSP.simplify.boolean.check.ignore.comparison.to.zero:
+    text: Ignore comparison to zero
+INSP.bad.except.exception.class.already.caught:
+    text: Exception class `{0}` has already been caught
+INSP.bad.except.superclass.of.exception.class.already.caught:
+    text: '`{0}`, superclass of the exception class `{1}`, has already been caught'
+QFIX.except.clause.missing.parens:
+    text: Wrap exception tuple in parentheses
+INSP.global.variable.undefined:
+    text: Global variable `{0}` is undefined at the module level
+INSP.NAME.dataclass.definition.and.usages:
+    text: Invalid data class definition and usages
+INSP.NAME.stdlib.dataclass.definition.and.usages:
+    text: Invalid stdlib dataclass definition and usages
+INSP.NAME.attrs.dataclass.definition.and.usages:
+    text: Invalid attrs dataclass definition and usages
+INSP.NAME.dataclass.transform.definition.and.usages:
+    text: Invalid dataclass_transform definition and usages
+INSP.dataclasses.operator.not.supported.between.instances.of.class:
+    text: '`{0}` not supported between instances of `{1}`'
+INSP.dataclasses.operator.not.supported.between.instances.of.classes:
+    text: '`{0}` not supported between instances of `{1}` and `{2}`'
+INSP.dataclasses.object.could.have.no.attribute.because.it.declared.as.init.only:
+    text: '`{0}` object could have no attribute `{1}` because it is declared as init-only'
+INSP.dataclasses.object.attribute.read.only:
+    text: '`{0}` object attribute `{1}` is read-only'
+INSP.dataclasses.eq.must.be.true.if.order.true:
+    text: '''eq'' must be true if ''order'' is true'
+INSP.dataclasses.argument.ignored.if.class.already.defines.method:
+    text: '`{0}` is ignored if the class already defines `{1}` method'
+INSP.dataclasses.order.argument.should.be.false.if.class.defines.one.of.order.methods:
+    text: '''order'' should be False if the class defines one of order methods'
+INSP.dataclasses.frozen.attribute.should.be.false.if.class.defines.setattr.or.delattr:
+    text: '''frozen'' should be False if the class defines ''__setattr__'' or ''__delattr__'''
+INSP.dataclasses.unsafe.hash.attribute.should.be.false.if.class.defines.hash:
+    text: '''unsafe_hash'' should be False if the class defines ''__hash__'''
+INSP.dataclasses.frozen.dataclasses.can.not.inherit.non.frozen.one:
+    text: Frozen dataclasses cannot inherit non-frozen one and vice versa
+INSP.dataclasses.method.is.ignored.if.class.already.defines.parameter:
+    text: '`{0}` is ignored if the class already defines `{1}` parameter'
+INSP.dataclasses.hash.ignored.if.class.already.defines.cmp.or.order.or.frozen.parameters:
+    text: '''__hash__'' is ignored if the class already defines ''cmp/order'' and ''frozen'' parameters'
+INSP.dataclasses.mutable.attribute.default.not.allowed.use.default.factory:
+    text: Mutable default `{0}` is not allowed. Use `default_factory`
+INSP.dataclasses.attribute.default.set.using.method:
+    text: A default is set using `{0}`
+INSP.dataclasses.method.should.take.only.n.parameter:
+    text: '`{0}` should take only {1} {1,choice,1#parameter|2#parameters}'
+INSP.dataclasses.attribute.lacks.type.annotation:
+    text: Attribute `{0}` lacks a type annotation
+INSP.dataclasses.cannot.specify.both.default.and.factory:
+    text: Cannot specify both 'default' and 'factory'
+INSP.dataclasses.attribute.useless.until.post.init.declared:
+    text: Attribute `{0}` is useless until `__post_init__` is declared
+INSP.dataclasses.field.cannot.have.default.factory:
+    text: Field cannot have a default factory
+INSP.dataclasses.cannot.specify.both.default.and.default.factory:
+    text: Cannot specify both 'default' and 'default_factory'
+INSP.dataclasses.post.init.would.not.be.called.until.init.parameter.set.to.true:
+    text: '''__post_init__'' would not be called until ''init'' parameter is set to True'
+INSP.dataclasses.post.init.should.take.all.init.only.variables.including.inherited.in.same.order.they.defined:
+    text: '''__post_init__'' should take all init-only variables (incl. inherited) in the same order as they are defined'
+INSP.dataclasses.post.init.should.take.all.init.only.variables.in.same.order.they.defined:
+    text: '''__post_init__'' should take all init-only variables in the same order as they are defined'
+INSP.dataclasses.attrs.post.init.would.not.be.called.until.init.parameter.set.to.true:
+    text: '''__attrs_post_init__'' would not be called until ''init'' parameter is set to True'
+INSP.dataclasses.attrs.post.init.should.not.take.any.parameters.except.self:
+    text: '''__attrs_post_init__'' should not take any parameters except ''self'''
+INSP.dataclasses.method.should.be.called.on.dataclass.instances.or.types:
+    text: '`{0}` method should be called on dataclass instances or types'
+INSP.dataclasses.method.should.be.called.on.dataclass.instances:
+    text: '`{0}` method should be called on dataclass instances'
+INSP.dataclasses.method.should.be.called.on.attrs.instances:
+    text: '`{0}` method should be called on attrs instances'
+INSP.dataclasses.method.should.be.called.on.attrs.types:
+    text: '`{0}` method should be called on attrs types'
+INSP.NAME.deprecated.function.class.or.module:
+    text: Deprecated function, class, or module
+INSP.deprecation.abc.decorator.deprecated.use.alternative:
+    text: '''''{0}'''' is deprecated since Python 3.3. Use ''''{1}'''' with ''''{2}'''' instead'
+INSP.NAME.dunder.slots:
+    text: Invalid usages of classes with '__slots__' definitions
+INSP.dunder.slots.name.in.slots.conflicts.with.class.variable:
+    text: '`{0}` in ''__slots__'' conflicts with a class variable'
+INSP.dunder.slots.class.object.missing.attribute:
+    text: '`{0}` object has no attribute `{1}`'
+INSP.dunder.slots.enabled.twice:
+    text: A data class that explicitly defines '__slots__' must not be configured with 'slots=True'
+QFIX.dunder.slots.enabled.twice:
+    text: Remove slots=True
+INSP.NAME.disjoint.base.class.inheritance:
+    text: Inheritance from classes with disjoint bases
+INSP.disjoint.base.class.cannot.inherit.from.disjoint.bases:
+    text: '`{0}` and `{1}` have incompatible disjoint base classes'
+INSP.disjoint.base.on.function:
+    text: '''disjoint_base'' cannot be used on a function'
+INSP.disjoint.base.on.protocol:
+    text: '''disjoint_base'' cannot be used on a protocol'
+INSP.disjoint.base.on.typed.dict:
+    text: '''disjoint_base'' cannot be used on a TypedDict'
+INSP.NAME.final.classes.methods.and.variables:
+    text: Invalid usages of final classes, methods, and variables
+INSP.final.super.classes.are.marked.as.final.and.should.not.be.subclassed:
+    text: '{0} {1,choice,1#is|2#are} marked as ''''@final'''' and should not be subclassed'
+INSP.final.method.marked.as.final.should.not.be.overridden:
+    text: '`{0}` is marked as `@final` and should not be overridden'
+INSP.final.final.could.not.be.mixed.with.abstract.decorators:
+    text: '''Final'' cannot be mixed with abstract decorators'
+INSP.final.final.class.could.not.contain.abstract.methods:
+    text: '''Final'' class cannot contain abstract methods'
+INSP.final.no.need.to.mark.method.in.final.class.as.final:
+    text: No need to mark a method in the 'Final' class as '@final'
+INSP.final.non.method.function.could.not.be.marked.as.final:
+    text: Non-method function cannot be marked as '@final'
+INSP.final.final.could.not.be.used.in.annotations.for.function.parameters:
+    text: '''Final'' cannot be used in function parameter annotations'
+INSP.final.final.could.not.be.used.in.annotation.for.function.return.value:
+    text: '''Final'' cannot be used in a function return type annotation'
+INSP.final.if.assigned.value.omitted.there.should.be.explicit.type.argument.to.final:
+    text: If the assigned value is omitted, an explicit type argument for 'Final' is required
+INSP.final.final.name.should.be.initialized.with.value:
+    text: '''Final'' name should be initialized with a value'
+INSP.final.already.declared.name.could.not.be.redefined.as.final:
+    text: Already declared name cannot be redefined as 'Final'
+INSP.final.either.instance.attribute.or.class.attribute.could.be.type.hinted.as.final:
+    text: Either instance attribute or class attribute can be type-hinted as 'Final'
+INSP.final.final.attribute.could.not.be.overridden:
+    text: '`{0}` is `Final` and cannot be overridden'
+INSP.final.can.not.override.non.final.attribute.with.final:
+    text: Cannot override non-final attribute ''{0}'' (previously declared in base class ''{1}'') with a final attribute
+INSP.final.final.attribute.should.be.declared.in.class.body.or.init:
+    text: '''Final'' attribute should be declared in the class body or ''__init__'''
+INSP.final.final.target.could.not.be.reassigned:
+    text: '`{0}` is `Final` and cannot be reassigned'
+INSP.final.final.could.only.be.used.as.outermost.type:
+    text: '''Final'' can only be used as the outermost type'
+INSP.final.final.could.not.be.used.inside.loop:
+    text: '''Final'' cannot be used inside a loop'
+INSP.final.can.only.be.parameterized.with.one.type:
+    text: '''Final'' can only be parameterized with one type'
+INSP.NAME.inconsistent.indentation:
+    text: Inconsistent indentation
+INSP.inconsistent.indentation.mix.tabs.spaces:
+    text: 'Inconsistent indentation: mix of tabs and spaces'
+INSP.inconsistent.indentation.previous.line.used.tabs.this.line.uses.spaces:
+    text: 'Inconsistent indentation: previous line used tabs, this line uses spaces'
+INSP.inconsistent.indentation.previous.line.used.spaces.this.line.uses.tabs:
+    text: 'Inconsistent indentation: previous line used spaces, this line uses tabs'
+INSP.NAME.inconsistent.returns:
+    text: Inconsistent return statements
+INSP.inconsistent.returns.missing.return.stmt.on.some.paths:
+    text: Missing return statement on some paths
+INSP.inconsistent.returns.return.without.value:
+    text: '''return'' without value is inconsistent with other paths'
+INSP.NAME.missing.type.hints:
+    text: Missing type hinting for function definition
+INSP.missing.type.hints.type.hinting.missing.for.function.definition:
+    text: Type hinting is missing for a function definition
+INSP.missing.type.hints.add.type.hints:
+    text: Add type hints
+INSP.missing.type.hints.add.type.hints.for:
+    text: Add type hints for ''{0}''
+INSP.missing.type.hints.checkbox.only.when.types.are.known:
+    text: Only when types are known (collected from run-time or inferred)
+INSP.NAME.overloads.in.regular.python.files:
+    text: Invalid declaration of overloads
+INSP.overloads.series.overloads.should.always.be.followed.by.implementation:
+    text: A series of @overload-decorated {0,choice,0#functions|1#methods} should always be followed by an implementation that is not @overload-ed
+INSP.overloads.this.overload.signature.not.compatible.with.implementation:
+    text: Signature of this @overload-decorated {0,choice,0#function|1#method} is not compatible with the implementation
+INSP.overloads.at.least.two.overloads.must.be.present:
+    text: At least two @overload-decorated {0,choice,0#functions|1#methods} must be present
+INSP.overloads.use.staticmethod.inconsistently:
+    text: Overloads use @staticmethod inconsistently
+INSP.overloads.use.classmethod.inconsistently:
+    text: Overloads use @classmethod inconsistently
+INSP.overloads.override.should.be.placed.on.the.implementation:
+    text: '''@override'' should be placed on the implementation'
+INSP.overloads.final.should.be.placed.on.the.implementation:
+    text: '''@final'' should be placed on the implementation'
+INSP.overloads.override.should.be.placed.only.on.the.first.overload:
+    text: '''@override'' should be placed only on the first overload'
+INSP.overloads.final.should.be.placed.only.on.the.first.overload:
+    text: '''@final'' should be placed only on the first overload'
+INSP.overloads.overload.overlapped.by.a.broader.type:
+    text: This overload will never be matched as parameter types(s) of overload {0} are the same or broader
+INSP.overloads.overload.overlaps.with.incompatible.return.type:
+    text: This overload overlaps overload {0} with incompatible return type
+INSP.overloads.overload.conflicting.signature:
+    text: 'Conflicting signature: ''''{0}'''''
+INSP.NAME.invalid.usages.of.override.decorator:
+    text: Invalid usage of @override
+INSP.override.missing.super.method:
+    text: Missing super method for override
+INSP.NAME.pep8.naming:
+    text: PEP 8 naming convention violation
+INSP.pep8.naming.column.name.excluded.base.classes:
+    text: 'Excluded base classes:'
+INSP.pep8.naming.column.name.ignored.errors:
+    text: 'Ignored errors:'
+QFIX.NAME.ignore.errors.like.this:
+    text: Ignore errors like this
+INSP.pep8.naming.class.names.should.use.capwords.convention:
+    text: Class names should use CapWords convention
+INSP.pep8.naming.function.name.should.be.lowercase:
+    text: Function name should be lowercase
+INSP.pep8.naming.argument.name.should.be.lowercase:
+    text: Argument name should be lowercase
+INSP.pep8.naming.variable.in.function.should.be.lowercase:
+    text: Variable in function should be lowercase
+INSP.pep8.naming.constant.variable.imported.as.non.constant:
+    text: Constant variable imported as non-constant
+INSP.pep8.naming.lowercase.variable.imported.as.non.lowercase:
+    text: Lowercase variable imported as non-lowercase
+INSP.pep8.naming.camelcase.variable.imported.as.lowercase:
+    text: CamelCase variable imported as lowercase
+INSP.pep8.naming.camelcase.variable.imported.as.constant:
+    text: CamelCase variable imported as constant
+INSP.NAME.protocol.definition.and.usages:
+    text: Invalid protocol definitions and usages
+INSP.protocol.all.bases.protocol.must.be.protocols:
+    text: All bases of a protocol must be protocols
+INSP.protocol.only.runtime.checkable.protocols.can.be.used.with.instance.class.checks:
+    text: Only @runtime_checkable protocols can be used with instance and class checks
+INSP.protocol.only.non.data.protocols.can.be.used.with.issubclass:
+    text: Only non-data protocols can be used with class checks
+INSP.protocol.runtime.checkable.unsafe.overlap:
+    text: Unsafe overlap between the type and protocol
+INSP.protocol.newtype.cannot.be.used.with.protocol.classes:
+    text: NewType cannot be used with protocol classes
+INSP.protocol.element.type.incompatible.with.protocol:
+    text: Type of `{0}` is incompatible with `{1}`
+INSP.protocol.cannot.instantiate.protocol.class:
+    text: Cannot instantiate protocol class `{0}`
+INSP.protocol.element.type.not.writable:
+    text: '`{0}` is writable in protocol `{1}`'
+INSP.protocol.element.type.not.classvar:
+    text: Cannot override class variable from protocol ''{0}'' with instance variable
+INSP.protocol.element.type.not.instancevar:
+    text: Cannot override instance variable from protocol ''{0}'' with class variable
+INSP.NAME.shadowing.builtins:
+    text: Shadowing built-in names
+INSP.shadowing.builtins.shadows.built.in.name:
+    text: Shadows built-in name `{0}`
+INSP.shadowing.builtins.ignore.built.ins.label:
+    text: 'Ignored built-ins:'
+QFIX.NAME.ignore.shadowed.built.in.name:
+    text: Ignore shadowed built-in name
+QFIX.ignore.shadowed.built.in.name:
+    text: Ignore shadowed built-in name "{0}"
+INSP.NAME.type.checker:
+    text: Incorrect type
+INSP.NAME.typed.dict:
+    text: Invalid TypedDict definition and usages
+INSP.typeddict.typeddict.key.must.be.string.literal.expected.one:
+    text: TypedDict key must be a string literal; expected one of ({0})
+INSP.typeddict.typeddict.has.no.key:
+    text: TypedDict "{0}" has no key `{1}`
+INSP.typeddict.typeddict.has.no.keys:
+    text: TypedDict "{0}" has no keys ({1})
+INSP.typeddict.typeddict.field.is.readonly:
+    text: TypedDict key "{0}" is ReadOnly
+INSP.typeddict.first.argument.has.to.match.variable.name:
+    text: First argument has to match the variable name
+INSP.typeddict.typeddict.cannot.inherit.from.non.typeddict.base.class:
+    text: TypedDict cannot inherit from a non-TypedDict base class
+INSP.typeddict.specifying.metaclass.not.allowed.in.typeddict:
+    text: Specifying a metaclass is not allowed in TypedDict
+INSP.typeddict.invalid.statement.in.typeddict.definition.expected.field.name.field.type:
+    text: 'Invalid statement in TypedDict definition; expected ''field_name: field_type'''
+INSP.typeddict.right.hand.side.values.are.not.supported.in.typeddict:
+    text: Right-hand side values are not supported in TypedDict
+INSP.typeddict.key.cannot.be.deleted:
+    text: Key `{0}` of TypedDict `{1}` cannot be deleted
+INSP.typeddict.this.operation.might.break.typeddict.consistency:
+    text: This operation might break TypedDict consistency
+INSP.typeddict.key.should.be.string:
+    text: Key should be string
+INSP.typeddict.value.must.be.type:
+    text: Value must be a type
+INSP.typeddict.parameter.must.be.boolean:
+    text: Value of `{0}` must be True or False
+INSP.typeddict.typeddict.cannot.have.key:
+    text: TypedDict "{0}" cannot have key `{1}`
+INSP.typeddict.cannot.add.non.string.key.to.typeddict:
+    text: Cannot add a non-string key to TypedDict "{0}"
+INSP.typeddict.qualifiers.cannot.be.used.outside.typeddict.definition:
+    text: '`{0}` can be used only in a TypedDict definition'
+INSP.typeddict.required.and.not.required.cannot.be.nested:
+    text: Required[] and NotRequired[] cannot be nested
+INSP.typeddict.read.only.cannot.be.nested:
+    text: ReadOnly[] cannot be nested
+INSP.typeddict.required.notrequired.must.have.exactly.one.type.argument:
+    text: '`{0}` must have exactly one type argument'
+INSP.typeddict.unexpected.argument.for.__init_subclass__.of.TypedDict:
+    text: Unexpected argument `{0}` for '__init_subclass__' of TypedDict
+INSP.typeddict.expected.a.dictionary.literal:
+    text: Expected dictionary literal
+INSP.typeddict.field.cannot.override.mutable.required.as.readonly:
+    text: Cannot override mutable required field `{0}` as read-only
+INSP.typeddict.field.cannot.override.mutable.required.as.notrequired:
+    text: Cannot override mutable required field `{0}` as not-required
+INSP.typeddict.field.cannot.override.readonly.required.as.notrequired:
+    text: Cannot override read-only required field `{0}` as not-required
+INSP.typeddict.field.type.mismatch:
+    text: Type `{0}` is incompatible with expected type `{1}`
+INSP.typeddict.base.classes.define.field.incompatibly:
+    text: Base classes define field ''{0}'' incompatibly
+INSP.typeddict.item.cannot.redefine.as.not.required:
+    text: Field "{0}" cannot be redefined as NotRequired
+INSP.typeddict.closed.cannot.reopen.closed.superclass:
+    text: Cannot set 'closed=False' when superclass is 'closed=True'
+INSP.typeddict.cannot.set.closed.false.with.extra.items:
+    text: Cannot set 'closed=False' when superclass has 'extra_items'
+INSP.typeddict.closed.requires.readonly.extra.items:
+    text: Cannot set 'closed=True' when superclass has non-readonly 'extra_items'
+INSP.typeddict.incompatible.extra.items.override:
+    text: Cannot change 'extra_items' type unless it is 'ReadOnly' in the superclass
+INSP.typeddict.closed.and.extra.items.mutually.exclusive:
+    text: Cannot use both 'closed' and 'extra_items' in the same TypedDict definition
+INSP.typeddict.extra.items.cannot.be.required:
+    text: '''extra_items'' value cannot be ''Required[...]'''
+INSP.typeddict.extra.items.cannot.be.not.required:
+    text: '''extra_items'' value cannot be ''NotRequired[...]'''
+INSP.typeddict.closed.extra.key.not.allowed:
+    text: '"{0}" is a closed TypedDict; extra key "{1}" not allowed'
+INSP.typeddict.required.key.unknown.to.superclass:
+    text: Required key `{0}` is not known to `{1}`
+INSP.typeddict.type.not.assignable.to.extra.items:
+    text: '''''{0}'''' is not assignable to extra items type ''''{1}'''''
+INSP.typeddict.implicit.readonly.extra.items.incompatible:
+    text: Implicit ReadOnly[object] on ''{0}'' is not assignable to ''{1}''
+INSP.typeddict.field.not.required.in.target.but.required.in.source:
+    text: '''''{0}'''' is not required in ''''{1}'''', but it is required in ''''{2}'''''
+INSP.typeddict.parameter.overlaps.with.typed.dict:
+    text: Named parameter `{0}` conflicts with a field of the TypedDict `{1}`
+INSP.NAME.type.hints:
+    text: Invalid type hints definitions and usages
+INSP.type.hints.builtin.cannot.be.parameterized.directly:
+    text: Builtin `{0}` cannot be parameterized directly
+INSP.type.hints.typing.self.cannot.be.parameterized:
+    text: '''Self'' cannot be parameterized'
+INSP.type.hints.invalid.type.self:
+    text: Invalid type 'self'
+INSP.type.hints.literal.must.have.at.least.one.parameter:
+    text: '''Literal'' must have at least one parameter'
+INSP.type.hints.annotated.must.be.called.with.at.least.two.arguments:
+    text: '''Annotated'' must be called with at least two arguments'
+INSP.type.hints.type.specified.both.in.type.comment.and.annotation:
+    text: Types specified both in a type comment and annotation
+INSP.type.hints.typevar.expression.must.be.always.directly.assigned.to.variable:
+    text: A 'TypeVar()' expression must always directly be assigned to a variable
+INSP.type.hints.type.variables.must.not.be.redefined:
+    text: Type variables must not be redefined
+INSP.type.hints.typevar.expects.string.literal.as.first.argument:
+    text: '''TypeVar()'' expects a string literal as first argument'
+INSP.type.hints.typevar.tuple.expects.string.literal.as.first.argument:
+    text: '''TypeVarTuple()'' expects a string literal as first argument'
+INSP.type.hints.paramspec.expects.string.literal.as.first.argument:
+    text: '''ParamSpec()'' expects a string literal as first argument'
+INSP.type.hints.argument.to.typevar.must.be.string.equal.to.variable.name:
+    text: The argument to 'TypeVar()' must be a string equal to the variable name to which it is assigned
+INSP.type.hints.argument.to.typevar.tuple.must.be.string.equal.to.variable.name:
+    text: The argument to 'TypeVarTuple()' must be a string equal to the variable name to which it is assigned
+INSP.type.hints.argument.to.paramspec.must.be.string.equal.to.variable.name:
+    text: The argument to 'ParamSpec()' must be a string equal to the variable name to which it is assigned
+INSP.type.hints.type.alias.type.expects.string.literal.as.first.argument:
+    text: First argument to TypeAliasType must be a string literal
+INSP.type.hints.argument.to.type.alias.type.must.be.string.equal.to.variable.name:
+    text: Name of type alias must match the name of the variable to which it is assigned
+INSP.type.hints.type.alias.type.params.must.be.tuple.of.type.parameters:
+    text: Type parameter list must be a tuple of type parameters
+INSP.type.hints.concatenate.can.only.be.used.inside.callable:
+    text: '''Concatenate'' can only be used as the first argument to ''Callable'' in this context'
+INSP.type.hints.bivariant.type.variables.are.not.supported:
+    text: Bivariant type variables are not supported
+INSP.type.hints.typevar.constraints.cannot.be.combined.with.bound:
+    text: Constraints cannot be combined with bound=…
+INSP.type.hints.single.typevar.constraint.not.allowed:
+    text: A single constraint is not allowed
+INSP.type.hints.typevar.constraints.cannot.be.parametrized.by.type.variables:
+    text: Constraints cannot be parametrized by type variables
+INSP.type.hints.type.variables.cannot.be.used.with.instance.class.checks:
+    text: Type variables cannot be used with instance and class checks
+INSP.type.hints.type.cannot.be.used.with.instance.class.checks:
+    text: '`{0}` cannot be used with instance and class checks'
+INSP.type.hints.parameterized.generics.cannot.be.used.with.instance.class.checks:
+    text: Parameterized generics cannot be used with instance and class checks
+INSP.type.hints.typed.dict.type.cannot.be.used.in.isinstance.tests:
+    text: TypedDict type cannot be used with instance and class checks
+INSP.type.hints.new.type.type.cannot.be.used.in.isinstance.tests:
+    text: NewType type cannot be used with instance and class checks
+INSP.type.hints.typed.dict.is.not.allowed.as.a.bound.for.a.type.var:
+    text: TypedDict is not allowed as a bound for a TypeVar
+INSP.type.hints.generics.should.be.specified.through.square.brackets:
+    text: Generics should be specified through square brackets
+INSP.type.hints.cannot.inherit.from.plain.generic:
+    text: Cannot inherit from plain 'Generic'
+INSP.type.hints.cannot.inherit.from.generic.multiple.times:
+    text: Cannot inherit from 'Generic[...]' multiple times
+INSP.type.hints.generic.cannot.be.used.as.a.type.expression:
+    text: '''Generic'' cannot be used as a type expression'
+INSP.type.hints.generic.or.protocol.should.list.all.type.variables:
+    text: '''''Generic[...]'''' or ''''Protocol[...]'''' should list all type variables ({0})'
+INSP.type.hints.illegal.literal.parameter:
+    text: '''Literal'' may be parameterized with literal ints, byte and unicode strings, bools, Enum values, None, other literal types, or type aliases to other literal types'
+INSP.type.hints.parameters.to.generic.must.all.be.type.variables:
+    text: Parameters to `{0,choice,0#Generic|1#Protocol}[...]` must all be type variables
+INSP.type.hints.parameters.to.generic.must.all.be.unique:
+    text: Parameters to 'Generic[...]' must all be unique
+INSP.type.hints.non.default.type.vars.cannot.follow.defaults:
+    text: Non-default TypeVars cannot follow ones with defaults
+INSP.type.hints.default.type.var.cannot.follow.type.var.tuple:
+    text: TypeVar with a default value cannot follow TypeVarTuple
+INSP.type.hints.default.type.refers.to.type.var.out.of.scope:
+    text: Default type of this type parameter refers to one or more type variables that are out of scope
+INSP.type.hints.default.type.of.type.var.tuple.must.be.unpacked:
+    text: Default type of TypeVarTuple must be unpacked
+INSP.type.hints.default.type.of.param.spec.must.be.param.spec.or.list.of.types:
+    text: Default type of ParamSpec must be a ParamSpec type or a list of types
+INSP.type.hints.cannot.be.used.in.default.type.of.type.var:
+    text: '`{0}` cannot be used in default type of TypeVar'
+INSP.type.hints.type.arguments.do.not.match.type.parameters.of.class:
+    text: Passed type arguments do not match type parameters {0} of class `{1}`
+INSP.type.hints.type.arguments.do.not.match.type.parameters.of.alias:
+    text: Passed type arguments do not match type parameters of type alias `{0}`
+INSP.type.hints.inconsistent.type.var.order:
+    text: 'Generic base class ''''{0}'''' is inherited with inconsistent type arguments: ''''{1}'''' and ''''{2}'''''
+INSP.type.hints.type.arguments.class.is.not.generic:
+    text: Class `{0}` is not generic
+INSP.type.hints.invalid.type.argument:
+    text: Invalid type argument
+INSP.type.hints.generic.type.alias.is.not.generic.or.already.parameterized:
+    text: Type alias is not generic or already specialized
+INSP.type.hints.default.type.must.be.type.expression:
+    text: Default type must be a type expression
+INSP.type.hints.invalid.type.expression:
+    text: Invalid type expression
+INSP.type.hints.default.type.do.not.match.constraints:
+    text: Default type of TypeVar must be one of the constraint types
+INSP.type.hints.default.type.do.not.match.bounds:
+    text: Default type of TypeVar is not a subtype of the bound
+INSP.type.hints.callable.must.have.exactly.two.parameters:
+    text: '`Callable` must have exactly two arguments'
+INSP.type.hints.callable.invalid.first.parameter:
+    text: '`Callable` first parameter must be a list literal of parameter types (`[T1, T2, ...]`) or a parameter specification'
+INSP.type.hints.parameters.to.generic.types.must.be.types:
+    text: Parameters to generic types must be types
+INSP.type.hints.parameters.to.generic.types.cannot.contain.more.than.one.unpacking:
+    text: Parameters to generic cannot contain more than one unpacking
+INSP.type.hints.type.comment.cannot.be.matched.with.unpacked.variables:
+    text: Type comment cannot be matched with unpacked variables
+INSP.type.hints.type.signature.has.too.few.arguments:
+    text: Type signature has too few arguments
+INSP.type.hints.type.signature.has.too.many.arguments:
+    text: Type signature has too many arguments
+INSP.type.hints.type.self.not.supertype.its.class:
+    text: The type of self `{0}` is not a supertype of its class `{1}`
+INSP.type.hints.non.self.attribute.could.not.be.type.hinted:
+    text: Non-self attribute could not be type hinted
+INSP.type.hints.type.alias.must.be.used.as.standalone.type.hint:
+    text: '''TypeAlias'' must be used as standalone type hint'
+INSP.type.hints.type.alias.must.be.immediately.initialized:
+    text: Type alias must be immediately initialized
+INSP.type.hints.type.alias.must.be.top.level.declaration:
+    text: Type alias must be top-level declaration
+INSP.type.hints.type.alias.in.class.cannot.use.bound.type.variables:
+    text: Type alias in a class body cannot use bound type variables
+INSP.type.hints.type.alias.invalid.assigned.value:
+    text: Assigned value of type alias must be a correct type
+INSP.type.hints.type.alias.cannot.be.parameterized:
+    text: '''TypeAlias'' cannot be parameterized'
+INSP.type.hints.type.hint.is.not.valid:
+    text: Invalid type annotation
+INSP.type.hints.forward.reference.in.union:
+    text: Union type annotations with forward references must be wrapped in quotes entirely
+INSP.type.hints.circular.reference:
+    text: Circular reference
+INSP.type.hints.typeIs.has.zero.parameters:
+    text: User-defined TypeGuard or TypeIs functions must have at least one parameter
+INSP.type.hints.typeIs.does.not.match:
+    text: Return type of TypeIs `{0}` is not consistent with the type of the first parameter `{1}`
+INSP.type.hints.self.use.in.staticmethod:
+    text: Cannot use 'Self' in staticmethod
+INSP.type.hints.self.use.outside.class:
+    text: Cannot use 'Self' outside class
+INSP.type.hints.self.cannot.use.self.in.this.context:
+    text: Cannot use 'Self' in this context
+INSP.type.hints.self.cannot.use.self.in.metaclass:
+    text: Type 'Self' cannot be used in a metaclass
+INSP.type.hints.self.use.for.self.parameter.with.self.annotation:
+    text: Cannot use 'Self' if 'self' parameter is not 'Self' annotated
+INSP.type.hints.self.use.for.cls.parameter.with.self.annotation:
+    text: Cannot use 'Self' if 'cls' parameter is not 'Self' annotated
+INSP.type.hints.type.var.tuple.must.always.be.unpacked:
+    text: TypeVarTuple must always be unpacked
+INSP.type.hints.expected.a.type:
+    text: Expected a type
+INSP.type.hints.metaclass.cannot.be.generic:
+    text: Metaclass cannot be generic
+INSP.type.hints.unbound.type.variable:
+    text: Unbound type variable
+INSP.type.hints.some.type.variables.are.already.in.use.by.outer.scope:
+    text: Some type variables ({0}) are already in use by an outer scope
+INSP.type.hints.type.parameter.is.already.in.use.by.outer.scope:
+    text: Type parameter `{0}` is already in use by an outer scope
+INSP.type.hints.type.statement.incorrect.scope:
+    text: A 'type' statement can be used only within a module or class scope
+INSP.type.hints.at.most.one.unpacked.tuple:
+    text: Type argument list can have at most one unpacked TypeVarTuple or unbounded tuple
+INSP.type.hints.cannot.use.class.scope.type.variables.in.annotation.for.self.parameter.of__init__:
+    text: Class-scoped type variables should not be used in the annotation for 'self' parameter of '__init__' method
+INSP.type.hints.ellipsis.allowed.only.as.second.argument:
+    text: '`...` is allowed only as the second of two arguments'
+INSP.type.hints.empty.tuple.only.as.lone.argument:
+    text: Empty tuple is allowed only as a sole argument
+INSP.type.hints.ellipsis.cannot.be.used.with.unpacked.type:
+    text: '`...` cannot be used with an unpacked `TypeVarTuple` or tuple'
+INSP.type.hints.ellipsis.not.allowed.in.parameter.list:
+    text: '`...` is not allowed in a parameter list'
+INSP.type.hints.optional.must.have.exactly.one.argument:
+    text: '`Optional` must have exactly one argument'
+INSP.type.hints.type.form.must.have.exactly.one.argument:
+    text: '''TypeForm'' must have exactly one argument'
+INSP.type.hints.paramspec.args.must.annotate.star.args:
+    text: '`{0}.args` can only be used to annotate `*args` parameters'
+INSP.type.hints.paramspec.kwargs.must.annotate.star.kwargs:
+    text: '`{0}.kwargs` can only be used to annotate `**kwargs` parameters'
+INSP.type.hints.paramspec.components.must.be.paired:
+    text: '`{0}.args` and `{0}.kwargs` must both be present in the same function signature'
+INSP.type.hints.paramspec.not.in.scope:
+    text: ParamSpec `{0}` must be a type parameter of the enclosing callable or class
+INSP.type.hints.paramspec.no.params.allowed.between.components:
+    text: No parameters allowed between `{0}.args` and `{0}.kwargs`
+INSP.type.hints.paramspec.component.not.allowed:
+    text: ParamSpec component can only be used to annotate '*args' or '**kwargs' parameters
+INSP.type.hints.paramspec.cannot.annotate.parameter:
+    text: ParamSpec cannot be used as the type of a parameter
+INSP.type.hints.paramspec.not.allowed.in.this.context:
+    text: ParamSpec is not allowed in this context
+QFIX.remove.function.annotations:
+    text: Remove function annotations
+QFIX.replace.with.target.name:
+    text: Replace with the target name
+QFIX.remove.generic.parameters:
+    text: Remove generic parameters
+QFIX.replace.with.square.brackets:
+    text: Replace with square brackets
+QFIX.surround.with.square.brackets:
+    text: Surround with square brackets
+QFIX.remove.square.brackets:
+    text: Remove square brackets
+QFIX.replace.with.typing.alias:
+    text: Replace with typing alias
+QFIX.remove.type.comment:
+    text: Remove the type comment
+QFIX.remove.annotation:
+    text: Remove the annotation
+QFIX.replace.with.type.name:
+    text: Replace with the type name
+QFIX.NAME.unpack.type.var.tuple:
+    text: Unpack the TypeVarTuple
+INSP.NAME.variance.checker:
+    text: Incorrect variance
+INSP.variance.checker.incompatible:
+    text: A {1} type variable cannot be used in this {0} position
+INSP.variance.checker.protocols.keep.effective.variance:
+    text: This type variable is effectively {0} in this protocol, so it cannot be {1} here
+INSP.variance.checker.superfluous:
+    text: Superfluous variance since the given constraints have no subtype relation
+INSP.NAME.division.by.zero:
+    text: Division by zero
+INSP.division.by.zero:
+    text: Division by zero
+INSP.NAME.shadowed.type.parameter.default:
+    text: Unused type parameter default
+INSP.shadowed.type.parameter.default:
+    text: Default of type parameter ''{0}'' is never used because parameter default values take precedence over it
+INSP.python.suppressor.suppress.for.function:
+    text: Suppress for a function
+INSP.python.suppressor.suppress.for.class:
+    text: Suppress for a class
+INSP.python.suppressor.suppress.for.statement:
+    text: Suppress for this statement
+INSP.python.suppressor.suppress.for.function.named:
+    text: Suppress for function ''{0}''
+INSP.python.suppressor.suppress.for.class.named:
+    text: Suppress for class ''{0}''
+INSP.python.suppressor.suppress.with.type.ignore:
+    text: 'Suppress with ''type: ignore'' comment'
+INSP.redundant.suppression.remove.quickfix.name:
+    text: Remove ''{0}'' suppression
+INSP.redundant.suppression.remove.quickfix.family.name:
+    text: Remove suppression
+find.usages.unnamed:
+    text: <unnamed>
+find.usages.keyword.argument:
+    text: keyword argument
+find.usages.variable:
+    text: variable
+find.usages.imported.module.alias:
+    text: imported module alias
+find.usages.class:
+    text: class
+find.usages.function:
+    text: function
+find.usages.method:
+    text: method
+find.usages.parameter:
+    text: parameter
+python.find.usages:
+    text: Find Usages
+python.find.usages.base.method.question:
+    text: 'Method {0} overrides method of class {1}.
+    
+      Do you want to find usages of the base method?'
+python.find.usages.usage.in.superclass.list:
+    text: Usage in the superclass list
+python.find.usages.usage.in.isinstance:
+    text: Usage in isinstance()
+python.find.usages.untyped.probable.usage:
+    text: Untyped (probable) usage
+python.find.usages.usage.in.import.statement:
+    text: Usage in an import statement
+python.find.usages.usage.in.type.hint:
+    text: Usage in a type hint
+INSP.NAME.relative.import:
+    text: Suspicious relative imports
+INSP.relative.import.relative.import.outside.package:
+    text: Relative import outside of a package
+debugger.cleaning.signature.cache:
+    text: Cleaning the Cache of Dynamically Collected Types
+INSP.NAME.class.var.variables:
+    text: Invalid usage of ClassVar variables
+INSP.class.var.can.not.be.assigned.to.instance:
+    text: Cannot assign to class variable `{0}` via instance
+INSP.class.var.can.be.used.only.in.class.body:
+    text: '''ClassVar'' can only be used in class body'
+INSP.class.var.can.not.override.class.variable:
+    text: Cannot override class variable `{0}` (previously declared in base class `{1}`) with instance variable
+INSP.class.var.can.not.override.instance.variable:
+    text: Cannot override instance variable `{0}` (previously declared in base class `{1}`) with class variable
+INSP.class.var.can.not.be.used.in.annotations.for.function.parameters:
+    text: '''ClassVar'' cannot be used in annotations for function parameters'
+INSP.class.var.can.not.be.used.in.annotation.for.function.return.value:
+    text: '''ClassVar'' cannot be used in annotation for a function return value'
+INSP.class.var.can.not.include.type.variables:
+    text: '''ClassVar'' parameter cannot include type variables'
+INSP.class.var.can.only.be.parameterized.with.one.type:
+    text: '''ClassVar'' can only be parameterized with one type'
+INSP.class.var.can.not.be.nested:
+    text: '''ClassVar'' cannot be nested'
+INSP.class.var.is.not.allowed.here:
+    text: '''ClassVar'' is not allowed here'
+INSP.class.var.not.a.valid.type:
+    text: Not a valid type
+INSP.GROUP.pandas:
+    text: Pandas
+INSP.pandas.series.values.replace.with.tolist:
+    text: Method Series.to_list() is recommended
+QFIX.pandas.series.values.replace.with.tolist:
+    text: Replace list(Series.values) with Series.to_list()
+INSP.pandas.truth.value.is.ambiguous.df:
+    text: The truth value of a DataFrame is ambiguous
+INSP.pandas.truth.value.is.ambiguous.series:
+    text: The truth value of a Series is ambiguous
+QFIX.pandas.truth.value.is.ambiguous.emptiness.check:
+    text: Replace with explicit emptiness check
+QFIX.pandas.truth.value.is.ambiguous.none.check:
+    text: Replace with explicit None check
+INSP.NAME.new.style.generics.type.param.syntax:
+    text: Invalid usage of new-style type parameters and type aliases
+INSP.new.style.generics.are.not.allowed.inside.type.param.bounds:
+    text: Generic types are not allowed inside constraints and bounds of type parameters
+INSP.new.style.generics.old.style.type.vars.not.allowed.in.new.style.type.aliases:
+    text: Traditional TypeVars are not allowed inside new-style type alias statements
+INSP.new.style.generics.classes.with.type.param.list.should.not.extend.generic:
+    text: Classes with an explicit type parameter list should not extend 'Generic'
+INSP.new.style.generics.extending.protocol.does.not.need.parameterization:
+    text: Extending 'Protocol' does not need parameterization in classes with a type parameter list
+INSP.new.style.generics.mixing.old.style.and.new.style.type.vars.not.allowed:
+    text: Mixing traditional and new-style type variables is not allowed
+INSP.new.style.generics.assignment.expressions.not.allowed:
+    text: Assignment expressions are not allowed inside declarations of classes, functions and type aliases having type parameter list
+INSP.new.style.type.parameter.out.of.scope:
+    text: Type variable `{0}` is out of scope
+INSP.new.style.type.parameter.default.refers.to.itself:
+    text: Default type of type parameter `{0}` refers to itself
+INSP.NAME.assert.type:
+    text: Violated 'typing.assert_type'
+INSP.assert.type.expected.type.got.type.instead:
+    text: Expected type `{0}`, got `{1}` instead
+INSP.NAME.enum:
+    text: Invalid enum definition and usages
+INSP.enum.enum.class.is.final.and.cannot.be.subclassed:
+    text: Enum class `{0}` is final and cannot be subclassed
+INSP.enum.type.is.not.assignable.to.declared.type:
+    text: Type `{0}` is not assignable to declared type `{1}`
+INSP.enum.type.annotations.are.not.allowed.for.enum.members:
+    text: Type annotations are not allowed for enum members
+INSP.enum.enum.base.class.must.be.last:
+    text: Enum class `{0}` must be the last base class
+INSP.enum.sunder.name.is.reserved:
+    text: The name `{0}` is reserved for future Enum use
+INSP.enum.unique.enum.has.duplicate.value:
+    text: Unique enum member `{0}` has the same value as `{1}`
+INSP.NAME.new.type:
+    text: Invalid usage of NewType
+INSP.NAME.new.type.cannot.be.subclassed:
+    text: '`{0}` cannot be subclassed'
+INSP.NAME.new.type.variable.name.does.not.match.new.type.name:
+    text: Variable name `{0}` does not match NewType name `{1}`
+INSP.NAME.new.type.expected.class:
+    text: Expected class
+INSP.NAME.new.type.new.type.cannot.be.used.with:
+    text: NewType cannot be used with `{0}`
+INSP.NAME.new.type.new.type.cannot.be.generic:
+    text: NewType cannot be generic
+INSP.NAME.patterns:
+    text: Invalid pattern in pattern matching
+INSP.patterns.pattern.can.be.simplified:
+    text: Pattern can be simplified
+INSP.patterns.class.does.not.support.pattern.matching.with.positional.arguments:
+    text: Class {0} does not support pattern matching with positional arguments
+INSP.patterns.too.many.positional.patterns.expected:
+    text: Too many positional patterns, expected {0}
+INSP.patterns.attribute.already.specified.as.positional.pattern.at.position:
+    text: Attribute ''{0}'' is already specified as positional pattern at position {1}
+INSP.patterns.not.a.class:
+    text: Class pattern requires a class, but ''{0}'' can be ''{1}''
+QFIX.simplify.as.pattern:
+    text: Simplify 'as' pattern
+QFIX.NAME.remove.element:
+    text: Remove element
+QFIX.remove.pattern:
+    text: Remove pattern
+QFIX.NAME.add.match.args.to.class:
+    text: Add '__match_args__' to class
+QFIX.add.match.args.to.class:
+    text: Add '__match_args__' to class {0}
+packaging.could.not.parse.relation:
+    text: 'Could not parse relation from: {0}'
+INSP.NAME.invalid.cast:
+    text: Type cast between unrelated types
+INSP.invalid.cast.message:
+    text: Cast of type `{0}` to type `{1}` may be a mistake because they are not in the same inheritance hierarchy. If this was intentional, cast the expression to `{2}` first.
+INSP.invalid.cast.variance.message:
+    text: Cast of type `{0}` to type `{1}` may be a mistake because they differ in invariant type arguments
+INSP.invalid.cast.ignore.generic.variance:
+    text: Ignore variance of generic type arguments
+INSP.invalid.cast.ignore.typed.dict.structure:
+    text: Ignore TypedDict structure (treat a TypedDict as a dict)
+QFIX.add.intermediate.cast:
+    text: Add cast({0}, ...)
+INSP.NAME.unnecessary.cast:
+    text: Unnecessary type cast
+INSP.unnecessary.cast.message:
+    text: Unnecessary cast; type is already ''{0}''
+QFIX.remove.cast.call:
+    text: Remove 'cast' call
+QFIX.add.source.root.notification.text:
+    text: '''''{0}'''' has been marked as source root'
+QFIX.add.source.root.notification.ok:
+    text: Ok
+QFIX.add.source.root.notification.revert:
+    text: Revert
+INSP.NAME.invalid.escape.sequence:
+    text: Invalid escape sequence
+INSP.invalid.escape.sequence:
+    text: Invalid escape sequence ''{0}''
+QFIX.escape.backslash:
+    text: Escape backslash
+QFIX.convert.to.raw.string:
+    text: Convert to raw string
+INSP.NAME.global.variable.redeclaration.in.notebook:
+    text: Global variable redeclaration in notebook
+group.PythonPsiInternalGroup.text:
+    text: Python Type Inference
+action.PyTypeBenchmarkAction.text:
+    text: Benchmark Type Evaluation
+INSP.global.variable.redeclaration.in.notebook:
+    text: Global variable ''{0}'' is already defined in this notebook
+fstring.format.spec.doc.category.alignment:
+    text: Alignment
+fstring.format.spec.doc.category.datetime:
+    text: DateTime Format
+fstring.format.spec.doc.category.flag:
+    text: Flag
+fstring.format.spec.doc.category.grouping:
+    text: Grouping
+fstring.format.spec.doc.category.precision:
+    text: Precision
+fstring.format.spec.doc.category.sign:
+    text: Sign
+fstring.format.spec.doc.category.type:
+    text: Presentation Type
+fstring.format.spec.doc.example:
+    text: 'Example:'
+fstring.format.spec.entry.alternate.full:
+    text: Causes the 'alternate form' to be used for the conversion. The alternate form is defined differently for different types. This option is only valid for integer, float and complex types. For integers, when binary, octal, or hexadecimal output is used, this option adds the respective prefix '0b', '0o', '0x', or '0X' to the output value. For float and complex the alternate form causes the result of the conversion to always contain a decimal-point character, even if no digits follow it. Normally, a decimal-point character appears in the result of these conversions only if a digit follows it. In addition, for 'g' and 'G' conversions, trailing zeros are not removed from the result.
+fstring.format.spec.entry.alternate.short:
+    text: Alternate form
+fstring.format.spec.entry.ampm.full:
+    text: Locale's equivalent of either AM or PM.
+fstring.format.spec.entry.ampm.short:
+    text: AM/PM
+fstring.format.spec.entry.binary.full:
+    text: Binary format. Outputs the number in base 2.
+fstring.format.spec.entry.binary.short:
+    text: Binary
+fstring.format.spec.entry.center.full:
+    text: Forces the field to be centered within the available space.
+fstring.format.spec.entry.center.short:
+    text: Center
+fstring.format.spec.entry.character.full:
+    text: Character. Converts the integer to the corresponding unicode character before printing.
+fstring.format.spec.entry.character.short:
+    text: Character
+fstring.format.spec.entry.coerce.zero.full:
+    text: Coerces negative zero floating-point values to positive zero after rounding to the format precision. This option is only valid for floating-point presentation types. (Added in Python 3.11, see PEP 682)
+fstring.format.spec.entry.coerce.zero.short:
+    text: Coerce negative zero
+fstring.format.spec.entry.comma.full:
+    text: Inserts a comma every 3 digits for integer presentation type 'd' and floating-point presentation types, excluding 'n'. For other presentation types, this option is not supported. (Added in Python 3.1, see PEP 378)
+fstring.format.spec.entry.comma.short:
+    text: Comma separator
+fstring.format.spec.entry.date.repr.full:
+    text: Locale's appropriate date representation.
+fstring.format.spec.entry.date.repr.short:
+    text: Date
+fstring.format.spec.entry.datetime.repr.full:
+    text: Locale's appropriate date and time representation.
+fstring.format.spec.entry.datetime.repr.short:
+    text: Date and time
+fstring.format.spec.entry.day.full:
+    text: Day of the month as a zero-padded decimal number (01-31).
+fstring.format.spec.entry.day.of.year.full:
+    text: Day of the year as a zero-padded decimal number (001-366).
+fstring.format.spec.entry.day.of.year.short:
+    text: Day of year
+fstring.format.spec.entry.day.short:
+    text: Day (01-31)
+fstring.format.spec.entry.decimal.full:
+    text: Decimal Integer. Outputs the number in base 10.
+fstring.format.spec.entry.decimal.short:
+    text: Decimal
+fstring.format.spec.entry.fixed.full:
+    text: 'Fixed-point notation. For a given precision p, formats the number as a decimal number with exactly p digits following the decimal point. With no precision given, uses a precision of 6 digits after the decimal point for float, and uses a precision large enough to show all coefficient digits for Decimal. If p=0, the decimal point is omitted unless the # option is used.'
+fstring.format.spec.entry.fixed.short:
+    text: Fixed-point
+fstring.format.spec.entry.fixed.upper.full:
+    text: Fixed-point notation. Same as 'f', but converts nan to NAN and inf to INF.
+fstring.format.spec.entry.fixed.upper.short:
+    text: Fixed-point (uppercase)
+fstring.format.spec.entry.general.lower.full:
+    text: 'General format. For a given precision p >= 1, this rounds the number to p significant digits and then formats the result in either fixed-point format or in scientific notation, depending on its magnitude. A precision of 0 is treated as equivalent to a precision of 1. The precise rules are as follows: suppose that the result formatted with presentation type ''e'' and precision p-1 would have exponent exp. Then, if m <= exp < p, where m is -4 for floats and -6 for Decimals, the number is formatted with presentation type ''f'' and precision p-1-exp. Otherwise, the number is formatted with presentation type ''e'' and precision p-1. In both cases insignificant trailing zeros are removed from the significand, and the decimal point is also removed if there are no remaining digits following it, unless the ''#'' option is used.'
+fstring.format.spec.entry.general.lower.short:
+    text: General (lowercase)
+fstring.format.spec.entry.general.upper.full:
+    text: General format. Same as 'g' except switches to 'E' if the number gets too large. The representations of infinity and NaN are uppercased, too.
+fstring.format.spec.entry.general.upper.short:
+    text: General (uppercase)
+fstring.format.spec.entry.hex.lower.full:
+    text: Hex format. Outputs the number in base 16, using lower-case letters for the digits above 9.
+fstring.format.spec.entry.hex.lower.short:
+    text: Hex (lowercase)
+fstring.format.spec.entry.hex.upper.full:
+    text: Hex format. Outputs the number in base 16, using upper-case letters for the digits above 9. In case '#' is specified, the prefix '0x' will be upper-cased to '0X' as well.
+fstring.format.spec.entry.hex.upper.short:
+    text: Hex (uppercase)
+fstring.format.spec.entry.hour12.full:
+    text: Hour (12-hour clock) as a zero-padded decimal number (01-12).
+fstring.format.spec.entry.hour12.short:
+    text: Hour 12h (01-12)
+fstring.format.spec.entry.hour24.full:
+    text: Hour (24-hour clock) as a zero-padded decimal number (00-23).
+fstring.format.spec.entry.hour24.short:
+    text: Hour 24h (00-23)
+fstring.format.spec.entry.iso.week.full:
+    text: ISO 8601 week number as a decimal number with Monday as the first day of the week (01-53).
+fstring.format.spec.entry.iso.week.short:
+    text: ISO week number
+fstring.format.spec.entry.iso.weekday.full:
+    text: ISO weekday as a decimal number, where 1 is Monday and 7 is Sunday.
+fstring.format.spec.entry.iso.weekday.short:
+    text: ISO weekday (1-7)
+fstring.format.spec.entry.left.full:
+    text: Forces the field to be left-aligned within the available space (this is the default for most objects).
+fstring.format.spec.entry.left.short:
+    text: Left-align
+fstring.format.spec.entry.literal.percent.full:
+    text: A literal '%' character.
+fstring.format.spec.entry.literal.percent.short:
+    text: Literal %
+fstring.format.spec.entry.locale.number.full:
+    text: Number. This is the same as 'd', except that it uses the current locale setting to insert the appropriate digit group separators.
+fstring.format.spec.entry.locale.number.short:
+    text: Locale-aware number
+fstring.format.spec.entry.microsecond.full:
+    text: Microsecond as a decimal number, zero-padded to 6 digits (000000-999999).
+fstring.format.spec.entry.microsecond.short:
+    text: Microsecond
+fstring.format.spec.entry.minute.full:
+    text: Minute as a zero-padded decimal number (00-59).
+fstring.format.spec.entry.minute.short:
+    text: Minute (00-59)
+fstring.format.spec.entry.month.abbrev.full:
+    text: Month as locale's abbreviated name (e.g., Jan, Feb).
+fstring.format.spec.entry.month.abbrev.short:
+    text: Month (abbrev)
+fstring.format.spec.entry.month.full:
+    text: Month as a zero-padded decimal number (01-12).
+fstring.format.spec.entry.month.full.full:
+    text: Month as locale's full name (e.g., January, February).
+fstring.format.spec.entry.month.full.short:
+    text: Month (full)
+fstring.format.spec.entry.month.short:
+    text: Month (01-12)
+fstring.format.spec.entry.octal.full:
+    text: Octal format. Outputs the number in base 8.
+fstring.format.spec.entry.octal.short:
+    text: Octal
+fstring.format.spec.entry.pad.after.sign.full:
+    text: Forces the padding to be placed after the sign (if any) but before the digits. This is used for printing fields in the form '+000000120'. This alignment option is only valid for numeric types, excluding complex. It becomes the default for numbers when '0' immediately precedes the field width.
+fstring.format.spec.entry.pad.after.sign.short:
+    text: Pad after sign
+fstring.format.spec.entry.percentage.full:
+    text: Percentage. Multiplies the number by 100 and displays in fixed ('f') format, followed by a percent sign.
+fstring.format.spec.entry.percentage.short:
+    text: Percentage
+fstring.format.spec.entry.precision.full:
+    text: The precision is a decimal integer indicating how many digits should be displayed after the decimal point for presentation types 'f' and 'F', or before and after the decimal point for presentation types 'g' or 'G'. For string presentation types the field indicates the maximum field size - in other words, how many characters will be used from the field content. The precision is not allowed for integer presentation types.
+fstring.format.spec.entry.precision.short:
+    text: Precision
+fstring.format.spec.entry.right.full:
+    text: Forces the field to be right-aligned within the available space (this is the default for numbers).
+fstring.format.spec.entry.right.short:
+    text: Right-align
+fstring.format.spec.entry.scientific.lower.full:
+    text: 'Scientific notation. For a given precision p, formats the number in scientific notation with the letter ''e'' separating the coefficient from the exponent. The coefficient has one digit before and p digits after the decimal point, for a total of p + 1 significant digits. With no precision given, uses a precision of 6 digits after the decimal point for float, and shows all coefficient digits for Decimal. If p=0, the decimal point is omitted unless the # option is used.'
+fstring.format.spec.entry.scientific.lower.short:
+    text: Scientific (lowercase)
+fstring.format.spec.entry.scientific.upper.full:
+    text: Scientific notation. Same as 'e' except it uses an upper case 'E' as the separator character.
+fstring.format.spec.entry.scientific.upper.short:
+    text: Scientific (uppercase)
+fstring.format.spec.entry.second.full:
+    text: Second as a zero-padded decimal number (00-59).
+fstring.format.spec.entry.second.short:
+    text: Second (00-59)
+fstring.format.spec.entry.sign.both.full:
+    text: Indicates that a sign should be used for both positive as well as negative numbers.
+fstring.format.spec.entry.sign.both.short:
+    text: Show sign
+fstring.format.spec.entry.sign.negative.full:
+    text: Indicates that a sign should be used only for negative numbers (this is the default behavior).
+fstring.format.spec.entry.sign.negative.short:
+    text: Negative sign only
+fstring.format.spec.entry.sign.space.full:
+    text: Indicates that a leading space should be used on positive numbers, and a minus sign on negative numbers.
+fstring.format.spec.entry.sign.space.short:
+    text: Space for positive
+fstring.format.spec.entry.string.full:
+    text: String format. This is the default type for strings and may be omitted.
+fstring.format.spec.entry.string.short:
+    text: String
+fstring.format.spec.entry.time.repr.full:
+    text: Locale's appropriate time representation.
+fstring.format.spec.entry.time.repr.short:
+    text: Time
+fstring.format.spec.entry.tz.name.full:
+    text: Time zone name (empty string if the object is naive).
+fstring.format.spec.entry.tz.name.short:
+    text: Timezone name
+fstring.format.spec.entry.underscore.full:
+    text: Inserts an underscore every 3 digits for integer presentation type 'd' and floating-point presentation types, excluding 'n'. For integer presentation types 'b', 'o', 'x', and 'X', underscores are inserted every 4 digits. For other presentation types, this option is not supported. (Added in Python 3.6, see PEP 515)
+fstring.format.spec.entry.underscore.short:
+    text: Underscore separator
+fstring.format.spec.entry.utc.offset.full:
+    text: UTC offset in the form ±HHMM[SS[.ffffff]] (empty string if the object is naive).
+fstring.format.spec.entry.utc.offset.short:
+    text: UTC offset
+fstring.format.spec.entry.week.mon.full:
+    text: Week number of the year (Monday as the first day of the week) as a zero-padded decimal number (00-53).
+fstring.format.spec.entry.week.mon.short:
+    text: Week number (Mon)
+fstring.format.spec.entry.week.sun.full:
+    text: Week number of the year (Sunday as the first day of the week) as a zero-padded decimal number (00-53).
+fstring.format.spec.entry.week.sun.short:
+    text: Week number (Sun)
+fstring.format.spec.entry.weekday.abbrev.full:
+    text: Weekday as locale's abbreviated name (e.g., Sun, Mon).
+fstring.format.spec.entry.weekday.abbrev.short:
+    text: Weekday (abbrev)
+fstring.format.spec.entry.weekday.full.full:
+    text: Weekday as locale's full name (e.g., Sunday, Monday).
+fstring.format.spec.entry.weekday.full.short:
+    text: Weekday (full)
+fstring.format.spec.entry.weekday.num.full:
+    text: Weekday as a decimal number, where 0 is Sunday and 6 is Saturday.
+fstring.format.spec.entry.weekday.num.short:
+    text: Weekday (0-6)
+fstring.format.spec.entry.year2.full:
+    text: Year without century as a zero-padded decimal number (00-99).
+fstring.format.spec.entry.year2.short:
+    text: Year (2 digits)
+fstring.format.spec.entry.year4.full:
+    text: Year with century as a decimal number (e.g., 2024).
+fstring.format.spec.entry.year4.short:
+    text: Year (4 digits)
+fstring.format.spec.entry.zero.padding.full:
+    text: When no explicit alignment is given, preceding the width field by a zero ('0') character enables sign-aware zero-padding for numeric types, excluding complex. This is equivalent to a fill character of '0' with an alignment type of '='.
+fstring.format.spec.entry.zero.padding.short:
+    text: Zero-padding
+fstring.format.spec.doc.component.alignment:
+    text: Alignment
+fstring.format.spec.doc.component.alternate:
+    text: Alternate form
+fstring.format.spec.doc.component.alternate.meaning:
+    text: Use alternate form (0b/0o/0x prefix, decimal point)
+fstring.format.spec.doc.component.coerce:
+    text: Coerce -0
+fstring.format.spec.doc.component.coerce.meaning:
+    text: Coerces negative zero to positive zero
+fstring.format.spec.doc.component.fill:
+    text: Fill
+fstring.format.spec.doc.component.fill.meaning:
+    text: Character used for padding
+fstring.format.spec.doc.component.grouping:
+    text: Grouping
+fstring.format.spec.doc.component.precision:
+    text: Precision
+fstring.format.spec.doc.component.precision.meaning:
+    text: Digits after decimal point
+fstring.format.spec.doc.component.sign:
+    text: Sign
+fstring.format.spec.doc.component.type:
+    text: Type
+fstring.format.spec.doc.component.unknown:
+    text: Unknown
+fstring.format.spec.doc.component.width:
+    text: Width
+fstring.format.spec.doc.component.width.meaning:
+    text: Minimum field width
+fstring.format.spec.doc.component.zero.padding:
+    text: Zero-padding
+fstring.format.spec.doc.component.zero.padding.meaning:
+    text: Pad with zeros after sign
+fstring.format.spec.doc.datetime:
+    text: Datetime format string
+fstring.format.spec.doc.no.components:
+    text: No recognized format components
+fstring.format.spec.doc.title:
+    text: Format Specification
+fstring.format.spec.doc.title.for:
+    text: 'Format Specification: {0}'
+fstring.format.spec.doc.value.space:
+    text: space
+fstring.format.spec.completion.literal.type.text:
+    text: Format spec
+group.Floating.CodeToolbar.Python.text:
+    text: Floating Code Toolbar
+INSP.compatibility.feature.allow.backslashes.in.f.strings:
+    text: 'allow backslashes inside expression parts of f-strings'
+INSP.compatibility.feature.allow.deep.expression.nesting.in.f.strings:
+    text: 'allow nesting expressions in format specifiers this deep'
+INSP.compatibility.feature.allow.new.lines.in.f.strings:
+    text: 'allow new lines in expression parts of non-triple-quoted f-strings'
+INSP.compatibility.feature.allow.quote.reuse.in.f.strings:
+    text: 'allow nesting of string literals with the same quote type inside f-strings'
+INSP.compatibility.feature.line.comments.in.f.strings:
+    text: 'allow comments inside expression parts of f-strings'
+code.insight.select.methods.to.override:
+    text: Select Methods to Override
+code.insight.select.methods.to.implement:
+    text: Select Methods to Implement

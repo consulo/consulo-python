@@ -5,7 +5,7 @@ import com.jetbrains.python.impl.inspections.*;
 import consulo.language.editor.intention.IntentionAction;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.TestDataPath;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 import com.jetbrains.python.psi.LanguageLevel;

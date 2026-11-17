@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -48,7 +49,7 @@ public class UnresolvedRefTrueFalseQuickFix implements LocalQuickFix {
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
-        PyExpression expression = elementGenerator.createExpressionFromText(newName);
+        PyExpression expression = elementGenerator.createExpressionFromText(LanguageLevel.forElement(myElement), newName);
         myElement.replace(expression);
     }
 }

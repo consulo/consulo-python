@@ -19,12 +19,20 @@ package com.jetbrains.python.psi;
 import org.jspecify.annotations.Nullable;
 
 import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.psi.PsiReference;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+
+import java.util.Collections;
+import java.util.List;
 
 public interface PsiReferenceEx extends PsiReference {
   @Nullable
   HighlightSeverity getUnresolvedHighlightSeverity(TypeEvalContext context);
   @Nullable
   String getUnresolvedDescription();
+
+  default List<LocalQuickFix> getQuickFixes(TypeEvalContext context) {
+    return Collections.emptyList();
+  }
 }

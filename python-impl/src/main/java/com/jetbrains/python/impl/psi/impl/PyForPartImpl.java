@@ -1,87 +1,29 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiWhiteSpace;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiReference;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.psi.PyElementType;
-import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyForPart;
+import com.jetbrains.python.impl.psi.impl.references.PyKeywordReference;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import java.util.List;
+public class PyForPartImpl extends PyElementImpl implements PyForPart {
+    public PyForPartImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-/**
- * @author dcheryasov
- * @since 2009-03-15
- */
-public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
-  public PyForPartImpl(ASTNode astNode) {
-    super(astNode);
-  }
-
-  /**
-   * Checks that given node actually follows a node of given type, skipping whitespace.
-   * @param node node to check.
-   * @param eltType type of a node that must precede the node we're checking.
-   * @return true if node is really a next sibling to a node of eltType type.
-   */
-  @RequiredReadAction
-  protected static boolean followsNodeOfType(ASTNode node, PyElementType eltType) {
-    if (node != null) {
-      PsiElement checker = node.getPsi();
-      checker = checker.getPrevSibling(); // step from the source node
-      while (checker != null) {
-        ASTNode ch_node = checker.getNode();
-        if (ch_node == null) return false; 
-        else {
-          if (ch_node.getElementType() == eltType) {
-            return true;
-          }
-          else if (!(checker instanceof PsiWhiteSpace)) {
-            return false;
-          }
+    @Override
+    public PsiReference getReference() {
+        ASTNode inNode = getNode().findChildByType(PyTokenTypes.IN_KEYWORD);
+        if (inNode == null) {
+            return null;
         }
-        checker = checker.getPrevSibling();
-      }
-    }
-    return false;
-  }
 
-  @Override
-  @RequiredReadAction
-  public PyExpression getTarget() {
-    ASTNode n = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
-    if (followsNodeOfType(n, PyTokenTypes.FOR_KEYWORD)) {
-      return (PyExpression)n.getPsi(); // can't be null, 'if' would fail
+        TextRange range = inNode.getPsi().getTextRangeInParent();
+        PyResolveContext resolveContext = PyResolveContext.defaultContext(TypeEvalContext.codeAnalysis(getProject(), getContainingFile()));
+        return new PyKeywordReference(this, resolveContext, range);
     }
-    else return null;
-  }
-
-  @Override
-  @RequiredReadAction
-  public PyExpression getSource() {
-    List<PsiElement> exprs = findChildrenByType(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
-    // normally there are 2 exprs, the second is the source.
-    if (exprs.size() != 2) return null; // could be a parsing error
-    PyExpression ret = (PyExpression)exprs.get(1);
-    if (followsNodeOfType(ret.getNode(), PyTokenTypes.IN_KEYWORD)) return ret;
-    else return null;
-  }
 }

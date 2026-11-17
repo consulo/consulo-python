@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
+
+import com.jetbrains.python.ast.PyAstWhilePart;
 
 /**
  * The 'while' part of a cycle.
  * @see PyElsePart
- *
- * @author dcheryasov
  */
-public interface PyWhilePart extends PyConditionalStatementPart {
+public interface PyWhilePart extends PyAstWhilePart, PyConditionalStatementPart {
 }

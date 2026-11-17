@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringHandler;
 import com.jetbrains.python.impl.refactoring.classes.PyMemberInfoStorage;
@@ -44,7 +45,7 @@ public class PyExtractSuperclassHandler extends PyClassRefactoringHandler {
         Editor editor
     ) {
         //TODO: Move to presenter
-        if (PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty()) {
+        if (PyMembersUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty()) {
             CommonRefactoringUtil.showErrorHint(
                 project,
                 editor,

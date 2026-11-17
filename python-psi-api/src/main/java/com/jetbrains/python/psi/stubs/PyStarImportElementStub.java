@@ -15,12 +15,8 @@
  */
 package com.jetbrains.python.psi.stubs;
 
-import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyStarImportElement;
+import consulo.language.psi.stub.StubElement;
 
-/**
- * @author vlan
- */
-public interface PyStarImportElementStub extends StubElement<PyStarImportElement>
-{
+public interface PyStarImportElementStub extends StubElement<PyStarImportElement> {
 }

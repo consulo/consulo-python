@@ -22,7 +22,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
 import consulo.localize.LocalizeValue;
 import consulo.usage.UsageInfo;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.search.PyClassInheritorsSearch;
 

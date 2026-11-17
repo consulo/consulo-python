@@ -1,123 +1,139 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.types;
 
-import com.google.common.collect.Sets;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.impl.PyImportedModule;
-import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.resolve.PointInImport;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.types.PyType;
-import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiFileSystemItem;
-import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
-import consulo.util.collection.ContainerUtil;
-
+import consulo.language.util.ProcessingContext;
+import consulo.util.collection.SmartList;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyImportedModule;
+import com.jetbrains.python.impl.psi.impl.ResolveResultList;
+import com.jetbrains.python.psi.resolve.PointInImport;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
-/**
- * @author yole
- */
+
 public class PyImportedModuleType implements PyType {
-  private PyImportedModule myImportedModule;
+    private final PyImportedModule myImportedModule;
 
-  public PyImportedModuleType(PyImportedModule importedModule) {
-    myImportedModule = importedModule;
-  }
-
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public List<? extends RatedResolveResult> resolveMember(String name,
-                                                          @Nullable PyExpression location,
-                                                          AccessDirection direction,
-                                                          PyResolveContext resolveContext) {
-    PsiElement resolved = myImportedModule.resolve();
-    if (resolved != null) {
-      PsiFile containingFile = location != null ? location.getContainingFile() : null;
-      List<PsiElement> elements = Collections.singletonList(ResolveImportUtil.resolveChild(resolved, name, containingFile, false, true));
-      PyImportElement importElement = myImportedModule.getImportElement();
-      PyFile resolvedFile = PyUtil.as(resolved, PyFile.class);
-      if (location != null && importElement != null && PyUtil.inSameFile(location, importElement) &&
-        ResolveImportUtil.getPointInImport(location) == PointInImport.NONE && resolved instanceof PsiFileSystemItem &&
-        (resolvedFile == null || !PyUtil.isPackage(resolvedFile) || resolvedFile.getElementNamed(name) == null)) {
-        List<PsiElement> importedSubmodules = PyModuleType.collectImportedSubmodules((PsiFileSystemItem)resolved, location);
-        if (importedSubmodules != null) {
-          Set<PsiElement> imported = Sets.newHashSet(importedSubmodules);
-          elements = ContainerUtil.filter(elements, imported::contains);
-        }
-      }
-      return ResolveImportUtil.rateResults(elements);
+    public PyImportedModuleType(PyImportedModule importedModule) {
+        myImportedModule = importedModule;
     }
-    return null;
-  }
 
-  @Override
-  public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    List<LookupElement> result = new ArrayList<>();
-    PsiElement resolved = myImportedModule.resolve();
-    if (resolved instanceof PyFile) {
-      PyModuleType moduleType = new PyModuleType((PyFile)resolved, myImportedModule);
-      result.addAll(moduleType.getCompletionVariantsAsLookupElements(location, context, false, false));
-    }
-    else if (resolved instanceof PsiDirectory) {
-      PsiDirectory dir = (PsiDirectory)resolved;
-      if (PyUtil.isPackage(dir, location)) {
-        if (ResolveImportUtil.getPointInImport(location) != PointInImport.NONE) {
-          result.addAll(PyModuleType.getSubModuleVariants(dir, location, null));
+    @Override
+    public @Nullable List<? extends RatedResolveResult> resolveMember(String name,
+                                                                      @Nullable PyExpression location,
+                                                                      AccessDirection direction,
+                                                                      PyResolveContext resolveContext) {
+
+        List<PsiElement> importedModuleCandidates = ResolveResultList.getElements(myImportedModule.multiResolve());
+        SmartList<RatedResolveResult> primaryResults = new SmartList<>();
+        for (PsiElement moduleLocation : importedModuleCandidates) {
+            PsiFileSystemItem resolvedModuleOrPackage = PyUtil.as(moduleLocation, PsiFileSystemItem.class);
+            if (resolvedModuleOrPackage != null) {
+                List<? extends RatedResolveResult> results =
+                    PyModuleType.resolveMemberInPackageOrModule(myImportedModule, resolvedModuleOrPackage, name, location, resolveContext);
+
+                if (results != null) {
+                    primaryResults.addAll(results);
+                }
+            }
         }
-        else {
-          result.addAll(PyModuleType.collectImportedSubmodulesAsLookupElements(dir, location, context.get(CTX_NAMES)));
+
+        if (!primaryResults.isEmpty()) {
+            return PyUtil.filterTopPriorityResults(primaryResults);
         }
-      }
+
+        for (PsiElement moduleLocation : importedModuleCandidates) {
+            PsiFileSystemItem resolvedModuleOrPackage = PyUtil.as(moduleLocation, PsiFileSystemItem.class);
+            if (resolvedModuleOrPackage == null) {
+                continue;
+            }
+            //if it's a  synthetic import element
+            if (myImportedModule.getImportElement() == null) {
+                PsiFile resolvingFromFile = location != null ? location.getContainingFile() : null;
+                List<RatedResolveResult> fallbackResults =
+                    ResolveImportUtil.resolveChildren(resolvedModuleOrPackage, name, resolvingFromFile, false, true,
+                                                      false, false);
+
+                return ResolveResultList.asImportedResults(fallbackResults, null);
+            }
+        }
+        return null;
     }
-    return ArrayUtil.toObjectArray(result);
-  }
 
-  @Override
-  @RequiredReadAction
-  public String getName() {
-    return "imported module " + myImportedModule.getImportedPrefix().toString();
-  }
+    @Override
+    public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
+        List<LookupElement> result = new ArrayList<>();
+        for (PsiElement resolveResult : ResolveResultList.getElements(myImportedModule.multiResolve())) {
+            if (resolveResult instanceof PyFile) {
+                PyModuleType moduleType = new PyModuleType((PyFile)resolveResult);
+                TypeEvalContext typeEvalContext = TypeEvalContext.codeCompletion(location.getProject(), location.getContainingFile());
 
-  @Override
-  public boolean isBuiltin() {
-    return false;  // no module can be imported from built-ins
-  }
+                result.addAll(moduleType.getCompletionVariantsAsLookupElements(location, context, false, false, typeEvalContext));
+            }
+            else if (resolveResult instanceof PsiDirectory dir) {
+                if (PyUtil.isPackage(dir, location)) {
+                    if (ResolveImportUtil.getPointInImport(location) != PointInImport.NONE) {
+                        result.addAll(PyModuleType.getSubModuleVariants(dir, location, null));
+                    }
+                    else {
+                        result.addAll(PyModuleType.collectImportedSubmodulesAsLookupElements(dir, location, context.get(CTX_NAMES)));
+                    }
+                }
+            }
+        }
+        return ArrayUtil.toObjectArray(result);
+    }
 
-  @Override
-  public void assertValid(String message) {
-  }
+    @Override
+    public String getName() {
+        return myImportedModule.getImportedPrefix().toString();
+    }
 
-  public PyImportedModule getImportedModule() {
-    return myImportedModule;
-  }
+    @Override
+    public boolean isBuiltin() {
+        return false;  // no module can be imported from builtins
+    }
+
+    @Override
+    public void assertValid(String message) {
+    }
+
+    public PyImportedModule getImportedModule() {
+        return myImportedModule;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PyImportedModuleType type = (PyImportedModuleType)o;
+        return Objects.equals(myImportedModule, type.myImportedModule);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(myImportedModule);
+    }
 }

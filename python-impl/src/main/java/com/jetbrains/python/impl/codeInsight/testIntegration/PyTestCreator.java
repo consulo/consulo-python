@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.codeInsight.testIntegration;
 
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
@@ -133,7 +135,7 @@ public class PyTestCreator implements TestCreator
 			fileText.append("def ").append(method).append("(self):\n\tself.fail()\n\n\t");
 		}
 
-		PsiFile psiFile = PyUtil.getOrCreateFile(dialog.getTargetDir() + "/" + fileName, project);
+		PyFile psiFile = PyClassRefactoringUtil.getOrCreateFile(dialog.getTargetDir() + "/" + fileName, project, false);
 		AddImportHelper.addOrUpdateFromImportStatement(psiFile, "unittest", "TestCase", null, AddImportHelper.ImportPriority.BUILTIN, null);
 
 		PyElement createdClass =

@@ -1,21 +1,5 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
-
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -23,30 +7,61 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.stub.DefaultStubBuilder;
 import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyIfPart;
 import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyStatementPart;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyEvaluator;
 
-/**
- * @author yole
- */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class PyFileStubBuilder extends DefaultStubBuilder {
-  @Override
-  protected StubElement createStubForFile(PsiFile file) {
-    if (file instanceof PyFile) {
-      return new PyFileStubImpl((PyFile)file);
+    @Override
+    protected StubElement createStubForFile(PsiFile file) {
+        if (file instanceof PyFile) {
+            return new PyFileStubImpl((PyFile)file);
+        }
+
+        return super.createStubForFile(file);
     }
 
-    return super.createStubForFile(file);
-  }
+    @Override
+    public boolean skipChildProcessingWhenBuildingStubs(ASTNode parent, ASTNode node) {
+        PsiElement parentPsi = parent.getPsi();
+        if (parentPsi instanceof PyIfStatement && PyUtil.isIfNameEqualsMain((PyIfStatement)parentPsi)) {
+            return true;
+        }
+        if (parentPsi instanceof PyIfStatement ifStatement && node.getPsi() instanceof PyStatementPart part) {
+            return isAlwaysUnreachable(ifStatement, part);
+        }
+        return false;
+    }
 
-  @Override
-  protected boolean skipChildProcessingWhenBuildingStubs(PsiElement parent, PsiElement element) {
-    return parent instanceof PyIfStatement && PyUtil.isIfNameEqualsMain((PyIfStatement)parent);
-  }
+    private static boolean isAlwaysUnreachable(PyIfStatement ifStatement, PyStatementPart part) {
+        assert part.getParent() == ifStatement;
 
-  @Override
-  public boolean skipChildProcessingWhenBuildingStubs(ASTNode parent, ASTNode node) {
-    PsiElement psi = parent.getPsi();
-    return psi instanceof PyIfStatement && PyUtil.isIfNameEqualsMain((PyIfStatement)psi);
-  }
+        List<PyIfPart> ifParts = new ArrayList<>();
+        ifParts.add(ifStatement.getIfPart());
+        ifParts.addAll(Arrays.asList(ifStatement.getElifParts()));
+        for (PyIfPart ifPart : ifParts) {
+            if (ifPart == part) {
+                break;
+            }
+            Boolean result = PyEvaluator.evaluateAsBooleanNoResolve(ifPart.getCondition());
+            if (result == Boolean.TRUE) {
+                return true;
+            }
+        }
+
+        if (part instanceof PyIfPart ifPart) {
+            Boolean result = PyEvaluator.evaluateAsBooleanNoResolve(ifPart.getCondition());
+            if (result == Boolean.FALSE) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

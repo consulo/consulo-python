@@ -15,20 +15,21 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
-
+import com.jetbrains.python.ast.PyAstWithAncestors;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Class or class-like entity with ancestors
  *
  * @author Ilya.Kazakevich
  */
-public interface PyWithAncestors
-{
-	/**
-	 * Returns types of all ancestors from the hierarchy.
-	 */
-	List<PyClassLikeType> getAncestorTypes(TypeEvalContext context);
+public interface PyWithAncestors extends PyAstWithAncestors {
+    /**
+     * Returns types of all ancestors from the hierarchy.
+     */
+    List<@Nullable PyClassLikeType> getAncestorTypes(TypeEvalContext context);
 }

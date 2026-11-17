@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
@@ -122,7 +123,7 @@ public class AddFunctionQuickFix implements LocalQuickFix {
         }
       }
       // else: no argList, use empty args
-      PyFunction function = builder.buildFunction(project, LanguageLevel.forElement(file));
+      PyFunction function = builder.buildFunction();
 
       // add to the bottom
       function = (PyFunction)file.add(function);
@@ -130,7 +131,7 @@ public class AddFunctionQuickFix implements LocalQuickFix {
     }
     catch (IncorrectOperationException ignored) {
       // we failed. tell about this
-      PyUtil.showBalloon(project, PyLocalize.qfixFailedToAddFunction(), NotificationType.ERROR);
+      PythonUiService.getInstance().showBalloonError(project, PyLocalize.qfixFailedToAddFunction().get());
     }
   }
 

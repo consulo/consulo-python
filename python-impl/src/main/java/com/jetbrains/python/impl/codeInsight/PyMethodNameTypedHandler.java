@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;

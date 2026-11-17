@@ -1,68 +1,45 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
 import com.jetbrains.python.psi.PyElementVisitor;
-import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyWithItem;
+import com.jetbrains.python.psi.PyWithStatement;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.util.PsiTreeUtil;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
+import java.util.List;
+import java.util.Objects;
+
 public class PyWithItemImpl extends PyElementImpl implements PyWithItem {
-  public PyWithItemImpl(ASTNode astNode) {
-    super(astNode);
-  }
-
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyWithItem(this);
-  }
-
-  @Override
-  public PyExpression getExpression() {
-    ASTNode[] children = getNode().getChildren(null);
-    for (ASTNode child: children) {
-      PsiElement e = child.getPsi();
-      if (e instanceof PyExpression) {
-        return (PyExpression)e;
-      }
-      else if (child.getElementType() == PyTokenTypes.AS_KEYWORD) {
-        break;
-      }
+    public PyWithItemImpl(ASTNode astNode) {
+        super(astNode);
     }
-    return null;
-  }
 
-  @Override
-  public PyExpression getTarget() {
-    ASTNode[] children = getNode().getChildren(null);
-    boolean foundAs = false;
-    for (ASTNode child : children) {
-      if (child.getElementType() == PyTokenTypes.AS_KEYWORD) {
-        foundAs = true;
-      }
-      else if (foundAs && child.getPsi() instanceof PyExpression) {
-        return (PyExpression) child.getPsi();
-      }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyWithItem(this);
     }
-    return null;
-  }
+
+    @Override
+    public boolean isSuppressingExceptions(TypeEvalContext context) {
+        PyWithStatement withStmt = PsiTreeUtil.getParentOfType(this, PyWithStatement.class, false);
+        if (withStmt == null) {
+            return false;
+        }
+        String abstractType = withStmt.isAsync() ? "contextlib.AbstractAsyncContextManager" : "contextlib.AbstractContextManager";
+        PyType contextManagerType = PyTypeUtil.convertToType(context.getType(getExpression()), abstractType, this, context);
+        PyType exitResultType = null;
+        if (contextManagerType instanceof PyClassType classType) {
+            List<PyType> typeArguments = classType.getTypeArguments();
+            exitResultType = typeArguments.size() > 1 ? typeArguments.get(1) : null;
+        }
+        return Objects.equals(exitResultType, PyBuiltinCache.getInstance(this).getBoolType()) ||
+            exitResultType instanceof PyLiteralType literalType && Boolean.TRUE.equals(literalType.getBoolValue());
+    }
 }

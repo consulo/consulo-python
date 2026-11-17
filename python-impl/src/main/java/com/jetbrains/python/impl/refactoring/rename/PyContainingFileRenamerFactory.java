@@ -25,7 +25,7 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
 import consulo.usage.UsageInfo;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;

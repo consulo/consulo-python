@@ -17,7 +17,7 @@
 package consulo.ironPython.psi.impl;
 
 import com.jetbrains.python.psi.impl.PyImportResolver;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.psi.resolve.DotNetNamespaceAsElement;
@@ -40,7 +40,7 @@ public class PyDotNetImportResolver implements PyImportResolver
 {
 	@Override
 	@Nullable
-	public PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context)
+	public PsiElement resolveImportReference(QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots)
 	{
 		String fqn = name.toString();
 		DotNetPsiSearcher psiFacade = DotNetPsiSearcher.getInstance(context.getProject());

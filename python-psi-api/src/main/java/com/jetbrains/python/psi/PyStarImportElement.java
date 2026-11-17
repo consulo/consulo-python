@@ -16,13 +16,12 @@
 package com.jetbrains.python.psi;
 
 import consulo.language.psi.StubBasedPsiElement;
+import com.jetbrains.python.ast.PyAstStarImportElement;
 import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
 
 /**
  * Marks the star in "from foo import *".
- * User: dcheryasov
- * Date: Jul 28, 2008
  */
-public interface PyStarImportElement extends PyImplicitImportNameDefiner, StubBasedPsiElement<PyStarImportElementStub>
-{
+public interface PyStarImportElement
+    extends PyAstStarImportElement, PyImplicitImportNameDefiner, StubBasedPsiElement<PyStarImportElementStub> {
 }

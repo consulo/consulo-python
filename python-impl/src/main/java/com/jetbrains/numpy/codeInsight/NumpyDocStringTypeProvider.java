@@ -15,18 +15,20 @@
  */
 package com.jetbrains.numpy.codeInsight;
 
+import com.jetbrains.python.impl.psi.resolve.PyResolveImportUtil;
+import com.jetbrains.python.documentation.docstrings.DocStringParser;
+
 import com.google.common.collect.Lists;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
-import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.documentation.PyDocumentationSettings;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
-import com.jetbrains.python.impl.documentation.docstrings.NumpyDocString;
-import com.jetbrains.python.impl.documentation.docstrings.SectionBasedDocString.SectionField;
+import com.jetbrains.python.documentation.docstrings.NumpyDocString;
+import com.jetbrains.python.documentation.docstrings.SectionBasedDocString.SectionField;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.impl.PyExpressionCodeFragmentImpl;
-import com.jetbrains.python.impl.psi.types.PyNoneType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -54,7 +56,7 @@ import java.util.regex.Pattern;
  * @author avereshchagin
  * @author vlan
  */
-@ExtensionImpl
+@ExtensionImpl(id = "numpyDocStringTypeProvider", order = "before pythonDocstringTypeProvider, after pyTypingTypeProvider")
 public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   private static final Map<String, String> NUMPY_ALIAS_TO_REAL_TYPE = new HashMap<>();
   private static final Pattern REDIRECT = Pattern.compile("^Refer to `(.*)` for full documentation.$");
@@ -115,7 +117,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
     }
 
     if (docString != null) {
-      NumpyDocString parsed = (NumpyDocString)DocStringUtil.parseDocString(DocStringFormat.NUMPY, docString);
+      NumpyDocString parsed = (NumpyDocString)DocStringParser.parseDocString(DocStringFormat.NUMPY, docString);
       if (parsed.getReturnFields().isEmpty() && parsed.getParameterFields().isEmpty()) {
         return null;
       }
@@ -167,8 +169,8 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   private static PyFunction resolveRedirectToFunction(String redirect, PsiElement reference) {
     QualifiedName qualifiedName = QualifiedName.fromDottedString(redirect);
     String functionName = qualifiedName.getLastComponent();
-    PyPsiFacade facade = PyPsiFacade.getInstance(reference.getProject());
-    List<PsiElement> items = facade.qualifiedNameResolver(qualifiedName.removeLastComponent()).fromElement(reference).resultsAsList();
+    List<PsiElement> items = PyResolveImportUtil.resolveQualifiedName(qualifiedName.removeLastComponent(),
+                                                                      PyResolveImportUtil.fromFoothold(reference));
     for (PsiElement item : items) {
       if (item instanceof PsiDirectory) {
         item = ((PsiDirectory)item).findFile(PyNames.INIT_DOT_PY);
@@ -373,7 +375,10 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
       }
     }
     if (!types.isEmpty() && withoutOptional != null) {
-      types.add(PyNoneType.INSTANCE);
+      PyType noneType = PyBuiltinCache.getInstance(anchor).getNoneType();
+      if (noneType != null) {
+        types.add(noneType);
+      }
     }
     return getPsiFacade(anchor).createUnionType(types);
   }

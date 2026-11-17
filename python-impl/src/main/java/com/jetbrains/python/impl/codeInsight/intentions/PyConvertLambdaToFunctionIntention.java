@@ -22,12 +22,14 @@ import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.editor.template.*;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -46,6 +48,8 @@ import java.util.List;
  *
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyConvertLambdaToFunctionIntention", categories = "Python", fileExtensions = "py")
 public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {
@@ -92,12 +96,12 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
                 return;
             }
             PyExpression body = lambdaExpression.getBody();
-            PyFunctionBuilder functionBuilder = new PyFunctionBuilder(name);
+            PyFunctionBuilder functionBuilder = new PyFunctionBuilder(name, lambdaExpression);
             for (PyParameter param : lambdaExpression.getParameterList().getParameters()) {
                 functionBuilder.parameter(param.getText());
             }
             functionBuilder.statement("return " + body.getText());
-            PyFunction function = functionBuilder.buildFunction(project, LanguageLevel.getDefault());
+            PyFunction function = functionBuilder.buildFunction();
 
             PyStatement statement = PsiTreeUtil.getParentOfType(
                 lambdaExpression,

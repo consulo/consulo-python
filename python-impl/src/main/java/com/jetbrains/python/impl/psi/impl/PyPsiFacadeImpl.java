@@ -1,107 +1,116 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameResolverImpl;
-import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
-import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
-import com.jetbrains.python.impl.psi.types.PyTupleType;
-import com.jetbrains.python.impl.psi.types.PyTypeParser;
-import com.jetbrains.python.impl.psi.types.PyUnionType;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyPsiFacade;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyType;
 import consulo.annotation.component.ServiceImpl;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.QualifiedName;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.lang.ObjectUtil;
+import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyPsiFacade;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import com.jetbrains.python.impl.psi.resolve.PyResolveImportUtil;
+import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
+import com.jetbrains.python.impl.psi.types.PyLegacyDocstringTypeParser;
+import com.jetbrains.python.impl.psi.types.PyTupleType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeRendererFeature;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
 import org.jspecify.annotations.Nullable;
-import java.util.Collection;
-import java.util.List;
 
-/**
- * @author yole
- */
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 @ServiceImpl
 @Singleton
-public class PyPsiFacadeImpl extends PyPsiFacade {
-  private final Project myProject;
+public final class PyPsiFacadeImpl extends PyPsiFacade {
+    private final Project myProject;
 
-  @Inject
-  public PyPsiFacadeImpl(Project project) {
-    myProject = project;
-  }
+    @Inject
+    public PyPsiFacadeImpl(Project project) {
+        myProject = project;
+    }
 
-  @Override
-  public QualifiedNameResolver qualifiedNameResolver(String qNameString) {
-    return new QualifiedNameResolverImpl(qNameString);
-  }
+    @Override
+    public List<PsiElement> resolveQualifiedName(QualifiedName name, PyQualifiedNameResolveContext context) {
+        return PyResolveImportUtil.resolveQualifiedName(name, context);
+    }
 
-  @Override
-  public QualifiedNameResolver qualifiedNameResolver(QualifiedName qualifiedName) {
-    return new QualifiedNameResolverImpl(qualifiedName);
-  }
+    @Override
+    public PyQualifiedNameResolveContext createResolveContextFromFoothold(PsiElement foothold) {
+        return PyResolveImportUtil.fromFoothold(foothold);
+    }
 
-  @Nullable
-  @Override
-  public PyClass findClass(String qName) {
-    return PyClassNameIndex.findClass(qName, myProject);
-  }
+    @Override
+    public PyClassType createClassType(PyClass pyClass, boolean isDefinition) {
+        return new PyClassTypeImpl(pyClass, isDefinition);
+    }
 
-  @Override
-  public PyClassType createClassType(PyClass pyClass, boolean isDefinition) {
-    return new PyClassTypeImpl(pyClass, isDefinition);
-  }
+    @Override
+    public @Nullable PyType createUnionType(Collection<PyType> members) {
+        return PyUnionType.unionOrUnknown(members);
+    }
 
-  @Nullable
-  @Override
-  public PyType createUnionType(Collection<PyType> members) {
-    return PyUnionType.union(members);
-  }
+    @Override
+    public @Nullable PyType createTupleType(List<PyType> members, PsiElement anchor) {
+        return PyTupleType.create(anchor, members);
+    }
 
-  @Nullable
-  @Override
-  public PyType createTupleType(List<PyType> members, PsiElement anchor) {
-    return PyTupleType.create(anchor, members);
-  }
+    @Override
+    public @Nullable PyType parseTypeAnnotation(String annotation, PsiElement anchor) {
+        return PyLegacyDocstringTypeParser.getTypeByName(anchor, annotation);
+    }
 
-  @Nullable
-  @Override
-  public PyType parseTypeAnnotation(String annotation, PsiElement anchor) {
-    return PyTypeParser.getTypeByName(anchor, annotation);
-  }
+    @Override
+    public String renderType(@Nullable PyType type, TypeEvalContext context, Set<PyTypeRendererFeature> features) {
+        return PythonDocumentationProvider.getTypeName(type, context, features.toArray(new PyTypeRendererFeature[0]));
+    }
 
-  @Nullable
-  @Override
-  public final PyClass createClassByQName(String qName, PsiElement anchor) {
-    PyClassType classType = PyUtil.as(parseTypeAnnotation(qName, anchor), PyClassType.class);
-    return (classType != null ? classType.getPyClass() : null);
-  }
+    public static List<@Nullable PsiElement> resolveQName(QualifiedName qualifiedName, PsiElement anchor) {
+        // Only built-in classes can be found by their unqualified names.
+        if (qualifiedName.getComponentCount() == 1) {
+            PyClass aClass = PyBuiltinCache.getInstance(anchor).getClass(qualifiedName.toString());
+            return aClass != null ? List.of(aClass) : Collections.emptyList();
+        }
 
-  @Nullable
-  @Override
-  public String findShortestImportableName(VirtualFile targetFile, PsiElement anchor) {
-    return QualifiedNameFinder.findShortestImportableName(anchor, targetFile);
-  }
+        Module module = ModuleUtilCore.findModuleForPsiElement(ObjectUtil.notNull(anchor.getContainingFile(), anchor));
+        if (module == null) {
+            return Collections.emptyList();
+        }
+        // Don't use PyResolveImportUtil.fromFoothold here as setting foothold file is going to affect resolve results
+        // particularly if the anchor element happens to be in the same file as the target class.
+        PyQualifiedNameResolveContext resolveContext = PyResolveImportUtil.fromModule(module).copyWithMembers();
+        return PyResolveImportUtil.resolveQualifiedName(qualifiedName, resolveContext);
+    }
+
+    @Override
+    public @Nullable PyClass createClassByQName(String qName, PsiElement anchor) {
+        return resolveQName(QualifiedName.fromDottedString(qName), anchor).stream()
+            .filter(PyClass.class::isInstance)
+            .map(PyClass.class::cast)
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
+    public @Nullable String findShortestImportableName(VirtualFile targetFile, PsiElement anchor) {
+        return QualifiedNameFinder.findShortestImportableName(anchor, targetFile);
+    }
+
+    @Override
+    public LanguageLevel getLanguageLevel(PsiElement element) {
+        return LanguageLevel.forElement(element);
+    }
 }

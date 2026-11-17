@@ -17,8 +17,10 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -45,6 +47,8 @@ import java.util.List;
  *
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyJoinIfIntention", categories = "Python", fileExtensions = "py")
 public class PyJoinIfIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {
@@ -109,7 +113,7 @@ public class PyJoinIfIntention extends BaseIntentionAction {
                 replacementText.append(condition.getText());
             }
 
-            PyExpression newCondition = elementGenerator.createExpressionFromText(replacementText.toString());
+            PyExpression newCondition = elementGenerator.createExpressionFromText(LanguageLevel.forElement(condition), replacementText.toString());
             ifCondition.replace(newCondition);
 
             PyStatementList stList = ((PyIfStatement) firstStatement).getIfPart().getStatementList();

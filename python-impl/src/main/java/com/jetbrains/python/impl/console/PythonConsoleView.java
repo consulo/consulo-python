@@ -23,7 +23,7 @@ import com.jetbrains.python.impl.console.completion.PythonConsoleAutopopupBlocki
 import com.jetbrains.python.parsing.console.PythonConsoleData;
 import com.jetbrains.python.impl.debugger.PyDebuggerEditorsProvider;
 import com.jetbrains.python.impl.debugger.PyStackFrame;
-import com.jetbrains.python.impl.highlighting.PyHighlighter;
+import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.application.ApplicationManager;

@@ -1,44 +1,55 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.psi.impl.stubs.*;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
-import com.jetbrains.python.PyElementTypes;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.stubs.PyDecoratorStub;
+import consulo.util.lang.ObjectUtil;
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.stubs.PyDecoratorStub;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Decorator stub storage.
- *
- * @author dcheryasov
- * @since 2008-12-18
  */
 public class PyDecoratorStubImpl extends StubBase<PyDecorator> implements PyDecoratorStub {
     private final QualifiedName myQualifiedName;
+    private final boolean myHasArgumentList;
+    private final @Nullable PyCustomDecoratorStub myCustomStub;
 
-    protected PyDecoratorStubImpl(QualifiedName qualifiedName, StubElement parent) {
+    protected PyDecoratorStubImpl(QualifiedName qualname,
+                                  boolean hasArgumentList,
+                                  StubElement parent,
+                                  @Nullable PyCustomDecoratorStub customStub) {
         super(parent, PyStubElementTypes.DECORATOR_CALL);
-        myQualifiedName = qualifiedName;
+        myQualifiedName = qualname;
+        myHasArgumentList = hasArgumentList;
+        myCustomStub = customStub;
     }
 
     @Override
     public QualifiedName getQualifiedName() {
         return myQualifiedName;
+    }
+
+    @Override
+    public boolean hasArgumentList() {
+        return myHasArgumentList;
+    }
+
+    @Override
+    public <T> @Nullable T getCustomStub(Class<T> stubClass) {
+        return ObjectUtil.tryCast(myCustomStub, stubClass);
+    }
+
+    @Override
+    public String toString() {
+        return "PyDecoratorStubImpl{" +
+               "myQualifiedName=" + myQualifiedName +
+               ", myHasArgumentList=" + myHasArgumentList +
+               ", myCustomStub=" + myCustomStub +
+               '}';
     }
 }

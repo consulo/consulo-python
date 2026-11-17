@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import consulo.util.collection.ContainerUtil;
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 import org.jspecify.annotations.Nullable;
@@ -205,14 +206,13 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         PyCallExpression callExpression = getCallExpression(elementAt);
 
         if (callExpression != null && elementAt != null) {
-            PyCallable callable = callExpression.resolveCalleeFunction(getResolveContext(elementAt));
+            PyCallable callable = ContainerUtil.getFirstItem(callExpression.multiResolveCalleeFunction(getResolveContext(elementAt)));
             return callable == null ? PsiTreeUtil.getParentOfType(elementAt, PyFunction.class) : callable;
         }
         return PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
     }
 
     protected static PyResolveContext getResolveContext(PsiElement origin) {
-        return PyResolveContext.defaultContext()
-            .withTypeEvalContext(TypeEvalContext.codeAnalysis(origin.getProject(), origin.getContainingFile()));
+        return PyResolveContext.implicitContext(TypeEvalContext.codeAnalysis(origin.getProject(), origin.getContainingFile()));
     }
 }

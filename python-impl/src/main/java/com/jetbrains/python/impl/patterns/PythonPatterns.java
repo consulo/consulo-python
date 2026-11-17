@@ -15,6 +15,10 @@
  */
 package com.jetbrains.python.impl.patterns;
 
+import java.util.Collections;
+import java.util.List;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import one.util.streamex.StreamEx;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.psi.*;
@@ -82,62 +86,57 @@ public class PythonPatterns extends PlatformPatterns
 		});
 	}
 
-	public static PyElementPattern.Capture<PyExpression> pyModuleFunctionArgument(final String functionName, final int index, final String moduleName)
+	public static PyElementPattern.Capture<PyExpression> pyModuleFunctionArgument(@Nullable String functionName,
+	                                                                               int index,
+	                                                                               String moduleName)
 	{
-		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyExpression>(PyExpression.class)
+		return new PyElementPattern.Capture<>(new InitialPatternCondition<>(PyExpression.class)
 		{
+			@Override
 			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
-				PyCallable function = resolveCalledFunction(o, functionName, index);
-				if(!(function instanceof PyFunction))
-				{
-					return false;
-				}
-				ScopeOwner scopeOwner = PsiTreeUtil.getParentOfType(function, ScopeOwner.class);
-				if(!(scopeOwner instanceof PyFile))
-				{
-					return false;
-				}
-				return moduleName.equals(FileUtil.getNameWithoutExtension(scopeOwner.getName()));
+				return StreamEx
+					.of(multiResolveCalledFunction(o, functionName, index))
+					.select(PyFunction.class)
+					.map(ScopeUtil::getScopeOwner)
+					.select(PyFile.class)
+					.anyMatch(file -> moduleName.equals(FileUtil.getNameWithoutExtension(file.getName())));
 			}
 		});
 	}
 
-	public static PyElementPattern.Capture<PyExpression> pyMethodArgument(final String functionName, final int index, final String classQualifiedName)
+	public static PyElementPattern.Capture<PyExpression> pyMethodArgument(@Nullable String functionName,
+	                                                                       int index,
+	                                                                       String classQualifiedName)
 	{
-		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyExpression>(PyExpression.class)
+		return new PyElementPattern.Capture<>(new InitialPatternCondition<>(PyExpression.class)
 		{
+			@Override
 			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
-				PyCallable function = resolveCalledFunction(o, functionName, index);
-				if(!(function instanceof PyFunction))
-				{
-					return false;
-				}
-				ScopeOwner scopeOwner = PsiTreeUtil.getParentOfType(function, ScopeOwner.class);
-				if(!(scopeOwner instanceof PyClass))
-				{
-					return false;
-				}
-				return classQualifiedName.equals(((PyClass) scopeOwner).getQualifiedName());
+				return StreamEx
+					.of(multiResolveCalledFunction(o, functionName, index))
+					.select(PyFunction.class)
+					.map(ScopeUtil::getScopeOwner)
+					.select(PyClass.class)
+					.anyMatch(cls -> classQualifiedName.equals(cls.getQualifiedName()));
 			}
 		});
 	}
 
-	private static PyCallable resolveCalledFunction(Object o, String functionName, int index)
+	private static List<PyCallable> multiResolveCalledFunction(@Nullable Object expression, @Nullable String functionName, int index)
 	{
-		if(!isCallArgument(o, functionName, index))
+		if(!isCallArgument(expression, functionName, index))
 		{
-			return null;
+			return Collections.emptyList();
 		}
-		PyExpression expression = (PyExpression) o;
-		PyCallExpression call = (PyCallExpression) expression.getParent().getParent();
+
+		final PyCallExpression call = (PyCallExpression) ((PyExpression) expression).getParent().getParent();
 
 		// TODO is it better or worse to allow implicits here?
-		PyResolveContext context = PyResolveContext.noImplicits().withTypeEvalContext(TypeEvalContext.codeAnalysis(expression.getProject(), expression.getContainingFile()));
+		final TypeEvalContext context = TypeEvalContext.codeAnalysis(call.getProject(), call.getContainingFile());
 
-		PyCallExpression.PyMarkedCallee callee = call.resolveCallee(context);
-		return callee != null ? callee.getCallable() : null;
+		return call.multiResolveCalleeFunction(PyResolveContext.defaultContext(context));
 	}
 
 	private static boolean isCallArgument(Object o, String functionName, int index)

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.hierarchy.treestructures;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import java.util.List;
 
 
@@ -37,7 +38,8 @@ public class PyTypeHierarchyTreeStructure extends PySubTypesHierarchyTreeStructu
 	private static PyHierarchyNodeDescriptor buildHierarchyElement(PyClass cl)
 	{
 		PyHierarchyNodeDescriptor descriptor = null;
-		List<PyClass> superClasses = PyUtil.getAllSuperClasses(cl);
+		TypeEvalContext context = TypeEvalContext.codeAnalysis(cl.getProject(), cl.getContainingFile());
+		List<PyClass> superClasses = cl.getAncestorClasses(context);
 		for(int i = superClasses.size() - 1; i >= 0; --i)
 		{
 			PyClass superClass = superClasses.get(i);

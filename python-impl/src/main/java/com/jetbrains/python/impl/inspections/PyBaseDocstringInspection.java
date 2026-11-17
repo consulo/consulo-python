@@ -1,24 +1,15 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.testing.PythonUnitTestUtil;
-import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
+import com.jetbrains.python.psi.Property;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.impl.testing.PythonUnitTestDetectorsKt;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,16 +17,15 @@ import org.jspecify.annotations.Nullable;
  */
 public abstract class PyBaseDocstringInspection extends PyInspection {
     @Override
-    public abstract Visitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    );
+    public abstract Visitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state);
 
-    protected static abstract class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+    protected abstract static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder,
+                       TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
@@ -45,11 +35,7 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
 
         @Override
         public final void visitPyFunction(PyFunction node) {
-            if (PythonUnitTestUtil.isUnitTestCaseFunction(node)) {
-                return;
-            }
-            PyClass containingClass = node.getContainingClass();
-            if (containingClass != null && PythonUnitTestUtil.isUnitTestCaseClass(containingClass)) {
+            if (PythonUnitTestDetectorsKt.isTestFunction(node)) {
                 return;
             }
             Property property = node.getProperty();
@@ -64,7 +50,7 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
 
         @Override
         public final void visitPyClass(PyClass node) {
-            if (PythonUnitTestUtil.isUnitTestCaseClass(node)) {
+            if (PythonUnitTestDetectorsKt.isTestClass(node, myTypeEvalContext)) {
                 return;
             }
             String name = node.getName();

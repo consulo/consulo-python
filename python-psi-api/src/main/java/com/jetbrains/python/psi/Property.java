@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.psi.types.PyClassType;
 import org.jspecify.annotations.Nullable;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -68,5 +69,5 @@ public interface Property {
    * Get the return type of the property getter.
    */
   @Nullable
-  PyType getType(TypeEvalContext context);
+  PyType getType(PyClassType receiverType, TypeEvalContext context);
 }

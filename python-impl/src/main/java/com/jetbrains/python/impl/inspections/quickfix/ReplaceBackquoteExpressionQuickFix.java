@@ -22,6 +22,7 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
+import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyReprExpression;
 
@@ -41,7 +42,7 @@ public class ReplaceBackquoteExpressionQuickFix implements LocalQuickFix {
     if (problemElement instanceof PyReprExpression) {
       if (((PyReprExpression)problemElement).getExpression() != null) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        problemElement.replace(elementGenerator.createExpressionFromText("repr(" + ((PyReprExpression)problemElement).getExpression().getText() + ")"));
+        problemElement.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(problemElement), "repr(" + ((PyReprExpression)problemElement).getExpression().getText() + ")"));
       }
     }
   }

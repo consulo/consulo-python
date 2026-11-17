@@ -1,20 +1,33 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi;
 
-import com.google.common.collect.Iterators;
+import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
+import com.jetbrains.python.impl.pyi.PyiFile;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyDecoratable;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyQualifiedNameOwner;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.ide.impl.idea.util.containers.Convertor;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiReference;
+import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.QualifiedName;
-
+import one.util.streamex.StreamEx;
 import org.jspecify.annotations.Nullable;
-import java.util.*;
 
-import static com.jetbrains.python.impl.psi.PyKnownDecoratorUtil.KnownDecorator.*;
-import static com.jetbrains.python.impl.psi.PyUtil.as;
-import static consulo.util.collection.ContainerUtil.newMapFromValues;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Contains list of well-behaved decorators from Pythons standard library, that don't change
@@ -22,203 +35,319 @@ import static consulo.util.collection.ContainerUtil.newMapFromValues;
  *
  * @author Mikhail Golubev
  */
-public class PyKnownDecoratorUtil
-{
+public final class PyKnownDecoratorUtil {
+  private PyKnownDecoratorUtil() {
+  }
 
-	private PyKnownDecoratorUtil()
-	{
-	}
+  /**
+   * Returns the known decorators of [element], one entry per decorator in declaration order.
+   *
+   * @param context type evaluation context. If it doesn't allow switch to AST, the imports of the file give the qualified name of a decorator.
+   */
+  public static PyElementKnownDecorators knownDecoratorsOf(PyDecoratable element, TypeEvalContext context) {
+    PyDecoratorList decoratorList = element.getDecoratorList();
+    if (decoratorList == null) return PyElementKnownDecorators.NONE;
+    List<PyKnownDecorators> decorators = new ArrayList<>();
+    for (PyDecorator it : decoratorList.getDecorators()) {
+      decorators.add(knownDecoratorsOf(it, context));
+    }
+    return PyElementKnownDecorators.of(decorators);
+  }
 
-	// TODO provide more information about these decorators: attributes (e.g. lru_cache(f).cache_info), side-effects etc.
-	@SuppressWarnings("SpellCheckingInspection")
-	public enum KnownDecorator
-	{
+  /**
+   * @deprecated Use knownDecoratorsOf(element, context). The returned list flattens two axes - which decorator, and which
+   * known decorator each can resolve to - and holds candidates, not facts: aggregate it with any, never with all.
+   */
+  @Deprecated
+  public static List<PyKnownDecorator> getKnownDecorators(PyDecoratable element, TypeEvalContext context) {
+    return knownDecoratorsOf(element, context).asList();
+  }
 
-		STATICMETHOD(PyNames.STATICMETHOD),
-		CLASSMETHOD(PyNames.CLASSMETHOD),
-		PROPERTY(PyNames.PROPERTY),
+  /**
+   * Returns the known decorators that [decorator] can resolve to.
+   *
+   * @param context type evaluation context. If it doesn't allow switch to AST, the imports of the file give the qualified name of a decorator.
+   */
+  public static PyKnownDecorators knownDecoratorsOf(PyDecorator decorator, TypeEvalContext context) {
+    QualifiedName qualifiedName = decorator.getQualifiedName();
+    if (qualifiedName == null) return PyKnownDecorators.NONE;
+    // Avoid resolving property accessor decorators to prevent an infinite recursion
+    String lastComponent = qualifiedName.getLastComponent();
+    if (PyNames.GETTER.equals(lastComponent) || PyNames.SETTER.equals(lastComponent) || PyNames.DELETER.equals(lastComponent)) {
+      return PyKnownDecorators.NONE;
+    }
+    PsiFile containingFile = decorator.getContainingFile();
+    if (!context.maySwitchToAST(decorator)) {
+      // Without the AST, the imports of the file give the qualified name of the decorator. This reads stubs only.
+      if (!(containingFile instanceof PyFile pyFile)) return PyKnownDecorators.NONE;
+      return PyKnownDecorators.of(asKnownDecoratorsInFile(qualifiedName, pyFile));
+    }
+    List<? extends PsiElement> resolved;
+    if (containingFile instanceof PyiFile pyiFile) {
+      // In .pyi files it's safe to resolve decorators such as "@overload" flow-insensitively.
+      resolved = PyResolveUtil.resolveQualifiedNameInScope(qualifiedName, pyiFile, context);
+    }
+    else {
+      resolved = PyUtil.multiResolveTopPriority(Objects.requireNonNull(decorator.getCallee()), PyResolveContext.defaultContext(context));
+    }
+    List<PyKnownDecorator> candidates = new ArrayList<>();
+    for (PsiElement element : resolved) {
+      if (!(element instanceof PyQualifiedNameOwner qualifiedNameOwner)) continue;
+      String qName = qualifiedNameOwner.getQualifiedName();
+      if (qName == null) continue;
+      String unqualified = PyNames.FQN.unqualifyBuiltinName(qName);
+      PyKnownDecorator known = findByQualifiedName(QualifiedName.fromDottedString(Objects.requireNonNull(unqualified)));
+      if (known != null) {
+        candidates.add(known);
+      }
+    }
+    return PyKnownDecorators.of(candidates);
+  }
 
-		CONTEXTLIB_CONTEXTMANAGER("contextlib.contextmanager"),
+  /**
+   * @deprecated Use knownDecoratorsOf(decorator, context). The returned list holds resolve candidates, not facts:
+   * aggregate it with any, never with all. The returned list is immutable.
+   */
+  @Deprecated
+  public static List<PyKnownDecorator> asKnownDecorators(PyDecorator decorator, TypeEvalContext context) {
+    return knownDecoratorsOf(decorator, context).asList();
+  }
 
-		FUNCTOOLS_LRU_CACHE("functools.lru_cache"),
-		FUNCTOOLS_WRAPS("functools.wraps"),
-		FUNCTOOLS_TOTAL_ORDERING("functools.total_ordering"),
-		FUNCTOOLS_SINGLEDISPATCH("functools.singledispatch"),
+  /**
+   * Returns the known decorators that [qualifiedName], as it is written in [file], can point to.
+   * <p>
+   * The method reads the import statements of the file and resolves nothing, so it stays inside the stubs of the file.
+   * It sees a top-level import only, which includes an import under `if TYPE_CHECKING:`.
+   * <p>
+   * An import gives the module of a name, but the file cannot tell where that module takes the name from.
+   * A decorator of the same top-level package matches first.
+   * If the package holds no such decorator, the module can re-export one, as `propcache._helpers_py` re-exports
+   * `functools.cached_property`, so the short name matches.
+   * A relative import comes from the package of the file, which holds no known decorator, so the name is not one.
+   * A name that the file itself defines belongs to the module of the file, as `classmethod` does in `builtins.pyi`.
+   * For any other name the short name is all the file gives. This covers a builtin, a name from a star import,
+   * an import inside a function, and a member of a local object as in `@my_property.expression`.
+   */
+  private static List<PyKnownDecorator> asKnownDecoratorsInFile(QualifiedName qualifiedName, PyFile file) {
+    return computeKnownDecoratorsInFile(qualifiedName, file);
+  }
 
-		ABC_ABSTRACTMETHOD("abc.abstractmethod"),
-		ABC_ABSTRACTCLASSMETHOD("abc.abstractclassmethod"),
-		ABC_ABSTRACTSTATICMETHOD("abc.abstractstaticmethod"),
-		ABC_ABSTRACTPROPERTY("abc.abstractproperty"),
+  private static List<PyKnownDecorator> computeKnownDecoratorsInFile(QualifiedName qualifiedName, PyFile file) {
+    String firstName = qualifiedName.getFirstComponent();
+    if (firstName == null) return Collections.emptyList();
+    QualifiedName tail = qualifiedName.removeHead(1);
+    // A star import keeps the name and gives no imported name, so the short name still finds the decorator further down.
+    List<QualifiedName> importedNames = importedQualifiedNames(qualifiedName, file);
+    if (importedNames == null) return Collections.emptyList();
 
-		//ATEXIT_REGISTER("atexit.register", true),
-		//ATEXIT_UNREGISTER("atexit.unregister", false),
+    if (!importedNames.isEmpty()) {
+      List<PyKnownDecorator> result = new ArrayList<>();
+      for (QualifiedName importedName : importedNames) {
+        PyKnownDecorator byQualifiedName = findByQualifiedName(importedName);
+        if (byQualifiedName != null) {
+          result.add(byQualifiedName);
+          continue;
+        }
+        List<PyKnownDecorator> byShortName = findByShortName(Objects.requireNonNull(importedName.getLastComponent()));
+        List<PyKnownDecorator> samePackage = new ArrayList<>();
+        for (PyKnownDecorator it : byShortName) {
+          if (Objects.equals(it.getQualifiedName().getFirstComponent(), importedName.getFirstComponent())) {
+            samePackage.add(it);
+          }
+        }
+        result.addAll(samePackage.isEmpty() ? byShortName : samePackage);
+      }
+      return result;
+    }
+    PsiElement defined = definedName(file, firstName);
+    if (defined != null) {
+      String definedQName = defined instanceof PyQualifiedNameOwner qualifiedNameOwner ? qualifiedNameOwner.getQualifiedName() : null;
+      if (definedQName == null) return Collections.emptyList();
+      String name = Objects.requireNonNull(PyNames.FQN.unqualifyBuiltinName(definedQName));
+      PyKnownDecorator known = findByQualifiedName(QualifiedName.fromDottedString(name).append(tail));
+      return known != null ? List.of(known) : List.of();
+    }
+    return findByShortName(Objects.requireNonNull(qualifiedName.getLastComponent()));
+  }
 
-		ASYNCIO_COROUTINE("asyncio.tasks.coroutine"),
+  /**
+   * Returns the absolute names that the top-level imports of [file] give to [qualifiedName], as it is written in [file].
+   * Returns `null` when a relative import binds the first component of [qualifiedName].
+   * The method reads the import statements of the file and resolves nothing, so it stays inside the stubs of the file.
+   */
+  public static @Nullable List<QualifiedName> importedQualifiedNames(QualifiedName qualifiedName, PyFile file) {
+    String firstName = qualifiedName.getFirstComponent();
+    if (firstName == null) return Collections.emptyList();
+    QualifiedName tail = qualifiedName.removeHead(1);
+    List<QualifiedName> importedNames = new ArrayList<>();
 
-		UNITTEST_SKIP("unittest.case.skip"),
-		UNITTEST_SKIP_IF("unittest.case.skipIf"),
-		UNITTEST_SKIP_UNLESS("unittest.case.skipUnless"),
-		UNITTEST_EXPECTED_FAILURE("unittest.case.expectedFailure"),
-		UNITTEST_MOCK_PATCH("unittest.mock.patch"),
+    for (PyImportElement importElement : file.getImportTargets()) {
+      QualifiedName importedQName = importElement.getImportedQName();
+      if (importedQName == null) continue;
+      String asName = importElement.getAsName();
+      if (asName != null) {
+        if (asName.equals(firstName)) importedNames.add(importedQName.append(tail));
+      }
+      else if (Objects.equals(importedQName.getFirstComponent(), firstName)) {
+        // "import a.b" binds "a", so the name is already absolute.
+        importedNames.add(qualifiedName);
+      }
+    }
+    for (PyFromImportStatement fromImport : file.getFromImports()) {
+      if (fromImport.isStarImport()) continue;
+      boolean bindsName = false;
+      for (PyImportElement it : fromImport.getImportElements()) {
+        if (firstName.equals(it.getVisibleName())) {
+          bindsName = true;
+          break;
+        }
+      }
+      if (!bindsName) continue;
+      if (fromImport.getRelativeLevel() != 0) return null;
+      QualifiedName source = fromImport.getImportSourceQName();
+      if (source == null) continue;
+      for (PyImportElement importElement : fromImport.getImportElements()) {
+        if (firstName.equals(importElement.getVisibleName())) {
+          QualifiedName importedQName = importElement.getImportedQName();
+          if (importedQName != null) {
+            importedNames.add(source.append(importedQName).append(tail));
+          }
+        }
+      }
+    }
+    return importedNames;
+  }
 
-		TYPING_OVERLOAD("typing.overload"),
+  private static @Nullable PsiElement definedName(PyFile file, String name) {
+    PsiElement result = file.findTopLevelClass(name);
+    if (result == null) result = file.findTopLevelFunction(name);
+    if (result == null) result = file.findTopLevelAttribute(name);
+    return result;
+  }
 
-		REPRLIB_RECURSIVE_REPR("reprlib.recursive_repr");
+  public static List<PyKnownDecorator> asKnownDecorators(QualifiedName qualifiedName) {
+    // The method might have been called during building of PSI stub indexes. Thus, we can't leave this file's boundaries.
+    // TODO Use proper local resolve to imported names here
+    String lastComponent = qualifiedName.getLastComponent();
+    if (lastComponent == null) {
+      return Collections.emptyList();
+    }
+    return findByShortName(lastComponent);
+  }
 
-		private final QualifiedName myQualifiedName;
+  /**
+   * Check that given element has any non-standard (read "unreliable") decorators.
+   *
+   * @param element decoratable element to check
+   * @param context type evaluation context. If it doesn't allow switch to AST, the imports of the file give the qualified name of a decorator.
+   * @see PyKnownDecorator
+   */
+  public static boolean hasUnknownDecorator(PyDecoratable element, TypeEvalContext context) {
+    return !knownDecoratorsOf(element, context).allKnown();
+  }
 
-		KnownDecorator(String qualifiedName)
-		{
-			myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
-		}
+  /**
+   * Checks that given function has any decorators from `abc` module.
+   *
+   * @param element Python function to check
+   * @param context type evaluation context. If it doesn't allow switch to AST, the imports of the file give the qualified name of a decorator.
+   * @see PyKnownDecorator
+   */
+  public static boolean hasAbstractDecorator(PyDecoratable element, TypeEvalContext context) {
+    return knownDecoratorsOf(element, context).hasTrait(PyKnownDecorator::isAbstract);
+  }
 
-		public QualifiedName getQualifiedName()
-		{
-			return myQualifiedName;
-		}
+  public static boolean hasGeneratorBasedCoroutineDecorator(PyFunction function, TypeEvalContext context) {
+    return knownDecoratorsOf(function, context).hasTrait(PyKnownDecorator::isGeneratorBasedCoroutine);
+  }
 
-		public String getShortName()
-		{
-			//noinspection ConstantConditions
-			return myQualifiedName.getLastComponent();
-		}
-	}
+  public static boolean isResolvedToGeneratorBasedCoroutine(PyCallExpression receiver,
+                                                            PyResolveContext resolveContext,
+                                                            TypeEvalContext typeEvalContext) {
+    return StreamEx
+      .of(receiver.multiResolveCalleeFunction(resolveContext))
+      .select(PyFunction.class)
+      .anyMatch(function -> hasGeneratorBasedCoroutineDecorator(function, typeEvalContext));
+  }
 
-	private static final Set<KnownDecorator> BUILTIN_DECORATORS = EnumSet.of(PROPERTY, CLASSMETHOD, STATICMETHOD);
-	private static final Set<KnownDecorator> ABSTRACT_DECORATORS = EnumSet.of(ABC_ABSTRACTMETHOD, ABC_ABSTRACTPROPERTY, ABC_ABSTRACTSTATICMETHOD, ABC_ABSTRACTCLASSMETHOD);
+  public static boolean hasRedeclarationDecorator(PyFunction function, TypeEvalContext context) {
+    return knownDecoratorsOf(function, context).contains(PyKnownDecorator.TYPING_OVERLOAD);
+  }
 
-	private static final Map<String, KnownDecorator> ourByShortName = newMapFromValues(Iterators.forArray(values()), new Convertor<KnownDecorator, String>()
-	{
-		@Override
-		public String convert(KnownDecorator o)
-		{
-			return o.getShortName();
-		}
-	});
+  public static @Nullable PyDecorator findOverrideDecorator(PyDecoratable decoratable, TypeEvalContext context) {
+    PyDecoratorList decoratorList = decoratable.getDecoratorList();
+    if (decoratorList == null) return null;
+    for (PyDecorator decorator : decoratorList.getDecorators()) {
+      if (knownDecoratorsOf(decorator, context)
+        .containsAny(PyKnownDecorator.TYPING_OVERRIDE, PyKnownDecorator.TYPING_EXTENSIONS_OVERRIDE)) {
+        return decorator;
+      }
+    }
+    return null;
+  }
 
-	/**
-	 * Map decorators of element to {@link PyKnownDecoratorUtil.KnownDecorator}.
-	 *
-	 * @param element decoratable element to check
-	 * @param context type evaluation context. If it doesn't allow switch to AST, decorators will be compared by the text of the last component
-	 *                of theirs qualified names.
-	 * @return list of known decorators in declaration order with duplicates (with any)
-	 */
-	public static List<KnownDecorator> getKnownDecorators(PyDecoratable element, TypeEvalContext context)
-	{
-		PyDecoratorList decoratorList = element.getDecoratorList();
-		if(decoratorList == null)
-		{
-			return Collections.emptyList();
-		}
-		List<KnownDecorator> result = new ArrayList<>();
-		boolean allowResolve = context.maySwitchToAST((PsiElement) element);
-		for(PyDecorator decorator : decoratorList.getDecorators())
-		{
-			QualifiedName qualifiedName = decorator.getQualifiedName();
-			if(qualifiedName == null)
-			{
-				continue;
-			}
+  public static boolean hasOverrideDecorator(PyDecoratable decoratable, TypeEvalContext context) {
+    return findOverrideDecorator(decoratable, context) != null;
+  }
 
-			KnownDecorator knownDecorator = ourByShortName.get(qualifiedName.getLastComponent());
-			if(knownDecorator != null)
-			{
-				if(allowResolve)
-				{
-					PyQualifiedNameOwner resolved = as(resolveDecorator(decorator), PyQualifiedNameOwner.class);
-					if(resolved instanceof PyFunction && PyNames.INIT.equals(resolved.getName()))
-					{
-						resolved = ((PyFunction) resolved).getContainingClass();
-					}
-					if(resolved != null && resolved.getQualifiedName() != null)
-					{
-						QualifiedName resolvedName = QualifiedName.fromDottedString(resolved.getQualifiedName());
-						if(resolvedName.equals(knownDecorator.getQualifiedName()))
-						{
-							result.add(knownDecorator);
-						}
-					}
-				}
-				else
-				{
-					result.add(knownDecorator);
-				}
-			}
-		}
-		return result;
-	}
+  public static boolean hasUnknownOrChangingSignatureDecorator(PyDecoratable decoratable, TypeEvalContext context) {
+    PyElementKnownDecorators decorators = knownDecoratorsOf(decoratable, context);
+    return !decorators.allKnown() || decorators.contains(PyKnownDecorator.UNITTEST_MOCK_PATCH);
+  }
 
-	@Nullable
-	private static PsiElement resolveDecorator(PyDecorator decorator)
-	{
-		PyExpression callee = decorator.getCallee();
-		if(callee == null)
-		{
-			return null;
-		}
-		PsiReference reference = callee.getReference();
-		if(reference == null)
-		{
-			return null;
-		}
-		return reference.resolve();
-	}
+  public static boolean hasUnknownOrUpdatingAttributesDecorator(PyDecoratable decoratable, TypeEvalContext context) {
+    PyElementKnownDecorators decorators = knownDecoratorsOf(decoratable, context);
+    if (!decorators.allKnown()) return true;
+    // lru_cache adds cache_clear and cache_info, singledispatch adds register
+    return decorators.containsAny(PyKnownDecorator.FUNCTOOLS_LRU_CACHE, PyKnownDecorator.FUNCTOOLS_SINGLEDISPATCH);
+  }
 
-	/**
-	 * Check that given element has any non-standard (read "unreliable") decorators.
-	 *
-	 * @param element decoratable element to check
-	 * @param context type evaluation context. If it doesn't allow switch to AST, decorators will be compared by the text of the last component
-	 *                of theirs qualified names.
-	 * @see PyKnownDecoratorUtil.KnownDecorator
-	 */
-	public static boolean hasUnknownDecorator(PyDecoratable element, TypeEvalContext context)
-	{
-		return !allDecoratorsAreKnown(element, getKnownDecorators(element, context));
-	}
+  @SuppressWarnings("deprecation")
+  private static List<PyKnownDecorator> findByShortName(String shortName) {
+    return PyKnownDecoratorProvider.EP_NAME.getExtensionList().stream()
+      .flatMap(knownDecoratorProvider -> {
+        Collection<PyKnownDecorator> decorators = knownDecoratorProvider.getKnownDecorators();
+        if (!decorators.isEmpty()) {
+          return decorators.stream();
+        }
+        // Fallback to the old implementation that will be removed in the future release
+        String knownDecorator = knownDecoratorProvider.toKnownDecorator(shortName);
+        if (knownDecorator != null && !knownDecorator.isEmpty() && !knownDecorator.equals(shortName)) {
+          return StreamEx.of(findByShortName(knownDecorator));
+        }
+        return StreamEx.<PyKnownDecorator>empty();
+      })
+      .filter(knownDecorator -> knownDecorator.getShortName().equals(shortName))
+      .toList();
+  }
 
-	/**
-	 * Checks that given element has any non-builtin decorators.
-	 *
-	 * @param element decoratable element to check
-	 * @param context type evaluation context. If it doesn't allow switch to AST, decorators will be compared by the text of the last component
-	 *                of theirs qualified names.
-	 * @see PyKnownDecoratorUtil.KnownDecorator
-	 */
-	public static boolean hasNonBuiltinDecorator(PyDecoratable element, TypeEvalContext context)
-	{
-		List<KnownDecorator> knownDecorators = getKnownDecorators(element, context);
-		if(!allDecoratorsAreKnown(element, knownDecorators))
-		{
-			return true;
-		}
-		knownDecorators.removeAll(BUILTIN_DECORATORS);
-		return !knownDecorators.isEmpty();
-	}
+  private static @Nullable PyKnownDecorator findByQualifiedName(QualifiedName qualifiedName) {
+    return PyKnownDecoratorProvider.EP_NAME.getExtensionList().stream()
+      .flatMap(knownDecoratorProvider -> knownDecoratorProvider.getKnownDecorators().stream())
+      .filter(knownDecorator -> knownDecorator.getQualifiedName().equals(qualifiedName))
+      .findFirst()
+      .orElse(null);
+  }
 
-	/**
-	 * Checks that given function has any decorators from {@code abc} module.
-	 *
-	 * @param element Python function to check
-	 * @param context type evaluation context. If it doesn't allow switch to AST, decorators will be compared by the text of the last component
-	 *                of theirs qualified names.
-	 * @see PyKnownDecoratorUtil.KnownDecorator
-	 */
-	public static boolean hasAbstractDecorator(PyDecoratable element, TypeEvalContext context)
-	{
-		List<KnownDecorator> knownDecorators = getKnownDecorators(element, context);
-		if(knownDecorators.isEmpty())
-		{
-			return false;
-		}
-		knownDecorators.retainAll(ABSTRACT_DECORATORS);
-		return !knownDecorators.isEmpty();
-	}
+  public enum FunctoolsWrapsParameters implements FunctionParameter {
+    WRAPPED(0, "wrapped");
 
-	private static boolean allDecoratorsAreKnown(PyDecoratable element, List<KnownDecorator> decorators)
-	{
-		PyDecoratorList decoratorList = element.getDecoratorList();
-		return decoratorList == null ? decorators.isEmpty() : decoratorList.getDecorators().length == decorators.size();
-	}
+    private final int myPosition;
+    private final String myName;
+
+    FunctoolsWrapsParameters(int position, String name) {
+      myPosition = position;
+      myName = name;
+    }
+
+    @Override
+    public int getPosition() {
+      return myPosition;
+    }
+
+    @Override
+    public @Nullable String getName() {
+      return myName;
+    }
+  }
 }

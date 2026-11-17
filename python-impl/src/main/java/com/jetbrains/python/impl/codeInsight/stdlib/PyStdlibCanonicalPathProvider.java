@@ -1,77 +1,55 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.stdlib;
 
+import com.jetbrains.python.impl.psi.resolve.MainPythonSdkKt;
+import com.jetbrains.python.impl.sdk.skeleton.PySkeletonUtil;
+import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiUtilCore;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * @author yole
- */
 @ExtensionImpl
 public class PyStdlibCanonicalPathProvider implements PyCanonicalPathProvider {
-  @Nullable
-  @Override
-  public QualifiedName getCanonicalPath(QualifiedName qName, PsiElement foothold) {
-    return restoreStdlibCanonicalPath(qName);
-  }
-
-  public static QualifiedName restoreStdlibCanonicalPath(QualifiedName qName) {
-    if (qName.getComponentCount() > 0) {
-      List<String> components = qName.getComponents();
-      String head = components.get(0);
-      if (head.equals("_abcoll") || head.equals("_collections")) {
-        components.set(0, "collections");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("posix") || head.equals("nt")) {
-        components.set(0, "os");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("_functools")) {
-        components.set(0, "functools");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("_struct")) {
-        components.set(0, "struct");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("_io") || head.equals("_pyio") || head.equals("_fileio")) {
-        components.set(0, "io");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("_datetime")) {
-        components.set(0, "datetime");
-        return QualifiedName.fromComponents(components);
-      }
-      else if (head.equals("ntpath") || head.equals("posixpath") || head.equals("path")) {
-        List<String> result = new ArrayList<String>();
-        result.add("os");
-        components.set(0, "path");
-        result.addAll(components);
-        return QualifiedName.fromComponents(result);
-      }
+    @Override
+    public @Nullable QualifiedName getCanonicalPath(@Nullable PsiElement symbol, QualifiedName qName, @Nullable PsiElement foothold) {
+        VirtualFile virtualFile = PsiUtilCore.getVirtualFile(symbol);
+        if (virtualFile != null && foothold != null) {
+            QualifiedName canonicalPath = restoreStdlibCanonicalPath(qName);
+            if (canonicalPath != null && PySkeletonUtil.isStdLib(virtualFile, MainPythonSdkKt.pythonSdkIfReady(foothold))) {
+                return canonicalPath;
+            }
+        }
+        return null;
     }
-    return null;
-  }
+
+    private static QualifiedName replaceHead(QualifiedName qName, String newHead) {
+        return QualifiedName.fromDottedString(newHead).append(qName.removeHead(1));
+    }
+
+    public static @Nullable QualifiedName restoreStdlibCanonicalPath(QualifiedName qName) {
+        if (qName.matchesPrefix(QualifiedName.fromComponents("mock", "mock"))) {
+            return qName.removeHead(1);
+        }
+        String firstComponent = qName.getFirstComponent();
+        if (firstComponent == null) {
+            return null;
+        }
+        return switch (firstComponent) {
+            case "_abcoll", "_collections" -> replaceHead(qName, "collections");
+            case "_collections_abc" -> replaceHead(qName, "collections.abc");
+            case "posix", "nt" -> replaceHead(qName, "os");
+            case "_functools" -> replaceHead(qName, "functools");
+            case "_struct" -> replaceHead(qName, "struct");
+            case "_io", "_pyio", "_fileio" -> replaceHead(qName, "io");
+            case "_datetime" -> replaceHead(qName, "datetime");
+            case "ntpath", "posixpath", "path", "macpath", "os2emxpath", "genericpath" -> replaceHead(qName, "os.path");
+            case "_sqlite3" -> replaceHead(qName, "sqlite3");
+            case "_pickle" -> replaceHead(qName, "pickle");
+            case "_decimal" -> replaceHead(qName, "decimal");
+            default -> null;
+        };
+    }
 }

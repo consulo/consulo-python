@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
@@ -60,7 +61,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if (callExpression != null)
 		{
-			return callExpression.resolveCalleeFunction(PyResolveContext.defaultContext());
+			return ContainerUtil.getFirstItem(callExpression.multiResolveCalleeFunction(PyResolveContext.defaultContext()));
 		}
 		return PsiTreeUtil.getParentOfType(element, PyFunction.class);
 	}

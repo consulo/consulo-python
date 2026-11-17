@@ -15,10 +15,17 @@
  */
 package com.jetbrains.python.impl.refactoring.introduce;
 
+import com.jetbrains.python.impl.psi.types.PyLiteralStringType;
+import com.jetbrains.python.psi.types.PyCallableParameter;
+import one.util.streamex.StreamEx;
+import java.util.Optional;
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
+
+import static com.jetbrains.python.impl.psi.types.PyNoneTypeKt.isNoneType;
+
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.psi.types.PyNoneType;
 import com.jetbrains.python.impl.refactoring.NameSuggesterUtil;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
@@ -66,7 +73,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
-import static com.jetbrains.python.inspections.PyStringFormatParser.*;
+import static com.jetbrains.python.impl.PyStringFormatParser.*;
 
 /**
  * @author Alexey.Ivanov
@@ -224,10 +231,13 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
     }
     TypeEvalContext context = TypeEvalContext.userInitiated(expression.getProject(), expression.getContainingFile());
     PyType type = context.getType(expression);
-    if (type != null && type != PyNoneType.INSTANCE) {
+    if (!isUnknown(type) && !isNoneType(type)) {
       String typeName = type.getName();
       if (typeName != null) {
-        if (type.isBuiltin()) {
+        if (type instanceof PyLiteralStringType) { // we don't want to suggest "L" for inferred LiteralStrings
+          typeName = "s";
+        }
+        else if (type.isBuiltin()) {
           typeName = typeName.substring(0, 1);
         }
         candidates.addAll(NameSuggesterUtil.generateNamesByType(typeName));
@@ -238,20 +248,19 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
       candidates.add(kwArg.getKeyword());
     }
 
-    PyArgumentList argList = PsiTreeUtil.getParentOfType(expression, PyArgumentList.class);
-    if (argList != null) {
-      PyCallExpression callExpr = argList.getCallExpression();
-      if (callExpr != null) {
-        PyResolveContext resolveContext = PyResolveContext.noImplicits();
-        PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(resolveContext);
-        if (mapping.getMarkedCallee() != null) {
-          PyNamedParameter namedParameter = mapping.getMappedParameters().get(expression);
-          if (namedParameter != null) {
-            candidates.add(namedParameter.getName());
-          }
-        }
-      }
-    }
+    Optional
+      .ofNullable(PsiTreeUtil.getParentOfType(expression, PyArgumentList.class))
+      .map(PyArgumentList::getCallExpression)
+      .ifPresent(
+        call -> StreamEx
+          .of(call.multiMapArguments(PyResolveContext.defaultContext(context)))
+          .map(mapping -> mapping.getMappedParameters().get(expression))
+          .nonNull()
+          .map(PyCallableParameter::getName)
+          .nonNull()
+          .forEach(candidates::add)
+      );
+
     return candidates;
   }
 

@@ -39,7 +39,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * User : ktisha
  */
-@ExtensionImpl(id = "pyStatement", order = "before line")
+@ExtensionImpl(id = "pyStatementMover", order = "before line")
 public class PyStatementMover extends LineMover {
   @Override
   public boolean checkAvailable(Editor editor, PsiFile file, MoveInfo info, boolean down) {

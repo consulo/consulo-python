@@ -1,13 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.stub.IStubElementType;
 import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyTypeParameter;
 import com.jetbrains.python.psi.PyTypeParameterList;
 import com.jetbrains.python.psi.stubs.PyTypeParameterListStub;
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.stub.IStubElementType;
 
 import java.util.List;
 

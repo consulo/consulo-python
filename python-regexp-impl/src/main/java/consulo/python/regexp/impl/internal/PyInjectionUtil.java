@@ -16,7 +16,7 @@
 
 package consulo.python.regexp.impl.internal;
 
-import com.jetbrains.python.inspections.PyStringFormatParser;
+import com.jetbrains.python.impl.PyStringFormatParser;
 import consulo.language.inject.MultiHostRegistrar;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-import static com.jetbrains.python.inspections.PyStringFormatParser.*;
+import static com.jetbrains.python.impl.PyStringFormatParser.*;
 
 /**
  * @author vlan

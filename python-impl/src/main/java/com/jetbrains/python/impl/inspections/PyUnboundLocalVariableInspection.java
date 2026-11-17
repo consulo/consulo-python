@@ -1,31 +1,7 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
-import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
-import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
-import com.jetbrains.python.impl.inspections.quickfix.AddGlobalQuickFix;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
-import com.jetbrains.python.impl.psi.impl.PyGlobalStatementNavigator;
-import com.jetbrains.python.psi.*;
+import consulo.localize.LocalizeValue;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.ControlFlowUtil;
@@ -34,47 +10,77 @@ import consulo.language.dataFlow.DFALimitExceededException;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import consulo.util.dataholder.Key;
-import consulo.util.lang.ref.Ref;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
+import com.jetbrains.python.impl.codeInsight.controlflow.PyDataFlowKt;
+import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
+import com.jetbrains.python.impl.inspections.quickfix.AddGlobalQuickFix;
+import com.jetbrains.python.psi.PyAssignmentExpression;
+import com.jetbrains.python.psi.PyAugAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyComprehensionElement;
+import com.jetbrains.python.psi.PyConditionalStatementPart;
+import com.jetbrains.python.psi.PyExpressionCodeFragment;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportStatementBase;
+import com.jetbrains.python.psi.PyNonlocalStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTypeParameter;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyWithStatement;
+import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.impl.psi.impl.PyDelStatementNavigator;
+import com.jetbrains.python.impl.psi.impl.PyGlobalStatementNavigator;
+import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author oleg
- */
 @ExtensionImpl
-public class PyUnboundLocalVariableInspection extends PyInspection {
-    private static Key<Set<ScopeOwner>> LARGE_FUNCTIONS_KEY = Key.create("PyUnboundLocalVariableInspection.LargeFunctions");
-
+public final class PyUnboundLocalVariableInspection extends PyInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameUnbound();
     }
 
-    public PsiElementVisitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session
-    ) {
-        session.putUserData(LARGE_FUNCTIONS_KEY, new HashSet<>());
-        return new Visitor(holder, session);
+    @Override
+    public PsiElementVisitor buildVisitor(ProblemsHolder holder,
+                                          boolean isOnTheFly,
+                                          LocalInspectionToolSession session,
+                                          Object state) {
+        TypeEvalContext context = PyInspectionVisitor.getContext(session);
+        if (context.getUsesExternalTypeEngine()) {
+            return PsiElementVisitor.EMPTY_VISITOR;
+        }
+        return new Visitor(holder, context);
     }
 
     public static class Visitor extends PyInspectionVisitor {
+        Set<ScopeOwner> LARGE_FUNCTIONS = new HashSet<>();
 
-        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
-            super(holder, session);
+        Visitor(ProblemsHolder holder, TypeEvalContext context) {
+            super(holder, context);
         }
 
         @Override
         public void visitPyReferenceExpression(PyReferenceExpression node) {
+            if (PyResolveUtil.allowForwardReferences(node)) {
+                return;
+            }
+
             if (node.getContainingFile() instanceof PyExpressionCodeFragment) {
                 return;
             }
@@ -90,25 +96,29 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             if (PsiTreeUtil.getParentOfType(node, PyImportStatementBase.class) != null) {
                 return;
             }
+            if (PyDataFlowKt.isUnreachableByControlFlow(node, myTypeEvalContext)) {
+                return;
+            }
             String name = node.getReferencedName();
             if (name == null) {
                 return;
             }
             ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(node, name);
-            Set<ScopeOwner> largeFunctions = getSession().getUserData(LARGE_FUNCTIONS_KEY);
+            Set<ScopeOwner> largeFunctions = LARGE_FUNCTIONS;
             assert largeFunctions != null;
             if (owner == null || largeFunctions.contains(owner)) {
                 return;
             }
-            // Ignore references declared in outer scopes
-            if (owner != ScopeUtil.getScopeOwner(node)) {
+            // Check if it is nonlocal to search in appropriate scope later
+            boolean isNonLocal = false;
+            ScopeOwner currentScopeOwner = ScopeUtil.getScopeOwner(node);
+            if (currentScopeOwner != null) {
+                isNonLocal = ControlFlowCache.getScope(currentScopeOwner).isNonlocal(name);
+            }
+            if (owner != currentScopeOwner && !isNonLocal) {
                 return;
             }
-            Scope scope = ControlFlowCache.getScope(owner);
-            // Ignore globals and if scope even doesn't contain such a declaration
-            if (scope.isGlobal(name) || (!scope.containsDeclaration(name))) {
-                return;
-            }
+            Scope scope = ControlFlowCache.getScope(isNonLocal ? currentScopeOwner : owner);
             // Start DFA from the assignment statement in case of augmented assignments
             PsiElement anchor;
             PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(node, PyAugAssignmentStatement.class);
@@ -120,7 +130,7 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             }
             ScopeVariable variable;
             try {
-                variable = scope.getDeclaredVariable(anchor, name);
+                variable = scope.getDeclaredVariable(anchor, name, myTypeEvalContext);
             }
             catch (DFALimitExceededException e) {
                 largeFunctions.add(owner);
@@ -132,17 +142,21 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
                     return;
                 }
                 PsiPolyVariantReference ref = node.getReference(getResolveContext());
-                if (ref == null) {
+                PsiElement resolved = ref.resolve();
+                // type parameter list is not included in CFG
+                if (resolved instanceof PyTypeParameter) {
                     return;
                 }
-                PsiElement resolved = ref.resolve();
                 boolean isBuiltin = PyBuiltinCache.getInstance(node).isBuiltin(resolved);
                 if (owner instanceof PyClass) {
                     if (isBuiltin || ScopeUtil.getDeclarationScopeOwner(owner, name) != null) {
                         return;
                     }
                 }
-                if (PyUnreachableCodeInspection.hasAnyInterruptedControlFlowPaths(node)) {
+                if (PyDelStatementNavigator.getDelStatementByTarget(node) != null) {
+                    return;
+                }
+                if (resolvedUnderWithStatement(node, resolved) || resolvedUnderAssignmentExpressionAndCondition(node, resolved)) {
                     return;
                 }
                 if (owner instanceof PyFile) {
@@ -152,21 +166,43 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
                     if (resolved != null && !PyUtil.inSameFile(node, resolved)) {
                         return;
                     }
-                    registerProblem(node, PyLocalize.inspUnboundNameNotDefined(name).get());
+                    registerProblem(node, PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundNameUndefined(msgArgs[0]), name),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
+                else if (scope.isGlobal(name)) {
+                    registerProblem(node, PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundNameUndefined(msgArgs[0]), name),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
+                else if (isNonLocal) {
+                    registerProblem(node, PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundLocalVariable(msgArgs[0]), name),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 else {
-                    registerProblem(
-                        node,
-                        PyLocalize.inspUnboundLocalVariable(node.getName()).get(),
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        null,
-                        new AddGlobalQuickFix()
-                    );
+                    registerProblem(node, PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundLocalVariable(msgArgs[0]), node.getName()),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                    new AddGlobalQuickFix());
                 }
             }
         }
 
-        private static boolean isFirstUnboundRead(PyReferenceExpression node, ScopeOwner owner) {
+        private static boolean resolvedUnderWithStatement(PyReferenceExpression node, @Nullable PsiElement resolved) {
+            return resolved != null &&
+                   PyUtil.inSameFile(node, resolved) &&
+                   PsiTreeUtil.getParentOfType(resolved, PyWithStatement.class, true, ScopeOwner.class) != null;
+        }
+
+        private static boolean resolvedUnderAssignmentExpressionAndCondition(PyReferenceExpression node,
+                                                                             @Nullable PsiElement resolved) {
+            return resolved instanceof PyTargetExpression &&
+                   PyUtil.inSameFile(node, resolved) &&
+                   resolved.getParent() instanceof PyAssignmentExpression &&
+                   PsiTreeUtil.getParentOfType(
+                     PsiTreeUtil.getParentOfType(resolved.getParent(), PyComprehensionElement.class, true, PyConditionalStatementPart.class),
+                     PyConditionalStatementPart.class
+                   ) != null;
+        }
+
+        private boolean isFirstUnboundRead(PyReferenceExpression node, ScopeOwner owner) {
             String nodeName = node.getReferencedName();
             Scope scope = ControlFlowCache.getScope(owner);
             ControlFlow flow = ControlFlowCache.getControlFlow(owner);
@@ -177,13 +213,12 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             }
             Ref<Boolean> first = Ref.create(true);
             ControlFlowUtil.iteratePrev(num, instructions, instruction -> {
-                if (instruction instanceof ReadWriteInstruction) {
-                    ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
+                if (instruction instanceof ReadWriteInstruction rwInstruction) {
                     String name = rwInstruction.getName();
                     PsiElement element = rwInstruction.getElement();
-                    if (element != null && name != null && name.equals(nodeName) && instruction.num() != num) {
+                    if (element != null && name != null && name.equals(nodeName) && instruction.num() < num) {
                         try {
-                            if (scope.getDeclaredVariable(element, name) == null) {
+                            if (scope.getDeclaredVariable(element, name, myTypeEvalContext) == null) {
                                 ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
                                 if (access.isReadAccess()) {
                                     first.set(false);
@@ -208,21 +243,16 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
                 String name = var.getName();
                 ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(var, name);
                 if (owner == null || owner instanceof PyFile) {
-                    registerProblem(
-                        var,
-                        PyLocalize.inspUnboundNonlocalVariable(name).get(),
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                    );
+                    registerProblem(var, PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundNonlocalVariable(msgArgs[0]), name),
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         }
 
         private void registerLargeFunction(ScopeOwner owner) {
-            registerProblem(
-                (owner instanceof PyFunction) ? ((PyFunction) owner).getNameIdentifier() : owner,
-                PyLocalize.inspUnboundFunctionTooLarge(owner.getName()).get(),
-                ProblemHighlightType.WEAK_WARNING
-            );
+            registerProblem((owner instanceof PyFunction) ? ((PyFunction)owner).getNameIdentifier() : owner,
+                            PyInspectionMessages.problemMessage(msgArgs -> PyLocalize.inspUnboundFunctionTooLarge(msgArgs[0]), owner.getName()),
+                            ProblemHighlightType.WEAK_WARNING);
         }
     }
 }

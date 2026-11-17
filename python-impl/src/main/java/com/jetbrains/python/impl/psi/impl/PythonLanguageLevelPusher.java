@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.language.file.light.LightVirtualFile;
+import consulo.annotation.access.RequiredReadAction;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.resolve.PythonSdkPathCache;
@@ -80,7 +82,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
         }
       }
     }
-    project.putUserData(PYTHON_LANGUAGE_LEVEL, PyUtil.guessLanguageLevel(project));
+    project.putUserData(PYTHON_LANGUAGE_LEVEL, guessLanguageLevel(project));
   }
 
   @Override
@@ -116,7 +118,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     if (sdk != null) {
       return PythonSdkType.getLanguageLevelForSdk(sdk);
     }
-    return PyUtil.guessLanguageLevelWithCaching(project);
+    return guessLanguageLevelWithCaching(project);
   }
 
   @Nullable
@@ -246,7 +248,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
     VirtualFile[] files = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
     Application application = ApplicationManager.getApplication();
-    PyUtil.invalidateLanguageLevelCache(project);
+    invalidateLanguageLevelCache(project);
     application.executeOnPooledThread(() -> application.runReadAction(() -> {
       if (project.isDisposed()) {
         return;
@@ -286,6 +288,48 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     });
   }
 
+  // Use `PyLanguageFacade.getEffectiveLanguageLevel(Project, VirtualFile)`
+  @RequiredReadAction
+  public static LanguageLevel getEffectiveLanguageLevel(Project project, VirtualFile virtualFile) {
+    final LanguageLevel forced = LanguageLevel.FORCE_LANGUAGE_LEVEL;
+    if (project.getApplication().isUnitTestMode() && forced != null) {
+      return forced;
+    }
+
+    final LanguageLevel specified = specifiedFileLanguageLevel(virtualFile);
+    if (specified != null) {
+      return specified;
+    }
+
+    // TODO consulo: PythonLanguageLevels.layoutOf / PythonInterpreter missing, the interpreter level comes from the module SDK
+    final LanguageLevel interpreterLevel = virtualFile instanceof LightVirtualFile ? null : getFileLanguageLevel(project, virtualFile);
+    if (interpreterLevel != null) {
+      return interpreterLevel;
+    }
+
+    return guessLanguageLevelWithCaching(project);
+  }
+
+  public static void specifyFileLanguageLevel(VirtualFile file, @Nullable LanguageLevel languageLevel) {
+    // TODO consulo: FilePropertyKey (persistent file property) missing, the level is kept in the file user data
+    file.putUserData(LanguageLevel.KEY, languageLevel);
+  }
+
+  private static @Nullable LanguageLevel specifiedFileLanguageLevel(@Nullable VirtualFile file) {
+    if (file == null) {
+      return null;
+    }
+
+    final LanguageLevel specified = file.getUserData(LanguageLevel.KEY);
+    if (file.isDirectory()) {
+      // no need to check parent since UpdateRootTask pushes language level into all directories under roots
+      return specified;
+    }
+    else {
+      return specified == null ? specifiedFileLanguageLevel(file.getParent()) : specified;
+    }
+  }
+
   public static void setForcedLanguageLevel(Project project, @Nullable LanguageLevel languageLevel) {
     LanguageLevel.FORCE_LANGUAGE_LEVEL = languageLevel;
     pushLanguageLevel(project);
@@ -293,5 +337,40 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 
   public void flushLanguageLevelCache() {
     myModuleSdks.clear();
+  }
+
+  // TODO consulo: moved from the old PyUtil until the JB PythonLanguageLevelPusher port (needs EvoPyProject / PythonInterpreter)
+  private static void invalidateLanguageLevelCache(Project project) {
+    project.putUserData(PYTHON_LANGUAGE_LEVEL, null);
+  }
+
+  @RequiredReadAction
+  private static LanguageLevel guessLanguageLevelWithCaching(Project project) {
+    LanguageLevel languageLevel = project.getUserData(PYTHON_LANGUAGE_LEVEL);
+    if (languageLevel == null) {
+      languageLevel = guessLanguageLevel(project);
+      project.putUserData(PYTHON_LANGUAGE_LEVEL, languageLevel);
+    }
+
+    return languageLevel;
+  }
+
+  @RequiredReadAction
+  private static LanguageLevel guessLanguageLevel(Project project) {
+    ModuleManager moduleManager = ModuleManager.getInstance(project);
+    LanguageLevel maxLevel = null;
+    for (Module projectModule : moduleManager.getModules()) {
+      Sdk sdk = PythonSdkType.findPythonSdk(projectModule);
+      if (sdk != null) {
+        LanguageLevel level = PythonSdkType.getLanguageLevelForSdk(sdk);
+        if (maxLevel == null || maxLevel.isOlderThan(level)) {
+          maxLevel = level;
+        }
+      }
+    }
+    if (maxLevel != null) {
+      return maxLevel;
+    }
+    return LanguageLevel.getDefault();
   }
 }

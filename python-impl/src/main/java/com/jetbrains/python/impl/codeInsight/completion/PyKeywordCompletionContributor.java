@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.codeInsight.completion;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.codeInsight.UnindentingInsertHandler;
+import com.jetbrains.python.impl.codeInsight.PyUnindentingInsertHandler;
 import com.jetbrains.python.impl.documentation.doctest.PyDocstringFile;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
@@ -52,7 +52,7 @@ import static consulo.language.pattern.StandardPatterns.or;
  * User: dcheryasov
  * Date: Sep 8, 2008
  */
-@ExtensionImpl
+@ExtensionImpl(order = "after PyDictKeyNames")
 public class PyKeywordCompletionContributor extends CompletionContributor
 {
 	/**
@@ -553,7 +553,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 						//.andNot(RIGHT_AFTER_COLON)
 						.andNot(AFTER_QUALIFIER).andNot(IN_STRING_LITERAL)
 				,
-				new PyKeywordCompletionProvider(TailType.NONE, UnindentingInsertHandler.INSTANCE, "elif"));
+				new PyKeywordCompletionProvider(TailType.NONE, PyUnindentingInsertHandler.INSTANCE, "elif"));
 	}
 
 	private void addWithinTry()
@@ -572,8 +572,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor
                         CompletionParameters parameters, ProcessingContext context, CompletionResultSet result
 					)
 					{
-						putKeyword("except", UnindentingInsertHandler.INSTANCE, TailType.NONE, result);
-						putKeyword("finally", UnindentingInsertHandler.INSTANCE, TailType.CASE_COLON, result);
+						putKeyword("except", PyUnindentingInsertHandler.INSTANCE, TailType.NONE, result);
+						putKeyword("finally", PyUnindentingInsertHandler.INSTANCE, TailType.CASE_COLON, result);
 					}
 				}
 		);
@@ -589,7 +589,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 						//.andNot(RIGHT_AFTER_COLON)
 						.andNot(AFTER_QUALIFIER).andNot(IN_STRING_LITERAL)
 				,
-				new PyKeywordCompletionProvider(TailType.CASE_COLON, UnindentingInsertHandler.INSTANCE, "else"));
+				new PyKeywordCompletionProvider(TailType.CASE_COLON, PyUnindentingInsertHandler.INSTANCE, "else"));
 	}
 
 	private void addInfixOperators()

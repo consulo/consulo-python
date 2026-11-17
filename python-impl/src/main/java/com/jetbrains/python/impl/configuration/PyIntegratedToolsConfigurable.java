@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.impl.configuration;
 
+import com.jetbrains.python.impl.ui.PyUiUtil;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.ReSTService;
-import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
-import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.documentation.PyDocumentationSettings;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.impl.packaging.PyPackageRequirementsSettings;
 import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -276,7 +277,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
     });
     FileContentUtilCore.reparseFiles(filesToReparse);
 
-    PyUtil.rehighlightOpenEditors(myProject);
+    PyUiUtil.rehighlightOpenEditors(myProject);
 
     DaemonCodeAnalyzer.getInstance(myProject).restart();
   }

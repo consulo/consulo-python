@@ -139,7 +139,7 @@ public final class PythonSdkType extends PlatformAwareSdkType {
      */
     public static String getBuiltinsFileName(Sdk sdk) {
         LanguageLevel level = getLanguageLevelForSdk(sdk);
-        return level.isOlderThan(LanguageLevel.PYTHON30) ? PyBuiltinCache.BUILTIN_FILE : PyBuiltinCache.BUILTIN_FILE_3K;
+        return PyBuiltinCache.getBuiltinsFileName(level);
     }
 
     /**
@@ -748,6 +748,10 @@ public final class PythonSdkType extends PlatformAwareSdkType {
     public boolean sdkHasValidPath(Sdk sdk) {
         VirtualFile homeDir = sdk.getHomeDirectory();
         return homeDir != null && homeDir.isValid();
+    }
+
+    public static boolean isRemote(@Nullable Sdk sdk) {
+        return sdk != null && sdk.getSdkAdditionalData() instanceof PyRemoteSdkAdditionalDataMarker;
     }
 
     public static boolean isStdLib(VirtualFile vFile, Sdk pythonSdk) {

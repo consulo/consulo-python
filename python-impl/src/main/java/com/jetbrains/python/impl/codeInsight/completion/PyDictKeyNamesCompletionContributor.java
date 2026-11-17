@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.completion;
 
+import java.util.Collection;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -45,7 +46,7 @@ import static consulo.language.pattern.PlatformPatterns.psiElement;
  *
  * @author catherine
  */
-@ExtensionImpl
+@ExtensionImpl(id = "PyDictKeyNames")
 public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
     public PyDictKeyNamesCompletionContributor() {
         extend(
@@ -162,7 +163,7 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
      */
     @RequiredReadAction
     private static void addAdditionalKeys(PsiFile file, PsiElement operand, CompletionResultSet result) {
-        PySubscriptionExpression[] subscriptionExpressions = PyUtil.getAllChildrenOfType(file, PySubscriptionExpression.class);
+        Collection<PySubscriptionExpression> subscriptionExpressions = PsiTreeUtil.findChildrenOfType(file, PySubscriptionExpression.class);
         for (PySubscriptionExpression expr : subscriptionExpressions) {
             if (expr.getOperand().getText().equals(operand.getText())
                 && expr.getParent() instanceof PyAssignmentStatement assignment

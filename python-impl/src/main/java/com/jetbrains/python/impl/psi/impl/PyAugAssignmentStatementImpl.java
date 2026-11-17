@@ -1,72 +1,41 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
 import com.jetbrains.python.psi.PyAugAssignmentStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import consulo.annotation.access.RequiredReadAction;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-
+import consulo.language.psi.PsiPolyVariantReference;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAugAssignmentStatement
-{
-	public PyAugAssignmentStatementImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAugAssignmentStatement {
+    public PyAugAssignmentStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyAugAssignmentStatement(this);
-	}
-
-	@Override
-    @RequiredReadAction
-    public PyExpression getTarget()
-	{
-		PyExpression target = childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
-		if(target == null)
-		{
-			throw new RuntimeException("Target missing in augmented assignment statement");
-		}
-		return target;
-	}
-
-    @Nullable
     @Override
-    @RequiredReadAction
-	public PyExpression getValue()
-	{
-		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 1);
-	}
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyAugAssignmentStatement(this);
+    }
 
-	@Nullable
+    /**
+     * the type after the operation has been applied
+     */
     @Override
-	public PsiElement getOperation()
-	{
-		return PyPsiUtils.getChildByFilter(this, PyTokenTypes.AUG_ASSIGN_OPERATIONS, 0);
-	}
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        return PyCallExpressionHelper.getCallType(this, context, key);
+    }
+
+    @Override
+    public PsiPolyVariantReference getReference() {
+        return getReference(PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(getProject())));
+    }
+
+    @Override
+    public PsiPolyVariantReference getReference(PyResolveContext context) {
+        return new PyOperatorReference(this, context);
+    }
 }

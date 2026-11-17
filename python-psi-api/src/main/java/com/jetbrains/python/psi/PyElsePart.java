@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,10 @@
  */
 package com.jetbrains.python.psi;
 
-import org.jspecify.annotations.Nullable;
+import com.jetbrains.python.ast.PyAstElsePart;
 
 /**
  * The 'else:' part of various compound statements.
- *
- * @author dcheryasov
- * @since 2009-03-15
  */
-public interface PyElsePart extends PyStatementPart {
-    /**
-     * @return the body of the 'else' part.
-     */
-    @Nullable
-    @Override
-    PyStatementList getStatementList();
+public interface PyElsePart extends PyAstElsePart, PyStatementPart {
 }

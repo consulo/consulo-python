@@ -1,6 +1,6 @@
 package consulo.python.impl;
 
-import com.jetbrains.python.impl.highlighting.PyHighlighter;
+import com.jetbrains.python.highlighting.PyHighlighter;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.colorScheme.AttributesFlyweightBuilder;
 import consulo.colorScheme.EditorColorSchemeExtender;

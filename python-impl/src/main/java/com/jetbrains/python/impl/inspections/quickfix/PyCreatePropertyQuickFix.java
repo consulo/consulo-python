@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassType;
@@ -56,7 +57,7 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix {
                     PyElementGenerator generator = PyElementGenerator.getInstance(project);
                     PyFunction property =
                         generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
-                    PyUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
+                    PyPsiRefactoringUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
                 }
             }
         }

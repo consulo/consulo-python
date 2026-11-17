@@ -1,51 +1,49 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import org.jspecify.annotations.Nullable;
-
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.StubBasedPsiElement;
+import com.jetbrains.python.ast.PyAstNamedParameter;
 import com.jetbrains.python.psi.stubs.PyNamedParameterStub;
+import com.jetbrains.python.psi.types.PyCallableParameter;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a named parameter, as opposed to a tuple parameter.
  */
-public interface PyNamedParameter extends PyParameter, PsiNamedElement, PsiNameIdentifierOwner, PyExpression, PyTypeCommentOwner, StubBasedPsiElement<PyNamedParameterStub>
-{
-	boolean isPositionalContainer();
+public interface PyNamedParameter
+    extends PyAstNamedParameter, PyParameter, PsiNamedElement, PsiNameIdentifierOwner, PyExpression, PyTypeCommentOwner,
+            PyAnnotationOwner, StubBasedPsiElement<PyNamedParameterStub> {
 
-	boolean isKeywordContainer();
+    @Override
+    @RequiredReadAction
+    default @Nullable PyExpression getDefaultValue() {
+        return (PyExpression)PyAstNamedParameter.super.getDefaultValue();
+    }
 
-	/**
-	 * Parameter is considered "keyword-only" if it appears after named or unnamed positional vararg parameter.
-	 * See PEP-3102 for more details.
-	 *
-	 * @return whether this parameter is keyword-only
-	 */
-	boolean isKeywordOnly();
+    /**
+     * @param context context to be used to resolve argument type
+     * @return argument type. Returns element type for *param and value type for **param.
+     * @deprecated Use {@link PyCallableParameter#getArgumentType(TypeEvalContext)}
+     */
+    @Deprecated(forRemoval = true)
+    @Nullable
+    PyType getArgumentType(TypeEvalContext context);
 
-	/**
-	 * @param includeDefaultValue if true, include the default value after an " = ".
-	 * @return Canonical representation of parameter. Includes asterisks for *param and **param, and name.
-	 */
-	String getRepr(boolean includeDefaultValue);
+    @Override
+    @RequiredReadAction
+    default PyNamedParameter getAsNamed() {
+        return (PyNamedParameter)PyAstNamedParameter.super.getAsNamed();
+    }
 
-	@Nullable
-	PyAnnotation getAnnotation();
+    @Override
+    @RequiredReadAction
+    default @Nullable PyTupleParameter getAsTuple() {
+        return (PyTupleParameter)PyAstNamedParameter.super.getAsTuple();
+    }
 }
 

@@ -1,78 +1,111 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.documentation;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.ast.PyAstSingleStarParameter;
+import com.jetbrains.python.ast.PyAstSlashParameter;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.documentation.PythonDocumentationLinkProvider;
 import com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.console.PydevConsoleRunner;
-import com.jetbrains.python.impl.console.PydevDocumentationProvider;
+import com.jetbrains.python.highlighting.PyHighlighter;
+import com.jetbrains.python.impl.PythonRuntimeService;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.impl.psi.impl.PyClassImpl;
 import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.impl.psi.types.PyTypeParser;
-import com.jetbrains.python.impl.toolbox.ChainIterable;
-import com.jetbrains.python.impl.toolbox.FP;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.types.PyInferredVarianceJudgment;
+import com.jetbrains.python.impl.psi.types.PyTupleType;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecoratable;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyKeywordArgument;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTypeAliasStatement;
+import com.jetbrains.python.psi.PyTypeParameter;
+import com.jetbrains.python.psi.PyTypeParameterListOwner;
+import com.jetbrains.python.psi.PyTypedElement;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyCallableParameter;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeRendererFeature;
+import com.jetbrains.python.psi.types.PyTypeVarType;
+import com.jetbrains.python.psi.types.PyTypeVisitor;
+import com.jetbrains.python.psi.types.PyVariance;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.Application;
-import consulo.application.ApplicationManager;
+import consulo.application.util.HtmlBuilder;
+import consulo.application.util.HtmlChunk;
+import consulo.codeEditor.DefaultLanguageHighlighterColors;
 import consulo.codeEditor.Editor;
-import consulo.component.extension.Extensions;
 import consulo.content.bundle.Sdk;
-import consulo.http.HttpMethod;
-import consulo.http.HttpRequestBuilderFactory;
-import consulo.ide.setting.ShowSettingsUtil;
 import consulo.language.Language;
+import consulo.language.ast.IElementType;
 import consulo.language.editor.documentation.AbstractDocumentationProvider;
-import consulo.language.editor.documentation.ExternalDocumentationProvider;
 import consulo.language.editor.documentation.LanguageDocumentationProvider;
-import consulo.language.psi.*;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ResolveResult;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
-import consulo.module.content.ProjectRootManager;
-import consulo.project.Project;
-import consulo.ui.ex.awt.Messages;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
+import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-import static com.jetbrains.python.impl.documentation.DocumentationBuilderKit.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static com.jetbrains.python.impl.documentation.PyDocSignaturesHighlighterKt.functionNameTextAttribute;
+import static com.jetbrains.python.impl.documentation.PyDocSignaturesHighlighterKt.highlightExpressionText;
+import static com.jetbrains.python.impl.documentation.PyDocSignaturesHighlighterKt.paramNameTextAttribute;
+import static com.jetbrains.python.impl.documentation.PyDocSignaturesHighlighterKt.styledReference;
+import static com.jetbrains.python.impl.documentation.PyDocSignaturesHighlighterKt.styledSpan;
+import static com.jetbrains.python.impl.documentation.PyTypeRenderer.findReferenceOrTypeParameter;
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+import static com.jetbrains.python.impl.psi.types.PyInferredVarianceJudgment.isEffectivelyInvariant;
 
 /**
  * Provides quick docs for classes, methods, and functions.
  * Generates documentation stub
  */
-@ExtensionImpl
-public class PythonDocumentationProvider extends AbstractDocumentationProvider implements ExternalDocumentationProvider, LanguageDocumentationProvider {
-  static final String LINK_TYPE_CLASS = "#class#";
-  static final String LINK_TYPE_PARENT = "#parent#";
-  static final String LINK_TYPE_PARAM = "#param#";
-  static final String LINK_TYPE_TYPENAME = "#typename#";
+@ExtensionImpl(id = "pythonDocumentationProvider")
+public class PythonDocumentationProvider extends AbstractDocumentationProvider implements LanguageDocumentationProvider {
+  public static final String DOCUMENTATION_CONFIGURABLE_ID = "com.jetbrains.python.documentation.PythonDocumentationConfigurable";
+
+  private static final int RETURN_TYPE_WRAPPING_THRESHOLD = 80;
+  private static final int TYPE_LINE_WIDTH = 80;
 
   @Override
   public Language getLanguage() {
@@ -81,340 +114,764 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   // provides ctrl+hover info
   @Override
-  @Nullable
-  public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+  public @Nullable String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+    final PsiElement referenceElement = originalElement.getParent(); // identifier -> expression
     for (PythonDocumentationQuickInfoProvider point : PythonDocumentationQuickInfoProvider.EP_NAME.getExtensionList()) {
-      String info = point.getQuickInfo(originalElement);
+      final String info = point.getQuickInfo(referenceElement);
       if (info != null) {
         return info;
       }
     }
 
-    if (element instanceof PyFunction) {
-      PyFunction func = (PyFunction)element;
-      StringBuilder cat = new StringBuilder();
-      PyClass cls = func.getContainingClass();
+    final TypeEvalContext context = TypeEvalContext.userInitiated(referenceElement.getProject(), referenceElement.getContainingFile());
+
+    if (element instanceof PyFunction function) {
+      final HtmlBuilder result = new HtmlBuilder();
+
+      final PyClass cls = function.getContainingClass();
       if (cls != null) {
-        String clsName = cls.getName();
-        cat.append("class ").append(clsName).append("\n");
-        // It would be nice to have class import info here, but we don't know the ctrl+hovered reference and context
-      }
-      String summary = "";
-      PyStringLiteralExpression docStringExpression = func.getDocStringExpression();
-      if (docStringExpression != null) {
-        StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
-        summary = docString.getSummary();
-      }
-      return $(cat.toString()).add(describeDecorators(func, LSame2, ", ", LSame1))
-                              .add(describeFunction(func, LSame2, LSame1))
-                              .toString() + "\n" + summary;
-    }
-    else if (element instanceof PyClass) {
-      PyClass cls = (PyClass)element;
-      String summary = "";
-      PyStringLiteralExpression docStringExpression = cls.getDocStringExpression();
-      if (docStringExpression == null) {
-        PyFunction initOrNew = cls.findInitOrNew(false, null);
-        if (initOrNew != null) {
-          docStringExpression = initOrNew.getDocStringExpression();
+        final String clsName = cls.getName();
+        if (clsName != null) {
+          result.append(styledSpan(PyLocalize.qdocClass().get(), PyHighlighter.PY_KEYWORD));
+          result.nbsp();
+          result.append(styledSpan(clsName, PyHighlighter.PY_CLASS_DEFINITION));
+          result.br();
+          // It would be nice to have class import info here, but we don't know the ctrl+hovered reference and context
         }
       }
-      if (docStringExpression != null) {
-        StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
-        summary = docString.getSummary();
-      }
 
-      return describeDecorators(cls, LSame2, ", ", LSame1).add(describeClass(cls, LSame2, false, false)).toString() + "\n" + summary;
+      return result
+        .append(describeDecorators(function, HtmlChunk.text(", ")))
+        .append(describeFunction(function, context, true))
+        .toString();
+    }
+    else if (element instanceof PyClass cls) {
+      final HtmlBuilder result = new HtmlBuilder();
+      return result
+        .append(describeDecorators(cls, HtmlChunk.text(", ")))
+        .append(describeClass(cls, context))
+        .toString();
+    }
+    else if (element instanceof PsiDirectory directory) {
+      return PyLocalize.qdocDirectoryName(directory.getName()).get();
+    }
+    else if (element instanceof PsiFile file) {
+      return PyLocalize.qdocFileName(file.getName()).get();
     }
     else if (element instanceof PyExpression) {
-      return describeExpression((PyExpression)element, originalElement);
+      return describeExpression((PyExpression)element, referenceElement, context);
+    }
+    else if (element instanceof PyTypeParameter typeParameter) {
+      return PyLocalize.qdocTypeParameterName(describeTypeParameter(typeParameter, originalElement, context).toString()).get();
+    }
+    else if (element instanceof PyTypeAliasStatement typeAliasStatement) {
+      return describeTypeAlias(typeAliasStatement, context, true).toString();
     }
     return null;
   }
 
-  /**
-   * Creates a HTML description of function definition.
-   *
-   * @param fun             the function
-   * @param funcNameWrapper puts a tag around the function name
-   * @param escaper         sanitizes values that come directly from doc string or code
-   * @return chain of strings for further chaining
-   */
-  static ChainIterable<String> describeFunction(PyFunction fun,
-                                                FP.Lambda1<Iterable<String>, Iterable<String>> funcNameWrapper,
-                                                FP.Lambda1<String, String> escaper) {
-    ChainIterable<String> cat = new ChainIterable<>();
-    String name = fun.getName();
-    cat.addItem("def ").addWith(funcNameWrapper, $(name));
-    TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
-    List<PyParameter> parameters = PyUtil.getParameters(fun, context);
-    String paramStr = "(" +
-      StringUtil.join(parameters, parameter -> PyUtil.getReadableRepr(parameter, false), ", ") +
-      ")";
-    cat.addItem(escaper.apply(paramStr));
-    if (!PyNames.INIT.equals(name)) {
-      cat.addItem(escaper.apply("\nInferred type: "));
-      getTypeDescription(fun, cat);
-      cat.addItem(BR);
-    }
-    return cat;
+  static HtmlChunk describeFunction(PyFunction function,
+                                    TypeEvalContext context,
+                                    boolean forTooltip) {
+    return HtmlChunk.raw(describeFunctionWithTypes(function, context, forTooltip));
   }
 
-  @Nullable
-  private static String describeExpression(PyExpression expr, PsiElement originalElement) {
-    String name = expr.getName();
-    if (name != null) {
-      StringBuilder result = new StringBuilder((expr instanceof PyNamedParameter) ? "parameter" : "variable");
-      result.append(String.format(" \"%s\"", name));
-      if (expr instanceof PyNamedParameter) {
-        PyFunction function = PsiTreeUtil.getParentOfType(expr, PyFunction.class);
-        if (function != null) {
-          result.append(" of ").append(function.getContainingClass() == null ? "function" : "method");
-          result.append(String.format(" \"%s\"", function.getName()));
+  static HtmlChunk describeTarget(PyTargetExpression target,
+                                  @Nullable PsiElement originalElement,
+                                  TypeEvalContext context) {
+    final HtmlBuilder result = new HtmlBuilder();
+    result.append(styledSpan(StringUtil.notNullize(target.getName()), DefaultLanguageHighlighterColors.IDENTIFIER));
+    result.append(styledSpan(": ", PyHighlighter.PY_OPERATION_SIGN));
+    PyType type = context.getType(target);
+    result.append(styledSpan(layoutTypeWithLinks(type, target, target, context, result.toString(), 0), PyHighlighter.PY_ANNOTATION));
+
+    // Can return not physical elements such as foo()[0] for assignments like x, _ = foo()
+    final PyExpression value = target.findAssignedValue();
+    if (value != null) {
+      result.append(styledSpan(" = ", PyHighlighter.PY_OPERATION_SIGN));
+      final String initializerText = value.getText();
+      final int index = value.getText().indexOf("\n");
+      if (index < 0) {
+        result.append(highlightExpressionText(initializerText, value));
+      }
+      else {
+        result.append(highlightExpressionText(initializerText.substring(0, index), value));
+        result.append(styledSpan("...", PyHighlighter.PY_DOT));
+      }
+      if (type instanceof PyClassType classType && PyTypingTypeProvider.TYPE_VAR.equals(classType.getClassQName())) {
+        Ref<PyType> typeRef = PyTypingTypeProvider.getType(value, context);
+        if (typeRef != null && typeRef.get() instanceof PyTypeVarType valueType) {
+          PyTypedElement refExpr = findReferenceOrTypeParameter(originalElement);
+          if (refExpr != null) {
+            if (isEffectivelyInvariant(refExpr, context)) {
+              if (valueType.getVariance() != PyVariance.INVARIANT) {
+                String varianceStr = PyVariance.INVARIANT.name().toLowerCase(Locale.ROOT); //NON-NLS
+                result.append(styledSpan(" # treated as " + varianceStr, PyHighlighter.PY_LINE_COMMENT)); //NON-NLS
+              }
+            }
+            else if (valueType.getVariance() == PyVariance.INFER_VARIANCE) {
+              PyVariance inferredVariance = PyInferredVarianceJudgment.getDeclaredOrInferredVariance(refExpr, context);
+              if (inferredVariance != null) {
+                String varianceStr = inferredVariance.name().toLowerCase(Locale.ROOT); //NON-NLS
+                result.append(styledSpan(" # inferred as " + varianceStr, PyHighlighter.PY_LINE_COMMENT)); //NON-NLS
+              }
+            }
+          }
         }
       }
-      if (originalElement instanceof PyTypedElement) {
-        result.append("\n").append(describeType((PyTypedElement)originalElement));
+    }
+    return result.toFragment();
+  }
+
+  static HtmlChunk describeParameter(PyNamedParameter parameter, TypeEvalContext context) {
+    final HtmlBuilder result = new HtmlBuilder();
+    result.append(styledSpan(StringUtil.notNullize(parameter.getName()), paramNameTextAttribute(parameter.isSelf())));
+    result.append(styledSpan(": ", PyHighlighter.PY_OPERATION_SIGN));
+    result.append(styledSpan(layoutTypeWithLinks(context.getType(parameter), parameter, parameter, context, result.toString(), 0),
+                             PyHighlighter.PY_ANNOTATION));
+    return result.toFragment();
+  }
+
+  static HtmlChunk describeTypeParameterList(PyTypeParameterListOwner typeParameterListOwner,
+                                             boolean showVariance,
+                                             TypeEvalContext context) {
+    return new PyTypeRenderer.RichDocumentation(context, typeParameterListOwner).describeTypeParameterList(typeParameterListOwner,
+                                                                                                           showVariance,
+                                                                                                           PythonDocumentationProvider::formatTypeWithLinks,
+                                                                                                           context);
+  }
+
+  static HtmlChunk describeTypeParameter(PyTypeParameter typeParameter,
+                                         PsiElement originalElement,
+                                         TypeEvalContext context) {
+    return new PyTypeRenderer.RichDocumentation(context, originalElement).describeTypeParameter(typeParameter, originalElement,
+                                                                                                true, true,
+                                                                                                PythonDocumentationProvider::formatTypeWithLinks,
+                                                                                                context);
+  }
+
+  static HtmlChunk describeTypeAlias(PyTypeAliasStatement typeAliasStatement,
+                                     TypeEvalContext context,
+                                     boolean forTooltip) {
+    HtmlBuilder result = new HtmlBuilder();
+    result.append(styledSpan("type ", PyHighlighter.PY_KEYWORD)); //NON-NLS
+    result.append(styledSpan(StringUtil.notNullize(typeAliasStatement.getName()), DefaultLanguageHighlighterColors.IDENTIFIER));
+    result.append(describeTypeParameterList(typeAliasStatement, true, context));
+    PyExpression typeExpression = typeAliasStatement.getTypeExpression();
+    if (typeExpression != null) {
+      result.append(styledSpan(" = ", PyHighlighter.PY_OPERATION_SIGN));
+      // TODO consulo: Ref.deref missing
+      Ref<PyType> aliasedTypeRef = PyTypingTypeProvider.getType(typeExpression, context);
+      PyType aliasedType = aliasedTypeRef != null ? aliasedTypeRef.get() : null;
+      HtmlChunk renderedType = forTooltip
+                               ? formatTypeWithLinks(aliasedType, typeExpression, typeAliasStatement, context)
+                               : layoutTypeWithLinks(aliasedType, typeExpression, typeAliasStatement, context, result.toString(), 0);
+      result.append(styledSpan(renderedType, PyHighlighter.PY_ANNOTATION));
+    }
+    return result.toFragment();
+  }
+
+  private static String describeFunctionWithTypes(PyFunction function,
+                                                  TypeEvalContext context,
+                                                  boolean forTooltip) {
+    final StringBuilder result = new StringBuilder();
+    int firstParamOffset = 0;
+    // TODO wrapping of long signatures
+
+    if (function.isAsync()) {
+      result.append(styledSpan("async ", PyHighlighter.PY_KEYWORD)); //NON-NLS
+      firstParamOffset += "async ".length();
+    }
+    result.append(styledSpan("def ", PyHighlighter.PY_KEYWORD)); //NON-NLS
+    firstParamOffset += "def ".length();
+
+    final String funcName = StringUtil.notNullize(function.getName(), PyNames.UNNAMED_ELEMENT);
+
+    firstParamOffset += funcName.length();
+    result.append(styledSpan(funcName, functionNameTextAttribute(function, funcName)));
+
+    var typeParameterListDescription = describeTypeParameterList(function, false, context);
+    result.append(typeParameterListDescription);
+    firstParamOffset += StringUtil.stripHtml(typeParameterListDescription.toString(), false).length();
+
+    result.append(styledSpan("(", PyHighlighter.PY_PARENTHS));
+    firstParamOffset++;
+
+    boolean first = true;
+    boolean firstIsSelf = false;
+    final List<PyCallableParameter> parameters = function.getParameters(context);
+    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(function.getProject());
+    for (PyCallableParameter parameter : parameters) {
+      boolean isSelf = parameter.isSelf();
+      if (!first) {
+        result.append(styledSpan(",", PyHighlighter.PY_COMMA));
+        if (forTooltip || firstIsSelf && parameters.size() == 2) {
+          result.append(" ");
+        }
+        else {
+          result.append("\n");
+          // alignment
+          StringUtil.repeatSymbol(result, ' ', firstParamOffset);
+        }
+      }
+      else {
+        firstIsSelf = isSelf;
+      }
+
+      String paramName = parameter.getName();
+      PyType paramType = parameter.getType(context);
+      final PyNamedParameter named = as(parameter.getParameter(), PyNamedParameter.class);
+      boolean showType = true;
+      if (parameter.isPositionalContainer()) {
+        paramName = "*" + StringUtil.notNullize(paramName, "args"); //NON-NLS
+        final PyTupleType tupleType = as(paramType, PyTupleType.class);
+        if (tupleType != null) {
+          paramType = tupleType.getIteratedItemType();
+        }
+      }
+      else if (parameter.isKeywordContainer()) {
+        paramName = "**" + StringUtil.notNullize(paramName, "kwargs"); //NON-NLS
+        final PyClassType genericType = as(paramType, PyClassType.class);
+        if (genericType != null && genericType.isParameterized() &&
+            genericType.getPyClass() == PyBuiltinCache.getInstance(function).getClass("dict")) {
+          final List<PyType> typeParams = genericType.getTypeArguments();
+          paramType = typeParams.size() == 2 ? typeParams.get(1) : null;
+        }
+      }
+      else if (parameter.isPositionOnlySeparator()) {
+        paramName = PyAstSlashParameter.TEXT;
+        showType = false;
+      }
+      else if (parameter.isKeywordOnlySeparator()) {
+        paramName = PyAstSingleStarParameter.TEXT;
+        showType = false;
+      }
+      else {
+        paramName = StringUtil.notNullize(paramName, PyNames.UNNAMED_ELEMENT);
+        // Don't show a type for "self" unless it's explicitly annotated
+        showType = !isSelf || (named != null && new PyTypingTypeProvider().getParameterType(named, function, context) != null);
+      }
+
+      result.append(styledSpan(paramName, paramNameTextAttribute(isSelf)));
+      if (showType) {
+        result.append(styledSpan(": ", PyHighlighter.PY_OPERATION_SIGN));
+        HtmlChunk renderedType = forTooltip
+                                 ? formatTypeWithLinks(paramType, named, function, context)
+                                 : layoutTypeWithLinks(paramType, named, function, context, result.toString(), firstParamOffset);
+        result.append(styledSpan(renderedType, PyHighlighter.PY_ANNOTATION));
+      }
+
+      final String signature = ParamHelper.getDefaultValuePartInSignature(parameter.getDefaultValueText(), showType);
+      if (signature != null) {
+        @SuppressWarnings("RegExpRepeatedSpace") final String delimiter = showType ? " = " : "=";
+        final String[] parts = signature.split(delimiter);
+        if (parts.length == 2) {
+          result.append(styledSpan(delimiter, PyHighlighter.PY_OPERATION_SIGN));
+          PyExpression defaultValue = parameter.getDefaultValue() != null ?
+                                      parameter.getDefaultValue() :
+                                      elementGenerator.createExpressionFromText(LanguageLevel.forElement(function),
+                                                                                parameter.getDefaultValueText());
+          result.append(highlightExpressionText(parts[1], defaultValue));
+        }
+      }
+      first = false;
+    }
+
+    result.append(styledSpan(")", PyHighlighter.PY_PARENTHS));
+
+    if (!forTooltip && StringUtil.stripHtml(result.substring(result.lastIndexOf("\n") + 1), false).length() > RETURN_TYPE_WRAPPING_THRESHOLD) {
+      result.append("\n ");
+    }
+    final PyType returnType = context.getReturnType(function);
+    result.append(HtmlChunk.text(" -> "));
+    HtmlChunk renderedReturnType = forTooltip
+                                   ? formatTypeWithLinks(returnType, function, function, context)
+                                   : layoutTypeWithLinks(returnType, function, function, context, result.toString(), 0);
+    result.append(styledSpan(renderedReturnType, PyHighlighter.PY_ANNOTATION));
+    return result.toString();
+  }
+
+  private static @Nullable String describeExpression(PyExpression expression,
+                                                     PsiElement originalElement,
+                                                     TypeEvalContext context) {
+    final String name = expression.getName();
+    if (name != null) {
+      final HtmlBuilder result = new HtmlBuilder();
+      if (expression instanceof PyNamedParameter) {
+        final PyFunction function = PsiTreeUtil.getParentOfType(expression, PyFunction.class);
+        if (function != null) {
+          final String functionName = function.getName();
+          if (function.getContainingClass() == null) {
+            result.append(PyLocalize.qdocParameterOfFunctionName(name, functionName));
+          }
+          else {
+            result.append(PyLocalize.qdocParameterOfMethodName(name, functionName));
+          }
+        }
+        else {
+          result.append(PyLocalize.qdocParameterName(name));
+        }
+      }
+      else {
+        result.append(PyLocalize.qdocVariableName(name));
+      }
+
+      if (originalElement instanceof PyTypedElement typedElement) {
+        final PyType type = context.getType(typedElement);
+        final HtmlChunk formattedType = formatTypeWithLinks(type, typedElement, typedElement, context);
+        result.br().appendRaw(PyLocalize.qdocInferredTypeName(formattedType.toString()));
       }
       return result.toString();
     }
     return null;
   }
 
-  private static String describeType(PyTypedElement element) {
-    TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
-    return String.format("Inferred type: %s", getTypeName(context.getType(element), context));
-  }
-
-  private static void getTypeDescription(PyFunction fun, ChainIterable<String> body) {
-    TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
-    PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
-    builder.build(context.getType(fun), true).toBodyWithLinks(body, fun);
-  }
-
+  /**
+   * Render a type in a human-readable format.
+   * <p>
+   * The format is our own compact representation of types, intended to be used in inspection warnings,
+   * documentation, and other user-facing messages. It's not PEP-484 compatible.
+   * In particular callables are rendered as {@code (p1: T1, p2: T2, ...) -> R}, not as {@code Callable[[T1, T2, ...], R]}.
+   * To render a type as a valid expression for a type annotation use {@link #getTypeHint(PyType, TypeEvalContext)}.
+   *
+   * @param type    the type to render
+   * @param context TypeEvalContext instance to infer extra types with
+   * @return string representation of the type
+   * @see #getTypeHint(PyType, TypeEvalContext)
+   */
   public static String getTypeName(@Nullable PyType type, TypeEvalContext context) {
-    PyTypeModelBuilder.TypeModel typeModel = buildTypeModel(type, context);
-    return typeModel.asString();
-  }
-
-  private static PyTypeModelBuilder.TypeModel buildTypeModel(PyType type, TypeEvalContext context) {
-    PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
-    return builder.build(type, true);
-  }
-
-  public static void describeExpressionTypeWithLinks(ChainIterable<String> body,
-                                                     PyReferenceExpression expression,
-                                                     TypeEvalContext context) {
-    PyType type = context.getType(expression);
-    describeTypeWithLinks(body, expression, type, context);
-  }
-
-  public static void describeTypeWithLinks(ChainIterable<String> body,
-                                           PsiElement anchor,
-                                           PyType type,
-                                           TypeEvalContext context) {
-    PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
-    builder.build(type, true).toBodyWithLinks(body, anchor);
-  }
-
-
-  static ChainIterable<String> describeDecorators(PyDecoratable what,
-                                                  FP.Lambda1<Iterable<String>, Iterable<String>> decoNameWrapper,
-                                                  String decoSeparator,
-                                                  FP.Lambda1<String, String> escaper) {
-    ChainIterable<String> cat = new ChainIterable<>();
-    PyDecoratorList decoList = what.getDecoratorList();
-    if (decoList != null) {
-      for (PyDecorator deco : decoList.getDecorators()) {
-        cat.add(describeDeco(deco, decoNameWrapper, escaper)).addItem(decoSeparator); // can't easily pass describeDeco to map() %)
-      }
-    }
-    return cat;
+    return PyTypeVisitor.visit(type, new PyTypeRenderer.Documentation(context, EnumSet.noneOf(PyTypeRendererFeature.class))).toString();
   }
 
   /**
-   * Creates a HTML description of function definition.
+   * Render a type in a human-readable format, enabling additional rendering features of {@link PyTypeRenderer}.
    *
-   * @param cls         the class
-   * @param nameWrapper wrapper to render the name with
-   * @param allowHtml
-   * @param linkOwnName if true, add link to class's own name  @return cat for easy chaining
+   * @param type     the type to render
+   * @param context  TypeEvalContext instance to infer extra types with
+   * @param features additional rendering features to enable
+   * @return string representation of the type
+   * @see PyTypeRendererFeature
    */
-  static ChainIterable<String> describeClass(PyClass cls,
-                                             FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
-                                             boolean allowHtml,
-                                             boolean linkOwnName) {
-    ChainIterable<String> cat = new ChainIterable<>();
-    String name = cls.getName();
-    cat.addItem("class ");
-    if (allowHtml && linkOwnName) {
-      cat.addWith(LinkMyClass, $(name));
+  public static String getTypeName(@Nullable PyType type,
+                                   TypeEvalContext context,
+                                   PyTypeRendererFeature... features) {
+    EnumSet<PyTypeRendererFeature> featureSet =
+      features.length == 0 ? EnumSet.noneOf(PyTypeRendererFeature.class) : EnumSet.copyOf(Arrays.asList(features));
+    return PyTypeVisitor.visit(type, new PyTypeRenderer.Documentation(context, featureSet)).toString();
+  }
+
+  /**
+   * Render a type as HTML with the same highlighting as {@link #getTypeNameWithLinks}, but without links.
+   * The lines of a long type are broken to fit in {@link #TYPE_LINE_WIDTH} columns.
+   * The lines are separated by {@code \n} and indented with spaces.
+   *
+   * @param type    the type to render
+   * @param context TypeEvalContext instance to infer extra types with
+   * @param anchor  element the type belongs to, used to resolve class names to their declarations
+   * @return HTML representation of the type, on one or more lines
+   */
+  public static String getMultilineHighlightedTypeName(@Nullable PyType type,
+                                                       TypeEvalContext context,
+                                                       PsiElement anchor) {
+    HtmlChunk renderedType = Objects.requireNonNull(PyTypeVisitor.visit(type, new PyTypeRenderer.HighlightedDocumentation(context, anchor)));
+    return PyTypeLayout.layout(renderedType, TYPE_LINE_WIDTH, 0, 0, true);
+  }
+
+  /**
+   * Render a type in PEP-484 compliant format, in other words, as a valid expression intended to be used inside type annotations.
+   * <p>
+   * The format is described in the <a href="https://typing.python.org/en/latest/spec/annotations.html">typing specification</a>.
+   *
+   * @param type    the type to render
+   * @param context TypeEvalContext instance to infer extra types with
+   * @return PEP-484 compatible representation of the type
+   */
+  public static String getTypeHint(@Nullable PyType type, TypeEvalContext context) {
+    return PyTypeVisitor.visit(type, new PyTypeRenderer.TypeHint(context, EnumSet.noneOf(PyTypeRendererFeature.class))).toString();
+  }
+
+  /**
+   * Render a type in PEP 484 compliant format, similarly to {@link #getTypeHint}, but with all names expanded to fully qualified.
+   * <p>
+   * For instance, this method will return {@code collections.defaultdict[str, main.MyClass]} instead of just
+   * {@code defaultdict[str, MyClass]}.
+   *
+   * @param type    the type to render
+   * @param context TypeEvalContext instance to infer extra types with
+   * @return PEP-484 compatible representation of the type with fully qualified names
+   */
+  public static String getFullyQualifiedTypeHint(@Nullable PyType type, TypeEvalContext context) {
+    return PyTypeVisitor.visit(type, new PyTypeRenderer.TypeHint(context, EnumSet.of(PyTypeRendererFeature.USE_FQN))).toString();
+  }
+
+  /**
+   * Render a type in a human-readable format, with additional verbose features of {@link PyTypeRenderer},
+   * such as displaying TypeVar bounds inline in the {@code T <: MyClass} format.
+   *
+   * @param type    the type to render
+   * @param context TypeEvalContext instance to infer extra types with
+   * @return string representation of the type
+   */
+  public static String getVerboseTypeName(@Nullable PyType type, TypeEvalContext context) {
+    return getTypeName(type, context, PyTypeRendererFeature.TYPE_VAR_BOUNDS);
+  }
+
+  /**
+   * Render a type as HTML the same way as {@link #getTypeName(PyType, TypeEvalContext)}, but with class names
+   * turned into highlighted links that are clickable from an editor tooltip (e.g. an inspection hover).
+   * <p>
+   * The resulting markup matches Quick Documentation styling (builtins are highlighted, etc.), but the links use
+   * the {@code #element/<fqn>} format navigable from tooltips rather than the {@code psi_element://} protocol.
+   *
+   * @param type     the type to render
+   * @param context  TypeEvalContext instance to infer extra types with
+   * @param anchor   element the type belongs to, used to resolve class names to their declarations
+   * @param features additional rendering features to enable
+   * @return HTML representation of the type with navigable, highlighted class links
+   */
+  public static String getTypeNameWithLinks(@Nullable PyType type,
+                                            TypeEvalContext context,
+                                            PsiElement anchor,
+                                            PyTypeRendererFeature... features) {
+    EnumSet<PyTypeRendererFeature> featureSet =
+      features.length == 0 ? EnumSet.noneOf(PyTypeRendererFeature.class) : EnumSet.copyOf(Arrays.asList(features));
+    return PyTypeVisitor.visit(type, new PyTypeRenderer.TooltipDocumentation(context, anchor, featureSet)).toString();
+  }
+
+  /**
+   * Same as {@link #getTypeNameWithLinks(PyType, TypeEvalContext, PsiElement, PyTypeRendererFeature...)} with the verbose
+   * features enabled (see {@link #getVerboseTypeName(PyType, TypeEvalContext)}).
+   */
+  public static String getVerboseTypeNameWithLinks(@Nullable PyType type,
+                                                   TypeEvalContext context,
+                                                   PsiElement anchor) {
+    return getTypeNameWithLinks(type, context, anchor, PyTypeRendererFeature.TYPE_VAR_BOUNDS);
+  }
+
+  /**
+   * @param type      type which description will be calculated.
+   *                  Description is the same as {@link PythonDocumentationProvider#getTypeName(PyType, TypeEvalContext)} gives but
+   *                  types are converted to links.
+   * @param typeOwner element that has the given type, can be {@code null} for synthetic parameters
+   * @param context   type evaluation context
+   * @param anchor    anchor element
+   */
+  private static HtmlChunk formatTypeWithLinks(@Nullable PyType type,
+                                               @Nullable PyTypedElement typeOwner,
+                                               PsiElement anchor,
+                                               TypeEvalContext context) {
+    if (typeOwner instanceof PyTargetExpression) {
+      if (typeOwner.getParent() instanceof PyAssignmentStatement assignment &&
+          PyTypingTypeProvider.isExplicitTypeAlias(assignment, context)) {
+        return styledSpan("TypeAlias", PyHighlighter.PY_ANNOTATION);
+      }
     }
-    else {
-      cat.addWith(nameWrapper, $(name));
-    }
-    PyExpression[] ancestors = cls.getSuperClassExpressions();
-    if (ancestors.length > 0) {
-      cat.addItem("(");
-      boolean isNotFirst = false;
-      for (PyExpression parent : ancestors) {
-        String parentName = parent.getName();
-        if (parentName == null) {
-          continue;
+    return Objects.requireNonNull(PyTypeVisitor.visit(type, new PyTypeRenderer.RichDocumentation(context, anchor)));
+  }
+
+  /**
+   * Same as {@link #formatTypeWithLinks}, but breaks the lines of a long type to fit in {@link #TYPE_LINE_WIDTH} columns.
+   * The output is for a {@code <pre>} element.
+   *
+   * @param precedingHtml the HTML before the type, which gives the column where the type starts
+   * @param indent        the column where the next lines of the type start, before their nesting level
+   */
+  private static HtmlChunk layoutTypeWithLinks(@Nullable PyType type,
+                                               @Nullable PyTypedElement typeOwner,
+                                               PsiElement anchor,
+                                               TypeEvalContext context,
+                                               String precedingHtml,
+                                               int indent) {
+    HtmlChunk renderedType = formatTypeWithLinks(type, typeOwner, anchor, context);
+    int startColumn = PyTypeLayout.lastLineWidth(precedingHtml);
+    return HtmlChunk.raw(PyTypeLayout.layout(renderedType, TYPE_LINE_WIDTH, startColumn, indent, true));
+  }
+
+  static HtmlChunk describeDecorators(PyDecoratable decoratable,
+                                      HtmlChunk separator) {
+    final HtmlBuilder result = new HtmlBuilder();
+    final PyDecoratorList decoratorList = decoratable.getDecoratorList();
+    if (decoratorList != null) {
+      boolean first = true;
+
+      for (PyDecorator decorator : decoratorList.getDecorators()) {
+        if (!first) {
+          result.append(separator);
         }
+        result.appendRaw(describeDecorator(decorator).toString());
+        first = false;
+      }
+    }
+    if (!result.isEmpty()) {
+      result.br();
+    }
+    return result.toFragment();
+  }
+
+  static HtmlChunk describeClass(PyClass cls,
+                                 TypeEvalContext context) {
+    final HtmlBuilder result = new HtmlBuilder();
+    final String name = StringUtil.notNullize(cls.getName(), PyNames.UNNAMED_ELEMENT);
+    result.append(styledSpan("class ", PyHighlighter.PY_KEYWORD)); //NON-NLS
+    result.append(styledSpan(name, PyHighlighter.PY_CLASS_DEFINITION));
+
+    result.append(describeTypeParameterList(cls, true, context));
+
+    final PyExpression[] superClasses = cls.getSuperClassExpressions();
+    if (superClasses.length > 0) {
+      result.append(styledSpan("(", PyHighlighter.PY_PARENTHS));
+      boolean isNotFirst = false;
+
+      for (PyExpression superClass : superClasses) {
         if (isNotFirst) {
-          cat.addItem(", ");
+          result.append(styledSpan(", ", PyHighlighter.PY_COMMA));
         }
         else {
           isNotFirst = true;
         }
-        if (allowHtml) {
-          cat.addWith(new LinkWrapper(LINK_TYPE_PARENT + parentName), $(parentName));
-        }
-        else {
-          cat.addItem(parentName);
-        }
+        result.append(describeSuperClass(superClass, context));
       }
-      cat.addItem(")");
+      result.append(styledSpan(")", PyHighlighter.PY_PARENTHS));
     }
-    return cat;
+
+    return result.toFragment();
   }
 
-  //
-  private static Iterable<String> describeDeco(PyDecorator deco, FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
-                                               //  addWith in tags, if need be
-                                               FP.Lambda1<String, String> argWrapper
-                                               // add escaping, if need be
-  ) {
-    ChainIterable<String> cat = new ChainIterable<>();
-    cat.addItem("@").addWith(nameWrapper, $(PyUtil.getReadableRepr(deco.getCallee(), true)));
-    if (deco.hasArgumentList()) {
-      PyArgumentList arglist = deco.getArgumentList();
-      if (arglist != null) {
-        cat.addItem("(").add(interleave(FP.map(FP.combine(LReadableRepr, argWrapper), arglist.getArguments()), ", ")).addItem(")");
+  private static HtmlChunk describeSuperClass(PyExpression expression, TypeEvalContext context) {
+    final String expressionText = expression.getText();
+    if (expression instanceof PyReferenceExpression referenceExpression) {
+      if (!referenceExpression.isQualified()) {
+        final PyResolveContext resolveContext = PyResolveContext.defaultContext(context);
+        for (ResolveResult result : referenceExpression.getReference(resolveContext).multiResolve(false)) {
+          if (result.getElement() instanceof PyClass pyClass && pyClass.getQualifiedName() != null) {
+            return styledReference(PyDocumentationLink.toClass(pyClass, expressionText), pyClass);
+          }
+        }
       }
     }
-    return cat;
+    else if (expression instanceof PySubscriptionExpression) {
+      final PyExpression operand = ((PySubscriptionExpression)expression).getOperand();
+      final PyExpression indexExpression = ((PySubscriptionExpression)expression).getIndexExpression();
+
+      if (indexExpression != null) {
+        return new HtmlBuilder()
+          .append(describeSuperClass(operand, context))
+          .append(styledSpan("[", PyHighlighter.PY_BRACKETS))
+          .append(describeSuperClass(indexExpression, context))
+          .append(styledSpan("]", PyHighlighter.PY_BRACKETS))
+          .toFragment();
+      }
+    }
+    else if (expression instanceof PyKeywordArgument) {
+      final String keyword = ((PyKeywordArgument)expression).getKeyword();
+      final PyExpression valueExpression = ((PyKeywordArgument)expression).getValueExpression();
+
+      if (PyNames.METACLASS.equals(keyword) && valueExpression != null) {
+        return new HtmlBuilder()
+          .append(styledSpan(PyNames.METACLASS, PyHighlighter.PY_KEYWORD_ARGUMENT))
+          .append(styledSpan("=", PyHighlighter.PY_OPERATION_SIGN))
+          .append(describeSuperClass(valueExpression, context))
+          .toFragment();
+      }
+    }
+    else if (PyClassImpl.isSixWithMetaclassCall(expression)) {
+      final PyCallExpression callExpression = (PyCallExpression)expression;
+      final PyExpression callee = callExpression.getCallee();
+
+      if (callee != null) {
+        return new HtmlBuilder()
+          .append(styledSpan(callee.getText(), DefaultLanguageHighlighterColors.IDENTIFIER))
+          .append(styledSpan("(", PyHighlighter.PY_PARENTHS))
+          .append(Stream
+                    .of(callExpression.getArguments())
+                    .map(argument -> describeSuperClass(argument, context))
+                    .collect(HtmlChunk.toFragment(styledSpan(", ", PyHighlighter.PY_COMMA))))
+          .append(styledSpan(")", PyHighlighter.PY_PARENTHS))
+          .toFragment();
+      }
+    }
+    return HtmlChunk.text(expressionText);
+  }
+
+  private static HtmlChunk describeDecorator(PyDecorator decorator) {
+    final HtmlBuilder result = new HtmlBuilder();
+    result.append(styledSpan("@" + PyUtil.getReadableRepr(decorator.getCallee(), false), PyHighlighter.PY_DECORATOR));
+
+    final PyArgumentList argumentList = decorator.getArgumentList();
+    if (argumentList != null) {
+      result.append(styledSpan("(", PyHighlighter.PY_PARENTHS));
+      final PyExpression[] argumentsExpressions = argumentList.getArguments();
+
+      final HtmlChunk styledArgumentsList =
+        Stream
+          .of(argumentsExpressions)
+          .map(argExpression -> {
+            if (!(argExpression instanceof PyKeywordArgument keywordArg)) {
+              return highlightExpressionText(argExpression.getText(), argExpression);
+            }
+            final String argName = argExpression.getName();
+            if (argName == null) return null;
+            final PyExpression argValueExpression = keywordArg.getValueExpression();
+            if (argValueExpression == null) return null;
+            return new HtmlBuilder().append(styledSpan(argName, PyHighlighter.PY_KEYWORD_ARGUMENT))
+              .append(styledSpan("=", PyHighlighter.PY_OPERATION_SIGN))
+              .append(highlightExpressionText(argValueExpression.getText(), argValueExpression))
+              .toFragment();
+          })
+          .filter(Objects::nonNull)
+          .collect(HtmlChunk.toFragment(styledSpan(", ", PyHighlighter.PY_COMMA)));
+
+      result.append(styledArgumentsList);
+      result.append(styledSpan(")", PyHighlighter.PY_PARENTHS));
+    }
+    return result.toFragment();
   }
 
   // provides ctrl+Q doc
-  public String generateDoc(@Nullable PsiElement element, @Nullable PsiElement originalElement) {
-    if (element != null && PydevConsoleRunner.isInPydevConsole(element) || originalElement != null && PydevConsoleRunner.isInPydevConsole(
-      originalElement)) {
-      return PydevDocumentationProvider.createDoc(element, originalElement);
+  @Override
+  public @Nullable String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+    final PythonRuntimeService runtimeService = PythonRuntimeService.getInstance();
+    if (runtimeService.isInPydevConsole(element) || originalElement != null && runtimeService.isInPydevConsole(originalElement)) {
+      return runtimeService.createPydevDoc(element, originalElement);
     }
     return new PyDocumentationBuilder(element, originalElement).build();
   }
 
   @Override
-  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
-    if (link.equals(LINK_TYPE_CLASS)) {
-      return inferContainingClassOf(context);
-    }
-    else if (link.equals(LINK_TYPE_PARAM)) {
-      return inferClassOfParameter(context);
-    }
-    else if (link.startsWith(LINK_TYPE_PARENT)) {
-      PyClass cls = inferContainingClassOf(context);
-      if (cls != null) {
-        String desiredName = link.substring(LINK_TYPE_PARENT.length());
-        for (PyClass parent : cls.getAncestorClasses(null)) {
-          String parentName = parent.getName();
-          if (parentName != null && parentName.equals(desiredName)) {
-            return parent;
+  public @Nullable PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    return PyDocumentationLink.elementForLink(link,
+                                              context,
+                                              TypeEvalContext.userInitiated(context.getProject(), context.getContainingFile()));
+  }
+
+  @Override
+  public @Nullable List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+    final String url = getOnlyUrlFor(element, originalElement);
+    return url == null ? null : Collections.singletonList(url);
+  }
+
+  @Override
+  public @Nullable PsiElement getCustomDocumentationElement(Editor editor,
+                                                            PsiFile file,
+                                                            @Nullable PsiElement contextElement,
+                                                            int targetOffset) {
+    if (contextElement != null) {
+      final IElementType elementType = contextElement.getNode().getElementType();
+      if (PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(elementType)) {
+        return contextElement;
+      }
+      final PsiElement parent = contextElement.getParent();
+      if (parent instanceof PyArgumentList && (PyTokenTypes.LPAR == elementType || PyTokenTypes.RPAR == elementType)) {
+        final PyCallExpression expression = PsiTreeUtil.getParentOfType(contextElement, PyCallExpression.class);
+        if (expression != null) {
+          final PyExpression callee = expression.getCallee();
+          if (callee != null) {
+            final PsiReference reference = callee.getReference();
+            if (reference != null) {
+              return reference.resolve();
+            }
           }
         }
       }
-    }
-    else if (link.startsWith(LINK_TYPE_TYPENAME)) {
-      String typeName = link.substring(LINK_TYPE_TYPENAME.length());
-      PyType type = PyTypeParser.getTypeByName(context, typeName);
-      if (type instanceof PyClassType) {
-        return ((PyClassType)type).getPyClass();
+      final PyExpression expression = PsiTreeUtil.getParentOfType(contextElement, PyExpression.class);
+      if (expression != null && DocStringUtil.isDocStringExpression(expression)) {
+        final PyDocStringOwner docstringOwner = PsiTreeUtil.getParentOfType(contextElement, PyDocStringOwner.class);
+        if (docstringOwner != null) return docstringOwner;
       }
     }
     return null;
   }
 
-  @Override
-  public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    String url = getUrlFor(element, originalElement, true);
-    return url == null ? null : Collections.singletonList(url);
+  public static @Nullable QualifiedName getFullQualifiedName(final @Nullable PsiElement element) {
+    final String name =
+      (element instanceof PsiNamedElement) ? ((PsiNamedElement)element).getName() : element != null ? element.getText() : null;
+    if (name != null) {
+      final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+      final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
+      if (owner instanceof PyClass) {
+        final QualifiedName importQName = QualifiedNameFinder.findCanonicalImportPath(element, element);
+        if (importQName != null) {
+          return QualifiedName.fromDottedString(importQName + "." + owner.getName() + "." + name);
+        }
+      }
+      else if (PyUtil.isInitOrNewMethod(owner)) {
+        final QualifiedName importQName = QualifiedNameFinder.findCanonicalImportPath(owner, element);
+        final PyClass containingClass = ((PyFunction)owner).getContainingClass();
+        if (importQName != null && containingClass != null) {
+          return QualifiedName.fromDottedString(importQName + "." + containingClass.getName() + "." + name);
+        }
+      }
+      else if (owner instanceof PyFile) {
+        if (builtinCache.isBuiltin(element)) {
+          return QualifiedName.fromDottedString(name);
+        }
+        else {
+          final VirtualFile virtualFile = ((PyFile)owner).getVirtualFile();
+          if (virtualFile != null) {
+            final QualifiedName fileQName = QualifiedNameFinder.findCanonicalImportPath(element, element);
+            if (fileQName != null) {
+              return QualifiedName.fromDottedString(fileQName + "." + name);
+            }
+          }
+        }
+      }
+      else {
+        if (element instanceof PyFile) {
+          return QualifiedNameFinder.findCanonicalImportPath(element, element);
+        }
+      }
+    }
+    return null;
   }
 
-  @Nullable
-  public static String getUrlFor(PsiElement element, PsiElement originalElement, boolean checkExistence) {
+  protected static @Nullable PsiFileSystemItem getFile(PsiElement element) {
     PsiFileSystemItem file = element instanceof PsiFileSystemItem ? (PsiFileSystemItem)element : element.getContainingFile();
-    if (file == null) {
-      return null;
+    return (PsiFileSystemItem)PyUtil.turnInitIntoDir(file);
+  }
+
+  public static @Nullable PsiNamedElement getNamedElement(@Nullable PsiElement element) {
+    PsiNamedElement namedElement = (element instanceof PsiNamedElement) ? (PsiNamedElement)element : null;
+    final PyClass containingClass = PyUtil.turnConstructorIntoClass(as(namedElement, PyFunction.class));
+    if (containingClass != null) {
+      namedElement = containingClass;
     }
-    if (PyNames.INIT_DOT_PY.equals(file.getName())) {
-      file = file.getParent();
-      assert file != null;
+    else {
+      namedElement = (PsiNamedElement)PyUtil.turnInitIntoDir(namedElement);
     }
-    Sdk sdk = PyBuiltinCache.findSdkForFile(file);
+    return namedElement;
+  }
+
+  public static @Nullable String getOnlyUrlFor(PsiElement element, @Nullable PsiElement originalElement) {
+    PsiFileSystemItem file = getFile(element);
+    if (file == null) return null;
+    final Sdk sdk = PyBuiltinCache.findSdkForFile(file);
     if (sdk == null) {
       return null;
     }
-    QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, originalElement);
+    final QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, originalElement);
     if (qName == null) {
       return null;
     }
-    PythonDocumentationMap map = PythonDocumentationMap.getInstance();
-    String pyVersion = pyVersion(sdk.getVersionString());
-    PsiNamedElement namedElement =
-      (element instanceof PsiNamedElement && !(element instanceof PsiFileSystemItem)) ? (PsiNamedElement)element : null;
-    if (namedElement instanceof PyFunction && PyNames.INIT.equals(namedElement.getName())) {
-      PyClass containingClass = ((PyFunction)namedElement).getContainingClass();
-      if (containingClass != null) {
-        namedElement = containingClass;
-      }
-    }
-    String url = map.urlFor(qName, namedElement, pyVersion);
+    final PythonDocumentationMap map = PythonDocumentationMap.getInstance();
+    final String pyVersion = pyVersion(sdk.getVersionString());
+    PsiNamedElement namedElement = getNamedElement(element);
+    final String url = map.urlFor(qName, namedElement, pyVersion);
     if (url != null) {
-      if (checkExistence && !pageExists(url)) {
-        return map.rootUrlFor(qName);
-      }
       return url;
     }
-    for (PythonDocumentationLinkProvider provider : Extensions.getExtensions(PythonDocumentationLinkProvider.EP_NAME)) {
-      String providerUrl = provider.getExternalDocumentationUrl(element, originalElement);
+    for (PythonDocumentationLinkProvider provider : PythonDocumentationLinkProvider.EP_NAME.getExtensionList()) {
+      final String providerUrl = provider.getExternalDocumentationUrl(element, originalElement);
       if (providerUrl != null) {
-        if (checkExistence && !pageExists(providerUrl)) {
-          return provider.getExternalDocumentationRoot(sdk);
-        }
         return providerUrl;
       }
     }
     return null;
   }
 
-  private static boolean pageExists(String url) {
-    if (new File(url).exists()) {
-      return true;
-    }
-
-    try {
-      return Application.get().getInstance(HttpRequestBuilderFactory.class)
-        .newBuilder(url, HttpMethod.HEAD)
-        .connectTimeout(5000)
-        .readTimeout(5000)
-        .allowErrorCodes(true)
-        .connect(request -> request.statusCode() != 404);
-    }
-    catch (IOException ignored) {
-    }
-    catch (IllegalArgumentException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Nullable
-  public static String pyVersion(@Nullable String versionString) {
-    String prefix = "Python ";
+  public static @Nullable String pyVersion(@Nullable String versionString) {
+    final String prefix = "Python ";
     if (versionString != null && versionString.startsWith(prefix)) {
-      String version = versionString.substring(prefix.length());
+      final String version = versionString.substring(prefix.length());
       int dot = version.indexOf('.');
       if (dot > 0) {
         dot = version.indexOf('.', dot + 1);
@@ -426,85 +883,4 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     }
     return null;
   }
-
-  @Override
-  public String fetchExternalDocumentation(Project project, PsiElement element, List<String> docUrls) {
-    return null;
-  }
-
-  @Override
-  public boolean hasDocumentationFor(PsiElement element, PsiElement originalElement) {
-    return getUrlFor(element, originalElement, false) != null;
-  }
-
-  @Override
-  public boolean canPromptToConfigureDocumentation(PsiElement element) {
-    PsiFile containingFile = element.getContainingFile();
-    if (containingFile instanceof PyFile) {
-      Project project = element.getProject();
-      VirtualFile vFile = containingFile.getVirtualFile();
-      if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInLibraryClasses(vFile)) {
-        QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
-        if (qName != null && qName.getComponentCount() > 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  @Override
-  public void promptToConfigureDocumentation(PsiElement element) {
-    Project project = element.getProject();
-    QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
-    if (qName != null && qName.getComponentCount() > 0) {
-      Application application = ApplicationManager.getApplication();
-      application.invokeLater(() -> {
-        int rc =
-          Messages.showOkCancelDialog(project, "No external documentation URL configured for module " + qName.getComponents().get(0) +
-            ".\nWould you like to configure it now?", "Python External Documentation", Messages.getQuestionIcon());
-        if (rc == Messages.OK) {
-          ShowSettingsUtil.getInstance().showSettingsDialog(project, PythonDocumentationConfigurable.ID, "");
-        }
-      }, application.getNoneModalityState());
-    }
-  }
-
-  @Nullable
-  @Override
-  public PsiElement getCustomDocumentationElement(Editor editor, PsiFile file, @Nullable PsiElement contextElement) {
-    if (contextElement != null && PythonDialectsTokenSetProvider.getInstance().getKeywordTokens()
-                                                                         .contains(contextElement.getNode().getElementType())) {
-      return contextElement;
-    }
-    return super.getCustomDocumentationElement(editor, file, contextElement);
-  }
-
-  @Nullable
-  private static PyClass inferContainingClassOf(PsiElement context) {
-    if (context instanceof PyClass) {
-      return (PyClass)context;
-    }
-    if (context instanceof PyFunction) {
-      return ((PyFunction)context).getContainingClass();
-    }
-    else {
-      return PsiTreeUtil.getParentOfType(context, PyClass.class);
-    }
-  }
-
-  @Nullable
-  private static PyClass inferClassOfParameter(PsiElement context) {
-    if (context instanceof PyNamedParameter) {
-      PyType type =
-        TypeEvalContext.userInitiated(context.getProject(), context.getContainingFile()).getType((PyNamedParameter)context);
-      if (type instanceof PyClassType) {
-        return ((PyClassType)type).getPyClass();
-      }
-    }
-    return null;
-  }
-
-  public static final LinkWrapper LinkMyClass = new LinkWrapper(LINK_TYPE_CLASS);
-  // link item to containing class
 }

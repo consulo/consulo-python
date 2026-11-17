@@ -1,48 +1,39 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
-import com.google.common.collect.Iterables;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.types.PyModuleType;
-import com.jetbrains.python.impl.toolbox.ChainIterable;
-import com.jetbrains.python.psi.*;
+import org.jspecify.annotations.Nullable;
+import consulo.localize.LocalizeValue;
+import consulo.ui.image.Image;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+
+import com.google.common.collect.Lists;
+import consulo.language.ast.ASTNode;
+import consulo.navigation.ItemPresentation;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ContainerUtil;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStarImportElement;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
-import consulo.localize.LocalizeValue;
-import consulo.navigation.ItemPresentation;
-import consulo.ui.image.Image;
-import org.jspecify.annotations.Nullable;
+import com.jetbrains.python.impl.psi.types.PyModuleType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import java.util.ArrayList;
+import java.util.stream.StreamSupport;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author dcheryasov
- */
+import static com.jetbrains.python.impl.psi.PyUtil.as;
+
 public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportElementStub> implements PyStarImportElement {
     public PyStarImportElementImpl(ASTNode astNode) {
         super(astNode);
@@ -53,29 +44,21 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
     }
 
     @Override
-    @RequiredReadAction
     public Iterable<PyElement> iterateNames() {
         if (getParent() instanceof PyFromImportStatement fromImportStatement) {
-            List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
-            ChainIterable<PyElement> chain = new ChainIterable<>();
-            for (PsiElement importedFile : new HashSet<>(importedFiles)) { // resolver gives lots of duplicates
-                if (PyUtil.turnDirIntoInit(importedFile) instanceof PyFile sourceFile) {
-                    chain.add(filterStarImportableNames(sourceFile.iterateNames(), sourceFile));
-                }
-            }
-            return chain;
+            return fromImportStatement.resolveImportSourceCandidates().stream()
+                .distinct()
+                .map(PyUtil::turnDirIntoInit)
+                .filter(PyFile.class::isInstance)
+                .map(PyFile.class::cast)
+                .flatMap(file -> StreamSupport.stream(file.iterateNames().spliterator(), false)
+                    .filter(e -> {
+                        String name = e.getName();
+                        return name != null && PyUtil.isStarImportableFrom(name, file);
+                    }))
+                .toList();
         }
         return Collections.emptyList();
-    }
-
-    private static Iterable<PyElement> filterStarImportableNames(Iterable<PyElement> declaredNames, PyFile file) {
-        return Iterables.filter(
-            declaredNames,
-            input -> {
-                String name = input != null ? input.getName() : null;
-                return name != null && PyUtil.isStarImportableFrom(name, file);
-            }
-        );
     }
 
     @Override
@@ -83,25 +66,19 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
         return PyUtil.getParameterizedCachedValue(this, name, this::calculateMultiResolveName);
     }
 
-    @RequiredReadAction
     private List<RatedResolveResult> calculateMultiResolveName(String name) {
-        if (PyUtil.isClassPrivateName(name)) {
-            return Collections.emptyList();
-        }
         PsiElement parent = getParentByStub();
         if (parent instanceof PyFromImportStatement fromImportStatement) {
             List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
             for (PsiElement importedFile : new HashSet<>(importedFiles)) { // resolver gives lots of duplicates
-                if (PyUtil.turnDirIntoInit(importedFile) instanceof PyFile sourceFile) {
+                PyFile sourceFile = as(PyUtil.turnDirIntoInit(importedFile), PyFile.class);
+                if (sourceFile != null && PyUtil.isStarImportableFrom(name, sourceFile)) {
                     PyModuleType moduleType = new PyModuleType(sourceFile);
-                    List<? extends RatedResolveResult> results =
-                        moduleType.resolveMember(name, null, AccessDirection.READ, PyResolveContext.defaultContext());
-                    if (results != null && !results.isEmpty() && PyUtil.isStarImportableFrom(name, sourceFile)) {
-                        List<RatedResolveResult> res = new ArrayList<>();
-                        for (RatedResolveResult result : results) {
-                            res.add(result);
-                        }
-                        return res;
+                    TypeEvalContext context = TypeEvalContext.codeInsightFallback(sourceFile.getProject());
+                    List<? extends RatedResolveResult> results = moduleType.resolveMember(name, null, AccessDirection.READ,
+                                                                                                PyResolveContext.defaultContext(context));
+                    if (!ContainerUtil.isEmpty(results)) {
+                        return Lists.newArrayList(results);
                     }
                 }
             }
@@ -112,6 +89,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
     @Override
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
+
             private String getName() {
                 PyFromImportStatement elt = PsiTreeUtil.getParentOfType(PyStarImportElementImpl.this, PyFromImportStatement.class);
                 if (elt != null) { // always? who knows :)

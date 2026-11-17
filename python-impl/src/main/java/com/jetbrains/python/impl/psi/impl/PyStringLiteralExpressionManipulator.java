@@ -1,64 +1,73 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PythonStringUtil;
-import com.jetbrains.python.psi.PyElementGenerator;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.util.lang.Pair;
 import consulo.document.util.TextRange;
 import consulo.language.psi.AbstractElementManipulator;
-import consulo.util.lang.Pair;
+import consulo.language.util.IncorrectOperationException;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyStringLiteralCoreUtil;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 
-
-/**
- * @author traff
- */
 @ExtensionImpl
-public class PyStringLiteralExpressionManipulator extends AbstractElementManipulator<PyStringLiteralExpressionImpl>
-{
-	public PyStringLiteralExpressionImpl handleContentChange(PyStringLiteralExpressionImpl element, TextRange range, String newContent)
-	{
-		Pair<String, String> quotes = PythonStringUtil.getQuotes(range.substring(element.getText()));
+public final class PyStringLiteralExpressionManipulator extends AbstractElementManipulator<PyStringLiteralExpressionImpl> {
 
-		if(quotes != null)
-		{
-			range = TextRange.create(range.getStartOffset() + quotes.first.length(), range.getEndOffset() - quotes.second.length());
-		}
+    @Override
+    public PyStringLiteralExpressionImpl handleContentChange(PyStringLiteralExpressionImpl element,
+                                                             TextRange range,
+                                                             String newContent) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(element.getProject());
+        String escapedText = calculateEscapedText(element.getText(), range, newContent);
 
-		String newName = range.replace(element.getText(), newContent);
+        PyStringLiteralExpression escaped = elementGenerator.createStringLiteralAlreadyEscaped(escapedText);
 
-		return (PyStringLiteralExpressionImpl) element
-				.replace(PyElementGenerator.getInstance(element.getProject()).createStringLiteralAlreadyEscaped(newName));
-	}
+        return (PyStringLiteralExpressionImpl)element.replace(escaped);
+    }
 
-	@Override
-	public TextRange getRangeInElement(PyStringLiteralExpressionImpl element)
-	{
-		Pair<String, String> pair = PythonStringUtil.getQuotes(element.getText());
-		if(pair != null)
-		{
-			return TextRange.from(pair.first.length(), element.getTextLength() - pair.first.length() - pair.second.length());
-		}
-		return super.getRangeInElement(element);
-	}
+    @Override
+    public PyStringLiteralExpressionImpl handleContentChange(PyStringLiteralExpressionImpl element, String newContent)
+        throws IncorrectOperationException {
+        return handleContentChange(element, TextRange.create(0, element.getTextLength()), newContent);
+    }
 
-	@Override
-	public Class<PyStringLiteralExpressionImpl> getElementClass()
-	{
-		return PyStringLiteralExpressionImpl.class;
-	}
+    @Override
+    public TextRange getRangeInElement(PyStringLiteralExpressionImpl element) {
+        return element.getStringValueTextRange();
+    }
+
+    private static String calculateEscapedText(String prevText,
+                                                        TextRange range,
+                                                        String newContent) {
+        String newText = range.replace(prevText, newContent);
+
+        if (PyStringLiteralCoreUtil.isQuoted(newText)) {
+            return newText;
+        }
+
+        Pair<String, String> quotes = calculateQuotes(prevText);
+        return quotes.first + newText + quotes.second;
+    }
+
+    private static Pair<String, String> calculateQuotes(String text) {
+        Pair<String, String> quotes = PyStringLiteralCoreUtil.getQuotes(text);
+
+        if (quotes == null || quotes.first == null && quotes.second == null) {
+            return Pair.createNonNull("\"", "\"");
+        }
+
+        if (quotes.first == null) {
+            return Pair.createNonNull(quotes.second, quotes.second);
+        }
+        if (quotes.second == null) {
+            return Pair.createNonNull(quotes.first, quotes.first);
+        }
+
+        return quotes;
+    }
+
+    @Override
+    public Class<PyStringLiteralExpressionImpl> getElementClass() {
+        return PyStringLiteralExpressionImpl.class;
+    }
 }

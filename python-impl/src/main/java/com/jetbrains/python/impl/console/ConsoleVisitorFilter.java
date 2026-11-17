@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.console;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.inspections.*;
-import com.jetbrains.python.impl.validation.DocStringAnnotator;
+import com.jetbrains.python.impl.validation.PyDocStringHighlightingAnnotator;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.psi.PsiFile;
@@ -44,7 +44,7 @@ public class ConsoleVisitorFilter implements PythonVisitorFilter
       }
 
       //annotators
-      if (visitorClass == DocStringAnnotator.class) {
+      if (visitorClass == PyDocStringHighlightingAnnotator.class) {
         return false;
       }
     }

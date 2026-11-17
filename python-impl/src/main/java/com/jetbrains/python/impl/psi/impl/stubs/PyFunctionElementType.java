@@ -1,25 +1,9 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
-import java.io.IOException;
-
-import consulo.annotation.access.RequiredReadAction;
+import com.google.common.collect.RangeSet;
 import consulo.language.ast.ASTNode;
+import consulo.util.lang.Version;
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
@@ -27,95 +11,109 @@ import consulo.language.psi.stub.IndexSink;
 import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.stub.StubInputStream;
 import consulo.language.psi.stub.StubOutputStream;
-import consulo.index.io.StringRef;
-import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStubElementType;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyFunctionImpl;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.impl.psi.stubs.PyExportedModuleAttributeIndex;
+import com.jetbrains.python.psi.stubs.PyFileStub;
 import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyFunctionStub;
 
-/**
- * @author max
- */
-public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyFunction>
-{
-	public PyFunctionElementType()
-	{
-		this("FUNCTION_DECLARATION");
-	}
+import java.io.IOException;
 
-	public PyFunctionElementType(String debugName)
-	{
-		super(debugName);
-	}
-
-	@Override
-    public PsiElement createElement(ASTNode node)
-	{
-		return new PyFunctionImpl(node);
-	}
-
-	@Override
-    public PyFunction createPsi(PyFunctionStub stub)
-	{
-		return new PyFunctionImpl(stub);
-	}
-
-	@Override
-    @RequiredReadAction
-    public PyFunctionStub createStub(PyFunction psi, StubElement parentStub)
-	{
-		PyFunctionImpl function = (PyFunctionImpl) psi;
-		String message = function.extractDeprecationMessage();
-		PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
-		String typeComment = function.getTypeCommentAnnotation();
-		return new PyFunctionStubImpl(psi.getName(), PyPsiUtils.strValue(docStringExpression), message, function.isAsync(), typeComment, parentStub, getStubElementType());
-	}
-
-	@Override
-    public void serialize(PyFunctionStub stub, StubOutputStream dataStream) throws IOException
-	{
-		dataStream.writeName(stub.getName());
-		dataStream.writeUTFFast(StringUtil.notNullize(stub.getDocString()));
-		dataStream.writeName(stub.getDeprecationMessage());
-		dataStream.writeBoolean(stub.isAsync());
-		dataStream.writeName(stub.getTypeComment());
-	}
-
-	@Override
-    public PyFunctionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
-	{
-		String name = StringRef.toString(dataStream.readName());
-		String docString = dataStream.readUTFFast();
-		StringRef deprecationMessage = dataStream.readName();
-		boolean isAsync = dataStream.readBoolean();
-		StringRef typeComment = dataStream.readName();
-        return new PyFunctionStubImpl(
-            name,
-            StringUtil.nullize(docString),
-            deprecationMessage == null ? null : deprecationMessage.getString(),
-            isAsync,
-            typeComment == null ? null : typeComment.getString(),
-            parentStub,
-            getStubElementType()
-        );
+public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyFunction> {
+    public PyFunctionElementType() {
+        this("FUNCTION_DECLARATION");
     }
 
-	@Override
-    public void indexStub(PyFunctionStub stub, IndexSink sink)
-	{
-		String name = stub.getName();
-		if(name != null)
-		{
-			sink.occurrence(PyFunctionNameIndex.KEY, name);
-		}
-	}
+    public PyFunctionElementType(String debugName) {
+        super(debugName);
+    }
 
-	protected IStubElementType getStubElementType()
-	{
-		return PyStubElementTypes.FUNCTION_DECLARATION;
-	}
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyFunctionImpl(node);
+    }
+
+    @Override
+    public PyFunction createPsi(PyFunctionStub stub) {
+        return new PyFunctionImpl(stub);
+    }
+
+    @Override
+    public PyFunctionStub createStub(PyFunction psi, StubElement parentStub) {
+        PyFunctionImpl function = (PyFunctionImpl)psi;
+        String message = function.extractDeprecationMessage();
+        PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
+        String typeComment = function.getTypeCommentAnnotation();
+        String annotationContent = function.getAnnotationValue();
+        RangeSet<Version> versions = PyVersionSpecificStubBaseKt.evaluateVersionsForElement(psi);
+        return new PyFunctionStubImpl(psi.getName(),
+                                      PyPsiUtils.strValue(docStringExpression),
+                                      message,
+                                      function.isAsync(),
+                                      function.isGenerator(),
+                                      function.onlyRaisesNotImplementedError(),
+                                      typeComment,
+                                      annotationContent,
+                                      parentStub,
+                                      getStubElementType(),
+                                      versions);
+    }
+
+    @Override
+    public void serialize(PyFunctionStub stub, StubOutputStream dataStream) throws IOException {
+        dataStream.writeName(stub.getName());
+        dataStream.writeUTFFast(StringUtil.notNullize(stub.getDocString()));
+        dataStream.writeName(stub.getDeprecationMessage());
+        dataStream.writeBoolean(stub.isAsync());
+        dataStream.writeBoolean(stub.isGenerator());
+        dataStream.writeBoolean(stub.onlyRaisesNotImplementedError());
+        dataStream.writeName(stub.getTypeComment());
+        dataStream.writeName(stub.getAnnotation());
+        PyVersionSpecificStubBaseKt.serializeVersions(stub.getVersions(), dataStream);
+    }
+
+    @Override
+    public PyFunctionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+        String name = dataStream.readNameString();
+        String docString = dataStream.readUTFFast();
+        String deprecationMessage = dataStream.readNameString();
+        boolean isAsync = dataStream.readBoolean();
+        boolean isGenerator = dataStream.readBoolean();
+        boolean onlyRaisesNotImplementedError = dataStream.readBoolean();
+        String typeComment = dataStream.readNameString();
+        String annotationContent = dataStream.readNameString();
+        RangeSet<Version> versions = PyVersionSpecificStubBaseKt.deserializeVersions(dataStream);
+        return new PyFunctionStubImpl(name,
+                                      StringUtil.nullize(docString),
+                                      deprecationMessage,
+                                      isAsync,
+                                      isGenerator,
+                                      onlyRaisesNotImplementedError,
+                                      typeComment,
+                                      annotationContent,
+                                      parentStub,
+                                      getStubElementType(),
+                                      versions);
+    }
+
+    @Override
+    public void indexStub(PyFunctionStub stub, IndexSink sink) {
+        String name = stub.getName();
+        if (name != null) {
+            sink.occurrence(PyFunctionNameIndex.KEY, name);
+            if (stub.getParentStub() instanceof PyFileStub && PyUtil.getInitialUnderscores(name) == 0) {
+                sink.occurrence(PyExportedModuleAttributeIndex.KEY, name);
+            }
+        }
+    }
+
+    protected IStubElementType getStubElementType() {
+        return PyStubElementTypes.FUNCTION_DECLARATION;
+    }
 }

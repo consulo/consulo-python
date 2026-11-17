@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.codeInsight.PyUnindentUtil;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.action.TypedHandlerDelegate;
 import consulo.document.Document;
@@ -54,7 +55,7 @@ public class KeywordTypedHandler extends TypedHandlerDelegate {
         editor.getCaretModel().moveToOffset(offset + 1); // overtype, that is, jump over
         return Result.STOP;
       }
-      UnindentingInsertHandler.unindentAsNeeded(project, editor, file);
+      PyUnindentUtil.unindentAsNeeded(project, editor, file);
     }
 
     return Result.CONTINUE; // the default

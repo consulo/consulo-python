@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.stubs;
 
-import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyDecorator;
+import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.util.QualifiedName;
+import org.jspecify.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: dcheryasov
- * Date: Sep 28, 2008
- */
 public interface PyDecoratorStub extends StubElement<PyDecorator> {
 
-  /**
-   * @return name of the decorator after the "@".
-   */
-  QualifiedName getQualifiedName();
+    /**
+     * @return name of the decorator after the "@".
+     */
+    QualifiedName getQualifiedName();
 
-  //PyFunction getTarget();
+    /**
+     * @return true if invocation has a form of {@code @foo(...)}.
+     */
+    boolean hasArgumentList();
+
+    <T> @Nullable T getCustomStub(Class<T> stubClass);
 }

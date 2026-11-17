@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.override;
 
+import com.jetbrains.python.psi.types.PyCallableParameter;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
@@ -37,13 +38,32 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 {
 	private final String myFullName;
 
+	private static String buildParameterText(PyCallableParameter parameter, TypeEvalContext context)
+	{
+		// The type of the receiver (self/cls) is implicit; render it only when it was annotated explicitly.
+		if(parameter.isSelf() && !isExplicitlyAnnotated(parameter))
+		{
+			return parameter.getPresentableText(true, context, ignored -> true);
+		}
+		return parameter.getPresentableText(true, context);
+	}
+
+	private static boolean isExplicitlyAnnotated(PyCallableParameter parameter)
+	{
+		return parameter.getParameter() instanceof PyNamedParameter namedParameter && namedParameter.getAnnotationValue() != null;
+	}
+
 	private static String buildNameFor(PyElement element)
 	{
 		if(element instanceof PyFunction)
 		{
 			TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
-			List<PyParameter> parameters = PyUtil.getParameters((PyFunction) element, context);
-			return element.getName() + "(" + StringUtil.join(parameters, parameter -> PyUtil.getReadableRepr(parameter, false), ", ") + ")";
+			List<PyCallableParameter> parameters = ((PyFunction) element).getParameters(context);
+			StringBuilder result = new StringBuilder();
+			result.append(element.getName()).append('(');
+			StringUtil.join(parameters, parameter -> buildParameterText(parameter, context), ", ", result);
+			result.append(')');
+			return result.toString();
 		}
 		if(element instanceof PyClass && PyNames.FAKE_OLD_BASE.equals(element.getName()))
 		{

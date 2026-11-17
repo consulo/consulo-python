@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
+
+import com.jetbrains.python.ast.PyAstIfPart;
 
 /**
  * Branches of an 'if' statement.
  * @see PyElsePart
- * User: dcheryasov
- * Date: Mar 12, 2009 2:16:00 AM
  */
-public interface PyIfPart extends PyConditionalStatementPart {
-  PyIfPart[] EMPTY_ARRAY = new PyIfPart[0];
-  /**
-   * @return true for a 'elif' part.
-   */
-  boolean isElif();
-
+public interface PyIfPart extends PyAstIfPart, PyConditionalStatementPart {
+    PyIfPart[] EMPTY_ARRAY = new PyIfPart[0];
 }

@@ -1,58 +1,47 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.search;
 
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.Property;
+import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessRule;
+import consulo.application.ReadAction;
 
 import java.util.function.Predicate;
 
 /**
- * @author yole
+ * JB PyOverridingMethodsSearchExecutor (Consulo: {@link PyOverridingMethodsSearchExecutor} is the extension point).
  */
 @ExtensionImpl
-public class DefaultPyOverridingMethodsSearchExecutor implements PyOverridingMethodsSearchExecutor {
+public final class DefaultPyOverridingMethodsSearchExecutor implements PyOverridingMethodsSearchExecutor {
     @Override
-    public boolean execute(
-        PyOverridingMethodsSearch.SearchParameters queryParameters,
-        Predicate<? super PyFunction> consumer
-    ) {
+    public boolean execute(PyOverridingMethodsSearch.SearchParameters queryParameters, Predicate<? super PyFunction> consumer) {
         PyFunction baseMethod = queryParameters.getFunction();
 
-        PyClass containingClass = AccessRule.read(baseMethod::getContainingClass);
+        PyClass containingClass = ReadAction.compute(() -> baseMethod.getContainingClass());
 
         return PyClassInheritorsSearch.search(containingClass, queryParameters.isCheckDeep()).forEach(pyClass -> {
-            PyFunction overridingMethod = AccessRule.read(() -> {
-                PyFunction func = pyClass.findMethodByName(baseMethod.getName(), false, null);
-                if (func != null) {
+            PyFunction overridingMethod = ReadAction.compute(() -> {
+                PyFunction o = pyClass.findMethodByName(baseMethod.getName(), false, null);
+                if (o != null) {
                     Property baseProperty = baseMethod.getProperty();
-                    Property overridingProperty = func.getProperty();
+                    Property overridingProperty = o.getProperty();
                     if (baseProperty != null && overridingProperty != null) {
                         AccessDirection direction = PyUtil.getPropertyAccessDirection(baseMethod);
                         PyCallable callable = overridingProperty.getByDirection(direction).valueOrNull();
-                        func = callable instanceof PyFunction function ? function : null;
+                        o = (callable instanceof PyFunction) ? (PyFunction)callable : null;
                     }
                 }
-
-                return func;
+                return o;
             });
-
-            return overridingMethod == null || consumer.test(overridingMethod);
+            //noinspection SimplifiableIfStatement
+            if (overridingMethod != null) {
+                return consumer.test(overridingMethod);
+            }
+            return true;
         });
     }
 }

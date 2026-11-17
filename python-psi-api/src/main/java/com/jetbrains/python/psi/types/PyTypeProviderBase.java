@@ -1,142 +1,99 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi.types;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.impl.PyTypeProvider;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.language.psi.PsiElement;
-import consulo.util.collection.FactoryMap;
-import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.ref.Ref;
-
 import org.jspecify.annotations.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
-/**
- * @author yole
- */
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class PyTypeProviderBase implements PyTypeProvider {
 
-  private final ReturnTypeCallback mySelfTypeCallback = (callSite,
-                                                         qualifierType,
-                                                         context) -> Optional.ofNullable(ObjectUtil.tryCast(qualifierType,
-                                                                                                            PyClassType.class))
-                                                                             .map(PyClassType::getPyClass)
-                                                                             .map(pyClass -> PyPsiFacade.getInstance(pyClass.getProject())
-                                                                                                        .createClassType(pyClass, false))
-                                                                             .orElse(null);
-
-  @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-  private final Map<String, ReturnTypeDescriptor> myMethodToReturnTypeMap = FactoryMap.create(s -> new ReturnTypeDescriptor());
-
-  @Nullable
-  @Override
-  public PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context) {
-    return null;
-  }
-
-  @Override
-  public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
-    return null;
-  }
-
-  @Override
-  @Nullable
-  public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
-    ReturnTypeDescriptor descriptor;
-    synchronized (myMethodToReturnTypeMap) {
-      descriptor = myMethodToReturnTypeMap.get(function.getName());
-    }
-    if (descriptor != null) {
-      return descriptor.get(function, callSite, context);
-    }
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public PyType getCallableType(PyCallable callable, TypeEvalContext context) {
-    return null;
-  }
-
-  protected void registerSelfReturnType(String classQualifiedName, Collection<String> methods) {
-    registerReturnType(classQualifiedName, methods, mySelfTypeCallback);
-  }
-
-  protected void registerReturnType(String classQualifiedName,
-                                    Collection<String> methods,
-                                    ReturnTypeCallback callback) {
-    synchronized (myMethodToReturnTypeMap) {
-      for (String method : methods) {
-        myMethodToReturnTypeMap.get(method).put(classQualifiedName, callback);
-      }
-    }
-  }
-
-  protected interface ReturnTypeCallback {
-
-    @Nullable
-    PyType getType(@Nullable PyCallSiteExpression callSite, @Nullable PyType qualifierType, TypeEvalContext context);
-  }
-
-  private static class ReturnTypeDescriptor {
-
-    private final Map<String, ReturnTypeCallback> myStringToReturnTypeMap = new HashMap<>();
-
-    public void put(String classQualifiedName, ReturnTypeCallback callback) {
-      myStringToReturnTypeMap.put(classQualifiedName, callback);
+    @Override
+    public @Nullable PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context) {
+        return null;
     }
 
-    @Nullable
-    public Ref<PyType> get(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
-      return Optional.ofNullable(function.getContainingClass())
-                     .map(pyClass -> myStringToReturnTypeMap.get(pyClass.getQualifiedName()))
-                     .map(typeCallback -> typeCallback.getType(callSite,
-                                                               getQualifierType(callSite, context), context))
-                     .map(Ref::create)
-                     .orElse(null);
+    @Override
+    public @Nullable Ref<PyType> getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
+        return null;
     }
 
-    @Nullable
-    private static PyType getQualifierType(@Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
-      PyExpression callee = callSite instanceof PyCallExpression ? ((PyCallExpression)callSite).getCallee() : null;
-      PyExpression qualifier = callee instanceof PyQualifiedExpression ? ((PyQualifiedExpression)callee).getQualifier() : null;
-
-      return qualifier != null ? context.getType(qualifier) : null;
+    @Override
+    public @Nullable Ref<PyType> getParameterType(PyNamedParameter param,
+                                                  PyFunction func,
+                                                  TypeEvalContext context) {
+        return null;
     }
-  }
+
+    @Override
+    public @Nullable Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public @Nullable Ref<PyType> getCallType(PyFunction function,
+                                             PyElement callSite,
+                                             TypeEvalContext context) {
+        if (callSite instanceof PyCallSiteExpression callSiteExpression) {
+            return getCallType(function, callSiteExpression, context);
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable Ref<PyType> getCallType(PyFunction function,
+                                             PyCallSiteExpression callSite,
+                                             TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public @Nullable PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public @Nullable PyType getCallableType(PyCallable callable, TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public @Nullable PyType getGenericType(PyClass cls, TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public Map<PyType, PyType> getGenericSubstitutions(PyClass cls, TypeEvalContext context) {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public @Nullable Ref<@Nullable PyType> prepareCalleeTypeForCall(@Nullable PyType type,
+                                                                    PyExpression callee,
+                                                                    TypeEvalContext context) {
+        return null;
+    }
+
+    @Override
+    public @Nullable List<PyTypeMember> getMemberTypes(PyType type,
+                                                                String name,
+                                                                @Nullable PyExpression location,
+                                                                AccessDirection direction,
+                                                                PyResolveContext context) {
+        return null;
+    }
 }

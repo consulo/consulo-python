@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.override;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
@@ -42,7 +43,7 @@ public class PyOverrideMethodsHandler implements OverrideMethodHandler
 		PyClass aClass = PyOverrideImplementUtil.getContextClass(editor, file);
 		if(aClass != null)
 		{
-			PyOverrideImplementUtil.chooseAndOverrideMethods(project, editor, aClass);
+			PyOverrideImplementUtil.chooseAndOverrideMethods(project, editor, aClass, TypeEvalContext.userInitiated(project, file));
 		}
 	}
 

@@ -1,37 +1,33 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.PythonRuntimeService;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.resolve.MainPythonSdkKt;
+import com.jetbrains.python.impl.psi.resolve.PyResolveImportUtil;
 import com.jetbrains.python.impl.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
-import com.jetbrains.python.impl.psi.types.PyCollectionTypeImpl;
-import com.jetbrains.python.impl.psi.types.PyTupleType;
 import com.jetbrains.python.impl.psi.types.PyUnionType;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.application.ApplicationManager;
-import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.content.bundle.SdkTypeId;
-import consulo.language.psi.*;
+import consulo.language.psi.FileContextUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.module.content.ProjectRootManager;
@@ -39,470 +35,410 @@ import consulo.module.content.layer.orderEntry.LibraryOrderEntry;
 import consulo.module.content.layer.orderEntry.ModuleExtensionWithSdkOrderEntry;
 import consulo.module.content.layer.orderEntry.OrderEntry;
 import consulo.project.Project;
-import consulo.util.lang.ref.Ref;
-import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import consulo.virtualFileSystem.util.VirtualFileUtil;
-
 import org.jspecify.annotations.Nullable;
-import java.io.File;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides access to Python builtins via skeletons.
+ * <p>
+ * Consulo: JB keys this cache by {@code com.intellij.python.sdk.backend.PythonInterpreter}, Consulo keys it by the {@link Sdk}
+ * of the interpreter (as {@link PythonSdkPathCache} does).
  */
-public class PyBuiltinCache
-{
-	public static final String BUILTIN_FILE = "__builtin__.py";
-	public static final String BUILTIN_FILE_3K = "builtins.py";
-	public static final String EXCEPTIONS_FILE = "exceptions.py";
+public class PyBuiltinCache {
+    public static final String BUILTIN_MODULE = "__builtin__";
+    public static final String BUILTIN_MODULE_3K = "builtins";
+    public static final String TYPES_MODULE = "types";
+    public static final String TYPESHED_MODULE = "_typeshed";
+    private static final String EXCEPTIONS_MODULE = "exceptions";
 
-	private static final PyBuiltinCache DUD_INSTANCE = new PyBuiltinCache(null, null);
+    private static final PyBuiltinCache DUD_INSTANCE = new PyBuiltinCache(null, null, null, null);
 
-	/**
-	 * Stores the most often used types, returned by getNNNType().
-	 */
-	private final Map<String, PyClassTypeImpl> myTypeCache = new HashMap<>();
+    private final @Nullable CachedFile myBuiltinsFile;
+    private final @Nullable CachedFile myTypesFile;
+    private final @Nullable CachedFile myTypeshedFile;
+    private final @Nullable CachedFile myExceptionsFile;
 
-	@Nullable
-	private PyFile myBuiltinsFile;
-	@Nullable
-	private PyFile myExceptionsFile;
-	private long myModStamp = -1;
+    private final @Nullable PyFile myBuiltinsPyFile;
 
-	public PyBuiltinCache()
-	{
-	}
+    private PyBuiltinCache(
+        @Nullable CachedFile builtinsFile,
+        @Nullable CachedFile typesFile,
+        @Nullable CachedFile typeshedFile,
+        @Nullable CachedFile exceptionsFile
+    ) {
+        myBuiltinsFile = builtinsFile;
+        myTypesFile = typesFile;
+        myTypeshedFile = typeshedFile;
+        myExceptionsFile = exceptionsFile;
+        myBuiltinsPyFile = builtinsFile != null ? builtinsFile.getFile() : null;
+    }
 
-	public PyBuiltinCache(@Nullable PyFile builtins, @Nullable PyFile exceptions)
-	{
-		myBuiltinsFile = builtins;
-		myExceptionsFile = exceptions;
-	}
+    public PyBuiltinCache(Project project, Sdk interpreter) {
+        this(
+            toCachedFile(getBuiltinsForInterpreter(project, interpreter)),
+            toCachedFile(getFileForInterpreter(project, interpreter, QualifiedName.fromDottedString(TYPES_MODULE))),
+            toCachedFile(getFileForInterpreter(project, interpreter, QualifiedName.fromDottedString(TYPESHED_MODULE))),
+            toCachedFile(getFileForInterpreter(project, interpreter, QualifiedName.fromDottedString(EXCEPTIONS_MODULE)))
+        );
+    }
 
-	/**
-	 * Returns an instance of builtin cache. Instances differ per module and are cached.
-	 *
-	 * @param reference something to define the module from.
-	 * @return an instance of cache. If reference was null, the instance is a fail-fast dud one.
-	 */
-	public static PyBuiltinCache getInstance(@Nullable PsiElement reference)
-	{
-		if(reference != null)
-		{
-			try
-			{
-				Sdk sdk = findSdkForFile(reference.getContainingFile());
-				if(sdk != null)
-				{
-					return PythonSdkPathCache.getInstance(reference.getProject(), sdk).getBuiltins();
-				}
-			}
-			catch(PsiInvalidElementAccessException ignored)
-			{
-			}
-		}
-		return DUD_INSTANCE; // a non-functional fail-fast instance, for a case when skeletons are not available
-	}
+    public @Nullable PyFile getBuiltinsFile() {
+        return myBuiltinsPyFile;
+    }
 
-	@Nullable
-	public static Sdk findSdkForFile(PsiFileSystemItem psifile)
-	{
-		if(psifile == null)
-		{
-			return null;
-		}
-		Module module = ModuleUtilCore.findModuleForPsiElement(psifile);
-		if(module != null)
-		{
-			return PythonSdkType.findPythonSdk(module);
-		}
-		return findSdkForNonModuleFile(psifile);
-	}
+    public boolean isValid() {
+        PyFile builtinsFile = getBuiltinsFile();
+        return builtinsFile != null && builtinsFile.isValid();
+    }
 
-	@Nullable
-	public static Sdk findSdkForNonModuleFile(PsiFileSystemItem psiFile)
-	{
-		Project project = psiFile.getProject();
-		Sdk sdk = null;
-		VirtualFile vfile = psiFile instanceof PsiFile ? ((PsiFile) psiFile).getOriginalFile().getVirtualFile() : psiFile.getVirtualFile();
-		if(vfile != null)
-		{ // reality
-			ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-			List<OrderEntry> orderEntries = projectRootManager.getFileIndex().getOrderEntriesForFile(vfile);
-			for(OrderEntry orderEntry : orderEntries)
-			{
-				if(orderEntry instanceof ModuleExtensionWithSdkOrderEntry)
-				{
-					sdk = ((ModuleExtensionWithSdkOrderEntry) orderEntry).getSdk();
-				}
-				else if(orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry) orderEntry).isModuleLevel())
-				{
-					sdk = PythonSdkType.findPythonSdk(orderEntry.getOwnerModule());
-				}
-			}
-		}
-		return sdk;
-	}
+    /**
+     * Looks for a top-level named item. (Package builtins does not contain any sensible nested names anyway.)
+     *
+     * @param name to look for
+     * @return found element, or null.
+     */
+    public @Nullable PsiElement getByName(@Nullable String name) {
+        // Accept both the short name ("int") and the canonical builtin qualified name ("builtins.int")
+        String shortName = PyNames.FQN.unqualifyBuiltinName(name);
+        PyFile builtinsFile = getBuiltinsFile();
+        if (builtinsFile != null) {
+            PsiElement element = builtinsFile.getElementNamed(shortName);
+            if (element != null) {
+                return element;
+            }
+        }
+        return myExceptionsFile != null ? myExceptionsFile.getFile().getElementNamed(shortName) : null;
+    }
 
-	@Nullable
-	public static PyFile getBuiltinsForSdk(Project project, Sdk sdk)
-	{
-		return getSkeletonFile(project, sdk, PythonSdkType.getBuiltinsFileName(sdk));
-	}
+    public @Nullable PyClass getClass(String name) {
+        PyFile builtinsFile = getBuiltinsFile();
+        if (builtinsFile == null) {
+            return null;
+        }
+        String shortName = PyNames.FQN.unqualifyBuiltinName(name);
+        return builtinsFile.findTopLevelClass(shortName != null ? shortName : name);
+    }
 
-	@Nullable
-	public static PyFile getSkeletonFile(Project project, Sdk sdk, String name)
-	{
-		SdkTypeId sdkType = sdk.getSdkType();
-		if(sdkType instanceof PythonSdkType)
-		{
-			// dig out the builtins file, create an instance based on it
-			String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.ID);
-			for(String url : urls)
-			{
-				if(url.contains(PythonSdkType.SKELETON_DIR_NAME))
-				{
-					String builtins_url = url + "/" + name;
-					File builtins = new File(VirtualFileUtil.urlToPath(builtins_url));
-					if(builtins.isFile() && builtins.canRead())
-					{
-						VirtualFile builtins_vfile = LocalFileSystem.getInstance().findFileByIoFile(builtins);
-						if(builtins_vfile != null)
-						{
-							Ref<PyFile> result = Ref.create();
-							ApplicationManager.getApplication().runReadAction(() -> {
-								PsiFile file = PsiManager.getInstance(project).findFile(builtins_vfile);
-								if(file instanceof PyFile)
-								{
-									result.set((PyFile) file);
-								}
-							});
-							return result.get();
+    public @Nullable PyClassType getObjectType(String name) {
+        if (myBuiltinsFile == null) {
+            return null;
+        }
+        String shortName = PyNames.FQN.unqualifyBuiltinName(name);
+        return myBuiltinsFile.getClassType(shortName != null ? shortName : name);
+    }
 
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
+    public @Nullable PyClassType getObjectType() {
+        return getObjectType("object");
+    }
 
-	@Nullable
-	public PyType createLiteralCollectionType(PySequenceExpression sequence, String name, TypeEvalContext context)
-	{
-		PyClass cls = getClass(name);
-		if(cls != null)
-		{
-			return new PyCollectionTypeImpl(cls, false, getSequenceElementTypes(sequence, context));
-		}
-		return null;
-	}
+    public @Nullable PyClassType getListType() {
+        return getObjectType("list");
+    }
 
-	private static List<PyType> getSequenceElementTypes(PySequenceExpression sequence, TypeEvalContext context)
-	{
-		PyExpression[] elements = sequence.getElements();
-		if(elements.length == 0 || elements.length > 10 /* performance */)
-		{
-			return Collections.singletonList(null);
-		}
-		PyType firstElementType = context.getType(elements[0]);
-		if(firstElementType == null)
-		{
-			return Collections.singletonList(null);
-		}
-		for(int i = 1; i < elements.length; i++)
-		{
-			PyType elementType = context.getType(elements[i]);
-			if(elementType == null || !elementType.equals(firstElementType))
-			{
-				return Collections.singletonList(null);
-			}
-		}
-		if(sequence instanceof PyDictLiteralExpression)
-		{
-			if(firstElementType instanceof PyTupleType)
-			{
-				PyTupleType tupleType = (PyTupleType) firstElementType;
-				if(tupleType.getElementCount() == 2)
-				{
-					return Arrays.asList(tupleType.getElementType(0), tupleType.getElementType(1));
-				}
-			}
-			return Arrays.asList(null, null);
-		}
-		else
-		{
-			return Collections.singletonList(firstElementType);
-		}
-	}
+    public @Nullable PyClassType getDictType() {
+        return getObjectType("dict");
+    }
 
-	@Nullable
-	public PyFile getBuiltinsFile()
-	{
-		return myBuiltinsFile;
-	}
+    public @Nullable PyClassType getSetType() {
+        return getObjectType("set");
+    }
 
-	public boolean isValid()
-	{
-		return myBuiltinsFile != null && myBuiltinsFile.isValid();
-	}
+    public @Nullable PyClassType getTupleType() {
+        return getObjectType("tuple");
+    }
 
-	/**
-	 * Looks for a top-level named item. (Package builtins does not contain any sensible nested names anyway.)
-	 *
-	 * @param name to look for
-	 * @return found element, or null.
-	 */
-	@Nullable
-	public PsiElement getByName(String name)
-	{
-		if(myBuiltinsFile != null)
-		{
-			PsiElement element = myBuiltinsFile.getElementNamed(name);
-			if(element != null)
-			{
-				return element;
-			}
-		}
-		if(myExceptionsFile != null)
-		{
-			return myExceptionsFile.getElementNamed(name);
-		}
-		return null;
-	}
+    public @Nullable PyClassType getIntType() {
+        return getObjectType("int");
+    }
 
-	@Nullable
-	public PyClass getClass(String name)
-	{
-		if(myBuiltinsFile != null)
-		{
-			return myBuiltinsFile.findTopLevelClass(name);
-		}
-		return null;
-	}
+    public @Nullable PyClassType getFloatType() {
+        return getObjectType("float");
+    }
 
-	@Nullable
-	public PyClassTypeImpl getObjectType(String name)
-	{
-		PyClassTypeImpl val;
-		synchronized(myTypeCache)
-		{
-			if(myBuiltinsFile != null)
-			{
-				if(myBuiltinsFile.getModificationStamp() != myModStamp)
-				{
-					myTypeCache.clear();
-					myModStamp = myBuiltinsFile.getModificationStamp();
-				}
-			}
-			val = myTypeCache.get(name);
-		}
-		if(val == null)
-		{
-			PyClass cls = getClass(name);
-			if(cls != null)
-			{ // null may happen during testing
-				val = new PyClassTypeImpl(cls, false);
-				val.assertValid(name);
-				synchronized(myTypeCache)
-				{
-					myTypeCache.put(name, val);
-				}
-			}
-		}
-		else
-		{
-			val.assertValid(name);
-		}
-		return val;
-	}
+    public @Nullable PyClassType getComplexType() {
+        return getObjectType("complex");
+    }
 
-	@Nullable
-	public PyClassType getObjectType()
-	{
-		return getObjectType("object");
-	}
+    public @Nullable PyClassType getStrType() {
+        return getObjectType("str");
+    }
 
-	@Nullable
-	public PyClassType getListType()
-	{
-		return getObjectType("list");
-	}
+    public @Nullable PyClassType getBytesType(LanguageLevel level) {
+        return getObjectType(level.isPy3K() ? "bytes" : "str");
+    }
 
-	@Nullable
-	public PyClassType getDictType()
-	{
-		return getObjectType("dict");
-	}
+    public @Nullable PyClassType getUnicodeType(LanguageLevel level) {
+        return getObjectType(level.isPy3K() ? "str" : "unicode");
+    }
 
-	@Nullable
-	public PyClassType getSetType()
-	{
-		return getObjectType("set");
-	}
+    public @Nullable PyType getStringType(LanguageLevel level) {
+        if (level.isPy3K()) {
+            return getObjectType("str");
+        }
+        else {
+            return getStrOrUnicodeType();
+        }
+    }
 
-	@Nullable
-	public PyClassType getTupleType()
-	{
-		return getObjectType("tuple");
-	}
+    public @Nullable PyType getByteStringType(LanguageLevel level) {
+        if (level.isPy3K()) {
+            return getObjectType("bytes");
+        }
+        else {
+            return getStrOrUnicodeType();
+        }
+    }
 
-	@Nullable
-	public PyClassType getIntType()
-	{
-		return getObjectType("int");
-	}
+    public @Nullable PyType getStrOrUnicodeType() {
+        return getStrOrUnicodeType(false);
+    }
 
-	@Nullable
-	public PyClassType getFloatType()
-	{
-		return getObjectType("float");
-	}
+    public @Nullable PyType getStrOrUnicodeType(boolean definition) {
+        PyClassLikeType str = getObjectType("str");
+        PyClassLikeType unicode = getObjectType("unicode");
 
-	@Nullable
-	public PyClassType getComplexType()
-	{
-		return getObjectType("complex");
-	}
+        if (str != null && str.isDefinition() ^ definition) {
+            str = definition ? str.toClass() : str.toInstance();
+        }
 
-	@Nullable
-	public PyClassType getStrType()
-	{
-		return getObjectType("str");
-	}
+        if (unicode != null && unicode.isDefinition() ^ definition) {
+            unicode = definition ? unicode.toClass() : unicode.toInstance();
+        }
 
-	@Nullable
-	public PyClassType getBytesType(LanguageLevel level)
-	{
-		if(level.isPy3K())
-		{
-			return getObjectType("bytes");
-		}
-		else
-		{
-			return getObjectType("str");
-		}
-	}
+        return PyUnionType.unionOrUnknown(str, unicode != null ? unicode : PyAnyType.getUnknown());
+    }
 
-	@Nullable
-	public PyClassType getUnicodeType(LanguageLevel level)
-	{
-		if(level.isPy3K())
-		{
-			return getObjectType("str");
-		}
-		else
-		{
-			return getObjectType("unicode");
-		}
-	}
+    public @Nullable PyClassType getBoolType() {
+        return getObjectType("bool");
+    }
 
-	@Nullable
-	public PyType getStringType(LanguageLevel level)
-	{
-		if(level.isPy3K())
-		{
-			return getObjectType("str");
-		}
-		else
-		{
-			return getStrOrUnicodeType();
-		}
-	}
+    public @Nullable PyClassType getClassMethodType() {
+        return getObjectType("classmethod");
+    }
 
-	@Nullable
-	public PyType getByteStringType(LanguageLevel level)
-	{
-		if(level.isPy3K())
-		{
-			return getObjectType("bytes");
-		}
-		else
-		{
-			return getStrOrUnicodeType();
-		}
-	}
+    public @Nullable PyClassType getStaticMethodType() {
+        return getObjectType("staticmethod");
+    }
 
-	public PyType getStrOrUnicodeType()
-	{
-		return PyUnionType.union(getObjectType("str"), getObjectType("unicode"));
-	}
+    public @Nullable PyClassType getTypeType() {
+        return getObjectType("type");
+    }
 
-	@Nullable
-	public PyClassType getBoolType()
-	{
-		return getObjectType("bool");
-	}
+    public @Nullable PyClassType getSliceType() {
+        return getObjectType("slice");
+    }
 
-	@Nullable
-	public PyClassType getOldstyleClassobjType()
-	{
-		return getObjectType(PyNames.FAKE_OLD_BASE);
-	}
+    public @Nullable PyClassType getNoneType() {
+        PyClassType type = myTypesFile != null ? myTypesFile.getClassType("NoneType") : null;
+        if (type != null) {
+            return type;
+        }
+        return myTypeshedFile != null ? myTypeshedFile.getClassType("NoneType") : null;
+    }
 
-	@Nullable
-	public PyClassType getClassMethodType()
-	{
-		return getObjectType("classmethod");
-	}
+    public @Nullable PyClassType getEllipsisType() {
+        return myTypesFile != null ? myTypesFile.getClassType("EllipsisType") : null;
+    }
 
-	@Nullable
-	public PyClassType getStaticMethodType()
-	{
-		return getObjectType("staticmethod");
-	}
+    /**
+     * @param target an element to check.
+     * @return true iff target is inside the __builtins__.py
+     */
+    public boolean isBuiltin(@Nullable PsiElement target) {
+        if (target == null) {
+            return false;
+        }
+        PyPsiUtils.assertValid(target);
+        if (!target.isValid()) {
+            return false;
+        }
+        PsiFile the_file = target.getContainingFile();
+        if (!(the_file instanceof PyFile)) {
+            return false;
+        }
+        // files are singletons, no need to compare URIs
+        return the_file == getBuiltinsFile() || (myExceptionsFile != null && the_file == myExceptionsFile.getFile());
+    }
 
-	@Nullable
-	public PyClassType getTypeType()
-	{
-		return getObjectType("type");
-	}
+    /**
+     * Returns an instance of builtin cache. Instances differ per module and are cached.
+     *
+     * @param reference something to define the module from.
+     * @return an instance of cache. If reference was null, the instance is a fail-fast dud one.
+     */
+    public static PyBuiltinCache getInstance(@Nullable PsiElement reference) {
+        if (reference != null) {
+            try {
+                Sdk interpreter = findInterpreterForFile(reference.getContainingFile());
+                if (interpreter != null) {
+                    return PythonSdkPathCache.getInstance(reference.getProject(), interpreter).getBuiltins();
+                }
+            }
+            catch (PsiInvalidElementAccessException ignored) {
+            }
+        }
+        return DUD_INSTANCE; // a non-functional fail-fast instance, for a case when skeletons are not available
+    }
 
-	/**
-	 * @param target an element to check.
-	 * @return true iff target is inside the __builtins__.py
-	 */
-	public boolean isBuiltin(@Nullable PsiElement target)
-	{
-		if(target == null)
-		{
-			return false;
-		}
-		PyPsiUtils.assertValid(target);
-		if(!target.isValid())
-		{
-			return false;
-		}
-		PsiFile the_file = target.getContainingFile();
-		if(!(the_file instanceof PyFile))
-		{
-			return false;
-		}
-		// files are singletons, no need to compare URIs
-		return the_file == myBuiltinsFile || the_file == myExceptionsFile;
-	}
+    /**
+     * The SDK of {@link #findInterpreterForFile}.
+     */
+    public static @Nullable Sdk findSdkForFile(@Nullable PsiFileSystemItem psiFile) {
+        return findInterpreterForFile(psiFile);
+    }
 
-	public static boolean isInBuiltins(PyExpression expression)
-	{
-		if(expression instanceof PyQualifiedExpression && (((PyQualifiedExpression) expression).isQualified()))
-		{
-			return false;
-		}
-		String name = expression.getName();
-		PsiReference reference = expression.getReference();
-		if(reference != null && name != null)
-		{
-			PyBuiltinCache cache = getInstance(expression);
-			if(cache.getByName(name) != null)
-			{
-				PsiElement resolved = reference.resolve();
-				if(resolved != null && cache.isBuiltin(resolved))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * The interpreter that resolves the names of {@code psiFile}: the interpreter of its module, or for a file outside every
+     * module, see {@link #findInterpreterForNonModuleFile}.
+     */
+    public static @Nullable Sdk findInterpreterForFile(@Nullable PsiFileSystemItem psiFile) {
+        if (psiFile == null) {
+            return null;
+        }
+        Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+        return module != null ? MainPythonSdkKt.pythonSdkIfReady(module) : findInterpreterForNonModuleFile(psiFile);
+    }
+
+    /**
+     * The interpreter for {@code psiFile} outside every module: the main interpreter, or the interpreter of the library that
+     * holds the file.
+     */
+    public static @Nullable Sdk findInterpreterForNonModuleFile(PsiFileSystemItem psiFile) {
+        VirtualFile vfile;
+        if (psiFile instanceof PsiFile file) {
+            PsiFile contextFile = FileContextUtil.getContextFile(file);
+            vfile = contextFile != null ? contextFile.getOriginalFile().getVirtualFile() : null;
+        }
+        else {
+            vfile = psiFile.getVirtualFile();
+        }
+        Sdk interpreter = null;
+        if (vfile != null) { // reality
+            ProjectRootManager projectRootManager = ProjectRootManager.getInstance(psiFile.getProject());
+            // A Python console is served by `PythonRuntimeService.getConsoleSdk` together with `visitAllModules`, so
+            // answering here would hand it a second, competing interpreter (PY-89831).
+            if (PythonRuntimeService.getInstance().getConsoleSdk(psiFile) == null) {
+                interpreter = MainPythonSdkKt.mainPythonSdk(psiFile.getProject());
+            }
+            if (interpreter == null) {
+                List<OrderEntry> orderEntries = projectRootManager.getFileIndex().getOrderEntriesForFile(vfile);
+                for (OrderEntry orderEntry : orderEntries) {
+                    // A module names its interpreter by one carrier, and the platform loads the other too, see
+                    // isIgnoredInterpreterEntry.
+                    // TODO consulo: com.intellij.python.sdk.backend isIgnoredInterpreterEntry/isInterpreterLibraryCarrier missing
+                    if (orderEntry == null) {
+                        continue;
+                    }
+                    if (orderEntry instanceof ModuleExtensionWithSdkOrderEntry sdkOrderEntry) {
+                        interpreter = sdkOrderEntry.getSdk();
+                    }
+                    // The interpreter library of a module carries the roots of its interpreter, as its SDK does.
+                    else if (orderEntry instanceof LibraryOrderEntry libraryOrderEntry && libraryOrderEntry.isModuleLevel()) {
+                        interpreter = MainPythonSdkKt.pythonSdkIfReady(orderEntry.getOwnerModule());
+                    }
+                }
+            }
+        }
+        return interpreter;
+    }
+
+    /**
+     * {@link #getBuiltinsForInterpreter} for the interpreter that the registry of {@code project} holds for {@code sdk}.
+     */
+    public static @Nullable PyFile getBuiltinsForSdk(Project project, Sdk sdk) {
+        return getBuiltinsForInterpreter(project, sdk);
+    }
+
+    public static @Nullable PyFile getBuiltinsForInterpreter(Project project, Sdk interpreter) {
+        String moduleName = getBuiltinsModuleName(PythonSdkType.getLanguageLevelForSdk(interpreter));
+        return getFileForInterpreter(project, interpreter, QualifiedName.fromDottedString(moduleName));
+    }
+
+    public static String getBuiltinsFileName(LanguageLevel level) {
+        return getBuiltinsModuleName(level) + PyNames.DOT_PY;
+    }
+
+    public static String getBuiltinsModuleName(LanguageLevel level) {
+        return level.isPython2() ? BUILTIN_MODULE : BUILTIN_MODULE_3K;
+    }
+
+    private static @Nullable PyFile getFileForInterpreter(Project project, Sdk interpreter, QualifiedName moduleName) {
+        List<PsiElement> results = PyResolveImportUtil.resolveQualifiedName(moduleName, PyResolveImportUtil.fromInterpreter(project, interpreter));
+        if (results.isEmpty()) {
+            return null;
+        }
+        return PyUtil.turnDirIntoInit(results.get(0)) instanceof PyFile file ? file : null;
+    }
+
+    public static boolean isInBuiltins(PyExpression expression) {
+        if (expression instanceof PyQualifiedExpression qualifiedExpression && qualifiedExpression.isQualified()) {
+            return false;
+        }
+        String name = expression.getName();
+        PsiReference reference = expression.getReference();
+        if (reference != null && name != null) {
+            PyBuiltinCache cache = getInstance(expression);
+            if (cache.getByName(name) != null) {
+                PsiElement resolved = reference.resolve();
+                if (resolved != null && cache.isBuiltin(resolved)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static @Nullable CachedFile toCachedFile(@Nullable PyFile file) {
+        return file != null ? new CachedFile(file) : null;
+    }
+
+    private static final class CachedFile {
+        private final PyFile myFile;
+        private long myModificationStamp = -1;
+        /**
+         * Stores the most often used types, returned by nNNType.
+         */
+        private final Map<String, @Nullable PyClassType> myTypeCache = new HashMap<>();
+
+        private CachedFile(PyFile file) {
+            myFile = file;
+        }
+
+        PyFile getFile() {
+            return myFile;
+        }
+
+        @Nullable PyClassType getClassType(String name) {
+            PyClassType cached;
+            synchronized (myTypeCache) {
+                if (myModificationStamp != myFile.getModificationStamp()) {
+                    myTypeCache.clear();
+                    myModificationStamp = myFile.getModificationStamp();
+                }
+                cached = myTypeCache.get(name);
+                if (cached != null) {
+                    cached.assertValid(name);
+                }
+            }
+            if (cached != null) {
+                return cached;
+            }
+            PyClassType resolved = resolveTopLevel(name);
+            if (resolved != null) {
+                synchronized (myTypeCache) {
+                    myTypeCache.put(name, resolved);
+                }
+            }
+            return resolved;
+        }
+
+        @Nullable PyClassType resolveTopLevel(String name) {
+            PyClass pyClass = myFile.findTopLevelClass(name);
+            return pyClass != null ? new PyClassTypeImpl(pyClass, false) : null;
+        }
+    }
 }

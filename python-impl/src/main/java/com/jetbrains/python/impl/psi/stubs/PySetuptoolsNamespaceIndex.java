@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.stubs;
 
-import com.jetbrains.python.impl.psi.search.PyProjectScopeBuilder;
+import com.jetbrains.python.impl.psi.search.PySearchUtilBase;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.index.io.DataIndexer;
 import consulo.index.io.EnumeratorStringDescriptor;
@@ -45,7 +45,7 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
   private static final Pattern RE_NAMESPACE = Pattern.compile("sys\\.modules\\.setdefault\\('([^']*)'");
   private static final String NAMESPACE_FILE_SUFFIX = "-nspkg.pth";
 
-  private final DataIndexer<String, Void, FileContent> myDataIndexer = new DataIndexer<String, Void, FileContent>() {
+  private final DataIndexer<String, Void, FileContent> myDataIndexer = new DataIndexer<>() {
     @Override
     public Map<String, Void> map(FileContent inputData) {
       CharSequence content = inputData.getContentAsText();
@@ -59,7 +59,8 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
     }
   };
 
-  private FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
+  // TODO consulo: FileNameSuffixInputFilter missing
+  private final FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
     @Override
     public boolean acceptInput(@Nullable Project project, VirtualFile file) {
       return StringUtil.endsWith(file.getNameSequence(), NAMESPACE_FILE_SUFFIX);
@@ -97,7 +98,7 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
   }
 
   public static Collection<VirtualFile> find(String name, Project project) {
-    GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(project);
+    GlobalSearchScope scope = PySearchUtilBase.excludeSdkTestsScope(project);
     return FileBasedIndex.getInstance().getContainingFiles(NAME, name, scope);
   }
 }

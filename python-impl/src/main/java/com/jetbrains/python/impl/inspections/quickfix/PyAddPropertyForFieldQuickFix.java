@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredWriteAction;
@@ -63,7 +64,7 @@ public class PyAddPropertyForFieldQuickFix implements LocalQuickFix {
                     if (!properties.containsKey(propertyName)) {
                         PyFunction property =
                             generator.createProperty(LanguageLevel.forElement(containingClass), propertyName, name, AccessDirection.READ);
-                        PyUtil.addElementToStatementList(property, containingClass.getStatementList(), false);
+                        PyPsiRefactoringUtil.addElementToStatementList(property, containingClass.getStatementList(), false);
                     }
                     PyExpression qualifier = ((PyReferenceExpression) element).getQualifier();
                     if (qualifier != null) {

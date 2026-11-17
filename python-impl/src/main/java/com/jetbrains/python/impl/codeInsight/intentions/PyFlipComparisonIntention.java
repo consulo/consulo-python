@@ -22,8 +22,10 @@ import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFile;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -37,6 +39,8 @@ import java.util.Map;
  * @author Alexey.Ivanov
  * @since 2010-03-26
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyFlipComparisonIntention", categories = "Python", fileExtensions = "py")
 public class PyFlipComparisonIntention extends BaseIntentionAction {
     private static final Map<PyElementType, String> OUR_FLIPPED_OPERATORS = Map.of(
         PyTokenTypes.EQEQ, "==",

@@ -1,61 +1,42 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
-
-import java.util.Collections;
-
-import org.jspecify.annotations.Nullable;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyListCompExpression;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.impl.psi.types.PyCollectionTypeImpl;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class PyListCompExpressionImpl extends PyComprehensionElementImpl implements PyListCompExpression
-{
-	public PyListCompExpressionImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+import java.util.Collections;
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyListCompExpression(this);
-	}
 
-	@Nullable
-	@Override
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
-	{
-		PyExpression resultExpr = getResultExpression();
-		PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
-		PyClass list = cache.getClass("list");
-		if(resultExpr != null && list != null)
-		{
-			PyType elementType = context.getType(resultExpr);
-			return new PyCollectionTypeImpl(list, false, Collections.singletonList(elementType));
-		}
-		return cache.getListType();
-	}
+public class PyListCompExpressionImpl extends PyComprehensionElementImpl implements PyListCompExpression {
+    public PyListCompExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
+
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyListCompExpression(this);
+    }
+
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression resultExpr = getResultExpression();
+        PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
+        PyClass list = cache.getClass("list");
+        if (resultExpr != null && list != null) {
+            PyType elementType = PyLiteralType.upcastLiteralToClass(getResultElementType(resultExpr, context));
+            return new PyCollectionTypeImpl(list, false, Collections.singletonList(elementType));
+        }
+        PyClassType listType = cache.getListType();
+        return listType != null ? listType : PyAnyType.getUnknown();
+    }
 }

@@ -15,10 +15,15 @@
  */
 package com.jetbrains.python.impl.editor;
 
+import com.jetbrains.python.documentation.docstrings.DocStringParser;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.documentation.docstrings.GoogleCodeStyleDocString;
+import com.jetbrains.python.documentation.docstrings.GoogleCodeStyleDocStringBuilder;
+import com.jetbrains.python.documentation.docstrings.SectionBasedDocString;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.impl.documentation.docstrings.*;
-import com.jetbrains.python.impl.psi.PyIndentUtil;
+import com.jetbrains.python.psi.PyIndentUtil;
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredReadAction;
@@ -195,9 +200,6 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
             }
         }
 
-        if (!PyCodeInsightSettings.getInstance().INSERT_BACKSLASH_ON_WRAP) {
-            return Result.Continue;
-        }
         return checkInsertBackslash(file, caretOffset, dataContext, offset, doc);
     }
 
@@ -414,14 +416,14 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
             PyStringLiteralExpression pyString = DocStringUtil.getParentDefinitionDocString(element);
             if (pyString != null) {
                 String docStringText = pyString.getText();
-                DocStringFormat format = DocStringUtil.guessDocStringFormat(docStringText, pyString);
+                DocStringFormat format = DocStringParser.guessDocStringFormat(docStringText, pyString);
                 if (format == DocStringFormat.GOOGLE && offset + 1 < document.getTextLength()) {
                     int lineNum = document.getLineNumber(offset);
                     TextRange lineRange =
                         TextRange.create(document.getLineStartOffset(lineNum - 1), document.getLineEndOffset(lineNum - 1));
                     Matcher matcher = GoogleCodeStyleDocString.SECTION_HEADER.matcher(document.getText(lineRange));
                     if (matcher.matches() && SectionBasedDocString.isValidSectionTitle(matcher.group(1))) {
-                        document.insertString(offset, GoogleCodeStyleDocStringBuilder.getDefaultSectionIndent(file.getProject()));
+                        document.insertString(offset, GoogleCodeStyleDocStringBuilder.getDefaultSectionIndent(file));
                         editor.getCaretModel().moveCaretRelatively(2, 0, false, false, false);
                     }
                 }

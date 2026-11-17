@@ -1,56 +1,35 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
-
-import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyForPart;
 import com.jetbrains.python.psi.PyForStatement;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author oleg
- */
-public class PyForStatementNavigator {
-  private PyForStatementNavigator() {
-  }
+public final class PyForStatementNavigator {
+    private PyForStatementNavigator() {
+    }
 
-  @Nullable
-  public static PyForStatement getPyForStatementByIterable(PsiElement element){
-    PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
-    if (forStatement == null){
-      return null;
+    public static @Nullable PyForStatement getPyForStatementByIterable(PsiElement element) {
+        PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
+        if (forStatement == null) {
+            return null;
+        }
+        PyExpression target = forStatement.getForPart().getTarget();
+        if (target != null && PsiTreeUtil.isAncestor(target, element, false)) {
+            return forStatement;
+        }
+        return null;
     }
-    PyExpression target = forStatement.getForPart().getTarget();
-    if (target != null && PsiTreeUtil.isAncestor(target, element, false)){
-      return forStatement;
-    }
-    return null;
-  }
 
-  @Nullable
-  public static Object getPyForStatementByBody(PsiElement element) {
-    PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
-    if (forStatement == null){
-      return null;
+    public static @Nullable Object getPyForStatementByBody(PsiElement element) {
+        PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
+        if (forStatement == null) {
+            return null;
+        }
+        PyForPart forPart = forStatement.getForPart();
+        return forPart == element || forPart.getStatementList() == element ? forStatement : null;
     }
-    PyForPart forPart = forStatement.getForPart();
-    return forPart == element || forPart.getStatementList() == element ? forStatement : null;
-  }
 }

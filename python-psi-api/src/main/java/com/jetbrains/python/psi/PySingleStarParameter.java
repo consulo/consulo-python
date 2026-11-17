@@ -1,29 +1,32 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.StubBasedPsiElement;
+import com.jetbrains.python.ast.PyAstSingleStarParameter;
 import com.jetbrains.python.psi.stubs.PySingleStarParameterStub;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a single star (keyword-only parameter delimiter) appearing in the
  * parameter list of a Py3K function.
- *
- * @author yole
  */
-public interface PySingleStarParameter extends PyParameter, StubBasedPsiElement<PySingleStarParameterStub> {
+public interface PySingleStarParameter extends PyAstSingleStarParameter, PyParameter, StubBasedPsiElement<PySingleStarParameterStub> {
+    @Override
+    @RequiredReadAction
+    default @Nullable PyNamedParameter getAsNamed() {
+        return (PyNamedParameter)PyAstSingleStarParameter.super.getAsNamed();
+    }
+
+    @Override
+    @RequiredReadAction
+    default @Nullable PyTupleParameter getAsTuple() {
+        return (PyTupleParameter)PyAstSingleStarParameter.super.getAsTuple();
+    }
+
+    @Override
+    @RequiredReadAction
+    default @Nullable PyExpression getDefaultValue() {
+        return (PyExpression)PyAstSingleStarParameter.super.getDefaultValue();
+    }
 }

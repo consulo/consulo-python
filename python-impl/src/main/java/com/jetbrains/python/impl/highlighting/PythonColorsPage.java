@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.highlighting;
 
+import com.jetbrains.python.highlighting.PyHighlighter;
 import com.google.common.collect.ImmutableMap;
 import com.jetbrains.python.PythonFileType;
 import consulo.annotation.component.ExtensionImpl;

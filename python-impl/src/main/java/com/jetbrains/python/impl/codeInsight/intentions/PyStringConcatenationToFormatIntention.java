@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
@@ -23,7 +24,9 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -42,6 +45,8 @@ import java.util.function.Function;
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyStringConcatenationToFormatIntention", categories = "Python", fileExtensions = "py")
 public class PyStringConcatenationToFormatIntention extends PyBaseIntentionAction {
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
@@ -146,7 +151,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
         int paramCount = 0;
         boolean isUnicode = false;
-        PyClassTypeImpl unicodeType = PyBuiltinCache.getInstance(element).getObjectType("unicode");
+        PyClassType unicodeType = PyBuiltinCache.getInstance(element).getObjectType("unicode");
 
         for (PyExpression expression : getSimpleExpressions((PyBinaryExpression) element)) {
             if (expression instanceof PyStringLiteralExpression stringLiteral1) {

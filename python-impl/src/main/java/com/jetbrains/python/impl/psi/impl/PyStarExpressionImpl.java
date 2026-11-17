@@ -1,80 +1,49 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyListLiteralExpression;
-import com.jetbrains.python.psi.PyParenthesizedExpression;
-import com.jetbrains.python.psi.PySetLiteralExpression;
+import com.jetbrains.python.psi.PyInstantTypeProvider;
 import com.jetbrains.python.psi.PyStarExpression;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyTupleExpression;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.impl.psi.types.PyABCUtil;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyTupleType;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.impl.psi.types.PyUnpackedTupleTypeImpl;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: 27.02.2010
- * Time: 14:27:28
- */
-public class PyStarExpressionImpl extends PyElementImpl implements PyStarExpression
-{
-	public PyStarExpressionImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyStarExpressionImpl extends PyElementImpl implements PyStarExpression, PyInstantTypeProvider {
+    public PyStarExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	@Nullable
-	public PyExpression getExpression()
-	{
-		return PsiTreeUtil.getChildOfType(this, PyExpression.class);
-	}
+    @Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression operand = getExpression();
+        if (operand == null || !isUnpacking() || getParent() instanceof PySubscriptionExpression) {
+            // A star expression used as an assignment target (`*a, b = ...`) has no meaningful type of its own,
+            // and outside an unpacking context an unpacked tuple type would be misleading.
+            return PyAnyType.getUnknown();
+        }
+        PyType operandType = context.getType(operand);
+        if (operandType instanceof PyTupleType tupleType) {
+            return tupleType.asUnpackedTupleType();
+        }
+        // Any other iterable contributes an unbounded `*tuple[T, ...]` portion of its item type.
+        if (operandType instanceof PyClassType operandClassType && PyABCUtil.isSubtype(operandType, PyNames.ITERABLE, context)) {
+            PyType itemType = PyTypeChecker.getIteratedItemType(operandClassType, context);
+            return PyUnpackedTupleTypeImpl.createUnbound(itemType);
+        }
+        return PyAnyType.getUnknown();
+    }
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
-	{
-		return null;
-	}
-
-	public void acceptPyVisitor(PyElementVisitor visitor)
-	{
-		visitor.visitPyStarExpression(this);
-	}
-
-	public boolean isAssignmentTarget()
-	{
-		return getExpression() instanceof PyTargetExpression;
-	}
-
-	public boolean isUnpacking()
-	{
-		if(isAssignmentTarget())
-		{
-			return false;
-		}
-		PsiElement parent = getParent();
-		while(parent instanceof PyParenthesizedExpression)
-		{
-			parent = parent.getParent();
-		}
-		return parent instanceof PyTupleExpression || parent instanceof PyListLiteralExpression || parent instanceof PySetLiteralExpression;
-	}
+    @Override
+    public void acceptPyVisitor(PyElementVisitor visitor) {
+        visitor.visitPyStarExpression(this);
+    }
 }

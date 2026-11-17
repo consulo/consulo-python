@@ -15,6 +15,15 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.psi.StructuredDocString;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.intention.IntentionMetaData;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.editor.util.PsiEditorUtil;
+import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.editor.template.TemplateBuilder;
+import com.google.common.base.Preconditions;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.impl.debugger.PySignatureCacheManager;
@@ -41,6 +50,8 @@ import org.jspecify.annotations.Nullable;
  *
  * @author ktisha
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.SpecifyTypeInDocstringIntention", categories = "Python", fileExtensions = "py")
 public class SpecifyTypeInDocstringIntention extends TypeIntention {
     private LocalizeValue myText = PyLocalize.intnSpecifyType();
 
@@ -71,7 +82,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
     }
 
     private static void generateDocstring(@Nullable PyNamedParameter param, PyFunction pyFunction) {
-        if (!DocStringUtil.ensureNotPlainDocstringFormat(pyFunction)) {
+        if (!PyGenerateDocstringIntention.ensureNotPlainDocstringFormat(pyFunction)) {
             return;
         }
 
@@ -94,7 +105,49 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
         }
 
         docstringGenerator.addFirstEmptyLine().buildAndInsert();
-        docstringGenerator.startTemplate();
+        startTemplate(docstringGenerator);
+    }
+
+    public static void startTemplate(PyDocstringGenerator generator) {
+        Preconditions.checkNotNull(generator.getDocStringOwner(), "For this action docstring owner must be supplied");
+        final PyStringLiteralExpression docStringExpression = (PyStringLiteralExpression) generator.getDocStringExpression();
+        assert docStringExpression != null;
+
+        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(docStringExpression);
+
+        if (generator.getAddedParams().size() > 1) {
+            throw new IllegalArgumentException("TemplateBuilder can be created only for one parameter");
+        }
+
+        final PyDocstringGenerator.DocstringParam paramToEdit = generator.getParamToEdit();
+        final DocStringFormat format = generator.getDocStringFormat();
+        if (format == DocStringFormat.PLAIN) {
+            return;
+        }
+        final StructuredDocString parsed = DocStringUtil.parseDocString(format, docStringExpression);
+        final Substring substring;
+        if (paramToEdit.isReturnValue()) {
+            substring = parsed.getReturnTypeSubstring();
+        }
+        else {
+            final String paramName = paramToEdit.getName();
+            substring = parsed.getParamTypeSubstring(paramName);
+        }
+        if (substring == null) {
+            return;
+        }
+        builder.replaceRange(substring.getTextRange(), PyDocstringGenerator.getDefaultType(generator.getParamToEdit()));
+
+        final VirtualFile virtualFile = generator.getDocStringOwner().getContainingFile().getVirtualFile();
+        if (virtualFile == null) {
+            return;
+        }
+        final Editor targetEditor = PsiEditorUtil.findEditor(generator.getDocStringOwner());
+        if (targetEditor != null) {
+            PyUtil.updateDocumentUnblockedAndCommitted(generator.getDocStringOwner(), document -> {
+                builder.run(targetEditor, true);
+            });
+        }
     }
 
     @Override

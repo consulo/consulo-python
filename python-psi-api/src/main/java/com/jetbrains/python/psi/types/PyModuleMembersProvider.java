@@ -1,68 +1,69 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.resolve.PointInImport;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author yole
- */
+
 @ExtensionAPI(ComponentScope.APPLICATION)
-public abstract class PyModuleMembersProvider
-{
-	public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create(PyModuleMembersProvider.class);
+public abstract class PyModuleMembersProvider {
+    public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create(PyModuleMembersProvider.class);
 
-	public Collection<PyCustomMember> getMembers(PyFile module, PointInImport point)
-	{
-		VirtualFile vFile = module.getVirtualFile();
-		if(vFile != null)
-		{
-			String qName = PyPsiFacade.getInstance(module.getProject()).findShortestImportableName(vFile, module);
-			if(qName != null)
-			{
-				return getMembersByQName(module, qName);
-			}
-		}
-		return Collections.emptyList();
-	}
+    /**
+     * Provides members for specified module.
+     *
+     * @param module  members owner
+     * @param point   position in import
+     * @param context type evaluation context
+     * @return provided members
+     */
+    public Collection<PyCustomMember> getMembers(PyFile module, PointInImport point, TypeEvalContext context) {
+        VirtualFile vFile = module.getVirtualFile();
+        if (vFile != null) {
+            String qName = PyPsiFacade.getInstance(module.getProject()).findShortestImportableName(vFile, module);
+            if (qName != null) {
+                return getMembersByQName(module, qName, context);
+            }
+        }
+        return Collections.emptyList();
+    }
 
-	@Nullable
-	public PsiElement resolveMember(PyFile module, String name)
-	{
-		for(PyCustomMember o : getMembers(module, PointInImport.NONE))
-		{
-			if(o.getName().equals(name))
-			{
-				return o.resolve(module);
-			}
-		}
-		return null;
-	}
+    /**
+     * Provides member with specified name for specified module.
+     *
+     * @param module         member owner
+     * @param name           member name
+     * @param resolveContext context to be used in resolve
+     * @return provided member
+     */
+    public @Nullable PsiElement resolveMember(PyFile module, String name, PyResolveContext resolveContext) {
+        for (PyCustomMember o : getMembers(module, PointInImport.NONE, resolveContext.getTypeEvalContext())) {
+            if (o.getName().equals(name)) {
+                return o.resolve(module, resolveContext);
+            }
+        }
+        return null;
+    }
 
-	protected abstract Collection<PyCustomMember> getMembersByQName(PyFile module, String qName);
+    /**
+     * Provides members for module with specified qualified name.
+     *
+     * @param module  module itself
+     * @param qName   module name
+     * @param context type evaluation context
+     * @return provided members
+     */
+    protected abstract Collection<PyCustomMember> getMembersByQName(PyFile module, String qName, TypeEvalContext context);
 }

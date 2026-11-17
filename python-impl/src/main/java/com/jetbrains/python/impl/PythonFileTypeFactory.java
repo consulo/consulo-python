@@ -18,6 +18,7 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.pyqt.QtUIFileType;
 import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.pyi.PyiFileType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
@@ -33,6 +34,7 @@ public class PythonFileTypeFactory extends FileTypeFactory
 	public void createFileTypes(FileTypeConsumer consumer)
 	{
 		consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
+		consumer.consume(PyiFileType.INSTANCE, "pyi");
 		consumer.consume(QtUIFileType.INSTANCE, "ui");
 	}
 }

@@ -288,8 +288,8 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
   private static class ListLikeExprJoiner extends Joiner {
     @Override
     public Result join(Request req) {
-      boolean left_is_list_like = PyUtil.instanceOf(req.leftExpr(), PyListLiteralExpression.class, PyTupleExpression.class);
-      if (left_is_list_like || PyUtil.instanceOf(req.rightExpr(), PyListLiteralExpression.class, PyTupleExpression.class)
+      boolean left_is_list_like = PsiTreeUtil.instanceOf(req.leftExpr(), PyListLiteralExpression.class, PyTupleExpression.class);
+      if (left_is_list_like || PsiTreeUtil.instanceOf(req.rightExpr(), PyListLiteralExpression.class, PyTupleExpression.class)
       ) {
         String insert = "";
         if (left_is_list_like) { // we join "a, \n b", not "a \n ,b"

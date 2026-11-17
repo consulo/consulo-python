@@ -1,78 +1,74 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
+
+import com.jetbrains.python.FunctionParameter;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.ast.PyAstArgumentList;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
-import consulo.annotation.access.RequiredWriteAction;
-import org.jspecify.annotations.Nullable;
-import consulo.language.ast.ASTNode;
-import com.jetbrains.python.FunctionParameter;
-
 /**
  * Represents an argument list of a function call.
- *
- * @author yole
  */
-public interface PyArgumentList extends PyElement
-{
-	/**
-	 * @return all argument list param expressions (keyword argument or nameless)
-	 */
-	Collection<PyExpression> getArgumentExpressions();
+public interface PyArgumentList extends PyAstArgumentList, PyElement {
 
-	PyExpression[] getArguments();
+    /**
+     * @return all argument list param expressions (keyword argument or nameless)
+     */
+    @Override
+    @RequiredReadAction
+    default Collection<PyExpression> getArgumentExpressions() {
+        //noinspection unchecked
+        return (Collection<PyExpression>)PyAstArgumentList.super.getArgumentExpressions();
+    }
 
-	@Nullable
-	PyKeywordArgument getKeywordArgument(String name);
+    @Override
+    @RequiredReadAction
+    default PyExpression[] getArguments() {
+        return childrenToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), PyExpression.EMPTY_ARRAY);
+    }
 
-	/**
-	 * TODO: Copy/Paste with {@link com.jetbrains.python.psi.PyCallExpression#addArgument(PyExpression)} ?
-	 * Adds argument to the appropriate place:
-	 * {@link com.jetbrains.python.psi.PyKeywordArgument} goes to the end.
-	 * All other go before key arguments (if any) but after last non-key arguments.
-	 * Commas should be set correctly as well.
-	 *
-	 * @param arg argument to add
-	 */
+    @Override
+    @RequiredReadAction
+    default @Nullable PyKeywordArgument getKeywordArgument(String name) {
+        return (PyKeywordArgument)PyAstArgumentList.super.getKeywordArgument(name);
+    }
+
+    /**
+     * Adds argument to the appropriate place:
+     * {@link PyKeywordArgument} goes to the end.
+     * All other go before key arguments (if any) but after last non-key arguments.
+     * Commas should be set correctly as well.
+     *
+     * @param arg argument to add
+     */
     @RequiredWriteAction
-	void addArgument(PyExpression arg);
+    void addArgument(PyExpression arg);
 
     @RequiredWriteAction
-	void addArgumentFirst(PyExpression arg);
+    void addArgumentFirst(PyExpression arg);
 
     @RequiredWriteAction
-	void addArgumentAfter(PyExpression argument, PyExpression afterThis);
+    void addArgumentAfter(PyExpression argument, PyExpression afterThis);
 
-	/**
-	 * @return the call expression to which this argument list belongs; not null in correctly parsed cases.
-	 */
-	@Nullable
-	PyCallExpression getCallExpression();
+    /**
+     * @return the call expression to which this argument list belongs; not null in correctly parsed cases.
+     */
+    @Override
+    @RequiredReadAction
+    default @Nullable PyCallExpression getCallExpression() {
+        return (PyCallExpression)PyAstArgumentList.super.getCallExpression();
+    }
 
-
-	@Nullable
-	ASTNode getClosingParen();
-
-	/**
-	 * Searches parameter value and returns it if exists.
-	 *
-	 * @param parameter param to search
-	 * @return function parameter value expression or null if does not exist
-	 */
-	@Nullable
-	PyExpression getValueExpressionForParam(FunctionParameter parameter);
+    /**
+     * Searches parameter value and returns it if exists.
+     *
+     * @param parameter param to search
+     * @return function parameter value expression or null if does not exist
+     */
+    @Nullable
+    PyExpression getValueExpressionForParam(FunctionParameter parameter);
 }

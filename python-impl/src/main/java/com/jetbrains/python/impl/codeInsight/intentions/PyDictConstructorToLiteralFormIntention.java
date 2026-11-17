@@ -20,7 +20,9 @@ import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
@@ -38,6 +40,8 @@ import consulo.python.impl.localize.PyLocalize;
  *
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyDictConstructorToLiteralFormIntention", categories = "Python", fileExtensions = "py")
 public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionAction {
     @Override
     public LocalizeValue getText() {

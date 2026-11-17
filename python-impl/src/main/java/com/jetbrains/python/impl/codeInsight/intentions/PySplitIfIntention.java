@@ -18,8 +18,10 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.ast.IElementType;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -31,6 +33,8 @@ import consulo.python.impl.localize.PyLocalize;
  * @author Alexey.Ivanov
  * @since 2010-03-10
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PySplitIfIntention", categories = "Python", fileExtensions = "py")
 public class PySplitIfIntention extends PyBaseIntentionAction {
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {

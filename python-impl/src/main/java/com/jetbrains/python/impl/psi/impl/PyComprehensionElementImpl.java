@@ -1,229 +1,38 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import consulo.annotation.access.RequiredReadAction;
-import org.jspecify.annotations.Nullable;
-import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiNamedElement;
-import consulo.language.ast.IElementType;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.psi.PyComprehensionComponent;
 import com.jetbrains.python.psi.PyComprehensionElement;
-import com.jetbrains.python.psi.PyComprehensionForComponent;
-import com.jetbrains.python.psi.PyComprehensionIfComponent;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyStarExpression;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Comprehension-like element base, for list comps ang generators.
- * @author dcheryasov
- * @since 2008-07-31
  */
-public abstract class PyComprehensionElementImpl extends PyElementImpl implements PyComprehensionElement
-{
-	public PyComprehensionElementImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public abstract class PyComprehensionElementImpl extends PyElementImpl implements PyComprehensionElement {
+    public PyComprehensionElementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	/**
-	 * In "[x+1 for x in (1,2,3)]" result expression is "x+1".
-	 *
-	 * @return result expression.
-	 */
-	@Nullable
-    @Override
-    @RequiredReadAction
-	public PyExpression getResultExpression()
-	{
-		ASTNode[] exprs = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
-		return exprs.length == 0 ? null : (PyExpression) exprs[0].getPsi();
-	}
-
-	/**
-	 * In "[x+1 for x in (1,2,3)]" a "for component" is "x".
-	 *
-	 * @return all "for components"
-	 */
-	@Override
-    @RequiredReadAction
-    public List<PyComprehensionForComponent> getForComponents()
-	{
-		final List<PyComprehensionForComponent> list = new ArrayList<>(5);
-		visitComponents(new ComprehensionElementVisitor()
-		{
-			@Override
-			void visitForComponent(PyComprehensionForComponent component)
-			{
-				list.add(component);
-			}
-		});
-		return list;
-	}
-
-	@RequiredReadAction
-    private void visitComponents(ComprehensionElementVisitor visitor)
-	{
-		ASTNode node = getNode().getFirstChildNode();
-		while(node != null)
-		{
-			IElementType type = node.getElementType();
-			ASTNode next = getNextExpression(node);
-			if(next == null)
-			{
-				break;
-			}
-			if(type == PyTokenTypes.FOR_KEYWORD)
-			{
-				ASTNode next2 = getNextExpression(next);
-				if(next2 == null)
-				{
-					break;
-				}
-				final PyExpression variable = (PyExpression) next.getPsi();
-				final PyExpression iterated = (PyExpression) next2.getPsi();
-				final boolean isAsync = Optional.ofNullable(node.getTreePrev()).map(ASTNode::getTreePrev).map(asyncNode -> asyncNode.getElementType() == PyTokenTypes.ASYNC_KEYWORD).orElse(false);
-
-				visitor.visitForComponent(new PyComprehensionForComponent()
-				{
-					@Override
-                    public PyExpression getIteratorVariable()
-					{
-						return variable;
-					}
-
-					@Override
-                    public PyExpression getIteratedList()
-					{
-						return iterated;
-					}
-
-					@Override
-					public boolean isAsync()
-					{
-						return isAsync;
-					}
-				});
-			}
-			else if(type == PyTokenTypes.IF_KEYWORD)
-			{
-				PyExpression test = (PyExpression) next.getPsi();
-				visitor.visitIfComponent(() -> test);
-			}
-			node = node.getTreeNext();
-		}
-	}
-
-	@Override
-    @RequiredReadAction
-    public List<PyComprehensionIfComponent> getIfComponents()
-	{
-		final List<PyComprehensionIfComponent> list = new ArrayList<>(5);
-		visitComponents(new ComprehensionElementVisitor()
-		{
-			@Override
-			void visitIfComponent(PyComprehensionIfComponent component)
-			{
-				list.add(component);
-			}
-		});
-		return list;
-	}
-
-	@Override
-    @RequiredReadAction
-    public List<PyComprehensionComponent> getComponents()
-	{
-		final List<PyComprehensionComponent> list = new ArrayList<>(5);
-		visitComponents(new ComprehensionElementVisitor()
-		{
-			@Override
-			void visitForComponent(PyComprehensionForComponent component)
-			{
-				list.add(component);
-			}
-
-			@Override
-			void visitIfComponent(PyComprehensionIfComponent component)
-			{
-				list.add(component);
-			}
-		});
-		return list;
-	}
-
-	@Nullable
-	private static ASTNode getNextExpression(ASTNode after)
-	{
-		ASTNode node = after;
-		do
-		{
-			node = node.getTreeNext();
-		}
-		while(node != null && !PythonDialectsTokenSetProvider.getInstance().getExpressionTokens().contains(node.getElementType()));
-		return node;
-	}
-
-	@Override
-    @RequiredReadAction
-    public List<PsiNamedElement> getNamedElements()
-	{
-		// extract whatever names are defined in "for" components
-		List<PyComprehensionForComponent> fors = getForComponents();
-		PyExpression[] for_targets = new PyExpression[fors.size()];
-		int i = 0;
-		for(PyComprehensionForComponent for_comp : fors)
-		{
-			for_targets[i] = for_comp.getIteratorVariable();
-			i += 1;
-		}
-		List<PyExpression> expressions = PyUtil.flattenedParensAndLists(for_targets);
-		List<PsiNamedElement> results = Lists.newArrayList();
-		for(PyExpression expression : expressions)
-		{
-			if(expression instanceof PsiNamedElement)
-			{
-				results.add((PsiNamedElement) expression);
-			}
-		}
-		return results;
-	}
-
-	@Nullable
-    @RequiredReadAction
-	public PsiNamedElement getNamedElement(String the_name)
-	{
-		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
-	}
-
-	abstract class ComprehensionElementVisitor
-	{
-		void visitIfComponent(PyComprehensionIfComponent component)
-		{
-		}
-
-		void visitForComponent(PyComprehensionForComponent component)
-		{
-		}
-	}
+    /**
+     * Type of a single element produced by the comprehension result expression.
+     * For a starred result (PEP 798), e.g. {@code [*it for it in its]}, this is the iterated element type of the
+     * unpacked iterable rather than the type of the iterable itself.
+     */
+    public static @Nullable PyType getResultElementType(@Nullable PyExpression resultExpression, TypeEvalContext context) {
+        if (resultExpression == null) {
+            return null;
+        }
+        if (resultExpression instanceof PyStarExpression starExpression) {
+            PyExpression iterable = starExpression.getExpression();
+            if (iterable == null) {
+                return null;
+            }
+            return PyTargetExpressionImpl.getIterationType(context.getType(iterable), starExpression, false, context);
+        }
+        return context.getType(resultExpression);
+    }
 }

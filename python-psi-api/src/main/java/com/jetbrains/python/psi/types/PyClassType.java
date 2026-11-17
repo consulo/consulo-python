@@ -1,29 +1,49 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.psi.PyClass;
 import consulo.util.dataholder.UserDataHolder;
+import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 
-/**
- * @author yole
- */
-public interface PyClassType extends PyClassLikeType, UserDataHolder
-{
-  PyClass getPyClass();
+public interface PyClassType extends PyClassLikeType, UserDataHolder {
+    PyClass getPyClass();
+
+    /**
+     * Concrete type arguments of this class instance, e.g. {@code [int]} for {@code list[int]}.
+     * Returns an empty list for non-parameterized class types.
+     */
+    List<PyType> getTypeArguments();
+
+    /**
+     * @return whether this class type carries concrete type arguments, e.g. {@code true} for {@code list[int]}
+     * and {@code false} for a bare {@code list}.
+     */
+    default boolean isParameterized() {
+        return !getTypeArguments().isEmpty();
+    }
+
+    /**
+     * The element type produced when iterating over an instance of this type, or {@code null} if it is not iterable.
+     * For most parameterized collections it is the first type argument; for mappings it is the key type.
+     *
+     * @deprecated resolves the element type without a caller-supplied {@link TypeEvalContext} (it falls back to
+     * {@code codeInsightFallback}) and hard-codes the {@code Iterable} protocol. Callers should instead choose the
+     * protocol they need and pass their own context, e.g. {@code PyTypeChecker.getIteratedItemType(classType, context)}.
+     */
+    @Deprecated
+    @Nullable
+    PyType getIteratedItemType();
+
+    @Override
+    default <T> T acceptTypeVisitor(PyTypeVisitor<T> visitor) {
+        return visitor.visitPyClassType(this);
+    }
+
+    @Override
+    PyClassType toInstance();
+
+    @Override
+    PyClassType toClass();
 }

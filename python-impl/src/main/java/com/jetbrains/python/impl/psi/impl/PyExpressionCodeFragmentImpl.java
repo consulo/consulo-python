@@ -1,30 +1,16 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.psi.PyExpressionCodeFragment;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.language.file.FileTypeManager;
-import consulo.language.file.FileViewProvider;
-import consulo.language.file.light.LightVirtualFile;
-import consulo.language.impl.ast.FileElement;
-import consulo.language.impl.file.SingleRootFileViewProvider;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiManager;
+import consulo.virtualFileSystem.fileType.FileType;
 import consulo.project.Project;
+import consulo.language.file.FileViewProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.impl.file.SingleRootFileViewProvider;
+import consulo.language.psi.PsiManager;
+import consulo.language.impl.ast.FileElement;
+import consulo.language.file.light.LightVirtualFile;
+import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.psi.PyExpressionCodeFragment;
 
 /**
  * clone of JSExpressionCodeFragment
@@ -35,19 +21,28 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
     private FileViewProvider myViewProvider;
 
     public PyExpressionCodeFragmentImpl(Project project, String name, CharSequence text, boolean isPhysical) {
-        super((new SingleRootFileViewProvider(
+        // Consulo: PsiManagerEx#getFileManager is internal API, view provider is created directly
+        super(new SingleRootFileViewProvider(
             PsiManager.getInstance(project),
-            new LightVirtualFile(name, FileTypeManager.getInstance().getFileTypeByFileName(name), text),
+            new LightVirtualFile(name, getFileTypeByFileName(name), text),
             isPhysical
-        )));
+        ));
         myPhysical = isPhysical;
-        ((SingleRootFileViewProvider) getViewProvider()).forceCachedPsi(this);
+        ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
+    }
+
+    private static FileType getFileTypeByFileName(String name) {
+        if (name.endsWith(".py")) {
+            return PythonFileType.INSTANCE;
+        }
+        else {
+            throw new IllegalArgumentException("unexpected file type");
+        }
     }
 
     @Override
-    @RequiredReadAction
     protected PyExpressionCodeFragmentImpl clone() {
-        PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl) cloneImpl((FileElement) calcTreeElement().clone());
+        PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
         clone.myPhysical = false;
         clone.myOriginalFile = this;
         SingleRootFileViewProvider cloneViewProvider =
@@ -58,7 +53,6 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
     }
 
     @Override
-    @RequiredReadAction
     public PsiElement getContext() {
         return myContext != null && myContext.isValid() ? myContext : super.getContext();
     }
@@ -69,15 +63,6 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
             return myViewProvider;
         }
         return super.getViewProvider();
-    }
-
-    @Override
-    @RequiredReadAction
-    public boolean isValid() {
-        if (!super.isValid()) {
-            return false;
-        }
-        return myContext == null || myContext.isValid();
     }
 
     @Override

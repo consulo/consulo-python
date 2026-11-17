@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersUtil;
 import com.google.common.base.Predicate;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
@@ -59,7 +61,7 @@ public final class PyExtractSuperclassHelper {
   /**
    * Accepts only those members whose element is PyClass object (new classes)
    */
-  private static final Predicate<PyMemberInfo<PyElement>> ALLOW_OBJECT = new PyUtil.ObjectPredicate(true);
+  private static final Predicate<PyMemberInfo<PyElement>> ALLOW_OBJECT = new PyMembersUtil.ObjectPredicate(true);
 
   private PyExtractSuperclassHelper() {
   }
@@ -110,7 +112,7 @@ public final class PyExtractSuperclassHelper {
     if (!newClass.getContainingFile().equals(clazz.getContainingFile())) {
       PyClassRefactoringUtil.optimizeImports(clazz.getContainingFile()); // To remove unneeded imports only if user used different file
     }
-    PyClassRefactoringUtil.addSuperclasses(project, clazz, null, newClass);
+    PyPsiRefactoringUtil.addSuperclasses(project, clazz, null, newClass);
 
     RefactoringEventData afterData = new RefactoringEventData();
     afterData.addElement(newClass);
@@ -164,7 +166,7 @@ public final class PyExtractSuperclassHelper {
       psiFile.add(PyElementGenerator.getInstance(project).createFromText(LanguageLevel.PYTHON24, PsiWhiteSpace.class, "\n\n"));
     }
     newClass = (PyClass)psiFile.add(newClass);
-    PyClassRefactoringUtil.insertImport(clazz, Collections.singleton((PsiNamedElement)newClass));
+    PyPsiRefactoringUtil.insertImport(clazz, Collections.singleton((PsiNamedElement)newClass));
     return newClass;
   }
 

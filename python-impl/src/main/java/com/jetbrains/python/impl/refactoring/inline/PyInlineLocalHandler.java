@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.inline;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -164,7 +165,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     for (PsiElement ref : refsToInline) {
       List<PsiElement> elems = new ArrayList<>();
       List<Instruction> latestDefs =
-        PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), ref, false, false);
+        PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), ref, false, false, TypeEvalContext.codeInsightFallback(project)).defs();
       for (Instruction i : latestDefs) {
         elems.add(i.getElement());
       }
@@ -195,7 +196,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
 
         PsiElement[] exprs = new PsiElement[refsToInline.length];
         PyExpression value = prepareValue(def, localName, project);
-        PyExpression withParenthesis = PyElementGenerator.getInstance(project).createExpressionFromText("(" + value.getText() + ")");
+        PyExpression withParenthesis = PyElementGenerator.getInstance(project).createExpressionFromText(LanguageLevel.forElement(value), "(" + value.getText() + ")");
         PsiElement lastChild = def.getLastChild();
         if (lastChild != null && lastChild.getNode().getElementType() == PyTokenTypes.END_OF_LINE_COMMENT) {
           PsiElement parent = def.getParent();
@@ -264,7 +265,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
                                                                   Project project) {
     if (expr != null) {
       try {
-        List<Instruction> candidates = PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), expr, true, true);
+        List<Instruction> candidates = PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), expr, true, true, TypeEvalContext.codeInsightFallback(project)).defs();
         if (candidates.size() == 1) {
           PyStatement expression = getAssignmentByLeftPart((PyElement)candidates.get(0).getElement());
           return Pair.create(expression, false);
@@ -317,7 +318,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
       PsiElement operation = expression.getOperation();
       assert operation != null;
       String op = operation.getText().replace('=', ' ');
-      return PyElementGenerator.getInstance(project).createExpressionFromText(localName + " " + op + value.getText() + ")");
+      return PyElementGenerator.getInstance(project).createExpressionFromText(LanguageLevel.forElement(value), localName + " " + op + value.getText() + ")");
     }
     return value;
   }

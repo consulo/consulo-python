@@ -1,276 +1,394 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.resolve;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.codeInsight.typing.PyStubPackages;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.impl.pyi.PyiFile;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyImportedNameDefiner;
+import com.jetbrains.python.psi.PyStarImportElement;
+import com.jetbrains.python.psi.PyTypeAliasStatement;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import consulo.component.extension.Extensions;
+import consulo.application.util.CachedValueProvider;
 import consulo.content.bundle.Sdk;
-import consulo.language.psi.*;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiModificationTracker;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.LanguageCachedValueUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.module.Module;
+import consulo.module.content.ProjectFileIndex;
+import consulo.project.Project;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.io.FileUtil;
+import consulo.util.lang.Couple;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
-/**
- * @author yole
- */
-public class QualifiedNameFinder
-{
-	/**
-	 * Looks for a way to import given file.
-	 *
-	 * @param foothold an element in the file to import to (maybe the file itself); used to determine module, roots, etc.
-	 * @param vfile    file which importable name we want to find.
-	 * @return a possibly qualified name under which the file may be imported, or null. If there's more than one way (overlapping roots),
-	 * the name with fewest qualifiers is selected.
-	 */
-	@Nullable
-	public static String findShortestImportableName(PsiElement foothold, VirtualFile vfile)
-	{
-		QualifiedName qName = findShortestImportableQName(foothold, vfile);
-		return qName == null ? null : qName.toString();
-	}
+import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-	@Nullable
-	public static QualifiedName findShortestImportableQName(@Nullable PsiFileSystemItem fsItem)
-	{
-		VirtualFile vFile = fsItem != null ? fsItem.getVirtualFile() : null;
-		return vFile != null ? findShortestImportableQName(fsItem, vFile) : null;
-	}
 
-	@Nullable
-	public static QualifiedName findShortestImportableQName(PsiElement foothold, VirtualFile vfile)
-	{
-		return shortestQName(findImportableQNames(foothold, vfile));
-	}
+public final class QualifiedNameFinder {
+  /**
+   * Looks for a way to import given file.
+   *
+   * @param foothold an element in the file to import to (maybe the file itself); used to determine module, roots, etc.
+   * @param vfile    file which importable name we want to find.
+   * @return a possibly qualified name under which the file may be imported, or null. If there's more than one way (overlapping roots),
+   *         the name with fewest qualifiers is selected.
+   */
+  public static @Nullable String findShortestImportableName(PsiElement foothold, VirtualFile vfile) {
+    final QualifiedName qName = findShortestImportableQName(foothold, vfile);
+    return qName == null ? null : qName.toString();
+  }
 
-	public static List<QualifiedName> findImportableQNames(PsiElement foothold, VirtualFile vfile)
-	{
-		PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
-		List<QualifiedName> names = cache != null ? cache.getNames(vfile) : null;
-		if(names != null)
-		{
-			return names;
-		}
-		PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
-		RootVisitorHost.visitRoots(foothold, visitor);
-		List<QualifiedName> results = visitor.getResults();
-		if(cache != null)
-		{
-			cache.putNames(vfile, results);
-		}
-		return results;
-	}
+  public static @Nullable QualifiedName findCachedShortestImportableName(PsiElement foothold, VirtualFile virtualFile) {
+    final PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
+    if (cache != null) {
+      final List<QualifiedName> names = cache.getNames(virtualFile);
+      if (names != null) {
+        return shortestQName(names);
+      }
+    }
+    return null;
+  }
 
-	@Nullable
-	private static QualifiedName shortestQName(List<QualifiedName> qNames)
-	{
-		return qNames.stream().min((o1, o2) -> o1.getComponentCount() - o2.getComponentCount()).orElse(null);
-	}
+  public static @Nullable QualifiedName findShortestImportableQName(@Nullable PsiFileSystemItem fsItem) {
+    VirtualFile vFile = fsItem != null ? fsItem.getVirtualFile() : null;
+    return vFile != null ? findShortestImportableQName(fsItem, vFile) : null;
+  }
 
-	@Nullable
-	public static String findShortestImportableName(Module module, VirtualFile vfile)
-	{
-		PythonPathCache cache = PythonModulePathCache.getInstance(module);
-		List<QualifiedName> names = cache.getNames(vfile);
-		if(names != null)
-		{
-			return names.toString();
-		}
-		PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
-		RootVisitorHost.visitRoots(module, false, visitor);
-		List<QualifiedName> results = visitor.getResults();
-		cache.putNames(vfile, results);
-		QualifiedName qName = shortestQName(results);
-		return qName == null ? null : qName.toString();
-	}
+  public static @Nullable QualifiedName findShortestImportableQName(PsiElement foothold, VirtualFile vfile) {
+    return shortestQName(findImportableQNames(foothold, vfile));
+  }
 
-	/**
-	 * Returns the name through which the specified symbol should be imported. This can be different from the qualified name of the
-	 * symbol (the place where a symbol is defined). For example, Python 2.7 unittest defines TestCase in unittest.case module
-	 * but it should be imported directly from unittest.
-	 *
-	 * @param symbol   the symbol to be imported
-	 * @param foothold the location where the import statement would be added
-	 * @return the qualified name, or null if it wasn't possible to calculate one
-	 */
-	@Nullable
-	public static QualifiedName findCanonicalImportPath(PsiElement symbol, @Nullable PsiElement foothold)
-	{
-		PsiFileSystemItem srcfile = symbol instanceof PsiFileSystemItem ? (PsiFileSystemItem) symbol : symbol.getContainingFile();
-		if(srcfile == null)
-		{
-			return null;
-		}
-		VirtualFile virtualFile = srcfile.getVirtualFile();
-		if(virtualFile == null)
-		{
-			return null;
-		}
-		if(srcfile instanceof PsiFile && symbol instanceof PsiNamedElement && !(symbol instanceof PsiFileSystemItem))
-		{
-			PsiElement toplevel = symbol;
-			if(symbol instanceof PyFunction)
-			{
-				PyClass containingClass = ((PyFunction) symbol).getContainingClass();
-				if(containingClass != null)
-				{
-					toplevel = containingClass;
-				}
-			}
-			PsiDirectory dir = ((PsiFile) srcfile).getContainingDirectory();
-			while(dir != null)
-			{
-				PsiFile initPy = dir.findFile(PyNames.INIT_DOT_PY);
-				if(initPy == null)
-				{
-					break;
-				}
-				if(initPy instanceof PyFile)
-				{
-					//noinspection ConstantConditions
-					List<RatedResolveResult> resolved = ((PyFile) initPy).multiResolveName(((PsiNamedElement) toplevel).getName());
-					PsiElement finalTopLevel = toplevel;
-					if(resolved.stream().anyMatch(r -> r.getElement() == finalTopLevel))
-					{
-						virtualFile = dir.getVirtualFile();
-					}
-				}
-				dir = dir.getParentDirectory();
-			}
-		}
-		QualifiedName qname = findShortestImportableQName(foothold != null ? foothold : symbol, virtualFile);
-		if(qname != null)
-		{
-			for(PyCanonicalPathProvider provider : Extensions.getExtensions(PyCanonicalPathProvider.EP_NAME))
-			{
-				QualifiedName restored = provider.getCanonicalPath(qname, foothold);
-				if(restored != null)
-				{
-					return restored;
-				}
-			}
-		}
-		return qname;
-	}
+  public static List<QualifiedName> findImportableQNames(PsiElement foothold, VirtualFile vfile) {
+    final PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
+    final List<QualifiedName> names = cache != null ? cache.getNames(vfile) : null;
+    if (names != null) {
+      return names;
+    }
+    PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
+    RootVisitorHost.visitRoots(foothold, visitor);
+    final List<QualifiedName> results = visitor.getResults();
+    if (cache != null) {
+      cache.putNames(vfile, results);
+    }
+    return results;
+  }
 
-	@Nullable
-	public static String getQualifiedName(PyElement element)
-	{
-		String name = element.getName();
-		if(name != null)
-		{
-			ScopeOwner owner = ScopeUtil.getScopeOwner(element);
-			PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
-			if(owner instanceof PyClass)
-			{
-				String classQName = ((PyClass) owner).getQualifiedName();
-				if(classQName != null)
-				{
-					return classQName + "." + name;
-				}
-			}
-			else if(owner instanceof PyFile)
-			{
-				if(builtinCache.isBuiltin(element))
-				{
-					return name;
-				}
-				else
-				{
-					VirtualFile virtualFile = ((PyFile) owner).getVirtualFile();
-					if(virtualFile != null)
-					{
-						String fileQName = findShortestImportableName(element, virtualFile);
-						if(fileQName != null)
-						{
-							return fileQName + "." + name;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
+  private static @Nullable QualifiedName shortestQName(List<QualifiedName> qNames) {
+    return qNames.stream().min(Comparator.comparingInt(QualifiedName::getComponentCount)).orElse(null);
+  }
 
-	/**
-	 * Tries to find roots that contain given vfile, and among them the root that contains at the smallest depth.
-	 * For equal depth source root is in preference to library.
-	 */
-	private static class PathChoosingVisitor implements RootVisitor
-	{
-		@Nullable
-		private final VirtualFile myVFile;
-		private final List<QualifiedName> myResults = new ArrayList<>();
+  public static @Nullable String findShortestImportableName(Module module, VirtualFile vfile) {
+    final PythonPathCache cache = PythonModulePathCache.getInstance(module);
+    List<QualifiedName> names = cache.getNames(vfile);
+    if (names == null) {
+      final PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
+      RootVisitorHost.visitRoots(module, false, visitor);
+      names = visitor.getResults();
+      cache.putNames(vfile, names);
+    }
+    return Objects.toString(shortestQName(names), null);
+  }
 
-		private PathChoosingVisitor(VirtualFile file)
-		{
-			if(!file.isDirectory() && file.getName().equals(PyNames.INIT_DOT_PY))
-			{
-				myVFile = file.getParent();
-			}
-			else
-			{
-				myVFile = file;
-			}
-		}
+  /**
+   * Returns the name through which the specified symbol should be imported. This can be different from the qualified name of the
+   * symbol (the place where a symbol is defined). For example, Python 2.7 unittest defines TestCase in unittest.case module
+   * but it should be imported directly from unittest.
+   *
+   * @param symbol   the symbol to be imported
+   * @param foothold the location where the import statement would be added
+   * @return the qualified name, or null if it wasn't possible to calculate one
+   */
+  public static @Nullable QualifiedName findCanonicalImportPath(PsiElement symbol, @Nullable PsiElement foothold) {
+    return PyUtil.getNullableParameterizedCachedValue(symbol, Couple.of(symbol, foothold), QualifiedNameFinder::doFindCanonicalImportPath);
+  }
 
-		public boolean visitRoot(VirtualFile root, Module module, Sdk sdk, boolean isModuleSource)
-		{
-			if(myVFile != null)
-			{
-				String relativePath = VirtualFileUtil.getRelativePath(myVFile, root, '/');
-				if(relativePath != null && !relativePath.isEmpty())
-				{
-					List<String> result = StringUtil.split(relativePath, "/");
-					if(result.size() > 0)
-					{
-						result.set(result.size() - 1, FileUtil.getNameWithoutExtension(result.get(result.size() - 1)));
-					}
-					for(String component : result)
-					{
-						if(!PyNames.isIdentifier(component))
-						{
-							return true;
-						}
-					}
-					myResults.add(QualifiedName.fromComponents(result));
-				}
-			}
-			return true;
-		}
+  private static @Nullable QualifiedName doFindCanonicalImportPath(Couple<PsiElement> param) {
+    final PsiElement symbol = param.getFirst();
+    final PsiElement foothold = param.getSecond();
 
-		public List<QualifiedName> getResults()
-		{
-			return myResults;
-		}
-	}
+    final PsiFileSystemItem srcfile = PyPsiUtils.getFileSystemItem(symbol);
+    if (srcfile == null) {
+      return null;
+    }
+    VirtualFile virtualFile = srcfile.getVirtualFile();
+    if (virtualFile == null) {
+      return null;
+    }
+    if (srcfile instanceof PsiFile && symbol instanceof PsiNamedElement namedSymbol && !(symbol instanceof PsiFileSystemItem)) {
+      PsiNamedElement toplevel = namedSymbol;
+      if (symbol instanceof PyFunction) {
+        final PyClass containingClass = ((PyFunction)symbol).getContainingClass();
+        if (containingClass != null) {
+          toplevel = containingClass;
+        }
+      }
+      PsiFileSystemItem item = srcfile;
+      PsiDirectory dir = ((PsiFile)srcfile).getContainingDirectory();
+      while (dir != null) {
+        PyFile initPy = as(PyUtil.turnDirIntoInit(dir), PyFile.class);
+        if (initPy != null && initPy.getImportTargets().isEmpty() && initPy.getFromImports().isEmpty()) {
+          initPy = jumpFromBinarySkeletonsToRealInitPy(initPy);
+        }
+
+        if (initPy != null && reexports(initPy, toplevel)) {
+          virtualFile = dir.getVirtualFile();
+        }
+        else {
+          var namesake = findReexportingPublicNamesake(item, dir, toplevel);
+          if (namesake != null) {
+            virtualFile = namesake;
+          }
+        }
+        if (initPy == null) {
+          break;
+        }
+        item = dir;
+        dir = dir.getParentDirectory();
+      }
+    }
+    final QualifiedName qname = findShortestImportableQName(foothold != null ? foothold : symbol, virtualFile);
+    if (qname != null) {
+      final QualifiedName restored = canonizeQualifiedName(symbol, qname, foothold);
+      if (restored != null) return restored;
+    }
+    return qname;
+  }
+
+  /**
+   * Returns the public namesake of {@code item} if {@code item} is private and the namesake re-exports {@code toplevel}.
+   * <p>
+   * The namesake is the module, stub, or package in {@code directory} with the name of {@code item} without the leading underscores,
+   * for example {@code mod} for {@code _mod}.
+   */
+  private static @Nullable VirtualFile findReexportingPublicNamesake(PsiFileSystemItem item,
+                                                                    PsiDirectory directory,
+                                                                    PsiNamedElement toplevel) {
+    var name = item instanceof PsiDirectory ? item.getName() : FileUtil.getNameWithoutExtension(item.getName());
+    if (PyUtil.getInitialUnderscores(name) == 0 || PyNames.INIT.equals(name)) return null;
+    var namesake = StringUtil.trimLeading(name, '_');
+    if (!PyNames.isIdentifier(namesake)) return null;
+
+    var psiManager = directory.getManager();
+    for (String childName : List.of(namesake, namesake + PyNames.DOT_PYI, namesake + PyNames.DOT_PY)) {
+      var child = directory.getVirtualFile().findChild(childName);
+      if (child == null) continue;
+      PsiFileSystemItem childItem = child.isDirectory() ? psiManager.findDirectory(child) : psiManager.findFile(child);
+      var module = as(PyUtil.turnDirIntoInit(childItem), PyFile.class);
+      if (module != null && reexports(module, toplevel)) return child;
+    }
+    return null;
+  }
+
+  /**
+   * Checks that {@code module} makes {@code toplevel} available under its own name.
+   * <p>
+   * A plain import counts only in a package {@code __init__} file. A module must alias the name
+   * ({@code from m import X as X}) or list it in {@code __all__}. A star import counts in a stub file only.
+   */
+  private static boolean reexports(PyFile module, PsiNamedElement toplevel) {
+    final String name = toplevel.getName();
+    if (name == null) return false;
+    final boolean plainImportCounts = PyNames.INIT.equals(FileUtil.getNameWithoutExtension(module.getName()));
+    for (RatedResolveResult result : module.multiResolveName(name)) {
+      if (result.getElement() != toplevel) continue;
+      if (plainImportCounts) return true;
+      final PyImportedNameDefiner definer = result instanceof ImportedResolveResult imported ? imported.getDefiner() : null;
+      if (definer instanceof PyStarImportElement && module instanceof PyiFile) return true;
+      if (definer instanceof PyImportElement importElement && importElement.getAsName() != null) return true;
+      final List<String> dunderAll = module.getDunderAll();
+      if (dunderAll != null && dunderAll.contains(name)) return true;
+    }
+    return false;
+  }
+
+  private static PyFile jumpFromBinarySkeletonsToRealInitPy(PyFile initPy) {
+    if (MainPythonSdkKt.isElementInSkeletons(initPy)) {
+      QualifiedName packageName = findShortestImportableQName(initPy);
+      if (packageName != null) {
+        List<PsiElement> namesakeResults = PyResolveImportUtil.resolveQualifiedName(packageName, PyResolveImportUtil.fromFoothold(initPy));
+        PsiElement nonSkeletonResult = ContainerUtil.find(namesakeResults, e -> !MainPythonSdkKt.isElementInSkeletons(e));
+        PsiDirectory libPackage = as(nonSkeletonResult, PsiDirectory.class);
+        if (libPackage != null) {
+          PyFile libInitPy = as(PyUtil.turnDirIntoInit(libPackage), PyFile.class);
+          if (libInitPy != null && libInitPy != initPy) {
+            return libInitPy;
+          }
+        }
+      }
+    }
+    return initPy;
+  }
+
+  public static @Nullable QualifiedName canonizeQualifiedName(PsiElement symbol, QualifiedName qname, @Nullable PsiElement foothold) {
+    for (PyCanonicalPathProvider provider : PyCanonicalPathProvider.EP_NAME.getExtensionList()) {
+      final QualifiedName restored = provider.getCanonicalPath(symbol, qname, foothold);
+      if (restored != null) {
+        return restored;
+      }
+    }
+    return null;
+  }
+
+  public static @Nullable String getQualifiedName(PyElement element) {
+    return LanguageCachedValueUtil.getCachedValue(element, () ->
+      CachedValueProvider.Result.create(getQualifiedNameInner(element), PsiModificationTracker.MODIFICATION_COUNT));
+  }
+
+  private static @Nullable String getQualifiedNameInner(final PyElement element) {
+    final String name = element.getName();
+    if (name != null) {
+      final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+      final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
+      if (owner instanceof PyClass) {
+        final String classQName = ((PyClass)owner).getQualifiedName();
+        if (classQName != null) {
+          return classQName + "." + name;
+        }
+      }
+      if (owner instanceof PyTypeAliasStatement typeAliasStatement) {
+        final String typeQName = typeAliasStatement.getQualifiedName();
+        if (typeQName != null) {
+          return typeQName + "." + name;
+        }
+      }
+      else if (owner instanceof PyFile) {
+        if (builtinCache.isBuiltin(element)) {
+          // Builtins are always qualified with "builtins" — including in Python 2, whose runtime module is "__builtin__" —
+          // so that consumers have a single canonical qualifier to match against (see PyNames.FQN.unqualifyBuiltinName).
+          // Computed deterministically instead of via findShortestImportableName, which may resolve the builtins file
+          // inconsistently under resolve-cache pressure.
+          return PyBuiltinCache.BUILTIN_MODULE_3K + "." + name;
+        }
+        else {
+          final VirtualFile virtualFile = ((PyFile)owner).getVirtualFile();
+          if (virtualFile != null) {
+            final String fileQName = findShortestImportableName(element, virtualFile);
+            if (fileQName != null) {
+              return fileQName + "." + name;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Tries to find roots that contain given vfile.
+   */
+  private static final class PathChoosingVisitor implements RootVisitor {
+    private final VirtualFile myVFile;
+    private final Set<QualifiedName> myResults = new LinkedHashSet<>();
+
+    private PathChoosingVisitor(VirtualFile file) {
+      myVFile = file;
+    }
+
+    @Override
+    public boolean visitRoot(VirtualFile root, @Nullable Module module, @Nullable Sdk sdk, boolean isModuleSource) {
+      QualifiedName qName = computeQualifiedNameInRoot(root, myVFile);
+      if (qName != null && ContainerUtil.all(qName.getComponents(), PyNames::isIdentifier)) {
+        myResults.add(qName);
+      }
+      return true;
+    }
+
+    public List<QualifiedName> getResults() {
+      return new ArrayList<>(myResults);
+    }
+  }
+
+  public abstract static class QualifiedNameBasedScope extends GlobalSearchScope {
+    private final ProjectFileIndex myProjectFileIndex;
+
+    public QualifiedNameBasedScope(Project project) {
+      super(project);
+      myProjectFileIndex = ProjectFileIndex.getInstance(project);
+    }
+
+    @Override
+    public boolean isSearchInModuleContent(Module aModule) {
+      return true;
+    }
+
+    @Override
+    public boolean isSearchInLibraries() {
+      return true;
+    }
+
+    @Override
+    public final boolean contains(VirtualFile file) {
+      VirtualFile closestRoot = findClosestRoot(file);
+      if (closestRoot == null) return true;
+      QualifiedName qName = computeQualifiedNameInRoot(closestRoot, file);
+      if (qName == null) return true;
+      return containsQualifiedNameInRoot(closestRoot, qName);
+    }
+
+    protected abstract boolean containsQualifiedNameInRoot(VirtualFile root, QualifiedName qName);
+
+    private @Nullable VirtualFile findClosestRoot(VirtualFile vFile) {
+      VirtualFile sourceRoot = myProjectFileIndex.getSourceRootForFile(vFile);
+      if (sourceRoot != null) return sourceRoot;
+      VirtualFile contentRoot = myProjectFileIndex.getContentRootForFile(vFile);
+      if (contentRoot != null) return contentRoot;
+      VirtualFile libraryRoot = myProjectFileIndex.getClassRootForFile(vFile);
+      if (libraryRoot != null) return libraryRoot;
+      return null;
+    }
+  }
+
+  private static @Nullable QualifiedName computeQualifiedNameInRoot(VirtualFile root, VirtualFile file) {
+    String relativePath = VirtualFileUtil.getRelativePath(file, root, VirtualFileUtil.VFS_SEPARATOR_CHAR);
+    if (StringUtil.isEmpty(relativePath)) {
+      return null;
+    }
+
+    List<String> components = new ArrayList<>(StringUtil.split(relativePath, "/"));
+    if (components.isEmpty()) {
+      return null;
+    }
+
+    int lastIndex = components.size() - 1;
+    String nameWithoutExtension = FileUtil.getNameWithoutExtension(components.get(lastIndex));
+    if (!file.isDirectory() && nameWithoutExtension.equals(PyNames.INIT)) {
+      components.remove(lastIndex);
+    }
+    else {
+      components.set(lastIndex, nameWithoutExtension);
+    }
+
+    if (components.isEmpty() || ContainerUtil.exists(components, part -> part.contains("."))) {
+      return null;
+    }
+    // A qualified name might still contain "-stubs" non-identifier part as its first component.
+    return PyStubPackages.convertStubToRuntimePackageName(QualifiedName.fromComponents(components));
+  }
 }

@@ -1,79 +1,68 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.psi.stubs;
 
-import org.jspecify.annotations.Nullable;
+import com.jetbrains.python.psi.PyTargetExpression;
 import consulo.language.psi.stub.NamedStub;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public interface PyTargetExpressionStub extends NamedStub<PyTargetExpression>
-{
-	enum InitializerType
-	{
-		ReferenceExpression(1),
-		CallExpression(2),
-		Custom(3),
-		Other(0);
 
-		private final int myIndex;
+public interface PyTargetExpressionStub
+    extends NamedStub<PyTargetExpression>, PyTypeCommentOwnerStub, PyAnnotationOwnerStub, PyVersionSpecificStub {
+    enum InitializerType {
+        ReferenceExpression(1),
+        CallExpression(2),
+        Custom(3),
+        Other(0);
 
-		InitializerType(int index)
-		{
-			myIndex = index;
-		}
+        private final int myIndex;
 
-		public int getIndex()
-		{
-			return myIndex;
-		}
+        InitializerType(int index) {
+            myIndex = index;
+        }
 
-		public static InitializerType fromIndex(int index)
-		{
-			switch(index)
-			{
-				case 1:
-					return ReferenceExpression;
-				case 2:
-					return CallExpression;
-				case 3:
-					return Custom;
-				default:
-					return Other;
-			}
-		}
-	}
+        public int getIndex() {
+            return myIndex;
+        }
 
-	InitializerType getInitializerType();
+        public static InitializerType fromIndex(int index) {
+            return switch (index) {
+                case 1 -> ReferenceExpression;
+                case 2 -> CallExpression;
+                case 3 -> Custom;
+                default -> Other;
+            };
+        }
+    }
 
-	@Nullable
-	QualifiedName getInitializer();
+    InitializerType getInitializerType();
 
-	boolean isQualified();
+    @Nullable
+    QualifiedName getInitializer();
 
-	@Nullable
-	<T extends CustomTargetExpressionStub> T getCustomStub(Class<T> stubClass);
+    @Nullable
+    PyLiteralKind getAssignedLiteralKind();
 
-	@Nullable
-	String getDocString();
+    /**
+     * The textual value of the assigned literal (e.g. {@code "42"}, the decoded string, or {@code "true"}/{@code "false"}),
+     * interpreted according to {@link #getAssignedLiteralKind()}. {@code null} when no literal value is stored
+     * (e.g. for {@code FLOAT}/{@code NONE}, non-plain strings, or non-literal initializers).
+     */
+    @Nullable
+    String getAssignedLiteralValue();
 
-	@Nullable
-	String getTypeComment();
+    boolean isQualified();
+
+    /**
+     * Whether the reference initializer is the value of a type alias.
+     * It is {@code false} for any other initializer type.
+     */
+    boolean isTypeAliasLikeReference();
+
+    <T> @Nullable T getCustomStub(Class<T> stubClass);
+
+    @Nullable
+    String getDocString();
+
+    boolean hasAssignedValue();
 }

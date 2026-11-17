@@ -1,75 +1,74 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
+import consulo.localize.LocalizeValue;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.localize.LocalizeValue;
-import consulo.project.Project;
-import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-
-import java.util.List;
-import java.util.Map;
+import consulo.util.collection.ContainerUtil;
+import consulo.python.impl.localize.PyLocalize;
+import com.jetbrains.python.impl.codeInsight.PyPsiIndexUtil;
+import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyCallableParameter;
+import com.jetbrains.python.impl.psi.types.PyCallableParameterImpl;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import one.util.streamex.StreamEx;
 
 public class PyRemoveParameterQuickFix implements LocalQuickFix {
+
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameRemoveParameter();
     }
 
+    @Override
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PsiElement element = descriptor.getPsiElement();
-        assert element instanceof PyParameter;
+        PyParameter psi = PyUtil.as(descriptor.getPsiElement(), PyParameter.class);
+        assert psi != null;
+        PyCallableParameter parameter = PyCallableParameterImpl.psi(psi);
+        TypeEvalContext ctx = TypeEvalContext.codeAnalysis(project, psi.getContainingFile());
 
-        PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        PyFunction function = PsiTreeUtil.getParentOfType(psi, PyFunction.class);
+        if (function != null) {
+            PyResolveContext resolveContext = PyResolveContext.defaultContext(ctx);
 
-        if (pyFunction != null) {
-            List<UsageInfo> usages = PyRefactoringUtil.findUsages(pyFunction, false);
-            for (UsageInfo usage : usages) {
-                PsiElement usageElement = usage.getElement();
-                if (usageElement != null) {
-                    PsiElement callExpression = usageElement.getParent();
-                    if (callExpression instanceof PyCallExpression) {
-                        PyArgumentList argumentList = ((PyCallExpression) callExpression).getArgumentList();
-                        if (argumentList != null) {
-                            PyResolveContext resolveContext = PyResolveContext.noImplicits();
-                            PyCallExpression.PyArgumentsMapping mapping =
-                                ((PyCallExpression) callExpression).mapArguments(resolveContext);
-                            for (Map.Entry<PyExpression, PyNamedParameter> parameterEntry : mapping.getMappedParameters().entrySet()) {
-                                if (parameterEntry.getValue().equals(element)) {
-                                    parameterEntry.getKey().delete();
-                                }
-                            }
-                        }
-                    }
-                }
+            StreamEx
+                .of(PyPsiIndexUtil.findUsages(function, false))
+                .map(UsageInfo::getElement)
+                .nonNull()
+                .map(PsiElement::getParent)
+                .select(PyCallExpression.class)
+                .flatCollection(callExpression -> callExpression.multiMapArguments(resolveContext))
+                .flatCollection(mapping -> mapping.getMappedParameters().entrySet())
+                .filter(entry -> parameter.equals(entry.getValue()))
+                .forEach(entry -> entry.getKey().delete());
+
+            PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
+            String parameterName = parameter.getName();
+            if (docStringExpression != null && parameterName != null) {
+                PyDocstringGenerator.forDocStringOwner(function).withoutParam(parameterName).buildAndInsert();
             }
-            PyStringLiteralExpression expression = pyFunction.getDocStringExpression();
-            String paramName = ((PyParameter) element).getName();
-            if (expression != null && paramName != null) {
-                PyDocstringGenerator.forDocStringOwner(pyFunction).withoutParam(paramName).buildAndInsert();
+
+            if (parameterName != null) {
+                StreamEx
+                    .of(PyiUtil.getOverloads(function, ctx))
+                    .map(overload -> overload.getParameterList().getParameters())
+                    .map(parameters -> ContainerUtil.find(parameters, overloadParameter -> parameterName.equals(overloadParameter.getName())))
+                    .nonNull()
+                    .forEach(PsiElement::delete);
             }
         }
-        element.delete();
+
+        psi.delete();
     }
 }

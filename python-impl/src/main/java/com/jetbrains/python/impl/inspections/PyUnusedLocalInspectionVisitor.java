@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections;
 
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.PyBundle;
@@ -246,7 +247,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
         if (scopeAnchor != null) {
             ScopeOwner declOwner = ScopeUtil.getDeclarationScopeOwner(scopeAnchor, name);
             if (declOwner != null && declOwner != owner) {
-                Collection<PsiElement> writeElements = ScopeUtil.getReadWriteElements(name, declOwner, false, true);
+                Iterable<PsiElement> writeElements = ScopeUtil.getElementsOfAccessType(name, declOwner, ReadWriteInstruction.ACCESS.WRITE);
                 for (PsiElement e : writeElements) {
                     myUsedElements.add(e);
                     myUnusedElements.remove(e);
@@ -316,7 +317,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
         for (PsiElement element : myUnusedElements) {
             boolean ignoreUnused = false;
             for (PyInspectionExtension filter : filters) {
-                if (filter.ignoreUnused(element)) {
+                if (filter.ignoreUnused(element, myTypeEvalContext)) {
                     ignoreUnused = true;
                 }
             }
@@ -435,10 +436,10 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
         }
         PyCallExpression expr = (PyCallExpression) source;
         if (expr.isCalleeText("range", "xrange")) {
-            PyCallable callee = expr.resolveCalleeFunction(PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext));
-            if (callee != null && PyBuiltinCache.getInstance(forStatement).isBuiltin(callee)) {
-                return true;
-            }
+            final PyResolveContext resolveContext = PyResolveContext.defaultContext(myTypeEvalContext);
+            final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(forStatement);
+
+            return ContainerUtil.exists(expr.multiResolveCalleeFunction(resolveContext), builtinCache::isBuiltin);
         }
         return false;
     }

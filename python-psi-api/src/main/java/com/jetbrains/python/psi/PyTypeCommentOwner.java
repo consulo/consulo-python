@@ -15,33 +15,19 @@
  */
 package com.jetbrains.python.psi;
 
+import consulo.language.psi.PsiElement;
+import com.jetbrains.python.ast.PyAstTypeCommentOwner;
 import org.jspecify.annotations.Nullable;
-import consulo.language.psi.PsiComment;
 
 /**
  * @author Mikhail Golubev
  */
-public interface PyTypeCommentOwner
-{
-	/**
-	 * Returns a special comment that follows element definition and starts with conventional "type:" prefix.
-	 * It is supposed to contain type annotation in PEP 484 compatible format. For further details see sections
-	 * <a href="https://www.python.org/dev/peps/pep-0484/#type-comments">Type Comments</a> and
-	 * <a href="https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code">Suggested syntax for Python 2.7 and straddling code</a> and
-	 * in PEP 484.
-	 * <p>
-	 * Use {@link #getTypeCommentAnnotation()} to get its content with the prefix stripped accessing either stubs or AST.
-	 *
-	 * @see #getTypeCommentAnnotation()
-	 */
-	@Nullable
-	PsiComment getTypeComment();
-
-	/**
-	 * Returns type annotation after the "type:" prefix extracted from the commentary returned by {@link #getTypeComment()}.
-	 *
-	 * @see #getTypeComment()
-	 */
-	@Nullable
-	String getTypeCommentAnnotation();
+public interface PyTypeCommentOwner extends PyAstTypeCommentOwner, PsiElement {
+    /**
+     * Returns type annotation after the "type:" prefix extracted from the commentary returned by {@link #getTypeComment()}.
+     *
+     * @see #getTypeComment()
+     */
+    @Nullable
+    String getTypeCommentAnnotation();
 }

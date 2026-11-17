@@ -1,22 +1,5 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.toolbox;
-
-import consulo.annotation.DeprecationInfo;
 
 import org.jspecify.annotations.Nullable;
 
@@ -27,63 +10,72 @@ import java.util.NoSuchElementException;
  * Useful when null must be a defined value.
  * Instances are immutable.
  * <br/>
- * User: dcheryasov
- * Date: Jun 5, 2010 3:52:59 PM
  */
-@Deprecated
-@DeprecationInfo("Use Optional")
 public class Maybe<T> {
-  private boolean myIsDefined;
-  private T myValue;
+    private final boolean myIsDefined;
+    private final @Nullable T myValue;
 
-  /**
-   * @return true iff this instance has a defined value.
-   */
-  public boolean isDefined() {
-    return myIsDefined;
-  }
-
-
-  /**
-   * @return value if it is defined, or null.
-   */
-  @Nullable
-  public T valueOrNull() {
-    if (myIsDefined) return myValue;
-    else return null;
-  }
-
-  /**
-   * @return value if it is defined; else throws a NoSuchElementException.
-   */
-  public T value() {
-    if (myIsDefined) return myValue;
-    else throw new NoSuchElementException("Accessing undefined value of Maybe");
-  }
-
-  /**
-   * Creates a defined instance.
-   * @param value what to store.
-   */
-  public Maybe(T value) {
-    myValue = value;
-    myIsDefined = true;
-  }
-
-  /**
-   * Creates an undefined instance.
-   */
-  public Maybe() {
-    myValue = null;
-    myIsDefined = false;
-  }
-
-  @Override
-  public String toString() {
-    if (myIsDefined) {
-      if (myValue == null) return "?(null)";
-      else return "?(" + myValue.toString() + ")";
+    /**
+     * @return true iff this instance has a defined value.
+     */
+    public boolean isDefined() {
+        return myIsDefined;
     }
-    else return "?_";
-  }
+
+
+    /**
+     * @return value if it is defined, or null.
+     */
+    public @Nullable T valueOrNull() {
+        if (myIsDefined) {
+            return myValue;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * @return value if it is defined; else throws a NoSuchElementException.
+     */
+    public T value() {
+        if (myIsDefined) {
+            return myValue;
+        }
+        else {
+            throw new NoSuchElementException("Accessing undefined value of Maybe");
+        }
+    }
+
+    /**
+     * Creates a defined instance.
+     * @param value what to store.
+     */
+    public Maybe(T value) {
+        myValue = value;
+        myIsDefined = true;
+    }
+
+    /**
+     * Creates an undefined instance.
+     */
+    public Maybe() {
+        myValue = null;
+        myIsDefined = false;
+    }
+
+    @Override
+    public String toString() {
+        if (myIsDefined) {
+            if (myValue == null) {
+                return "?(null)";
+            }
+            else {
+                return "?(" + myValue.toString() + ")";
+            }
+        }
+        else {
+            return "?_";
+        }
+    }
 }

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.impl.PythonUiService;
 import com.google.common.collect.Sets;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.types.PyModuleType;
@@ -23,9 +24,11 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
 import consulo.language.ast.ASTNode;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.*;
 import consulo.language.psi.resolve.PsiElementProcessor;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -53,6 +56,8 @@ import static com.jetbrains.python.impl.psi.PyUtil.sure;
  * @author dcheryasov
  * @since 2009-09-26
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ImportFromToImportIntention", categories = "Python", fileExtensions = "py")
 public class ImportFromToImportIntention extends PyBaseIntentionAction {
     /**
      * This class exists to extract bunches of info we can't store in our stateless instance.
@@ -291,7 +296,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
                     PyReferenceExpression refEx = iElt.getImportReferenceExpression();
                     assert refEx != null; // else we won't resolve to this iElt
                     String realName = refEx.getReferencedName();
-                    ASTNode newQualifier = generator.createExpressionFromText(realName).getNode();
+                    ASTNode newQualifier = generator.createExpressionFromText(LanguageLevel.forElement(refEx), realName).getNode();
                     assert newQualifier != null;
                     //ASTNode first_under_target = target_node.getFirstChildNode();
                     //if (first_under_target != null) new_qualifier.addChildren(first_under_target, null, null); // save the children if any
@@ -326,7 +331,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
             //myFromImportStatement.replace(new_import);
         }
         catch (IncorrectOperationException ignored) {
-            PyUtil.showBalloon(project, PyLocalize.qfixActionFailed(), NotificationType.WARNING);
+            PythonUiService.getInstance().showBalloonWarning(project, PyLocalize.qfixActionFailed().get());
         }
     }
 }

@@ -1,0 +1,304 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.jetbrains.python.impl.psi.impl.blockEvaluator;
+
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyAugAssignmentStatement;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyReturnStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyEvaluator;
+import com.jetbrains.python.impl.psi.impl.PyPathEvaluator;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class PyBlockEvaluator {
+    private final PyEvaluationResult myEvaluationResult = new PyEvaluationResult();
+    private final PyEvaluationContext myContext;
+    private final Set<PyFile> myVisitedFiles;
+    private final Set<String> myDeclarationsToTrack = new HashSet<>();
+    private @Nullable String myCurrentFilePath;
+    private @Nullable Object myReturnValue;
+    private boolean myEvaluateCollectionItems = true;
+
+    /**
+     * @param evaluationContext context, obtained via {@link #getContext()}. Pass it here to enable cache. See {@link PyEvaluationContext}
+     *                          for more info
+     * @see PyEvaluationContext
+     */
+    public PyBlockEvaluator(PyEvaluationContext evaluationContext) {
+        this(new HashSet<>(), evaluationContext);
+    }
+
+    /**
+     * Create evaluator with out of cache context
+     */
+    public PyBlockEvaluator() {
+        this(new PyEvaluationContext());
+    }
+
+    private PyBlockEvaluator(Set<PyFile> visitedFiles, PyEvaluationContext evaluationContext) {
+        myVisitedFiles = visitedFiles;
+        myContext = evaluationContext;
+    }
+
+    public void trackDeclarations(String attrName) {
+        myDeclarationsToTrack.add(attrName);
+    }
+
+    public void evaluate(PyElement element) {
+        VirtualFile vFile = element.getContainingFile().getVirtualFile();
+        myCurrentFilePath = vFile != null ? vFile.getPath() : null;
+        if (myVisitedFiles.contains(element)) {
+            return;
+        }
+        myVisitedFiles.add((PyFile)element.getContainingFile());
+        PyElement statementContainer = element instanceof PyFunction ? ((PyFunction)element).getStatementList() : element;
+        statementContainer.acceptChildren(new MyPyElementVisitor());
+    }
+
+    private void processExtendCall(PyCallExpression node, String nameBeingExtended) {
+        PyExpression arg = node.getArguments()[0];
+
+        Object value = myEvaluationResult.myNamespace.get(nameBeingExtended);
+        if (value instanceof List) {
+            Object argValue = prepareEvaluator().evaluate(arg);
+            if (argValue != null) {
+                myEvaluationResult.myNamespace.put(nameBeingExtended, prepareEvaluator().applyPlus(value, argValue));
+            }
+        }
+
+        if (myDeclarationsToTrack.contains(nameBeingExtended)) {
+            List<PyExpression> declarations = myEvaluationResult.myDeclarations.get(nameBeingExtended);
+            if (declarations != null) {
+                PyPsiUtils.sequenceToList(declarations, arg);
+            }
+        }
+    }
+
+    private void processUpdateCall(PyCallExpression node, String name) {
+        Object value = myEvaluationResult.myNamespace.get(name);
+        if (value instanceof Map) {
+            Object argValue = prepareEvaluator().evaluate(node.getArguments()[0]);
+            if (argValue instanceof Map) {
+                ((Map)value).putAll((Map)argValue);
+            }
+        }
+    }
+
+    private PyEvaluator prepareEvaluator() {
+        PyEvaluator evaluator = createEvaluator();
+        evaluator.setNamespace(myEvaluationResult.myNamespace);
+        evaluator.setEvaluateCollectionItems(myEvaluateCollectionItems);
+        return evaluator;
+    }
+
+    protected PyEvaluator createEvaluator() {
+        return new PyPathEvaluator(myCurrentFilePath);
+    }
+
+    public @Nullable Object getValue(String name) {
+        return myEvaluationResult.myNamespace.get(name);
+    }
+
+    public @Nullable String getValueAsString(String name) {
+        Object value = myEvaluationResult.myNamespace.get(name);
+        return value instanceof String ? (String)value : null;
+    }
+
+    public @Nullable List getValueAsList(String name) {
+        Object value = myEvaluationResult.myNamespace.get(name);
+        return value instanceof List ? (List)value : null;
+    }
+
+    public List<String> getValueAsStringList(String name) {
+        Object value = myEvaluationResult.myNamespace.get(name);
+        if (value instanceof List valueList) {
+            for (Object o : valueList) {
+                if (o != null && !(o instanceof String)) {
+                    return Collections.emptyList();
+                }
+            }
+            return (List<String>)value;
+        }
+        if (value instanceof String) {
+            return Collections.singletonList((String)value);
+        }
+        return Collections.emptyList();
+    }
+
+    public Set<PyFile> getVisitedFiles() {
+        return myVisitedFiles;
+    }
+
+    public @Nullable Object getReturnValue() {
+        return myReturnValue;
+    }
+
+    public void setEvaluateCollectionItems(boolean evaluateCollectionItems) {
+        myEvaluateCollectionItems = evaluateCollectionItems;
+    }
+
+    public List<PyExpression> getDeclarations(String name) {
+        return myEvaluationResult.getDeclarations(name);
+    }
+
+    /**
+     * @return so-called context. You may pass it to any instance of {@link PyBlockEvaluator}
+     * to make instances share their cache
+     */
+    public PyEvaluationContext getContext() {
+        return myContext;
+    }
+
+    private class MyPyElementVisitor extends PyElementVisitor {
+        @Override
+        public void visitPyAssignmentStatement(PyAssignmentStatement node) {
+            PyExpression expression = node.getLeftHandSideExpression();
+            if (expression instanceof PyTargetExpression) {
+                String name = expression.getName();
+                PyExpression value = ((PyTargetExpression)expression).findAssignedValue();
+                myEvaluationResult.myNamespace.put(name, prepareEvaluator().evaluate(value));
+                if (myDeclarationsToTrack.contains(name)) {
+                    List<PyExpression> declarations = new ArrayList<>();
+                    PyPsiUtils.sequenceToList(declarations, value);
+                    myEvaluationResult.myDeclarations.put(name, declarations);
+                }
+            }
+            else if (expression instanceof PySubscriptionExpression) {
+                PyExpression operand = ((PySubscriptionExpression)expression).getOperand();
+                PyExpression indexExpression = ((PySubscriptionExpression)expression).getIndexExpression();
+                if (operand instanceof PyReferenceExpression && ((PyReferenceExpression)operand).getQualifier() == null) {
+                    Object currentValue = myEvaluationResult.myNamespace.get(((PyReferenceExpression)operand).getReferencedName());
+                    if (currentValue instanceof Map) {
+                        Object mapKey = prepareEvaluator().evaluate(indexExpression);
+                        if (mapKey != null) {
+                            Object value = myEvaluateCollectionItems ? prepareEvaluator().evaluate(node.getAssignedValue()) : node.getAssignedValue();
+                            ((Map)currentValue).put(mapKey, value);
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void visitPyAugAssignmentStatement(PyAugAssignmentStatement node) {
+            PyExpression target = node.getTarget();
+            String name = target.getName();
+            if (target instanceof PyReferenceExpression && !((PyReferenceExpression)target).isQualified() && name != null) {
+                Object currentValue = myEvaluationResult.myNamespace.get(name);
+                if (currentValue != null) {
+                    Object rhs = prepareEvaluator().evaluate(node.getValue());
+                    myEvaluationResult.myNamespace.put(name, prepareEvaluator().applyPlus(currentValue, rhs));
+                }
+                if (myDeclarationsToTrack.contains(name)) {
+                    List<PyExpression> declarations = myEvaluationResult.myDeclarations.get(name);
+                    if (declarations != null) {
+                        PyPsiUtils.sequenceToList(declarations, node.getValue());
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void visitPyExpressionStatement(PyExpressionStatement node) {
+            node.getExpression().accept(this);
+        }
+
+        @Override
+        public void visitPyCallExpression(PyCallExpression node) {
+            PyExpression callee = node.getCallee();
+            if (callee instanceof PyReferenceExpression calleeRef) {
+                PyExpression qualifier = calleeRef.getQualifier();
+                if (qualifier instanceof PyReferenceExpression qualifierRef) {
+                    if (!qualifierRef.isQualified()) {
+                        if (PyNames.EXTEND.equals(calleeRef.getReferencedName()) && node.getArguments().length == 1) {
+                            processExtendCall(node, qualifierRef.getReferencedName());
+                        }
+                        else if (PyNames.UPDATE.equals(calleeRef.getReferencedName()) && node.getArguments().length == 1) {
+                            processUpdateCall(node, qualifierRef.getReferencedName());
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void visitPyFromImportStatement(PyFromImportStatement node) {
+            if (node.isFromFuture()) {
+                return;
+            }
+            PsiElement source = PyUtil.turnDirIntoInit(node.resolveImportSource());
+            if (source instanceof PyFile pyFile) {
+                PyEvaluationResult newlyEvaluatedResult = myContext.getCachedResult(pyFile);
+
+                if (newlyEvaluatedResult == null) {
+                    PyBlockEvaluator importEvaluator = new PyBlockEvaluator(myVisitedFiles, myContext);
+                    importEvaluator.myDeclarationsToTrack.addAll(myDeclarationsToTrack);
+                    importEvaluator.evaluate(pyFile);
+                    newlyEvaluatedResult = importEvaluator.myEvaluationResult;
+                    myContext.cache(pyFile, newlyEvaluatedResult);
+                }
+
+                if (node.isStarImport()) {
+                    // TODO honor __all__ here
+                    myEvaluationResult.myNamespace.putAll(newlyEvaluatedResult.myNamespace);
+                    myEvaluationResult.myDeclarations.putAll(newlyEvaluatedResult.myDeclarations);
+                }
+                else {
+                    for (PyImportElement element : node.getImportElements()) {
+                        String nameOfVarInOurModule = element.getVisibleName();
+                        QualifiedName nameOfVarInExternalModule = element.getImportedQName();
+                        if ((nameOfVarInOurModule == null) || (nameOfVarInExternalModule == null)) {
+                            continue;
+                        }
+
+                        Object value = newlyEvaluatedResult.myNamespace.get(nameOfVarInExternalModule.toString());
+                        myEvaluationResult.myNamespace.put(nameOfVarInOurModule, value);
+                        List<PyExpression> declarations = newlyEvaluatedResult.getDeclarations(nameOfVarInOurModule);
+                        if (myEvaluationResult.myDeclarations.containsKey(nameOfVarInOurModule)) {
+                            myEvaluationResult.myDeclarations.get(nameOfVarInOurModule).addAll(declarations);
+                        }
+                        else {
+                            myEvaluationResult.myDeclarations.put(nameOfVarInOurModule, declarations);
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void visitPyIfStatement(PyIfStatement node) {
+            PyStatementList list = node.getIfPart().getStatementList();
+            list.acceptChildren(this);
+        }
+
+        @Override
+        public void visitPyReturnStatement(PyReturnStatement node) {
+            myReturnValue = prepareEvaluator().evaluate(node.getExpression());
+        }
+    }
+}

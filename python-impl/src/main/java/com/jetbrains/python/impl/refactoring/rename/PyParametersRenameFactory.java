@@ -25,7 +25,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
 import consulo.usage.UsageInfo;
 import consulo.application.util.function.Processor;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameter;

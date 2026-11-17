@@ -15,13 +15,16 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.FileModificationService;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
@@ -50,6 +53,8 @@ import static com.jetbrains.python.impl.psi.PyUtil.sure;
  * @author dcheryasov
  * @since 2009-09-22
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ImportToImportFromIntention", categories = "Python", fileExtensions = "py")
 public class ImportToImportFromIntention extends PyBaseIntentionAction {
     private static class IntentionState {
         private String myModuleName = null;
@@ -194,7 +199,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
                 }
             }
             catch (IncorrectOperationException ignored) {
-                PyUtil.showBalloon(project, PyLocalize.qfixActionFailed(), NotificationType.WARNING);
+                PythonUiService.getInstance().showBalloonWarning(project, PyLocalize.qfixActionFailed().get());
             }
         }
 

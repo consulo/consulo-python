@@ -1,32 +1,23 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections;
 
+import consulo.localize.LocalizeValue;
+import consulo.annotation.component.ExtensionImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
-import com.jetbrains.python.impl.documentation.docstrings.PlainDocString;
-import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.toolbox.Substring;
-import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
-import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
+import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
+import com.jetbrains.python.documentation.docstrings.PlainDocString;
+import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.StructuredDocString;
+import com.jetbrains.python.toolbox.Substring;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,23 +28,17 @@ import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**
  * @author Mikhail Golubev
- * @author Alexey.Ivanov
  */
 @ExtensionImpl
-public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
+public final class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameIncorrectDocstring();
     }
 
     @Override
-    public Visitor buildVisitor(
-        ProblemsHolder holder,
-        boolean isOnTheFly,
-        LocalInspectionToolSession session,
-        Object state
-    ) {
-        return new Visitor(holder, session) {
+    public Visitor buildVisitor(ProblemsHolder holder, boolean isOnTheFly, LocalInspectionToolSession session, Object state) {
+        return new Visitor(holder, PyInspectionVisitor.getContext(session)) {
 
             @Override
             protected void checkDocString(PyDocStringOwner node) {
@@ -70,16 +55,14 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
                 }
 
                 if (pyDocStringOwner instanceof PyFunction) {
-                    PyParameter[] realParams = ((PyFunction) pyDocStringOwner).getParameterList().getParameters();
+                    PyParameter[] realParams = ((PyFunction)pyDocStringOwner).getParameterList().getParameters();
 
                     List<PyNamedParameter> missingParams = getMissingParams(docString, realParams);
                     if (!missingParams.isEmpty()) {
                         for (PyNamedParameter param : missingParams) {
-                            registerProblem(
-                                param,
-                                PyLocalize.inspMissingParameterInDocstring(param.getName()).get(),
-                                new DocstringQuickFix(param, null)
-                            );
+                            registerProblem(param,
+                                            PyLocalize.inspMissingParameterInDocstring(param.getName()).get(),
+                                            new DocstringQuickFix(param, null));
                         }
                     }
                     List<Substring> unexpectedParams = getUnexpectedParams(docString, realParams);
@@ -88,10 +71,9 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
                             ProblemsHolder holder = getHolder();
 
                             if (holder != null) {
-                                holder.newProblem(PyLocalize.inspUnexpectedParameterInDocstring(param))
-                                    .range(node, param.getTextRange())
-                                    .withFix(new DocstringQuickFix(null, param.getValue()))
-                                    .create();
+                                holder.registerProblem(node, param.getTextRange(),
+                                                       PyLocalize.inspUnexpectedParameterInDocstring(param).get(),
+                                                       new DocstringQuickFix(null, param.getValue()));
                             }
                         }
                     }
@@ -100,7 +82,8 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
         };
     }
 
-    private static List<PyNamedParameter> getMissingParams(StructuredDocString docString, PyParameter[] realParams) {
+    private static List<PyNamedParameter> getMissingParams(StructuredDocString docString,
+                                                                    PyParameter [] realParams) {
         List<PyNamedParameter> missing = new ArrayList<>();
         List<String> docStringParameters = docString.getParameters();
         if (docStringParameters.isEmpty()) {
@@ -113,13 +96,13 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
                 continue;
             }
             if (!docStringParameters.contains(p.getName())) {
-                missing.add((PyNamedParameter) p);
+                missing.add((PyNamedParameter)p);
             }
         }
         return missing;
     }
 
-    private static List<Substring> getUnexpectedParams(StructuredDocString docString, PyParameter[] realParams) {
+    private static List<Substring> getUnexpectedParams(StructuredDocString docString, PyParameter [] realParams) {
         Map<String, Substring> unexpected = Maps.newHashMap();
 
         for (Substring s : docString.getParameterSubstrings()) {
@@ -127,9 +110,7 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
         }
 
         for (PyParameter p : realParams) {
-            if (unexpected.containsKey(p.getName())) {
-                unexpected.remove(p.getName());
-            }
+            unexpected.remove(p.getName());
         }
         return Lists.newArrayList(unexpected.values());
     }

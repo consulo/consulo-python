@@ -20,6 +20,7 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.impl.psi.impl.ParamHelper;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
@@ -44,24 +45,24 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 {
 	@Override
 	@Nullable
-	public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public Ref<PyType> getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof DotNetTypeDeclaration)
 		{
-			return new PyDotNetClassType((DotNetTypeDeclaration) referenceTarget, true);
+			return Ref.create(new PyDotNetClassType((DotNetTypeDeclaration) referenceTarget, true));
 		}
 		if(referenceTarget instanceof DotNetNamespaceAsElement)
 		{
-			return new PyDotNetNamespaceType((DotNetNamespaceAsElement) referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor));
+			return Ref.create(new PyDotNetNamespaceType((DotNetNamespaceAsElement) referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor)));
 		}
 		if(referenceTarget instanceof DotNetLikeMethodDeclaration)
 		{
 			DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) referenceTarget;
-			return new PyDotNetMethodType(method);
+			return Ref.create(new PyDotNetMethodType(method));
 		}
 		if(referenceTarget instanceof DotNetVariable)
 		{
-			return asPyType(((DotNetVariable) referenceTarget).toTypeRef(true));
+			return PyTypeUtil.notNullToRef(asPyType(((DotNetVariable) referenceTarget).toTypeRef(true)));
 		}
 		return null;
 	}

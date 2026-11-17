@@ -21,7 +21,7 @@ import com.intellij.java.language.psi.PsiMethod;
 import com.jetbrains.python.impl.psi.impl.ResolveResultList;
 import com.jetbrains.python.impl.psi.resolve.CompletionVariantsProcessor;
 import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
@@ -119,7 +119,7 @@ public class PyJavaClassType implements PyClassLikeType {
 
   @Nullable
   @Override
-  public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite) {
+  public PyType getCallType(TypeEvalContext context, PyElement callSite) {
     return getReturnType(context);
   }
 
@@ -139,6 +139,11 @@ public class PyJavaClassType implements PyClassLikeType {
     return myDefinition ? new PyJavaClassType(myClass, false) : this;
   }
 
+  @Override
+  public PyClassLikeType toClass() {
+    return myDefinition ? this : new PyJavaClassType(myClass, true);
+  }
+
   @Nullable
   @Override
   public String getClassQName() {
@@ -155,7 +160,7 @@ public class PyJavaClassType implements PyClassLikeType {
   }
 
   @Override
-  public void visitMembers(Predicate<PsiElement> processor, boolean inherited, TypeEvalContext context) {
+  public void visitMembers(Predicate<? super PsiElement> processor, boolean inherited, TypeEvalContext context) {
     for (PsiMethod method : myClass.getAllMethods()) {
       processor.test(method);
     }

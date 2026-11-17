@@ -1,5 +1,6 @@
 package com.jetbrains.python;
 
+import com.jetbrains.python.ast.PyAstFunction;
 import java.util.Collection;
 import java.util.List;
 
@@ -328,8 +329,8 @@ public abstract class PyStubsTest extends PyTestCase {
     PyClass pyClass = file.getTopLevelClasses().get(0);
     PyFunction[] methods = pyClass.getMethods();
     assertEquals(1, methods.length);
-    PyFunction.Modifier modifier = methods[0].getModifier();
-    assertEquals(PyFunction.Modifier.STATICMETHOD, modifier);
+    PyAstFunction.Modifier modifier = methods[0].getModifier();
+    assertEquals(PyAstFunction.Modifier.STATICMETHOD, modifier);
     assertNotParsed(file);
   }
 

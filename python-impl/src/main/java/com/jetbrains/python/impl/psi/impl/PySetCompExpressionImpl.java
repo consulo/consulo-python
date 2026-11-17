@@ -1,41 +1,39 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.PyExpression;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PySetCompExpression;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.impl.psi.types.PyCollectionTypeImpl;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-/**
- * @author yole
- */
+import java.util.Collections;
+
+
 public class PySetCompExpressionImpl extends PyComprehensionElementImpl implements PySetCompExpression {
-  public PySetCompExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PySetCompExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    return PyBuiltinCache.getInstance(this).getSetType();
-  }
+    @Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression resultExpr = getResultExpression();
+        PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
+        PyClassType setType = cache.getSetType();
+        if (setType != null && resultExpr != null) {
+            PyType type = PyLiteralType.upcastLiteralToClass(getResultElementType(resultExpr, context));
+            return new PyCollectionTypeImpl(setType.getPyClass(), false, Collections.singletonList(type));
+        }
+        return setType != null ? setType : PyAnyType.getUnknown();
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPySetCompExpression(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPySetCompExpression(this);
+    }
 }

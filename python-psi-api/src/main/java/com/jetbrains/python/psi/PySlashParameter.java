@@ -1,60 +1,31 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-/*
- * Copyright 2013-2026 consulo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jetbrains.python.psi;
 
-import com.jetbrains.python.psi.stubs.PySlashParameterStub;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.StubBasedPsiElement;
+import com.jetbrains.python.ast.PyAstSlashParameter;
+import com.jetbrains.python.psi.stubs.PySlashParameterStub;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Represents positional-only parameters delimiter introduced in Python 3.8 (PEP 570).
- * <p>
- * Consulo: the default methods of JB {@code com.jetbrains.python.ast.PyAstSlashParameter} are declared here,
- * because the python-ast layer is not ported.
  */
-public interface PySlashParameter extends PyParameter, StubBasedPsiElement<PySlashParameterStub> {
-    String TEXT = "/";
-
+public interface PySlashParameter extends PyAstSlashParameter, PyParameter, StubBasedPsiElement<PySlashParameterStub> {
     @Override
+    @RequiredReadAction
     default @Nullable PyNamedParameter getAsNamed() {
-        return null;
+        return (PyNamedParameter)PyAstSlashParameter.super.getAsNamed();
     }
 
     @Override
+    @RequiredReadAction
     default @Nullable PyTupleParameter getAsTuple() {
-        return null;
+        return (PyTupleParameter)PyAstSlashParameter.super.getAsTuple();
     }
 
     @Override
+    @RequiredReadAction
     default @Nullable PyExpression getDefaultValue() {
-        return null;
-    }
-
-    @Override
-    default boolean hasDefaultValue() {
-        return false;
-    }
-
-    default @Nullable String getDefaultValueText() {
-        return null;
-    }
-
-    @Override
-    default boolean isSelf() {
-        return false;
+        return (PyExpression)PyAstSlashParameter.super.getDefaultValue();
     }
 }

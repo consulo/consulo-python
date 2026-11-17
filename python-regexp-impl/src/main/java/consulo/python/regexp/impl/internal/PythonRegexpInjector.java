@@ -18,6 +18,7 @@ package consulo.python.regexp.impl.internal;
 
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.Language;
 import consulo.language.inject.MultiHostInjector;
 import consulo.language.inject.MultiHostRegistrar;
@@ -71,7 +72,8 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
       if (call != null) {
         PyExpression callee = call.getCallee();
         if (callee instanceof PyReferenceExpression && canBeRegexpCall(callee)) {
-          PsiPolyVariantReference ref = ((PyReferenceExpression)callee).getReference(PyResolveContext.noImplicits());
+          TypeEvalContext typeEvalContext = TypeEvalContext.codeAnalysis(call.getProject(), call.getContainingFile());
+          PsiPolyVariantReference ref = ((PyReferenceExpression)callee).getReference(PyResolveContext.defaultContext(typeEvalContext));
           if (ref != null) {
             PsiElement element = ref.resolve();
             if (element != null && element.getContainingFile().getName().equals("re.py") && isRegexpMethod(element, index)) {

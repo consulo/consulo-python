@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.sdk.skeletons;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.codeInsight.userSkeletons.PyUserSkeletonsUtil;
 import com.jetbrains.python.impl.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.impl.sdk.InvalidSdkException;
 import com.jetbrains.python.impl.sdk.PySdkUtil;
@@ -231,9 +230,6 @@ public class PySkeletonRefresher {
     private static String calculateExtraSysPath(Sdk sdk, @Nullable String skeletonsPath) {
         File skeletons = skeletonsPath != null ? new File(skeletonsPath) : null;
 
-        VirtualFile userSkeletonsDir = PyUserSkeletonsUtil.getUserSkeletonsDirectory();
-        File userSkeletons = userSkeletonsDir != null ? new File(userSkeletonsDir.getPath()) : null;
-
         List<VirtualFile> paths = new ArrayList<>();
 
         paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(BinariesOrderRootType.ID)));
@@ -244,8 +240,7 @@ public class PySkeletonRefresher {
                 // We compare canonical files, not strings because "c:/some/folder" equals "c:\\some\\bin\\..\\folder\\"
                 File canonicalFile = new File(file.getPath());
                 if (canonicalFile.exists()
-                    && !FileUtil.filesEqual(canonicalFile, skeletons)
-                    && !FileUtil.filesEqual(canonicalFile, userSkeletons)) {
+                    && !FileUtil.filesEqual(canonicalFile, skeletons)) {
                     return file.getPath();
                 }
             }

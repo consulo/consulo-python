@@ -1,15 +1,16 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import java.util.Arrays;
+import consulo.annotation.access.RequiredReadAction;
+import com.jetbrains.python.ast.PyAstPatternArgumentList;
+
 import java.util.List;
 
-import static com.jetbrains.python.ast.PyAstElementKt.findChildrenByClass;
-
-// TODO consulo: JB extends com.jetbrains.python.ast.PyAstPatternArgumentList (python-ast layer not ported),
-//  its default methods are placed here
-public interface PyPatternArgumentList extends PyElement {
-  default List<PyPattern> getPatterns() {
-    return Arrays.asList(findChildrenByClass(this, PyPattern.class));
-  }
+public interface PyPatternArgumentList extends PyAstPatternArgumentList, PyElement {
+    @Override
+    @RequiredReadAction
+    default List<PyPattern> getPatterns() {
+        //noinspection unchecked
+        return (List<PyPattern>)PyAstPatternArgumentList.super.getPatterns();
+    }
 }

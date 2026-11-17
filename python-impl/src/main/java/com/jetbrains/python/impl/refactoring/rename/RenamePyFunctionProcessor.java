@@ -27,7 +27,7 @@ import consulo.ui.MessageButtonRole;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.application.util.function.Processor;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 /**
  * @author yole
  */
-@ExtensionImpl(id = "pyFunc", order = "before pyVar")
+@ExtensionImpl(id = "pyFunc", order = "before pyvar")
 public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   @Override
   public boolean canProcessElement(PsiElement element) {

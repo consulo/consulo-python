@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.rename;
 
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
@@ -29,11 +29,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author yole
  */
-@ExtensionImpl(id = "pyVar", order = "after pyFile")
+@ExtensionImpl(id = "pyvar", order = "after pyFile")
 public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
   public boolean canProcessElement(PsiElement element) {
-    // @ExtensionImpl ordering (pyFunc/pyClass are "before pyVar") ensures that classes and functions are handled by their own processors
+    // @ExtensionImpl ordering (pyFunc/pyClass are "before pyvar") ensures that classes and functions are handled by their own processors
     return element instanceof PyElement && !(element instanceof PyReferenceExpression);
   }
 

@@ -1,378 +1,281 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
-import com.google.common.collect.ImmutableList;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.stubs.PyFromImportStatementStub;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import consulo.language.ast.ASTNode;
-import consulo.language.ast.StandardTokenTypes;
-import consulo.language.psi.*;
-import consulo.language.psi.resolve.PsiScopeProcessor;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.resolve.ResolveState;
+import consulo.language.psi.resolve.DelegatingScopeProcessor;
+import consulo.language.psi.resolve.PsiScopeProcessor;
 import consulo.language.psi.stub.IStubElementType;
+import consulo.language.ast.IElementType;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
-
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.ast.impl.ValueHolder;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyElementType;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyStarImportElement;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
+import com.jetbrains.python.psi.stubs.PyFromImportStatementStub;
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-/**
- * @author yole
- */
-public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportStatementStub> implements PyFromImportStatement
-{
-	public PyFromImportStatementImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportStatementStub>
+    implements PyFromImportStatement /* TODO consulo: PsiListLikeElement missing */ {
+    private volatile @Nullable ValueHolder<QualifiedName> myImportSourceQName;
 
-	public PyFromImportStatementImpl(PyFromImportStatementStub stub)
-	{
-		this(stub, PyStubElementTypes.FROM_IMPORT_STATEMENT);
-	}
+    public PyFromImportStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	public PyFromImportStatementImpl(PyFromImportStatementStub stub, IStubElementType nodeType)
-	{
-		super(stub, nodeType);
-	}
+    public PyFromImportStatementImpl(PyFromImportStatementStub stub) {
+        this(stub, PyStubElementTypes.FROM_IMPORT_STATEMENT);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyFromImportStatement(this);
-	}
-
-	@Override
-    @RequiredReadAction
-    public boolean isStarImport()
-	{
-		PyFromImportStatementStub stub = getStub();
-		if(stub != null)
-		{
-			return stub.isStarImport();
-		}
-		return getStarImportElement() != null;
-	}
-
-	@Nullable
-    @Override
-    @RequiredReadAction
-	public PyReferenceExpression getImportSource()
-	{
-		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens(), 0);
-	}
-
-	@Override
-    @RequiredReadAction
-    public QualifiedName getImportSourceQName()
-	{
-		PyFromImportStatementStub stub = getStub();
-		if(stub != null)
-		{
-			QualifiedName qName = stub.getImportSourceQName();
-			if(qName != null && qName.getComponentCount() == 0)
-			{  // relative import only: from .. import the_name
-				return null;
-			}
-			return qName;
-		}
-
-		PyReferenceExpression importSource = getImportSource();
-		if(importSource == null)
-		{
-			return null;
-		}
-		return importSource.asQualifiedName();
-	}
-
-	@Override
-    @RequiredReadAction
-    public PyImportElement[] getImportElements()
-	{
-		PyFromImportStatementStub stub = getStub();
-		if(stub != null)
-		{
-			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, PyImportElement[]::new);
-		}
-		List<PyImportElement> result = new ArrayList<>();
-		ASTNode importKeyword = getNode().findChildByType(PyTokenTypes.IMPORT_KEYWORD);
-		if(importKeyword != null)
-		{
-			for(ASTNode node = importKeyword.getTreeNext(); node != null; node = node.getTreeNext())
-			{
-				if(node.getElementType() == PyElementTypes.IMPORT_ELEMENT)
-				{
-					result.add((PyImportElement) node.getPsi());
-				}
-			}
-		}
-		return result.toArray(new PyImportElement[result.size()]);
-	}
-
-	@Nullable
-    @Override
-    @RequiredReadAction
-	public PyStarImportElement getStarImportElement()
-	{
-		return getStubOrPsiChild(PyStubElementTypes.STAR_IMPORT_ELEMENT);
-	}
-
-	@Override
-    @RequiredReadAction
-    public int getRelativeLevel()
-	{
-		PyFromImportStatementStub stub = getStub();
-		if(stub != null)
-		{
-			return stub.getRelativeLevel();
-		}
-
-		int result = 0;
-		ASTNode seeker = getNode().getFirstChildNode();
-		while(seeker != null && (seeker.getElementType() == PyTokenTypes.FROM_KEYWORD || seeker.getElementType() == StandardTokenTypes.WHITE_SPACE))
-		{
-			seeker = seeker.getTreeNext();
-		}
-		while(seeker != null && seeker.getElementType() == PyTokenTypes.DOT)
-		{
-			result++;
-			seeker = seeker.getTreeNext();
-		}
-		return result;
-	}
-
-	@Override
-    @RequiredReadAction
-    public boolean isFromFuture()
-	{
-		QualifiedName qName = getImportSourceQName();
-		return qName != null && qName.matches(PyNames.FUTURE_MODULE);
-	}
-
-	@Override
-    @RequiredReadAction
-    public PsiElement getLeftParen()
-	{
-		return findChildByType(PyTokenTypes.LPAR);
-	}
-
-	@Override
-    @RequiredReadAction
-	public PsiElement getRightParen()
-	{
-		return findChildByType(PyTokenTypes.RPAR);
-	}
-
-	@Override
-    @RequiredReadAction
-    public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place)
-	{
-		// import is per-file
-		if(place.getContainingFile() != getContainingFile())
-		{
-			return true;
-		}
-		if(isStarImport())
-		{
-			List<PsiElement> targets = ResolveImportUtil.resolveFromImportStatementSource(this, getImportSourceQName());
-			for(PsiElement target : targets)
-			{
-				PsiElement importedFile = PyUtil.turnDirIntoInit(target);
-				if(importedFile != null)
-				{
-					if(!importedFile.processDeclarations(processor, state, null, place))
-					{
-						return false;
-					}
-				}
-			}
-		}
-		else
-		{
-			PyImportElement[] importElements = getImportElements();
-			for(PyImportElement element : importElements)
-			{
-				if(!processor.execute(element, state))
-				{
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    public PyFromImportStatementImpl(PyFromImportStatementStub stub, IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
 
     @Override
-    @RequiredWriteAction
-	public ASTNode addInternal(ASTNode first, ASTNode last, ASTNode anchor, Boolean before)
-	{
-		if(anchor == null)
-		{
-			// adding last element; the import may be "from ... import (...)", must get before the last ")"
-			PsiElement lastChild = getLastChild();
-			if(lastChild != null)
-			{
-				while(lastChild instanceof PsiComment)
-				{
-					lastChild = lastChild.getPrevSibling();
-					anchor = lastChild.getNode();
-				}
-				ASTNode rParNode = lastChild.getNode();
-				if(rParNode != null && rParNode.getElementType() == PyTokenTypes.RPAR)
-				{
-					anchor = rParNode;
-				}
-			}
-		}
-		ASTNode result = super.addInternal(first, last, anchor, before);
-		ASTNode prevNode = result;
-		do
-		{
-			prevNode = prevNode.getTreePrev();
-		}
-		while(prevNode != null && prevNode.getElementType() == StandardTokenTypes.WHITE_SPACE);
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyFromImportStatement(this);
+    }
 
-		if(prevNode != null && prevNode.getElementType() == PyElementTypes.IMPORT_ELEMENT &&
-				result.getElementType() == PyElementTypes.IMPORT_ELEMENT)
-		{
-			ASTNode comma = PyElementGenerator.getInstance(getProject()).createComma();
-			super.addInternal(comma, comma, prevNode, false);
-		}
-
-		return result;
-	}
-
-	@Override
-    @RequiredWriteAction
-	public void deleteChildInternal(ASTNode child)
-	{
-		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
-		{
-			PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, child.getPsi());
-		}
-		super.deleteChildInternal(child);
-	}
-
-	@Nullable
     @Override
-    @RequiredReadAction
-	public PsiFileSystemItem resolveImportSource()
-	{
-		return as(ContainerUtil.getFirstItem(resolveImportSourceCandidates()), PsiFileSystemItem.class);
-	}
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        myImportSourceQName = null;
+    }
 
-	@Override
-    @RequiredReadAction
-	public List<PsiElement> resolveImportSourceCandidates()
-	{
-		QualifiedName qName = getImportSourceQName();
-		if(qName == null)
-		{
-			int level = getRelativeLevel();
-			if(level > 0)
-			{
-				PsiDirectory upper = ResolveImportUtil.stepBackFrom(getContainingFile().getOriginalFile(), level);
-				return upper == null ? Collections.<PsiElement>emptyList() : Collections.<PsiElement>singletonList(upper);
-			}
-		}
-		return ResolveImportUtil.resolveFromImportStatementSource(this, qName);
-	}
+    @Override
+    public @Nullable QualifiedName getImportSourceQName() {
+        ValueHolder<QualifiedName> result = myImportSourceQName;
+        if (result == null) {
+            myImportSourceQName = result = new ValueHolder<>(doGetImportSourceQName());
+        }
+        return result.value;
+    }
 
-	@Override
-    @RequiredReadAction
-	public List<String> getFullyQualifiedObjectNames()
-	{
-		QualifiedName source = getImportSourceQName();
+    private @Nullable QualifiedName doGetImportSourceQName() {
+        PyFromImportStatementStub stub = getStub();
+        if (stub != null) {
+            QualifiedName qName = stub.getImportSourceQName();
+            if (qName != null && qName.getComponentCount() == 0) {  // relative import only: from .. import the_name
+                return null;
+            }
+            return qName;
+        }
 
-		String prefix = (source != null) ? (source.join(".") + '.') : "";
+        return PyFromImportStatement.super.getImportSourceQName();
+    }
 
-		List<String> unqualifiedNames = PyImportStatementImpl.getImportElementNames(getImportElements());
+    @Override
+    public PyImportElement[] getImportElements() {
+        return getImportElements(PyElementTypes.IMPORT_ELEMENT, PyTokenTypes.IMPORT_KEYWORD);
+    }
 
-		List<String> result = new ArrayList<>(unqualifiedNames.size());
+    protected final PyImportElement[] getImportElements(
+        IElementType importElementType,
+        PyElementType importKeywordToken) {
+        PyFromImportStatementStub stub = getStub();
+        if (stub != null) {
+            return stub.getChildrenByType(importElementType, count -> new PyImportElement[count]);
+        }
+        List<PyImportElement> result = new ArrayList<>();
+        ASTNode importKeyword = getNode().findChildByType(importKeywordToken);
+        if (importKeyword != null) {
+            for (ASTNode node = importKeyword.getTreeNext(); node != null; node = node.getTreeNext()) {
+                if (node.getElementType() == importElementType) {
+                    result.add((PyImportElement)node.getPsi());
+                }
+            }
+        }
+        return result.toArray(new PyImportElement[0]);
+    }
 
-		for(String unqualifiedName : unqualifiedNames)
-		{
-			result.add(prefix + unqualifiedName);
-		}
-		return result;
-	}
+    @Override
+    public int getRelativeLevel() {
+        PyFromImportStatementStub stub = getStub();
+        if (stub != null) {
+            return stub.getRelativeLevel();
+        }
 
-	@Override
-    @RequiredReadAction
-	public Iterable<PyElement> iterateNames()
-	{
-		PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
-		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
-	}
+        return PyFromImportStatement.super.getRelativeLevel();
+    }
 
-	@Override
-    @RequiredReadAction
-	public List<RatedResolveResult> multiResolveName(String name)
-	{
-		QualifiedName importSourceQName = getImportSourceQName();
-		if(importSourceQName != null && importSourceQName.endsWith(name))
-		{
-			PsiElement element = resolveImplicitSubModule();
-			if(element != null)
-			{
-				return ResolveResultList.to(element);
-			}
-		}
-		return Collections.emptyList();
-	}
+    @Override
+    public boolean processDeclarations(PsiScopeProcessor processor,
+            ResolveState state,
+            PsiElement lastParent,
+            PsiElement place) {
+        // import is per-file
+        if (place.getContainingFile() != getContainingFile()) {
+            return true;
+        }
+        if (isStarImport()) {
+            List<PsiElement> targets = ResolveImportUtil.resolveFromImportStatementSource(this, getImportSourceQName());
+            for (PsiElement target : targets) {
+                PsiElement importedFile = PyUtil.turnDirIntoInit(target);
+                if (importedFile != null) {
+                    PsiScopeProcessor starImportableNamesProcessor = new DelegatingScopeProcessor(processor) {
+                        @Override
+                        public boolean execute(PsiElement element, ResolveState state) {
+                            if (element instanceof PyElement && importedFile instanceof PyFile &&
+                                    !PyUtil.isStarImportableFrom(StringUtil.notNullize(((PyElement)element).getName()), (PyFile)importedFile)) {
+                                return true;
+                            }
+                            return super.execute(element, state);
+                        }
+                    };
+                    if (!importedFile.processDeclarations(starImportableNamesProcessor, state, null, place)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        else {
+            PyImportElement[] importElements = getImportElements();
+            for (PyImportElement element : importElements) {
+                if (!processor.execute(element, state)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * The statement 'from pkg1.m1 import ...' makes 'm1' available as a local name in the package 'pkg1'.
-	 * <p>
-	 * http://stackoverflow.com/questions/6048786/from-module-import-in-init-py-makes-module-name-visible
-	 */
-	@Nullable
-    @RequiredReadAction
-	private PsiElement resolveImplicitSubModule()
-	{
-		QualifiedName importSourceQName = getImportSourceQName();
-		if(importSourceQName != null)
-		{
-			String name = importSourceQName.getLastComponent();
-			PsiFile file = getContainingFile();
-			if(name != null && PyUtil.isPackage(file))
-			{
-				PsiElement resolvedImportSource = PyUtil.turnInitIntoDir(resolveImportSource());
-				if(resolvedImportSource != null && resolvedImportSource.getParent() == file.getContainingDirectory())
-				{
-					return resolvedImportSource;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public ASTNode addInternal(ASTNode first, ASTNode last, ASTNode anchor, Boolean before) {
+        boolean addingNewName = first == last &&
+                first.getElementType() == PyElementTypes.IMPORT_ELEMENT &&
+                (anchor == null || anchor.getElementType() == PyElementTypes.IMPORT_ELEMENT);
+        if (!addingNewName) {
+            return super.addInternal(first, last, anchor, before);
+        }
+
+        if (anchor == null) {
+            PyImportElement[] elements = getImportElements();
+            if (elements.length != 0) {
+                if (before) {
+                    anchor = elements[elements.length - 1].getNode();
+                    before = false;
+                }
+                else {
+                    anchor = elements[0].getNode();
+                    before = true;
+                }
+            }
+        }
+
+        // In an incomplete from import statement there is a special sentinel empty PyImportElement at the end
+        if (anchor != null && anchor.getTextLength() == 0) {
+            getNode().replaceChild(anchor, first);
+            return first;
+        }
+        else {
+            ASTNode result = super.addInternal(first, last, anchor, before);
+            if (anchor != null && anchor.getElementType() == PyElementTypes.IMPORT_ELEMENT &&
+                    result.getElementType() == PyElementTypes.IMPORT_ELEMENT) {
+                ASTNode comma = PyElementGenerator.getInstance(getProject()).createComma();
+                super.addInternal(comma, comma, before ? result : anchor, false);
+            }
+            return result;
+        }
+    }
+
+    @Override
+    public void deleteChildInternal(ASTNode child) {
+        if (ArrayUtil.contains(child.getPsi(), getImportElements())) {
+            PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, child.getPsi());
+        }
+        super.deleteChildInternal(child);
+    }
+
+    @Override
+    public @Nullable PyStarImportElement getStarImportElement() {
+        return getStubOrPsiChild(PyStubElementTypes.STAR_IMPORT_ELEMENT);
+    }
+
+    @Override
+    public @Nullable PsiFileSystemItem resolveImportSource() {
+        return FluentIterable.from(resolveImportSourceCandidates()).filter(PsiFileSystemItem.class).first().orNull();
+    }
+
+    @Override
+    public List<PsiElement> resolveImportSourceCandidates() {
+        QualifiedName qName = getImportSourceQName();
+        if (qName == null) {
+            int level = getRelativeLevel();
+            if (level > 0) {
+                PsiDirectory upper = ResolveImportUtil.stepBackFrom(getContainingFile().getOriginalFile(), level);
+                return ContainerUtil.createMaybeSingletonList(upper);
+            }
+        }
+        return ResolveImportUtil.resolveFromImportStatementSource(this, qName);
+    }
+
+    @Override
+    public Iterable<PyElement> iterateNames() {
+        PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
+        return resolved != null ? ImmutableList.of(resolved) : Collections.emptyList();
+    }
+
+    @Override
+    public List<RatedResolveResult> multiResolveName(String name) {
+        QualifiedName importSourceQName = getImportSourceQName();
+        if (importSourceQName != null && importSourceQName.endsWith(name)) {
+            PsiElement element = resolveImplicitSubModule();
+            if (element != null) {
+                return ResolveResultList.to(element);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * The statement 'from pkg1.m1 import ...' makes 'm1' available as a local name in the package 'pkg1'.
+     * <p>
+     * http://stackoverflow.com/questions/6048786/from-module-import-in-init-py-makes-module-name-visible
+     */
+    private @Nullable PsiElement resolveImplicitSubModule() {
+        QualifiedName importSourceQName = getImportSourceQName();
+        if (importSourceQName != null) {
+            String name = importSourceQName.getLastComponent();
+            PsiFile file = getContainingFile();
+            if (name != null && PyUtil.isPackage(file)) {
+                PsiElement resolvedImportSource = PyUtil.turnInitIntoDir(resolveImportSource());
+                if (resolvedImportSource != null && resolvedImportSource.getParent() == file.getContainingDirectory()) {
+                    return resolvedImportSource;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<? extends PsiElement> getComponents() {
+        return Arrays.asList(getImportElements());
+    }
 }

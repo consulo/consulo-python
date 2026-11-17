@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.google.common.collect.ImmutableList;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.inspections.quickfix.SimplifyBooleanCheckQuickFix;
@@ -76,7 +77,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
             super.visitPyConditionalStatementPart(node);
             PyExpression condition = node.getCondition();
             if (condition != null) {
-                condition.accept(new PyBinaryExpressionVisitor(getHolder(), getSession(), myIgnoreComparisonToZero));
+                condition.accept(new PyBinaryExpressionVisitor(getHolder(), myTypeEvalContext, myIgnoreComparisonToZero));
             }
         }
     }
@@ -86,10 +87,10 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
 
         public PyBinaryExpressionVisitor(
             @Nullable ProblemsHolder holder,
-            LocalInspectionToolSession session,
+            TypeEvalContext context,
             boolean ignoreComparisonToZero
         ) {
-            super(holder, session);
+            super(holder, context);
             myIgnoreComparisonToZero = ignoreComparisonToZero;
         }
 

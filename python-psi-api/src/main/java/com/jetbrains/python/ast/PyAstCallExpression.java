@@ -1,0 +1,112 @@
+package com.jetbrains.python.ast;
+
+import consulo.annotation.access.RequiredReadAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.ObjectUtil;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Represents an entire call expression, like <tt>foo()</tt> or <tt>foo.bar[1]('x')</tt>.
+ */
+public interface PyAstCallExpression extends PyAstCallSiteExpression {
+
+    /**
+     * @return the expression representing the object being called (reference to a function).
+     */
+    @RequiredReadAction
+    default @Nullable PyAstExpression getCallee() {
+        // peel off any parens, because we may have smth like (lambda x: x+1)(2)
+        PsiElement seeker = getFirstChild();
+        while (seeker instanceof PyAstParenthesizedExpression) {
+            seeker = ((PyAstParenthesizedExpression)seeker).getContainedExpression();
+        }
+        return seeker instanceof PyAstExpression ? (PyAstExpression) seeker : null;
+    }
+
+    /**
+     * @return the argument list used in the call.
+     */
+    @RequiredReadAction
+    default @Nullable PyAstArgumentList getArgumentList() {
+        return PsiTreeUtil.getChildOfType(this, PyAstArgumentList.class);
+    }
+
+    /**
+     * @return the argument array used in the call, or an empty array if the call has no argument list.
+     */
+    @RequiredReadAction
+    default PyAstExpression[] getArguments() {
+        PyAstArgumentList argList = getArgumentList();
+        return argList != null ? argList.getArguments() : PyAstExpression.EMPTY_ARRAY;
+    }
+
+    /**
+     * If the list of arguments has at least {@code index} elements and the {@code index}'th element is of type {@code argClass},
+     * returns it. Otherwise, returns null.
+     *
+     * @param index    argument index
+     * @param argClass argument expected type
+     * @return the argument or null
+     */
+    @RequiredReadAction
+    default @Nullable <T extends PsiElement> T getArgument(int index, Class<T> argClass) {
+        PyAstExpression[] args = getArguments();
+        return args.length > index ? ObjectUtil.tryCast(args[index], argClass) : null;
+    }
+
+    /**
+     * Returns the argument marked with the specified keyword or the argument at the specified position, if one is present in the list.
+     *
+     * @param index    argument index
+     * @param keyword  argument keyword
+     * @param argClass argument expected type
+     * @return the argument or null
+     */
+    @RequiredReadAction
+    default @Nullable <T extends PsiElement> T getArgument(int index, String keyword, Class<T> argClass) {
+        PyAstExpression arg = getKeywordArgument(keyword);
+        if (arg != null) {
+            return ObjectUtil.tryCast(arg, argClass);
+        }
+        return getArgument(index, argClass);
+    }
+
+    /**
+     * Returns the argument marked with the specified keyword, if one is present in the list.
+     *
+     * @param keyword argument keyword
+     * @return the argument or null
+     */
+    @RequiredReadAction
+    default @Nullable PyAstExpression getKeywordArgument(String keyword) {
+        for (PyAstExpression arg : getArguments()) {
+            if (arg instanceof PyAstKeywordArgument keywordArg) {
+                if (keyword.equals(keywordArg.getKeyword())) {
+                    return keywordArg.getValueExpression();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the unqualified name of the callee matches any of the specified names
+     *
+     * @param nameCandidates names to check
+     * @return true if matches, false otherwise
+     */
+    @RequiredReadAction
+    default boolean isCalleeText(String... nameCandidates) {
+        PyAstExpression callee = getCallee();
+
+        return callee instanceof PyAstReferenceExpression &&
+            ContainerUtil.exists(nameCandidates, name -> name.equals(((PyAstReferenceExpression)callee).getReferencedName()));
+    }
+
+    @Override
+    default void acceptPyVisitor(PyAstElementVisitor pyVisitor) {
+        pyVisitor.visitPyCallExpression(this);
+    }
+}

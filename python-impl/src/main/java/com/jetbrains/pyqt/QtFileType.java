@@ -16,8 +16,12 @@
 
 package com.jetbrains.pyqt;
 
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameResolverImpl;
+import com.jetbrains.python.impl.psi.resolve.PyQualifiedNameResolveContextImpl;
+import com.jetbrains.python.impl.psi.resolve.PyResolveImportUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.application.util.SystemInfo;
 import consulo.component.ComponentManager;
@@ -126,9 +130,9 @@ public abstract class QtFileType implements FileType, INativeFileType {
 
   @Nullable
   private static String findToolInPackage(String toolName, Module module, Sdk sdk, String name) {
-    QualifiedNameResolver visitor = new QualifiedNameResolverImpl(name).fromModule(module).withSdk(sdk);
-    List<PsiDirectory> elements = visitor.resultsOfType(PsiDirectory.class);
-    for (PsiDirectory directory : elements) {
+    List<PsiElement> elements = PyResolveImportUtil.resolveQualifiedName(QualifiedName.fromDottedString(name),
+                                                                         new PyQualifiedNameResolveContextImpl(PsiManager.getInstance(module.getProject()), module, null, sdk));
+    for (PsiDirectory directory : ContainerUtil.filterIsInstance(elements, PsiDirectory.class)) {
       VirtualFile tool = directory.getVirtualFile().findChild(toolName + ".exe");
       if (tool != null) {
         return tool.getPath();

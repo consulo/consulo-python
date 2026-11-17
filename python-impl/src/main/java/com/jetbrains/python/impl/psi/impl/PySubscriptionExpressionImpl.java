@@ -1,175 +1,202 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
-import com.jetbrains.python.impl.psi.types.*;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.util.lang.ref.SoftReference;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
+import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
-import consulo.language.psi.util.QualifiedName;
-
+import consulo.util.collection.ContainerUtil;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PySliceItem;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
+import com.jetbrains.python.impl.psi.types.PyTupleType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.impl.psi.types.PyTypedDictType;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-/**
- * @author yole
- */
-public class PySubscriptionExpressionImpl extends PyElementImpl implements PySubscriptionExpression
-{
-	public PySubscriptionExpressionImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
 
-	public PyExpression getOperand()
-	{
-		return childToPsiNotNull(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
-	}
 
-	@Override
-	public PyExpression getRootOperand()
-	{
-		PyExpression operand = getOperand();
-		while(operand instanceof PySubscriptionExpression)
-		{
-			operand = ((PySubscriptionExpression) operand).getOperand();
-		}
-		return operand;
-	}
+public class PySubscriptionExpressionImpl extends PyElementImpl implements PySubscriptionExpression {
+    public PySubscriptionExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	@Nullable
-	public PyExpression getIndexExpression()
-	{
-		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 1);
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPySubscriptionExpression(this);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPySubscriptionExpression(this);
-	}
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression indexExpression = getIndexExpression();
+        if (indexExpression != null) {
+            PyType operandType = context.getType(getOperand());
+            if (indexExpression instanceof PySliceItem) {
+                if (operandType instanceof PyTupleType) {
+                    if (((PyTupleType)operandType).isHomogeneous()) {
+                        return operandType;
+                    }
+                    PyClassType tupleType = PyBuiltinCache.getInstance(this).getTupleType();
+                    return tupleType != null ? tupleType : PyAnyType.getUnknown();
+                }
+            }
+            else {
+                if (operandType instanceof PyTupleType tupleType) {
+                    List<Integer> indexPossibleValues = getIndexExpressionPossibleValues(indexExpression, context, Integer.class);
+                    List<@Nullable PyType> possibleTypes = ContainerUtil.map(indexPossibleValues, index -> {
+                        if (!tupleType.isHomogeneous() && index < 0) {
+                            index += tupleType.getElementCount();
+                        }
+                        return tupleType.getElementType(index);
+                    });
+                    return PyUnionType.unionOrUnknown(possibleTypes);
+                }
+                if (operandType instanceof PyTypedDictType typedDictType) {
+                    return typedDictType.isDefinition()
+                           ? parameterizeTypedDictDeclaration(typedDictType, context)
+                           : getTypedDictSubscriptionType(typedDictType, indexExpression, context);
+                }
+                if (operandType instanceof PyClassType classType &&
+                    !(classType.isDefinition() && PyTypeUtil.hasMetaclassGetItem(classType.getPyClass(), context))) {
+                    PyType parameterizedType = SoftReference.deref(PyTypingTypeProvider.getType(this, context));
+                    if (parameterizedType instanceof PyClassType pyClassType && pyClassType.isParameterized()) {
+                        return pyClassType.toClass();
+                    }
+                }
+            }
+        }
+        return PyCallExpressionHelper.getCallType(this, context, key);
+    }
 
-	@Nullable
-	@Override
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
-	{
-		PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
-		List<PyType> members = new ArrayList<>();
-		for(PsiElement resolved : PyUtil.multiResolveTopPriority(reference))
-		{
-			PyType res = null;
-			if(resolved instanceof PyCallable)
-			{
-				res = ((PyCallable) resolved).getCallType(context, this);
-			}
-			if(PyTypeChecker.isUnknown(res) || res instanceof PyNoneType)
-			{
-				PyExpression indexExpression = getIndexExpression();
-				if(indexExpression != null)
-				{
-					PyType type = context.getType(getOperand());
-					PyClass cls = (type instanceof PyClassType) ? ((PyClassType) type).getPyClass() : null;
-					if(cls != null && PyABCUtil.isSubclass(cls, PyNames.MAPPING, context))
-					{
-						return res;
-					}
-					if(type instanceof PyTupleType)
-					{
-						PyTupleType tupleType = (PyTupleType) type;
+    /**
+     * A TypedDict without type parameters cannot be parameterized, and the expression still denotes the class, so the declaration
+     * type is returned rather than the `dict` class the generic fallback would answer with.
+     */
+    private PyType parameterizeTypedDictDeclaration(PyTypedDictType declarationType,
+                                                             TypeEvalContext context) {
+        PyType parameterizedType = SoftReference.deref(PyTypingTypeProvider.getType(this, context));
+        if (parameterizedType instanceof PyTypedDictType typedDictType && typedDictType.isParameterized()) {
+            return typedDictType.toClass();
+        }
+        return declarationType;
+    }
 
-						res = Optional.ofNullable(PyConstantExpressionEvaluator.evaluate(indexExpression)).map(value -> PyUtil.as(value, Integer.class)).map(tupleType::getElementType).orElse(null);
-					}
-					else if(type instanceof PyCollectionType)
-					{
-						res = ((PyCollectionType) type).getIteratedItemType();
-					}
-				}
-			}
-			members.add(res);
-		}
-		return PyUnionType.union(members);
-	}
+    /** The extra items type is asked for only when a key is really missing: evaluating it costs as much as an item type. */
+    private static @Nullable PyType getTypedDictSubscriptionType(PyTypedDictType typedDictType,
+                                                                 PyExpression indexExpression,
+                                                                 TypeEvalContext context) {
+        List<String> keys = getIndexExpressionPossibleValues(indexExpression, context, String.class);
+        if (keys.isEmpty()) {
+            if (typedDictType.isClosed() || !isStringIndex(indexExpression, context)) {
+                return PyAnyType.getUnknown();
+            }
+            PyType extraItemsType = typedDictType.extraItemsType(context);
+            if (extraItemsType == null || isUnknown(extraItemsType)) {
+                return PyAnyType.getUnknown();
+            }
+            // Non-literal `str` key: the value can be any declared item or an explicitly typed extra item.
+            List<PyType> types =
+                new ArrayList<>(ContainerUtil.map(typedDictType.fields(context).values(), PyTypedDictType.FieldTypeAndTotality::getType));
+            types.add(extraItemsType);
+            return PyUnionType.union(types);
+        }
 
-	@Override
-	public PsiReference getReference()
-	{
-		return getReference(PyResolveContext.noImplicits());
-	}
+        List<PyType> types = new ArrayList<>();
+        for (String key : keys) {
+            PyTypedDictType.FieldTypeAndTotality field = typedDictType.fields(context).get(key);
+            if (field != null) {
+                types.add(field.getType());
+                continue;
+            }
+            PyType extraItemsType = typedDictType.isClosed() ? null : typedDictType.extraItemsType(context);
+            types.add(extraItemsType != null ? extraItemsType : PyAnyType.getUnknown());
+        }
+        return PyUnionType.union(types);
+    }
 
-	@Override
-	public PsiPolyVariantReference getReference(PyResolveContext context)
-	{
-		return new PyOperatorReference(this, context);
-	}
+    public static <T> List<T> getIndexExpressionPossibleValues(@Nullable PyExpression indexExpression,
+                                                                        TypeEvalContext context,
+                                                                        Class<T> indexType) {
+        if (indexExpression == null) {
+            return List.of();
+        }
+        T indexExprValue = PyEvaluator.evaluate(indexExpression, indexType);
+        if (indexExprValue != null) {
+            return List.of(indexExprValue);
+        }
+        PyType type = context.getType(indexExpression);
+        if (type == null) {
+            return List.of();
+        }
+        List<T> result = new ArrayList<>();
+        for (PyType subType : PyTypeUtil.toStream(type)) {
+            if (!(subType instanceof PyLiteralType literalType)) {
+                return List.of();
+            }
+            T val = extractValueFromLiteral(literalType, indexType);
+            if (val == null) {
+                return List.of();
+            }
+            result.add(val);
+        }
+        return result;
+    }
 
-	@Override
-	public PyExpression getQualifier()
-	{
-		return getOperand();
-	}
+    private static boolean isStringIndex(@Nullable PyExpression indexExpression, TypeEvalContext context) {
+        if (indexExpression == null) {
+            return false;
+        }
+        PyType indexType = context.getType(indexExpression);
+        if (indexType == null || isUnknown(indexType)) {
+            return false;
+        }
+        PyType strType = PyBuiltinCache.getInstance(indexExpression).getStrType();
+        return strType != null && PyTypeChecker.match(strType, indexType, context);
+    }
 
-	@Nullable
-	@Override
-	public QualifiedName asQualifiedName()
-	{
-		return PyPsiUtils.asQualifiedName(this);
-	}
+    @SuppressWarnings("unchecked")
+    private static <T> @Nullable T extractValueFromLiteral(PyLiteralType literalType, Class<T> indexType) {
+        if ((indexType == Integer.class || indexType == int.class) && literalType.getIntValue() != null) {
+            try {
+                return (T)Integer.valueOf(literalType.getIntValue().intValueExact());
+            }
+            catch (ArithmeticException e) {
+                // If BigInteger does not fit into int
+                return null;
+            }
+        }
+        if (indexType == String.class && literalType.getStringValue() != null) {
+            return (T)literalType.getStringValue();
+        }
+        if ((indexType == Boolean.class || indexType == boolean.class) && literalType.getBoolValue() != null) {
+            return (T)literalType.getBoolValue();
+        }
+        return null;
+    }
 
-	@Override
-	public boolean isQualified()
-	{
-		return getQualifier() != null;
-	}
+    @Override
+    public PsiReference getReference() {
+        return getReference(PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(getProject())));
+    }
 
-	@Override
-	public String getReferencedName()
-	{
-		String res = PyNames.GETITEM;
-		switch(AccessDirection.of(this))
-		{
-			case READ:
-				res = PyNames.GETITEM;
-				break;
-			case WRITE:
-				res = PyNames.SETITEM;
-				break;
-			case DELETE:
-				res = PyNames.DELITEM;
-				break;
-		}
-		return res;
-	}
-
-	@Override
-	public ASTNode getNameElement()
-	{
-		return getNode().findChildByType(PyTokenTypes.LBRACKET);
-	}
+    @Override
+    public PsiPolyVariantReference getReference(PyResolveContext context) {
+        return new PyOperatorReference(this, context);
+    }
 }

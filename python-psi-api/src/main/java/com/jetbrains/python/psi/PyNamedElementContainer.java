@@ -15,20 +15,11 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
-
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiNamedElement;
+import com.jetbrains.python.ast.PyAstNamedElementContainer;
 
 /**
  * PSI element that contains named children that are visible in the current scope.
- *
- * @author dcheryasov
  */
-public interface PyNamedElementContainer extends PsiElement
-{
-	/**
-	 * Return named children visible in the current scope.
-	 */
-	List<PsiNamedElement> getNamedElements();
+public interface PyNamedElementContainer extends PyAstNamedElementContainer, PsiElement {
 }

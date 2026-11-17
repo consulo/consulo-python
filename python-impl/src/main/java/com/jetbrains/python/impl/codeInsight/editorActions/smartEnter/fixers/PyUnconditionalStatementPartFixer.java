@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
+import consulo.language.psi.util.PsiTreeUtil;
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
 
@@ -47,7 +48,7 @@ public class PyUnconditionalStatementPartFixer extends PyFixer<PyElement>
 	@Override
 	public void doApply(Editor editor, PySmartEnterProcessor processor, PyElement psiElement) throws IncorrectOperationException
 	{
-		if(PyUtil.instanceOf(psiElement, PyElsePart.class, PyTryPart.class, PyFinallyPart.class))
+		if(PsiTreeUtil.instanceOf(psiElement, PyElsePart.class, PyTryPart.class, PyFinallyPart.class))
 		{
 			PsiElement colon = PyPsiUtils.getFirstChildOfType(psiElement, PyTokenTypes.COLON);
 			if(colon == null)

@@ -18,8 +18,10 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
@@ -38,6 +40,8 @@ import java.util.List;
 /**
  * @author ktisha
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyConvertMethodToPropertyIntention", categories = "Python", fileExtensions = "py")
 public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {

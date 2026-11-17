@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.refactoring.classes.pushDown;
 
 
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersUtil;
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.project.Project;
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
@@ -56,7 +57,7 @@ public class PyPushDownPresenterImpl extends MembersBasedPresenterWithPreviewImp
 	@Override
 	public void launch()
 	{
-		myView.configure(new MembersViewInitializationInfo(myModel, PyUtil.filterOutObject(myStorage.getClassMemberInfos(myClassUnderRefactoring))));
+		myView.configure(new MembersViewInitializationInfo(myModel, PyMembersUtil.filterOutObject(myStorage.getClassMemberInfos(myClassUnderRefactoring))));
 		myView.initAndShow();
 	}
 }

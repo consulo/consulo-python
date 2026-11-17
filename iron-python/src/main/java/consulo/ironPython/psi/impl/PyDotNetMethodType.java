@@ -17,7 +17,8 @@
 package consulo.ironPython.psi.impl;
 
 import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.types.PyCallableArgument;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
@@ -62,7 +63,7 @@ public class PyDotNetMethodType implements PyCallableType
 
 	@Nullable
 	@Override
-	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, @Nullable PyElement callSite, List<PyCallableArgument> arguments)
 	{
 		return PyDotNetTypeProvider.asPyType(myMethod.getReturnTypeRef());
 	}

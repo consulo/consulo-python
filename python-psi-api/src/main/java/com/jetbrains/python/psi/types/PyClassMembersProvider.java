@@ -1,39 +1,34 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.codeInsight.PyCustomMember;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 
 /**
  * @author Dennis.Ushakov
  */
 @ExtensionAPI(ComponentScope.APPLICATION)
-public interface PyClassMembersProvider
-{
-	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create(PyClassMembersProvider.class);
+public interface PyClassMembersProvider {
+    ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create(PyClassMembersProvider.class);
 
-	Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
+    Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, TypeEvalContext context);
 
-	@Nullable
-	PsiElement resolveMember(PyClassType clazz, String name, @Nullable PsiElement location, @Nullable TypeEvalContext context);
+    /**
+     * Provides member with specified name for specified class type.
+     *
+     * @param type           member owner
+     * @param name           member name
+     * @param location       psi element to be used as psi context
+     * @param resolveContext context to be used in resolve
+     * @return provided member
+     */
+    @Nullable
+    PsiElement resolveMember(PyClassType type, String name, @Nullable PsiElement location, PyResolveContext resolveContext);
 }

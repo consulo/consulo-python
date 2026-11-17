@@ -1,0 +1,71 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package com.jetbrains.python.impl.psi;
+
+import consulo.annotation.component.ExtensionImpl;
+
+import java.util.Collection;
+import java.util.List;
+
+@ExtensionImpl
+public final class PyStdKnownDecoratorProvider implements PyKnownDecoratorProvider {
+  @Override
+  public Collection<PyKnownDecorator> getKnownDecorators() {
+    return List.of(
+      PyKnownDecorator.STATICMETHOD,
+      PyKnownDecorator.CLASSMETHOD,
+      PyKnownDecorator.PROPERTY,
+      PyKnownDecorator.FUNCTOOLS_LRU_CACHE,
+      PyKnownDecorator.FUNCTOOLS_WRAPS,
+      PyKnownDecorator.FUNCTOOLS_TOTAL_ORDERING,
+      PyKnownDecorator.FUNCTOOLS_SINGLEDISPATCH,
+      PyKnownDecorator.FUNCTOOLS_CACHED_PROPERTY,
+      PyKnownDecorator.ABC_ABSTRACTMETHOD,
+      PyKnownDecorator.ABC_ABSTRACTCLASSMETHOD,
+      PyKnownDecorator.ABC_ABSTRACTSTATICMETHOD,
+      PyKnownDecorator.ABC_ABSTRACTPROPERTY,
+      PyKnownDecorator.ASYNCIO_TASKS_COROUTINE,
+      PyKnownDecorator.ASYNCIO_COROUTINES_COROUTINE,
+      PyKnownDecorator.TYPES_COROUTINE,
+      PyKnownDecorator.UNITTEST_SKIP,
+      PyKnownDecorator.UNITTEST_SKIP_IF,
+      PyKnownDecorator.UNITTEST_SKIP_UNLESS,
+      PyKnownDecorator.UNITTEST_EXPECTED_FAILURE,
+      PyKnownDecorator.UNITTEST_MOCK_PATCH,
+      PyKnownDecorator.TYPING_OVERLOAD,
+      PyKnownDecorator.TYPING_OVERRIDE,
+      PyKnownDecorator.TYPING_EXTENSIONS_OVERRIDE,
+      PyKnownDecorator.TYPING_RUNTIME,
+      PyKnownDecorator.TYPING_RUNTIME_EXT,
+      PyKnownDecorator.TYPING_RUNTIME_CHECKABLE,
+      PyKnownDecorator.TYPING_RUNTIME_CHECKABLE_EXT,
+      PyKnownDecorator.TYPING_FINAL,
+      PyKnownDecorator.TYPING_FINAL_EXT,
+      PyKnownDecorator.TYPING_DEPRECATED,
+      PyKnownDecorator.TYPING_NO_TYPE_CHECK,
+      PyKnownDecorator.TYPING_NO_TYPE_CHECK_EXT,
+      PyKnownDecorator.TYPING_DATACLASS_TRANSFORM,
+      PyKnownDecorator.TYPING_DATACLASS_TRANSFORM_EXT,
+      PyKnownDecorator.WARNING_DEPRECATED,
+      PyKnownDecorator.REPRLIB_RECURSIVE_REPR,
+      PyKnownDecorator.PYRAMID_DECORATOR_REIFY,
+      PyKnownDecorator.KOMBU_UTILS_CACHED_PROPERTY,
+      PyKnownDecorator.DATACLASSES_DATACLASS,
+      PyKnownDecorator.ATTR_S,
+      PyKnownDecorator.ATTR_ATTRS,
+      PyKnownDecorator.ATTR_ATTRIBUTES,
+      PyKnownDecorator.ATTR_DATACLASS,
+      PyKnownDecorator.ATTR_DEFINE,
+      PyKnownDecorator.ATTR_MUTABLE,
+      PyKnownDecorator.ATTR_FROZEN,
+      PyKnownDecorator.ATTRS_DEFINE,
+      PyKnownDecorator.ATTRS_MUTABLE,
+      PyKnownDecorator.ATTRS_FROZEN,
+      PyKnownDecorator.PYTEST_FIXTURES_FIXTURE,
+      PyKnownDecorator.ENUM_MEMBER,
+      PyKnownDecorator.ENUM_NONMEMBER,
+      PyKnownDecorator.ENUM_UNIQUE,
+      PyKnownDecorator.DISJOINT_BASE,
+      PyKnownDecorator.DISJOINT_BASE_EXT
+    );
+  }
+}

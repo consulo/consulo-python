@@ -1,75 +1,75 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.resolve;
 
 import com.google.common.collect.Lists;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.impl.codeInsight.typing.PyStubPackages;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.impl.PyReferenceExpressionImpl;
-import com.jetbrains.python.impl.psi.impl.PyResolveResultRater;
 import com.jetbrains.python.impl.psi.impl.ResolveResultList;
 import com.jetbrains.python.impl.psi.types.PyModuleType;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.pyi.PyiStubSuppressor;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.impl.sdk.PySdkUtil;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExceptPart;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyImportStatement;
+import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.impl.PyResolveResultRater;
 import com.jetbrains.python.psi.resolve.PointInImport;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import com.jetbrains.python.psi.resolve.PyReferenceResolveProvider;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.application.util.RecursionManager;
+import consulo.application.util.registry.Registry;
 import consulo.content.bundle.Sdk;
-import consulo.language.file.FileTypeManager;
+import consulo.language.editor.completion.CompletionUtilCore;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.PsiInvalidElementAccessException;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.io.FileUtil;
-import consulo.virtualFileSystem.fileType.FileNameMatcher;
-import consulo.virtualFileSystem.fileType.matcher.ExtensionFileNameMatcher;
-
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jspecify.annotations.Nullable;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.jetbrains.python.psi.FutureFeature.ABSOLUTE_IMPORT;
 
-/**
- * @author dcheryasov
- */
-public class ResolveImportUtil {
+public final class ResolveImportUtil {
+
   private ResolveImportUtil() {
   }
 
-  private static final ThreadLocal<Set<String>> ourBeingImported = new ThreadLocal<Set<String>>() {
-    @Override
-    protected Set<String> initialValue() {
-      return new HashSet<>();
-    }
-  };
-
-  public static boolean isAbsoluteImportEnabledFor(PsiElement foothold) {
+  public static boolean isAbsoluteImportEnabledFor(@Nullable PsiElement foothold) {
     if (foothold != null) {
       PsiFile file = foothold.getContainingFile();
-      if (file instanceof PyFile) {
-        PyFile pyFile = (PyFile)file;
+      if (file instanceof PyFile pyFile) {
         if (pyFile.getLanguageLevel().isPy3K()) {
+          PsiElement originalFoothold = CompletionUtilCore.getOriginalOrSelf(foothold);
+          if (foothold.getManager().isInProject(originalFoothold) && Registry.is("python.explicit.namespace.packages", true)) {
+            return false;
+          }
           return true;
         }
         return pyFile.hasImportFromFuture(ABSOLUTE_IMPORT);
@@ -87,8 +87,7 @@ public class ResolveImportUtil {
    * @param depth must be positive, 1 means the dir that contains base, 2 is one dir above, etc.
    * @return found directory, or null.
    */
-  @Nullable
-  public static PsiDirectory stepBackFrom(PsiFile base, int depth) {
+  public static @Nullable PsiDirectory stepBackFrom(PsiFile base, int depth) {
     if (depth == 0) {
       return base.getContainingDirectory();
     }
@@ -98,9 +97,7 @@ public class ResolveImportUtil {
       result = base.getContainingDirectory();
       int count = 1;
       while (result != null && PyUtil.isPackage(result, base)) {
-        if (count >= depth) {
-          return result;
-        }
+        if (count >= depth) return result;
         result = result.getParentDirectory();
         count += 1;
       }
@@ -112,15 +109,15 @@ public class ResolveImportUtil {
    * @deprecated use {@link #multiResolveImportElement(PyImportElement, QualifiedName)} instead.
    */
   @Deprecated
-  @Nullable
-  public static PsiElement resolveImportElement(PyImportElement importElement, QualifiedName qName) {
-    List<RatedResolveResult> resultList = RatedResolveResult.sorted(multiResolveImportElement(importElement, qName));
-    return resultList.size() > 0 ? resultList.get(0).getElement() : null;
+  public static @Nullable PsiElement resolveImportElement(PyImportElement importElement, final QualifiedName qName) {
+    final List<RatedResolveResult> resultList = RatedResolveResult.sorted(multiResolveImportElement(importElement, qName));
+    return !resultList.isEmpty() ? resultList.get(0).getElement() : null;
   }
 
-  public static List<RatedResolveResult> multiResolveImportElement(PyImportElement importElement, QualifiedName qName) {
+  public static List<RatedResolveResult> multiResolveImportElement(PyImportElement importElement,
+                                                                   final QualifiedName qName) {
     PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(importElement));
-    PyStatement importStatement = importElement.getContainingImportStatement();
+    final PyStatement importStatement = importElement.getContainingImportStatement();
     if (importStatement instanceof PyFromImportStatement) {
       return resolveNameInFromImport((PyFromImportStatement)importStatement, qName);
     }
@@ -129,50 +126,41 @@ public class ResolveImportUtil {
     }
   }
 
-  public static List<RatedResolveResult> resolveNameInImportStatement(PyImportElement importElement, QualifiedName qName) {
-    PsiFile file = importElement.getContainingFile().getOriginalFile();
+  public static List<RatedResolveResult> resolveNameInImportStatement(PyImportElement importElement,
+                                                                      QualifiedName qName) {
+    final PsiFile file = importElement.getContainingFile().getOriginalFile();
     boolean absoluteImportEnabled = isAbsoluteImportEnabledFor(importElement);
-    List<PsiElement> modules = resolveModule(qName, file, absoluteImportEnabled, 0);
+    final List<PsiElement> modules = resolveModule(qName, file, absoluteImportEnabled, 0);
     return rateResults(modules);
   }
 
-  public static List<RatedResolveResult> resolveNameInFromImport(PyFromImportStatement importStatement, QualifiedName qName) {
+  public static List<RatedResolveResult> resolveNameInFromImport(PyFromImportStatement importStatement,
+                                                                 QualifiedName qName) {
     PsiFile file = importStatement.getContainingFile().getOriginalFile();
     String name = qName.getComponents().get(0);
 
-    List<PsiElement> candidates = importStatement.resolveImportSourceCandidates();
-    List<PsiElement> resultList = new ArrayList<>();
+    final List<RatedResolveResult> results = new ArrayList<>();
+    final List<PsiElement> candidates = importStatement.resolveImportSourceCandidates();
     for (PsiElement candidate : candidates) {
       if (!candidate.isValid()) {
-        throw new PsiInvalidElementAccessException(candidate,
-                                                   "Got an invalid candidate from resolveImportSourceCandidates(): " + candidate.getClass());
+        throw new PsiInvalidElementAccessException(candidate, "Got an invalid candidate from resolveImportSourceCandidates(): " +
+                                                              candidate.getClass());
       }
       if (candidate instanceof PsiDirectory) {
-        candidate = PyUtil.getPackageElement((PsiDirectory)candidate, importStatement);
-      }
-      List<RatedResolveResult> results = resolveChildren(candidate, name, file, false, true);
-      if (!results.isEmpty()) {
-        for (RatedResolveResult result : results) {
-          PsiElement element = result.getElement();
-          if (element != null) {
-            if (!element.isValid()) {
-              throw new PsiInvalidElementAccessException(element, "Got an invalid candidate from resolveChild(): " + element.getClass());
-            }
-            resultList.add(element);
-          }
+        final var packageElement = PyUtil.getPackageElement((PsiDirectory)candidate, importStatement);
+        if (packageElement != importStatement.getContainingFile()) {
+          candidate = packageElement;
         }
       }
+      results.addAll(resolveChildren(candidate, name, file, false, true, false, false));
     }
-    if (!resultList.isEmpty()) {
-      return rateResults(resultList);
-    }
-    return Collections.emptyList();
+    return updateRatedResults(PyStubPackages.removeRuntimeModulesForWhomStubModulesFound(results));
   }
 
   public static List<PsiElement> resolveFromImportStatementSource(PyFromImportStatement fromImportStatement,
                                                                   @Nullable QualifiedName qName) {
-    boolean absoluteImportEnabled = isAbsoluteImportEnabledFor(fromImportStatement);
-    PsiFile file = fromImportStatement.getContainingFile();
+    final boolean absoluteImportEnabled = isAbsoluteImportEnabledFor(fromImportStatement);
+    final PsiFile file = fromImportStatement.getContainingFile();
     return resolveModule(qName, file, absoluteImportEnabled, fromImportStatement.getRelativeLevel());
   }
 
@@ -185,128 +173,130 @@ public class ResolveImportUtil {
    * @param relativeLevel    if > 0, step back from sourceFile and resolve from there (even if importIsAbsolute is false!).
    * @return list of possible candidates
    */
-  public static List<PsiElement> resolveModule(@Nullable QualifiedName qualifiedName,
-                                               @Nullable PsiFile sourceFile,
-                                               boolean importIsAbsolute,
-                                               int relativeLevel) {
+  public static List<PsiElement> resolveModule(@Nullable QualifiedName qualifiedName, @Nullable PsiFile sourceFile,
+                                               boolean importIsAbsolute, int relativeLevel) {
     if (qualifiedName == null || sourceFile == null) {
       return Collections.emptyList();
     }
-    ResolveModuleParams params = new ResolveModuleParams(qualifiedName, sourceFile, importIsAbsolute, relativeLevel);
+    final ResolveModuleParams params = new ResolveModuleParams(qualifiedName, sourceFile, importIsAbsolute, relativeLevel);
     return PyUtil.getParameterizedCachedValue(sourceFile, params, ResolveImportUtil::calculateResolveModule);
   }
 
   private static List<PsiElement> calculateResolveModule(ResolveModuleParams params) {
-    QualifiedName qualifiedName = params.getName();
-    int relativeLevel = params.getLevel();
-    PsiFile sourceFile = params.getFile();
-    boolean importIsAbsolute = params.isAbsolute();
+    final QualifiedName qualifiedName = params.getName();
+    final int relativeLevel = params.getLevel();
+    final PsiFile sourceFile = params.getFile();
+    final boolean importIsAbsolute = params.isAbsolute();
 
-    String marker = qualifiedName + "#" + Integer.toString(relativeLevel);
-    Set<String> beingImported = ourBeingImported.get();
-    if (beingImported.contains(marker)) {
-      return Collections.emptyList(); // break endless loop in import
-    }
-    try {
-      beingImported.add(marker);
-      QualifiedNameResolver visitor = new QualifiedNameResolverImpl(qualifiedName).fromElement(sourceFile);
-      if (relativeLevel > 0) {
-        // "from ...module import"
-        visitor.withRelative(relativeLevel).withoutRoots();
-      }
-      else {
-        // "from module import"
-        if (!importIsAbsolute) {
-          visitor.withRelative(0);
+    return ObjectUtil.notNull(
+      RecursionManager.doPreventingRecursion(
+        params,
+        false,
+        () -> {
+          final PyQualifiedNameResolveContext initialContext = PyResolveImportUtil.fromFoothold(sourceFile);
+          final PyQualifiedNameResolveContext context = relativeLevel > 0 ?
+                                                        initialContext.copyWithRelative(relativeLevel).copyWithoutRoots() :
+                                                        importIsAbsolute ? initialContext : initialContext.copyWithRelative(0);
+          return PyResolveImportUtil.resolveQualifiedName(qualifiedName, context);
         }
-      }
-      return visitor.resultsAsList();
-    }
-    finally {
-      beingImported.remove(marker);
-    }
+      ),
+      Collections.emptyList()
+    );
   }
 
-  @Nullable
-  public static PsiElement resolveModuleInRoots(QualifiedName moduleQualifiedName, @Nullable PsiElement foothold) {
-    if (foothold == null) {
-      return null;
-    }
-    QualifiedNameResolver visitor = new QualifiedNameResolverImpl(moduleQualifiedName).fromElement(foothold);
-    return visitor.firstResult();
+  public static List<PsiElement> multiResolveModuleInRoots(QualifiedName moduleQualifiedName,
+                                                           @Nullable PsiElement foothold) {
+    if (foothold == null) return Collections.emptyList();
+    return PyResolveImportUtil.resolveQualifiedName(moduleQualifiedName,
+                                                    PyResolveImportUtil.fromFoothold(foothold));
   }
 
-  @Nullable
-  static PythonPathCache getPathCache(PsiElement foothold) {
+  /**
+   * @deprecated use {@link #multiResolveModuleInRoots(QualifiedName, PsiElement)}
+   */
+  @Deprecated
+  public static @Nullable PsiElement resolveModuleInRoots(QualifiedName moduleQualifiedName, @Nullable PsiElement foothold) {
+    final List<PsiElement> results = multiResolveModuleInRoots(moduleQualifiedName, foothold);
+    return ContainerUtil.getFirstItem(results);
+  }
+
+
+  static @Nullable PythonPathCache getPathCache(PsiElement foothold) {
     PythonPathCache cache = null;
-    Module module = ModuleUtilCore.findModuleForPsiElement(foothold);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(foothold);
     if (module != null) {
       cache = PythonModulePathCache.getInstance(module);
     }
     else {
-      Sdk sdk = PyBuiltinCache.findSdkForFile(foothold.getContainingFile());
-      if (sdk != null) {
-        cache = PythonSdkPathCache.getInstance(foothold.getProject(), sdk);
+      final Sdk interpreter = PyBuiltinCache.findInterpreterForFile(foothold.getContainingFile());
+      if (interpreter != null) {
+        cache = PythonSdkPathCache.getInstance(foothold.getProject(), interpreter);
       }
     }
     return cache;
   }
 
   /**
-   * @deprecated Use {@link #resolveChildren(PsiElement, String, PsiFile, boolean, boolean)} instead.
+   * @deprecated Use {@link #resolveChildren(PsiElement, String, PsiFile, boolean, boolean, boolean, boolean)} instead.
    */
-  @Deprecated
-  @Nullable
-  public static PsiElement resolveChild(@Nullable PsiElement parent,
-                                        String referencedName,
-                                        @Nullable PsiFile containingFile,
-                                        boolean fileOnly,
-                                        boolean checkForPackage) {
-    List<RatedResolveResult> results = resolveChildren(parent, referencedName, containingFile, fileOnly, checkForPackage);
+  @Deprecated(forRemoval = true)
+  public static @Nullable PsiElement resolveChild(final @Nullable PsiElement parent,
+                                                  final String referencedName,
+                                                  final @Nullable PsiFile containingFile,
+                                                  boolean fileOnly,
+                                                  boolean checkForPackage,
+                                                  boolean withoutStubs) {
+    final List<RatedResolveResult> results = resolveChildren(parent, referencedName, containingFile, fileOnly, checkForPackage,
+                                                             withoutStubs, false);
     return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
   }
 
   /**
    * Tries to find referencedName under the parent element.
    *
-   * @param parent          element under which to look for referenced name; if null, null is returned.
+   * @param parent          element under which to look for referenced name; if null empty list is returned
    * @param referencedName  which name to look for.
    * @param containingFile  where we're in.
    * @param fileOnly        if true, considers only a PsiFile child as a valid result; non-file hits are ignored.
    * @param checkForPackage if true, directories are returned only if they contain __init__.py
-   * @return the element the referencedName resolves to, or null.
+   * @param withoutForeign  if {@code true} do not use {@link PyReferenceResolveProvider} instances for resolving
+   * @return the element the referencedName resolves to
    */
   public static List<RatedResolveResult> resolveChildren(@Nullable PsiElement parent,
                                                          String referencedName,
                                                          @Nullable PsiFile containingFile,
                                                          boolean fileOnly,
-                                                         boolean checkForPackage) {
+                                                         boolean checkForPackage,
+                                                         boolean withoutStubs,
+                                                         boolean withoutForeign) {
     if (parent == null) {
       return Collections.emptyList();
     }
     else if (parent instanceof PyFile) {
-      return resolveInPackageModule((PyFile)parent, referencedName, containingFile, fileOnly, checkForPackage);
+      return resolveInPackageModule((PyFile)parent, referencedName, containingFile, fileOnly, checkForPackage, withoutStubs,
+                                    withoutForeign);
     }
-    else if (parent instanceof PsiDirectory) {
-      return resolveInPackageDirectory(parent, referencedName, containingFile, fileOnly, checkForPackage);
+    else if (parent instanceof PsiDirectory parentDir) {
+      return resolveInPackageDirectory(parentDir, referencedName, containingFile, fileOnly, checkForPackage, withoutStubs, withoutForeign);
     }
     else {
       return resolveMemberFromReferenceTypeProviders(parent, referencedName);
     }
-
   }
 
   private static List<RatedResolveResult> resolveInPackageModule(PyFile parent,
                                                                  String referencedName,
                                                                  @Nullable PsiFile containingFile,
                                                                  boolean fileOnly,
-                                                                 boolean checkForPackage) {
-    List<RatedResolveResult> moduleMembers = resolveModuleMember(parent, referencedName);
-    List<RatedResolveResult> resolvedInModule = Lists.newArrayList();
-    List<RatedResolveResult> results = Lists.newArrayList();
+                                                                 boolean checkForPackage,
+                                                                 boolean withoutStubs,
+                                                                 boolean withoutForeign) {
+    final List<RatedResolveResult> moduleMembers = resolveModuleMember(parent, referencedName);
+    final List<RatedResolveResult> resolvedInModule = new ArrayList<>();
+    final List<RatedResolveResult> results = new ArrayList<>();
     for (RatedResolveResult member : moduleMembers) {
-      PsiElement moduleMember = member.getElement();
-      if (!fileOnly || PyUtil.instanceOf(moduleMember, PsiFile.class, PsiDirectory.class)) {
+      final PsiElement moduleMember = member.getElement();
+      if (!fileOnly || PsiTreeUtil.instanceOf(moduleMember, PsiFile.class, PsiDirectory.class)) {
         results.add(member);
         if (moduleMember != null && !preferResolveInDirectoryOverModule(moduleMember)) {
           resolvedInModule.add(member);
@@ -317,8 +307,8 @@ public class ResolveImportUtil {
       return resolvedInModule;
     }
 
-    List<RatedResolveResult> resolvedInDirectory =
-      resolveInPackageDirectory(parent, referencedName, containingFile, fileOnly, checkForPackage);
+    final List<RatedResolveResult> resolvedInDirectory = resolveInPackageDirectory(parent, referencedName, containingFile, fileOnly,
+                                                                                   checkForPackage, withoutStubs, withoutForeign);
     if (!resolvedInDirectory.isEmpty()) {
       return resolvedInDirectory;
     }
@@ -328,29 +318,32 @@ public class ResolveImportUtil {
 
   private static boolean preferResolveInDirectoryOverModule(PsiElement resolved) {
     return PsiTreeUtil.getStubOrPsiParentOfType(resolved, PyExceptPart.class) != null ||
-      PyUtil.instanceOf(resolved, PsiFile.class, PsiDirectory.class) ||  // XXX: Workaround for PY-9439
-      isDunderAll(resolved);
+           PsiTreeUtil.instanceOf(resolved, PsiFile.class, PsiDirectory.class) ||  // XXX: Workaround for PY-9439
+           isDunderAll(resolved);
   }
 
   private static List<RatedResolveResult> resolveModuleMember(PyFile file, String referencedName) {
-    PyModuleType moduleType = new PyModuleType(file);
-    PyResolveContext resolveContext = PyResolveContext.defaultContext();
-    List<? extends RatedResolveResult> results = moduleType.resolveMember(referencedName, null, AccessDirection.READ, resolveContext);
+    final PyModuleType moduleType = new PyModuleType(file);
+    final PyResolveContext resolveContext = PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(file.getProject()));
+    final List<? extends RatedResolveResult> results = moduleType.resolveMember(referencedName, null, AccessDirection.READ,
+                                                                                resolveContext);
     if (results == null) {
       return Collections.emptyList();
     }
     return Lists.newArrayList(results);
   }
 
-  private static List<RatedResolveResult> resolveInPackageDirectory(@Nullable PsiElement parent,
+  private static List<RatedResolveResult> resolveInPackageDirectory(PsiFileSystemItem parent,
                                                                     String referencedName,
                                                                     @Nullable PsiFile containingFile,
                                                                     boolean fileOnly,
-                                                                    boolean checkForPackage) {
-    PsiElement parentDir = PyUtil.turnInitIntoDir(parent);
+                                                                    boolean checkForPackage,
+                                                                    boolean withoutStubs,
+                                                                    boolean withoutForeign) {
+    final PsiElement parentDir = PyUtil.turnInitIntoDir(parent);
     if (parentDir instanceof PsiDirectory) {
-      List<RatedResolveResult> resolved =
-        resolveInDirectory(referencedName, containingFile, (PsiDirectory)parentDir, fileOnly, checkForPackage);
+      final List<RatedResolveResult> resolved = resolveInDirectory(referencedName, containingFile, (PsiDirectory)parentDir, fileOnly,
+                                                                   checkForPackage, withoutStubs);
       if (!resolved.isEmpty()) {
         for (RatedResolveResult result : resolved) {
           if (result.getRate() > RatedResolveResult.RATE_LOW) {
@@ -358,13 +351,22 @@ public class ResolveImportUtil {
           }
         }
       }
-      if (parent instanceof PsiFile) {
-        PsiElement foreign = resolveForeignImports((PsiFile)parent, referencedName);
-        if (foreign != null) {
-          ResolveResultList results = new ResolveResultList();
-          results.addAll(resolved);
-          results.poke(foreign, RatedResolveResult.RATE_NORMAL);
-          return results;
+      if (!withoutForeign) {
+        if (parent instanceof PsiFile) {
+          final PsiElement foreign = resolveForeignImports((PsiFile)parent, referencedName);
+          if (foreign != null) {
+            final ResolveResultList results = new ResolveResultList();
+            results.addAll(resolved);
+            results.poke(foreign, RatedResolveResult.RATE_NORMAL);
+            return results;
+          }
+        }
+        else if (parent instanceof PsiDirectory dir) {
+          PsiDirectory skeletonsDir = findCorrespondingSkeletonsDir(dir);
+          if (skeletonsDir != null) {
+            return ContainerUtil.concat(resolved, resolveInDirectory(referencedName, containingFile, skeletonsDir, fileOnly,
+                                                                     checkForPackage, withoutStubs));
+          }
         }
       }
       return resolved;
@@ -372,17 +374,42 @@ public class ResolveImportUtil {
     return Collections.emptyList();
   }
 
-  @Nullable
-  private static PsiElement resolveForeignImports(PsiFile foothold, String referencedName) {
-    return new QualifiedNameResolverImpl(referencedName).fromElement(foothold).withoutRoots().firstResult();
+  private static @Nullable PsiElement resolveForeignImports(PsiFile foothold, String referencedName) {
+    final PyQualifiedNameResolveContext context = PyResolveImportUtil.fromFoothold(foothold).copyWithoutRoots();
+    final List<PsiElement> results = PyResolveImportUtil.resolveQualifiedName(QualifiedName.fromDottedString(referencedName), context);
+    return !results.isEmpty() ? results.get(0) : null;
+  }
+
+  public static @Nullable PsiDirectory findCorrespondingSkeletonsDir(PsiDirectory packageDir) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(packageDir);
+    final Sdk moduleInterpreter = module != null ? MainPythonSdkKt.pythonSdkIfReady(module) : null;
+    if (moduleInterpreter == null) return null;
+
+    VirtualFile skeletonsDir = PySdkUtil.findSkeletonsDir(moduleInterpreter);
+    if (skeletonsDir == null) return null;
+
+    boolean isInSkeletons = VirtualFileUtil.isAncestor(skeletonsDir, packageDir.getVirtualFile(), false);
+    if (isInSkeletons) return null;
+
+    PsiDirectory skeletonsPsiDir = packageDir.getManager().findDirectory(skeletonsDir);
+    if (skeletonsPsiDir == null) return null;
+
+    QualifiedName packageName = QualifiedNameFinder.findShortestImportableQName(packageDir);
+    if (packageName == null) return null;
+
+    List<PsiElement> elements =
+      PyResolveImportUtil.resolveModuleAt(packageName, skeletonsPsiDir, PyResolveImportUtil.fromFoothold(skeletonsPsiDir));
+    return ContainerUtil.getFirstItem(elements) instanceof PsiDirectory dir ? dir : null;
   }
 
   private static List<RatedResolveResult> resolveMemberFromReferenceTypeProviders(PsiElement parent,
                                                                                   String referencedName) {
-    PyResolveContext resolveContext = PyResolveContext.defaultContext();
-    PyType refType = PyReferenceExpressionImpl.getReferenceTypeFromProviders(parent, resolveContext.getTypeEvalContext(), null);
-    if (refType != null) {
-      List<? extends RatedResolveResult> result = refType.resolveMember(referencedName, null, AccessDirection.READ, resolveContext);
+    final var context = TypeEvalContext.codeInsightFallback(parent.getProject());
+    final Ref<PyType> refType = PyReferenceExpressionImpl.getReferenceTypeFromProviders(parent, context, null);
+    if (refType != null && !refType.isNull()) {
+      final PyResolveContext resolveContext = PyResolveContext.defaultContext(context);
+      final List<? extends RatedResolveResult> result =
+        refType.get().resolveMember(referencedName, null, AccessDirection.READ, resolveContext);
       if (result != null) {
         return Lists.newArrayList(result);
       }
@@ -394,48 +421,63 @@ public class ResolveImportUtil {
     return (element instanceof PyElement) && PyNames.ALL.equals(((PyElement)element).getName());
   }
 
-  private static List<RatedResolveResult> resolveInDirectory(String referencedName,
-                                                             @Nullable PsiFile containingFile,
-                                                             PsiDirectory dir,
+  private static List<RatedResolveResult> resolveInDirectory(final String referencedName,
+                                                             final @Nullable PsiFile containingFile,
+                                                             final PsiDirectory dir,
                                                              boolean isFileOnly,
-                                                             boolean checkForPackage) {
-    PsiDirectory subdir = dir.findSubdirectory(referencedName);
-    if (subdir != null && (!checkForPackage || PyUtil.isPackage(subdir, containingFile))) {
-      return ResolveResultList.to(subdir);
+                                                             boolean checkForPackage,
+                                                             boolean withoutStubs) {
+    final ResolveResultList result = new ResolveResultList();
+
+    final PsiDirectory subdir = dir.findSubdirectory(referencedName);
+    // VFS may be case insensitive on Windows, but resolve is always case sensitive (PEP 235, PY-18958), so we check name here
+    if (subdir != null && subdir.getName().equals(referencedName) &&
+        (!checkForPackage || PyUtil.isPackage(subdir, containingFile)) &&
+        (!withoutStubs || PyUtil.isOrdinaryPackage(subdir) || !PyiUtil.isPyiFileOfPackage(subdir))) {
+      result.add(new RatedResolveResult(RatedResolveResult.RATE_NORMAL, PyStubPackages.transferStubPackageMarker(dir, subdir)));
     }
 
-    PsiFile module = findPyFileInDir(dir, referencedName);
+    final var stubPackage = PyStubPackages.findStubPackage(dir, referencedName, checkForPackage, withoutStubs);
+    if (stubPackage != null) {
+      result.addAll(ContainerUtil.map(stubPackage, it -> new RatedResolveResult(RatedResolveResult.RATE_NORMAL, it)));
+    }
+
+    final PsiFile module = findPyFileInDir(dir, referencedName, withoutStubs);
     if (module != null) {
-      return ResolveResultList.to(module);
+      result.add(new RatedResolveResult(RatedResolveResult.RATE_NORMAL, PyStubPackages.transferStubPackageMarker(dir, module)));
     }
 
     if (!isFileOnly) {
-      // not a subdir, not a file; could be a name in parent/__init__.py
-      PsiFile initPy = dir.findFile(PyNames.INIT_DOT_PY);
-      if (initPy == containingFile) {
-        return Collections.emptyList(); // don't dive into the file we're in
-      }
-      if (initPy instanceof PyFile) {
-        return ((PyFile)initPy).multiResolveName(referencedName);
+      final PsiElement packageElement = PyUtil.getPackageElement(dir, containingFile);
+      if (packageElement != containingFile && packageElement instanceof PyFile) {
+        result.addAll(((PyFile)packageElement).multiResolveName(referencedName));
       }
     }
-    return Collections.emptyList();
+
+    return result;
   }
 
-  @Nullable
-  private static PsiFile findPyFileInDir(PsiDirectory dir, String referencedName) {
-    PsiFile file = dir.findFile(referencedName + PyNames.DOT_PY);
-    if (file == null) {
-      List<FileNameMatcher> associations = FileTypeManager.getInstance().getAssociations(PythonFileType.INSTANCE);
-      for (FileNameMatcher association : associations) {
-        if (association instanceof ExtensionFileNameMatcher) {
-          file = dir.findFile(referencedName + "." + ((ExtensionFileNameMatcher)association).getExtension());
-          if (file != null) {
-            break;
-          }
-        }
+  private static @Nullable PsiFile findPyFileInDir(PsiDirectory dir, String referencedName, boolean withoutStubs) {
+    PsiFile file = null;
+    if (!withoutStubs) {
+      final var stub = dir.findFile(referencedName + PyNames.DOT_PYI);
+      if (!PyiStubSuppressor.isIgnoredStub(stub)) {
+        file = stub;
       }
     }
+    if (file == null) {
+      file = dir.findFile(referencedName + PyNames.DOT_PY);
+    }
+    // TODO: in case of real users need make an extension point out of the following code
+    // if (file == null) {
+    //  final List<FileNameMatcher> associations = FileTypeManager.getInstance().getAssociations(PythonFileType.INSTANCE);
+    //  for (FileNameMatcher association : associations) {
+    //    if (association instanceof ExtensionFileNameMatcher) {
+    //      file = dir.findFile(referencedName + "." + ((ExtensionFileNameMatcher)association).getExtension());
+    //      if (file != null) break;
+    //    }
+    //  }
+    //}
     if (file != null && FileUtil.getNameWithoutExtension(file.getName()).equals(referencedName)) {
       return file;
     }
@@ -464,18 +506,41 @@ public class ResolveImportUtil {
     return ret;
   }
 
+  private static List<RatedResolveResult> updateRatedResults(List<? extends RatedResolveResult> results) {
+    if (results.isEmpty()) return Collections.emptyList();
+    final ResolveResultList result = new ResolveResultList();
+
+    for (RatedResolveResult resolveResult : results) {
+      PsiElement element = resolveResult.getElement();
+      if (element instanceof PsiDirectory) {
+        element = PyUtil.getPackageElement((PsiDirectory)element, element);
+      }
+
+      if (element != null) {
+        int delta = 0;
+        for (PyResolveResultRater rater : PyResolveResultRater.EP_NAME.getExtensionList()) {
+          delta += rater.getImportElementRate(element);
+        }
+
+        result.poke(element, resolveResult.getRate() + delta);
+      }
+    }
+
+    return result;
+  }
+
   /**
    * @param element what we test (identifier, reference, import element, etc)
    * @return the how the element relates to an enclosing import statement, if any
    * @see PointInImport
    */
   public static PointInImport getPointInImport(PsiElement element) {
-    PsiElement parent = PsiTreeUtil.getNonStrictParentOfType(element, PyImportElement.class, PyFromImportStatement.class);
+    final PsiElement parent = PsiTreeUtil.getNonStrictParentOfType(element, PyImportElement.class, PyFromImportStatement.class);
     if (parent instanceof PyFromImportStatement) {
       return PointInImport.AS_MODULE; // from foo ...
     }
     if (parent instanceof PyImportElement) {
-      PsiElement statement = parent.getParent();
+      final PsiElement statement = parent.getParent();
       if (statement instanceof PyImportStatement) {
         return PointInImport.AS_MODULE; // import foo,...
       }
@@ -492,7 +557,7 @@ public class ResolveImportUtil {
     private final boolean myAbsolute;
     private final int myLevel;
 
-    public ResolveModuleParams(QualifiedName qualifiedName, PsiFile file, boolean importIsAbsolute, int relativeLevel) {
+    ResolveModuleParams(QualifiedName qualifiedName, PsiFile file, boolean importIsAbsolute, int relativeLevel) {
       myName = qualifiedName;
       myFile = file;
       myAbsolute = importIsAbsolute;
@@ -517,27 +582,15 @@ public class ResolveImportUtil {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
       ResolveModuleParams params = (ResolveModuleParams)o;
 
-      if (myAbsolute != params.myAbsolute) {
-        return false;
-      }
-      if (myLevel != params.myLevel) {
-        return false;
-      }
-      if (!myName.equals(params.myName)) {
-        return false;
-      }
-      if (!myFile.equals(params.myFile)) {
-        return false;
-      }
+      if (myAbsolute != params.myAbsolute) return false;
+      if (myLevel != params.myLevel) return false;
+      if (!myName.equals(params.myName)) return false;
+      if (!myFile.equals(params.myFile)) return false;
 
       return true;
     }

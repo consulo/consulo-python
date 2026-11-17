@@ -15,15 +15,12 @@
  */
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.ast.PyAstExpression;
 import org.jspecify.annotations.Nullable;
 
 /**
  * The "if" part of list comprehensions and generators.
- * User: dcheryasov
- * Date: Jul 31, 2008
  */
-public interface PyComprehensionIfComponent extends PyComprehensionComponent
-{
-	@Nullable
-	PyExpression getTest();
+public interface PyComprehensionIfComponent extends PyComprehensionComponent {
+    @Nullable <T extends PyAstExpression> T getTest();
 }

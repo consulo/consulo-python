@@ -56,7 +56,7 @@ public class UnresolvedRefCreateFunctionQuickFix implements LocalQuickFix {
             return;
         }
 
-        PyFunctionBuilder functionBuilder = new PyFunctionBuilder(myReference.getText());
+        PyFunctionBuilder functionBuilder = new PyFunctionBuilder(myReference.getText(), myElement);
 
         // if function is actually an argument of a call, don't use other arguments of the call to create parameter list of new function
         PyArgumentList argumentList = myElement.getArgumentList();
@@ -78,7 +78,7 @@ public class UnresolvedRefCreateFunctionQuickFix implements LocalQuickFix {
             functionBuilder.parameter("args");
         }
 
-        PyFunction function = functionBuilder.buildFunction(project, LanguageLevel.getDefault());
+        PyFunction function = functionBuilder.buildFunction();
         PyFunction parentFunction = PsiTreeUtil.getTopmostParentOfType(myElement, PyFunction.class);
         if (parentFunction != null) {
             PyClass parentClass = PsiTreeUtil.getTopmostParentOfType(parentFunction, PyClass.class);

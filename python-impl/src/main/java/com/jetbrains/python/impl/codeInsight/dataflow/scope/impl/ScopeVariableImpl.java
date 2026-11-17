@@ -1,72 +1,67 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.dataflow.scope.impl;
 
-import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
+import consulo.language.psi.PsiElement;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author oleg
- */
 public class ScopeVariableImpl implements ScopeVariable {
-  private String myName;
-  private final Collection<PsiElement> myDeclarations;
-  private boolean isParameter;
+    private final String myName;
+    private final Collection<PsiElement> myDeclarations;
+    private final boolean isParameter;
 
-  public ScopeVariableImpl(String name, boolean parameter, Collection<PsiElement> declarations) {
-    myName = name;
-    myDeclarations = declarations;
-    isParameter = parameter;
-  }
+    public ScopeVariableImpl(String name, boolean parameter, Collection<PsiElement> declarations) {
+        myName = name;
+        myDeclarations = declarations;
+        isParameter = parameter;
+    }
 
-  public ScopeVariableImpl(String name, boolean parameter, PsiElement declaration) {
-    this(name, parameter, Collections.singletonList(declaration));
-  }
+    public ScopeVariableImpl(String name, boolean parameter, PsiElement declaration) {
+        this(name, parameter, Collections.singletonList(declaration));
+    }
 
-  public String getName() {
-    return myName;
-  }
+    @Override
+    public String getName() {
+        return myName;
+    }
 
-  public Collection<PsiElement> getDeclarations() {
-    return myDeclarations;
-  }
+    @Override
+    public Collection<PsiElement> getDeclarations() {
+        return myDeclarations;
+    }
 
-  public boolean isParameter() {
-    return isParameter;
-  }
+    @Override
+    public boolean isParameter() {
+        return isParameter;
+    }
 
-  @Override
-  public String toString() {
-    return (isParameter() ? "par" : "var") + "(" + myName+ ")[" + myDeclarations.size() + "]";
-  }
+    @Override
+    public String toString() {
+        return (isParameter() ? "par" : "var") + "(" + myName + ")[" + myDeclarations.size() + "]";
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof ScopeVariableImpl)) return false;
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ScopeVariableImpl that)) {
+            return false;
+        }
 
-    ScopeVariableImpl that = (ScopeVariableImpl)o;
-    if (isParameter != that.isParameter) return false;
-    if (myDeclarations != null ? !myDeclarations.equals(that.myDeclarations) : that.myDeclarations != null) return false;
-    if (myName != null ? !myName.equals(that.myName) : that.myName != null) return false;
+        if (isParameter != that.isParameter) {
+            return false;
+        }
+        if (myDeclarations != null ? !myDeclarations.equals(that.myDeclarations) : that.myDeclarations != null) {
+            return false;
+        }
+        if (myName != null ? !myName.equals(that.myName) : that.myName != null) {
+            return false;
+        }
 
-    return true;
-  }
+        return true;
+    }
 }

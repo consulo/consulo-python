@@ -22,6 +22,7 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
+import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyNumericLiteralExpression;
 
@@ -41,7 +42,7 @@ public class ReplaceOctalNumericLiteralQuickFix implements LocalQuickFix {
         if (numericLiteralExpression instanceof PyNumericLiteralExpression) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
             String text = numericLiteralExpression.getText();
-            numericLiteralExpression.replace(elementGenerator.createExpressionFromText("0o" + text.substring(1)));
+            numericLiteralExpression.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(numericLiteralExpression), "0o" + text.substring(1)));
         }
     }
 }

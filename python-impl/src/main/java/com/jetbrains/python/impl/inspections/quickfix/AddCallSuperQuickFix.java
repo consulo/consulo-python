@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -111,7 +112,7 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         PyParameterList newParameterList = generator.createParameterList(languageLevel, newParameters.toString());
         problemFunction.getParameterList().replace(newParameterList);
         PyStatementList statementList = problemFunction.getStatementList();
-        PyUtil.addElementToStatementList(callSuperStatement, statementList, true);
+        PyPsiRefactoringUtil.addElementToStatementList(callSuperStatement, statementList, true);
         PyPsiUtils.removeRedundantPass(statementList);
     }
 

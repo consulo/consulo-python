@@ -1,22 +1,5 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
-
-import java.io.IOException;
-
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -28,37 +11,35 @@ import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyStarImportElementImpl;
 import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
 
-/**
- * @author vlan
- */
-public class PyStarImportElementElementType extends PyStubElementType<PyStarImportElementStub, PyStarImportElement>
-{
-	public PyStarImportElementElementType()
-	{
-		super("STAR_IMPORT_ELEMENT");
-	}
+import java.io.IOException;
 
-	public PsiElement createElement(ASTNode node)
-	{
-		return new PyStarImportElementImpl(node);
-	}
+public class PyStarImportElementElementType extends PyStubElementType<PyStarImportElementStub, PyStarImportElement> {
+    public PyStarImportElementElementType() {
+        super("STAR_IMPORT_ELEMENT");
+    }
 
-	public PyStarImportElement createPsi(PyStarImportElementStub stub)
-	{
-		return new PyStarImportElementImpl(stub);
-	}
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyStarImportElementImpl(node);
+    }
 
-	public PyStarImportElementStub createStub(PyStarImportElement psi, StubElement parentStub)
-	{
-		return new PyStarImportElementStubImpl(parentStub);
-	}
+    @Override
+    public PyStarImportElement createPsi(PyStarImportElementStub stub) {
+        return new PyStarImportElementImpl(stub);
+    }
 
-	public void serialize(PyStarImportElementStub stub, StubOutputStream dataStream) throws IOException
-	{
-	}
+    @Override
+    public PyStarImportElementStub createStub(PyStarImportElement psi, StubElement parentStub) {
+        return new PyStarImportElementStubImpl(parentStub);
+    }
 
-	public PyStarImportElementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
-	{
-		return new PyStarImportElementStubImpl(parentStub);
-	}
+    @Override
+    public void serialize(PyStarImportElementStub stub, StubOutputStream dataStream) throws IOException {
+    }
+
+    @Override
+    public PyStarImportElementStub deserialize(StubInputStream dataStream, StubElement parentStub)
+        throws IOException {
+        return new PyStarImportElementStubImpl(parentStub);
+    }
 }

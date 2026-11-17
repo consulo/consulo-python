@@ -15,6 +15,9 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.codeEditor.Editor;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.ast.PyAstStringLiteralExpression;
 import com.jetbrains.python.impl.codeInsight.intentions.PyGenerateDocstringIntention;
 import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
 import com.jetbrains.python.psi.*;
@@ -97,4 +100,17 @@ public class DocstringQuickFix implements LocalQuickFix {
             PyGenerateDocstringIntention.generateDocstring(docStringOwner, PyQuickFixUtil.getEditor(docStringOwner));
         }
     }
+
+  public static void doGenerateDocstring(PyDocStringOwner docStringOwner, @Nullable Editor editor) {
+    final PyDocstringGenerator docstringGenerator = PyDocstringGenerator
+      .forDocStringOwner(docStringOwner)
+      .withInferredParameters(false)
+      .addFirstEmptyLine();
+    final PyAstStringLiteralExpression updated = docstringGenerator.buildAndInsert().getDocStringExpression();
+    if (updated != null && editor != null) {
+      final int offset = updated.getTextOffset();
+      editor.getCaretModel().moveToOffset(offset);
+      editor.getCaretModel().moveCaretRelatively(0, 1, false, false, false);
+    }
+  }
 }

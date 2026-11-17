@@ -25,6 +25,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.editor.completion.*;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ProcessingContext;
 import consulo.util.lang.StringUtil;
@@ -56,20 +57,20 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 					PsiElement callee = ((PyReferenceExpression) calleeExpression).getReference().resolve();
 					if(callee instanceof PsiClass)
 					{
-						addSettersAndListeners(result, (PsiClass) callee);
+						addSettersAndListeners(result, (PsiClass) callee, parameters.getOriginalFile());
 					}
 					else if(callee instanceof PsiMethod && ((PsiMethod) callee).isConstructor())
 					{
 						PsiClass containingClass = ((PsiMethod) callee).getContainingClass();
 						assert containingClass != null;
-						addSettersAndListeners(result, containingClass);
+						addSettersAndListeners(result, containingClass, parameters.getOriginalFile());
 					}
 				}
 			}
 		});
 	}
 
-	private static void addSettersAndListeners(CompletionResultSet result, PsiClass containingClass)
+	private static void addSettersAndListeners(CompletionResultSet result, PsiClass containingClass, PsiFile origin)
 	{
 		// see PyJavaType.init() in Jython source code for matching logic
 		for(PsiMethod method : containingClass.getAllMethods())
@@ -77,7 +78,7 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 			if(PropertyUtil.isSimplePropertySetter(method))
 			{
 				String propName = PropertyUtil.getPropertyName(method);
-				result.addElement(PyUtil.createNamedParameterLookup(propName, containingClass.getProject()));
+				result.addElement(PyUtil.createNamedParameterLookup(propName, origin));
 			}
 			else if(method.getName().startsWith("add") && method.getName().endsWith("Listener") && PsiType.VOID.equals(method.getReturnType()))
 			{
@@ -90,10 +91,10 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 						PsiClass parameterClass = ((PsiClassType) type).resolve();
 						if(parameterClass != null)
 						{
-							result.addElement(PyUtil.createNamedParameterLookup(StringUtil.decapitalize(parameterClass.getName()), containingClass.getProject()));
+							result.addElement(PyUtil.createNamedParameterLookup(StringUtil.decapitalize(StringUtil.notNullize(parameterClass.getName())), origin));
 							for(PsiMethod parameterMethod : parameterClass.getMethods())
 							{
-								result.addElement(PyUtil.createNamedParameterLookup(parameterMethod.getName(), containingClass.getProject()));
+								result.addElement(PyUtil.createNamedParameterLookup(parameterMethod.getName(), origin));
 							}
 						}
 					}

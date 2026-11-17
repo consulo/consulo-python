@@ -1,23 +1,7 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import java.io.IOException;
-
-
+import com.jetbrains.python.psi.impl.stubs.*;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IndexSink;
@@ -31,57 +15,60 @@ import com.jetbrains.python.impl.psi.impl.PyDecoratorImpl;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
 import com.jetbrains.python.impl.psi.stubs.PyDecoratorStubIndex;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Actual serialized data of a decorator call.
- * @author dcheryasov
- * @since 2008-12-18
  */
 public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStub, PyDecorator>
-{
-	public PyDecoratorCallElementType()
-	{
-		super("DECORATOR_CALL");
-	}
+    implements PyCustomizableStubElementType<PyDecorator, PyCustomDecoratorStub, PyCustomDecoratorStubType<? extends PyCustomDecoratorStub>> {
+    public PyDecoratorCallElementType() {
+        super("DECORATOR_CALL");
+    }
 
-	@Override
-    public PsiElement createElement(ASTNode node)
-	{
-		return new PyDecoratorImpl(node);
-	}
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyDecoratorImpl(node);
+    }
 
-	@Override
-    public PyDecorator createPsi(PyDecoratorStub stub)
-	{
-		return new PyDecoratorImpl(stub);
-	}
+    @Override
+    public PyDecorator createPsi(PyDecoratorStub stub) {
+        return new PyDecoratorImpl(stub);
+    }
 
-	@Override
-    public PyDecoratorStub createStub(PyDecorator psi, StubElement parentStub)
-	{
-		return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
-	}
+    @Override
+    public PyDecoratorStub createStub(PyDecorator psi, StubElement parentStub) {
+        return new PyDecoratorStubImpl(psi.getQualifiedName(), psi.hasArgumentList(), parentStub, createCustomStub(psi));
+    }
 
-	@Override
-    public void serialize(PyDecoratorStub stub, StubOutputStream dataStream) throws IOException
-	{
-		QualifiedName.serialize(stub.getQualifiedName(), dataStream);
-	}
+    @Override
+    public List<PyCustomDecoratorStubType<? extends PyCustomDecoratorStub>> getExtensions() {
+        return PyCustomDecoratorStubType.EP_NAME.getExtensionList();
+    }
 
-	@Override
-	public void indexStub(PyDecoratorStub stub, IndexSink sink)
-	{
-		// Index decorators stub by name (todo: index by FQDN as well!)
-		QualifiedName qualifiedName = stub.getQualifiedName();
-		if(qualifiedName != null)
-		{
-			sink.occurrence(PyDecoratorStubIndex.KEY, qualifiedName.toString());
-		}
-	}
+    @Override
+    public void serialize(PyDecoratorStub stub, StubOutputStream dataStream) throws IOException {
+        QualifiedName.serialize(stub.getQualifiedName(), dataStream);
+        dataStream.writeBoolean(stub.hasArgumentList());
+        PyCustomDecoratorStub customStub = stub.getCustomStub(PyCustomDecoratorStub.class);
+        serializeCustomStub(customStub, dataStream);
+    }
 
-	@Override
-    public PyDecoratorStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
-	{
-		QualifiedName q_name = QualifiedName.deserialize(dataStream);
-		return new PyDecoratorStubImpl(q_name, parentStub);
-	}
+    @Override
+    public void indexStub(PyDecoratorStub stub, IndexSink sink) {
+        // Index decorators stub by name (todo: index by FQDN as well!)
+        QualifiedName qualifiedName = stub.getQualifiedName();
+        if (qualifiedName != null) {
+            sink.occurrence(PyDecoratorStubIndex.KEY, qualifiedName.toString());
+        }
+    }
+
+    @Override
+    public PyDecoratorStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+        QualifiedName q_name = QualifiedName.deserialize(dataStream);
+        boolean hasArgumentList = dataStream.readBoolean();
+        PyCustomDecoratorStub customStub = deserializeCustomStub(dataStream);
+        return new PyDecoratorStubImpl(q_name, hasArgumentList, parentStub, customStub);
+    }
 }

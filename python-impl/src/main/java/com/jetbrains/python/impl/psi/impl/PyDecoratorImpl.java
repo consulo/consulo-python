@@ -1,280 +1,113 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
-
-import com.jetbrains.python.impl.PyStubElementTypes;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
-import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
-import consulo.language.util.IncorrectOperationException;
-
-import org.jspecify.annotations.Nullable;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.FunctionParameter;
-import com.jetbrains.python.PyElementTypes;
+import consulo.language.util.IncorrectOperationException;
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.nameResolver.FQNamesProvider;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyDecorator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
+import com.jetbrains.python.psi.types.PyCallableType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author dcheryasov
- */
-public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> implements PyDecorator
-{
+import java.util.List;
 
-	public PyDecoratorImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyDecoratorImpl extends PyBaseElementImpl<PyDecoratorStub> implements PyDecorator {
 
-	public PyDecoratorImpl(PyDecoratorStub stub)
-	{
-		super(stub, PyStubElementTypes.DECORATOR_CALL);
-	}
+    public PyDecoratorImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	/**
-	 * @return the name of decorator, without the "@". Stub is used if available.
-	 */
-	@Override
-    @RequiredReadAction
-	public String getName()
-	{
-		QualifiedName qName = getQualifiedName();
-		return qName != null ? qName.getLastComponent() : null;
-	}
+    public PyDecoratorImpl(PyDecoratorStub stub) {
+        super(stub, PyStubElementTypes.DECORATOR_CALL);
+    }
 
-    @Nullable
     @Override
-	public PyFunction getTarget()
-	{
-		return PsiTreeUtil.getParentOfType(this, PyFunction.class);
-	}
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyDecorator(this);
+    }
 
-	@Override
-    @RequiredReadAction
-    public boolean isBuiltin()
-	{
-		ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens());
-		if(node != null)
-		{
-			PyReferenceExpression ref = (PyReferenceExpression) node.getPsi();
-			PsiElement target = ref.getReference().resolve();
-			return PyBuiltinCache.getInstance(this).isBuiltin(target);
-		}
-		return false;
-	}
-
-	@Override
-    @RequiredReadAction
-    public boolean hasArgumentList()
-	{
-		ASTNode argListNode = getNode().findChildByType(PyElementTypes.ARGUMENT_LIST);
-		return (argListNode != null) && (argListNode.findChildByType(PyTokenTypes.LPAR) != null);
-	}
-
-	@Override
-    @RequiredReadAction
-    public QualifiedName getQualifiedName()
-	{
-		PyDecoratorStub stub = getStub();
-		if(stub != null)
-		{
-			return stub.getQualifiedName();
-		}
-		else
-		{
-			PyReferenceExpression node = PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
-			if(node != null)
-			{
-				return node.asQualifiedName();
-			}
-			return null;
-		}
-	}
-
-	@Override
-    @RequiredReadAction
-    public PyExpression getCallee()
-	{
-		try
-		{
-			return (PyExpression) getFirstChild().getNextSibling(); // skip the @ before call
-		}
-		catch(NullPointerException npe)
-		{ // no sibling
-			return null;
-		}
-		catch(ClassCastException cce)
-		{ // error node instead
-			return null;
-		}
-	}
-
-	@Nullable
+    /**
+     * @return the name of decorator, without the "@". Stub is used if available.
+     */
     @Override
-    @RequiredReadAction
-	public PyArgumentList getArgumentList()
-	{
-		return PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
-	}
+    public String getName() {
+        return PyDecorator.super.getName();
+    }
 
-	@Override
-    @RequiredReadAction
-    public PyExpression[] getArguments()
-	{
-		PyArgumentList argList = getArgumentList();
-		return argList != null ? argList.getArguments() : PyExpression.EMPTY_ARRAY;
-	}
+    @Override
+    public boolean isBuiltin() {
+        ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens());
+        if (node != null) {
+            PyReferenceExpression ref = (PyReferenceExpression)node.getPsi();
+            PsiElement target = ref.getReference().resolve();
+            return PyBuiltinCache.getInstance(this).isBuiltin(target);
+        }
+        return false;
+    }
 
-	@Override
-    @RequiredReadAction
-	public <T extends PsiElement> T getArgument(int index, Class<T> argClass)
-	{
-		PyExpression[] args = getArguments();
-		return args.length > index && argClass.isInstance(args[index]) ? argClass.cast(args[index]) : null;
-	}
+    @Override
+    public boolean hasArgumentList() {
+        PyDecoratorStub stub = getStub();
+        if (stub != null) {
+            return stub.hasArgumentList();
+        }
+        else {
+            return getExpression() instanceof PyCallExpression;
+        }
+    }
 
-	@Override
-    @RequiredReadAction
-	public <T extends PsiElement> T getArgument(int index, String keyword, Class<T> argClass)
-	{
-		PyExpression argument = getKeywordArgument(keyword);
-		if(argument != null)
-		{
-			return argClass.isInstance(argument) ? argClass.cast(argument) : null;
-		}
-		return getArgument(index, argClass);
-	}
+    @Override
+    public @Nullable QualifiedName getQualifiedName() {
+        PyDecoratorStub stub = getStub();
+        if (stub != null) {
+            return stub.getQualifiedName();
+        }
+        else {
+            return PyDecorator.super.getQualifiedName();
+        }
+    }
 
-	@Nullable
-	@Override
-	public <T extends PsiElement> T getArgument(FunctionParameter parameter, Class<T> argClass)
-	{
-		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
-	}
+    @Override
+    public List<PyCallableType> multiResolveCallee(PyResolveContext resolveContext) {
+        return PyCallExpressionHelper.multiResolveCallee(this, resolveContext);
+    }
 
-	@Override
-	public PyExpression getKeywordArgument(String keyword)
-	{
-		return PyCallExpressionHelper.getKeywordArgument(this, keyword);
-	}
+    @Override
+    public List<PyArgumentsMapping> multiMapArguments(PyResolveContext resolveContext) {
+        return PyCallExpressionHelper.mapArguments(this, resolveContext);
+    }
 
-	@Override
-    public void addArgument(PyExpression expression)
-	{
-		PyCallExpressionHelper.addArgument(this, expression);
-	}
+    @Override
+    public String toString() {
+        return "PyDecorator: @" + getQualifiedName();
+    }
 
-	@Override
-    @RequiredReadAction
-    public PyMarkedCallee resolveCallee(PyResolveContext resolveContext)
-	{
-		return resolveCallee(resolveContext, 0);
-	}
+    public PsiElement setName(String name) throws IncorrectOperationException {
+        ASTNode node = getNode();
+        ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
+        if (nameNode != null) {
+            ASTNode nameElement = PyUtil.createNewName(this, name);
+            node.replaceChild(nameNode, nameElement);
+            return this;
+        }
+        else {
+            throw new IncorrectOperationException("No name node");
+        }
+    }
 
-	@Override
-    @RequiredReadAction
-    public PyMarkedCallee resolveCallee(PyResolveContext resolveContext, int offset)
-	{
-		PyMarkedCallee callee = PyCallExpressionHelper.resolveCallee(this, resolveContext);
-		if(callee == null)
-		{
-			return null;
-		}
-		if(!hasArgumentList())
-		{
-			// NOTE: that +1 thing looks fishy
-			callee = new PyMarkedCallee(callee.getCallable(), callee.getModifier(), callee.getImplicitOffset() + 1, callee.isImplicitlyResolved());
-		}
-		return callee;
-	}
-
-	@Override
-	public PyArgumentsMapping mapArguments(PyResolveContext resolveContext)
-	{
-		return PyCallExpressionHelper.mapArguments(this, resolveContext, 0);
-	}
-
-	@Override
-	public PyArgumentsMapping mapArguments(PyResolveContext resolveContext, int implicitOffset)
-	{
-		return PyCallExpressionHelper.mapArguments(this, resolveContext, implicitOffset);
-	}
-
-	@Override
-	public PyCallable resolveCalleeFunction(PyResolveContext resolveContext)
-	{
-		return PyCallExpressionHelper.resolveCalleeFunction(this, resolveContext);
-	}
-
-	@Override
-    public boolean isCalleeText(String... nameCandidates)
-	{
-		return PyCallExpressionHelper.isCalleeText(this, nameCandidates);
-	}
-
-	@Override
-	public boolean isCallee(FQNamesProvider... name)
-	{
-		return PyCallExpressionHelper.isCallee(this, name);
-	}
-
-
-	@Override
-    @RequiredReadAction
-	public String toString()
-	{
-		return "PyDecorator: @" + PyUtil.getReadableRepr(getCallee(), true); //getCalledFunctionReference().getReferencedName();
-	}
-
-	@RequiredWriteAction
-    public PsiElement setName(String name) throws IncorrectOperationException
-	{
-		ASTNode node = getNode();
-		ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
-		if(nameNode != null)
-		{
-			ASTNode nameElement = PyUtil.createNewName(this, name);
-			node.replaceChild(nameNode, nameElement);
-			return this;
-		}
-		else
-		{
-			throw new IncorrectOperationException("No name node");
-		}
-	}
-
-	@Override
-    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
-	{
-		return PyCallExpressionHelper.getCallType(this, context);
-	}
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        return PyCallExpressionHelper.getCallType(this, context, key);
+    }
 }

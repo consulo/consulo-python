@@ -17,8 +17,10 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -30,6 +32,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author yole
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyDemorganIntention", categories = "Python", fileExtensions = "py")
 public class PyDemorganIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {
@@ -73,7 +77,7 @@ public class PyDemorganIntention extends BaseIntentionAction {
             expString = newExpression;
         }
         PyElementGenerator generator = PyElementGenerator.getInstance(expression.getProject());
-        PyExpression newCall = generator.createExpressionFromText(expString);
+        PyExpression newCall = generator.createExpressionFromText(LanguageLevel.forElement(expression), expString);
         PsiElement insertedElement = expressionToReplace.replace(newCall);
         // codeStyleManager = expression.getManager().getCodeStyleManager()
         // TODO codeStyleManager.reformat(insertedElement)

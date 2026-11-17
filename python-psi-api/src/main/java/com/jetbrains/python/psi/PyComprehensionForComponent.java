@@ -15,16 +15,13 @@
  */
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.ast.PyAstExpression;
+
 /**
  * The "for" part of list comprehensions and generators.
- * User: dcheryasov
- * Date: Jul 31, 2008
  */
-public interface PyComprehensionForComponent extends PyComprehensionComponent
-{
-	PyExpression getIteratorVariable();
-
-	PyExpression getIteratedList();
-
-	boolean isAsync();
+public interface PyComprehensionForComponent extends PyComprehensionComponent {
+    <T extends PyAstExpression> T getIteratorVariable();
+    <T extends PyAstExpression> T getIteratedList();
+    boolean isAsync();
 }

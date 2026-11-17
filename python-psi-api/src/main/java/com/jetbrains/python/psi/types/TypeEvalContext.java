@@ -1,333 +1,156 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi.types;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jspecify.annotations.Nullable;
-import consulo.ide.ServiceManager;
-import consulo.project.Project;
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyTypedElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.ProcessingContext;
+import consulo.logging.Logger;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class TypeEvalContext
-{
+import java.util.Map;
+import java.util.function.Function;
 
-	public static class Key
-	{
-		private static final Key INSTANCE = new Key();
+public abstract class TypeEvalContext {
+    protected static final Logger logger = Logger.getInstance(TypeEvalContext.class);
 
-		private Key()
-		{
-		}
-	}
+    protected TypeEvalContext() {
+    }
 
-	private final TypeEvalConstraints myConstraints;
+    public abstract boolean getUsesExternalTypeEngine();
 
-	private List<String> myTrace;
-	private String myTraceIndent = "";
+    public abstract ProcessingContext getProcessingContext();
 
-	private final Map<PyTypedElement, PyType> myEvaluated = new HashMap<>();
-	private final Map<PyCallable, PyType> myEvaluatedReturn = new HashMap<>();
-	private final ThreadLocal<Set<PyTypedElement>> myEvaluating = new ThreadLocal<Set<PyTypedElement>>()
-	{
-		@Override
-		protected Set<PyTypedElement> initialValue()
-		{
-			return new HashSet<>();
-		}
-	};
-	private final ThreadLocal<Set<PyCallable>> myEvaluatingReturn = new ThreadLocal<Set<PyCallable>>()
-	{
-		@Override
-		protected Set<PyCallable> initialValue()
-		{
-			return new HashSet<>();
-		}
-	};
+    public abstract @Nullable PsiFile getOrigin();
 
-	private TypeEvalContext(boolean allowDataFlow, boolean allowStubToAST, boolean allowCallContext, @Nullable PsiFile origin)
-	{
-		myConstraints = new TypeEvalConstraints(allowDataFlow, allowStubToAST, allowCallContext, origin);
-	}
+    public abstract boolean allowDataFlow(PsiElement element);
 
-	@Override
-	public String toString()
-	{
-		return String.format("TypeEvalContext(%b, %b, %s)", myConstraints.myAllowDataFlow, myConstraints.myAllowStubToAST, myConstraints.myOrigin);
-	}
+    public abstract boolean allowReturnTypes(PsiElement element);
 
-	public boolean allowDataFlow(PsiElement element)
-	{
-		return myConstraints.myAllowDataFlow || element.getContainingFile() == myConstraints.myOrigin;
-	}
+    public abstract boolean allowCallContext(PsiElement element);
 
-	public boolean allowReturnTypes(PsiElement element)
-	{
-		return myConstraints.myAllowDataFlow || element.getContainingFile() == myConstraints.myOrigin;
-	}
+    public abstract boolean maySwitchToAST(PsiElement element);
 
-	public boolean allowCallContext(PsiElement element)
-	{
-		return myConstraints.myAllowCallContext && element.getContainingFile() == myConstraints.myOrigin;
-	}
+    public boolean isExternal() {
+        return false;
+    }
 
-	/**
-	 * Create a context for code completion.
-	 * <p>
-	 * It is as detailed as {@link TypeEvalContext#userInitiated(Project, PsiFile)}, but allows inferring types based on the context in which
-	 * the analyzed code was called or may be called. Since this is basically guesswork, the results should be used only for code completion.
-	 */
-	public static TypeEvalContext codeCompletion(Project project, @Nullable PsiFile origin)
-	{
-		return getContextFromCache(project, new TypeEvalContext(true, true, true, origin));
-	}
+    public abstract TypeEvalContext withTracing();
 
-	/**
-	 * Create the most detailed type evaluation context for user-initiated actions.
-	 * <p>
-	 * Should be used go to definition, find usages, refactorings, documentation.
-	 * <p>
-	 * For code completion see {@link TypeEvalContext#codeCompletion(Project, PsiFile)}.
-	 */
-	public static TypeEvalContext userInitiated(Project project, @Nullable PsiFile origin)
-	{
-		return getContextFromCache(project, new TypeEvalContext(true, true, false, origin));
-	}
+    public abstract void trace(String message, @Nullable Object... args);
 
-	/**
-	 * Create a type evaluation context for performing analysis operations on the specified file which is currently open in the editor,
-	 * without accessing stubs. For such a file, additional slow operations are allowed.
-	 * <p>
-	 * Inspections should not create a new type evaluation context. They should re-use the context of the inspection session.
-	 */
-	public static TypeEvalContext codeAnalysis(Project project, @Nullable PsiFile origin)
-	{
-		return getContextFromCache(project, new TypeEvalContext(false, false, false, origin));
-	}
+    public abstract void traceIndent();
 
-	/**
-	 * Create the most shallow type evaluation context for code insight purposes when other more detailed contexts are not available.
-	 * It's use should be minimized.
-	 *
-	 * @param project pass project here to enable cache. Pass null if you do not have any project.
-	 *                <strong>Always</strong> do your best to pass project here: it increases performance!
-	 */
-	public static TypeEvalContext codeInsightFallback(@Nullable Project project)
-	{
-		TypeEvalContext anchor = new TypeEvalContext(false, false, false, null);
-		if(project != null)
-		{
-			return getContextFromCache(project, anchor);
-		}
-		return anchor;
-	}
+    public abstract void traceUnindent();
 
-	/**
-	 * Create a type evaluation context for deeper and slower code insight.
-	 * <p>
-	 * Should be used only when normal code insight context is not enough for getting good results.
-	 */
-	public static TypeEvalContext deepCodeInsight(Project project)
-	{
-		return getContextFromCache(project, new TypeEvalContext(false, true, false, null));
-	}
+    public abstract String printTrace();
 
-	/**
-	 * Moves context through cache returning one from cache (if exists).
-	 *
-	 * @param project current project
-	 * @param context context to fetch from cache
-	 * @return context to use
-	 * @see TypeEvalContextCache#getContext(TypeEvalContext)
-	 */
-	private static TypeEvalContext getContextFromCache(Project project, TypeEvalContext context)
-	{
-		return ServiceManager.getService(project, TypeEvalContextCache.class).getContext(context);
-	}
+    public abstract boolean tracing();
 
-	public TypeEvalContext withTracing()
-	{
-		if(myTrace == null)
-		{
-			myTrace = new ArrayList<>();
-		}
-		return this;
-	}
+    public abstract void traceWithIndent(String message, Runnable block);
 
-	public void trace(String message, Object... args)
-	{
-		if(myTrace != null)
-		{
-			myTrace.add(myTraceIndent + String.format(message, args));
-		}
-	}
+    public abstract <R> @Nullable R assumeType(
+        PyTypedElement element,
+        @Nullable PyType type,
+        Function<@Nullable TypeEvalContext, R> func
+    );
 
-	public void traceIndent()
-	{
-		if(myTrace != null)
-		{
-			myTraceIndent += "  ";
-		}
-	}
+    public abstract boolean hasAssumptions();
 
-	public void traceUnindent()
-	{
-		if(myTrace != null && myTraceIndent.length() >= 2)
-		{
-			myTraceIndent = myTraceIndent.substring(0, myTraceIndent.length() - 2);
-		}
-	}
+    public abstract @Nullable PyType getType(PyTypedElement element);
 
-	public String printTrace()
-	{
-		return StringUtil.join(myTrace, "\n");
-	}
+    public abstract @Nullable PyType getReturnType(PyCallable callable);
 
-	public boolean tracing()
-	{
-		return myTrace != null;
-	}
+    public abstract Map<Pair<Object, Object>, @Nullable PyType> getContextTypeCache();
 
-	@Nullable
-	public PyType getType(PyTypedElement element)
-	{
-		Set<PyTypedElement> evaluating = myEvaluating.get();
-		if(evaluating.contains(element))
-		{
-			return null;
-		}
-		evaluating.add(element);
-		try
-		{
-			synchronized(myEvaluated)
-			{
-				if(myEvaluated.containsKey(element))
-				{
-					PyType type = myEvaluated.get(element);
-					assertValid(type, element);
-					return type;
-				}
-			}
-			PyType type = element.getType(this, Key.INSTANCE);
-			assertValid(type, element);
-			synchronized(myEvaluated)
-			{
-				myEvaluated.put(element, type);
-			}
-			return type;
-		}
-		finally
-		{
-			evaluating.remove(element);
-		}
-	}
+    public abstract Map<PyTypeParameterType, PyVariance> getVarianceCache();
 
-	@Nullable
-	public PyType getReturnType(PyCallable callable)
-	{
-		Set<PyCallable> evaluating = myEvaluatingReturn.get();
-		if(evaluating.contains(callable))
-		{
-			return null;
-		}
-		evaluating.add(callable);
-		try
-		{
-			synchronized(myEvaluatedReturn)
-			{
-				if(myEvaluatedReturn.containsKey(callable))
-				{
-					PyType type = myEvaluatedReturn.get(callable);
-					assertValid(type, callable);
-					return type;
-				}
-			}
-			PyType type = callable.getReturnType(this, Key.INSTANCE);
-			assertValid(type, callable);
-			synchronized(myEvaluatedReturn)
-			{
-				myEvaluatedReturn.put(callable, type);
-			}
-			return type;
-		}
-		finally
-		{
-			evaluating.remove(callable);
-		}
-	}
+    public abstract @Nullable PyType getKnownType(PyTypedElement element);
 
-	private static void assertValid(@Nullable PyType result, PyTypedElement element)
-	{
-		if(result != null)
-		{
-			result.assertValid(element.toString());
-		}
-	}
+    public abstract @Nullable PyType getKnownReturnType(PyCallable callable);
 
-	public boolean maySwitchToAST(PsiElement element)
-	{
-		return myConstraints.myAllowStubToAST || myConstraints.myOrigin == element.getContainingFile();
-	}
+    /**
+     * This class ensures that only {@link TypeEvalContext} instances can directly invoke
+     * {@link PyTypedElement#getType} and everybody else has to
+     * access its result though {@link #getType} or {@link #getReturnType}.
+     * Hence, the inferred type information cannot bypass caching in {@link TypeEvalContext}.
+     */
+    public abstract static sealed class Key permits KeyImpl {
+        private Key() {
+        }
+    }
 
-	@Nullable
-	public PsiFile getOrigin()
-	{
-		return myConstraints.myOrigin;
-	}
+    protected static final class KeyImpl extends Key {
+        public static final KeyImpl INSTANCE = new KeyImpl();
 
-	/**
-	 * @return context constraints (see {@link com.jetbrains.python.psi.types.TypeEvalConstraints}
-	 */
-	TypeEvalConstraints getConstraints()
-	{
-		return myConstraints;
-	}
+        private KeyImpl() {
+        }
+    }
 
-	@Override
-	public boolean equals(Object o)
-	{
-		if(this == o)
-		{
-			return true;
-		}
-		if(o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
+    /**
+     * Create a context for code completion.
+     * <p>
+     * <p>
+     * It is as detailed as {@link TypeEvalContext#userInitiated}, but allows inferring types based on the context in which
+     * the analyzed code was called or may be called. Since this is basically guesswork, the results should be used only for code completion.
+     */
+    public static TypeEvalContext codeCompletion(Project project, @Nullable PsiFile origin) {
+        return TypeEvalContextFactory.getInstance().codeCompletion(project, origin);
+    }
 
-		TypeEvalContext context = (TypeEvalContext) o;
+    /**
+     * Create the most detailed type evaluation context for user-initiated actions.
+     * <p>
+     * <p>
+     * Should be used for "goto definition", "find usages", refactorings, documentation.
+     * <p>
+     * <p>
+     * For code completion see {@link TypeEvalContext#codeCompletion}.
+     */
+    public static TypeEvalContext userInitiated(Project project, @Nullable PsiFile origin) {
+        return TypeEvalContextFactory.getInstance().userInitiated(project, origin);
+    }
 
-		return myConstraints.equals(context.myConstraints);
-	}
+    /**
+     * Create a type evaluation context for performing analysis operations on the specified file which is currently open in the editor,
+     * without accessing stubs. For such a file, additional slow operations are allowed.
+     * <p>
+     * <p>
+     * Inspections should not create a new type evaluation context. They should re-use the context of the inspection session.
+     */
+    public static TypeEvalContext codeAnalysis(Project project, @Nullable PsiFile origin) {
+        return TypeEvalContextFactory.getInstance().codeAnalysis(project, origin);
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return myConstraints.hashCode();
-	}
+    /**
+     * Create the most shallow type evaluation context for code insight purposes when other more detailed contexts are not available.
+     * It's use should be minimized.
+     *
+     * @param project pass project here to enable cache. Pass null if you do not have any project.
+     *                <b>Always</b> do your best to pass project here: it increases performance!
+     */
+    public static TypeEvalContext codeInsightFallback(@Nullable Project project) {
+        return TypeEvalContextFactory.getInstance().codeInsightFallback(project);
+    }
+
+
+    /**
+     * Special context to converting types from an external type checker, more aggressive assumptions can be made.
+     */
+    public static TypeEvalContext externalContext(Project project) {
+        return TypeEvalContextFactory.getInstance().externalContext(project);
+    }
+
+    /**
+     * Create a type evaluation context for deeper and slower code insight.
+     * <p>
+     * <p>
+     * Should be used only when normal code insight context is not enough for getting good results.
+     */
+    public static TypeEvalContext deepCodeInsight(Project project) {
+        return TypeEvalContextFactory.getInstance().deepCodeInsight(project);
+    }
 }

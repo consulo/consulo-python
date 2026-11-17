@@ -19,7 +19,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.codeInsight.stdlib.PyNamedTupleType;
+import com.jetbrains.python.impl.psi.types.PyNamedTupleType;
 import com.jetbrains.python.impl.inspections.quickfix.PyAddPropertyForFieldQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.PyMakePublicQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;

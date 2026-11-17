@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
+import com.jetbrains.python.impl.PythonUiService;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -22,11 +23,13 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -60,6 +63,8 @@ import static com.jetbrains.python.impl.psi.PyUtil.sure;
  * @author dcheryasov
  * @since 2009-10-09
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ImportToggleAliasIntention", categories = "Python", fileExtensions = "py")
 public class ImportToggleAliasIntention extends PyBaseIntentionAction {
     private static class IntentionState {
         private PyImportElement myImportElement;
@@ -270,7 +275,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
             }
         }
         catch (IncorrectOperationException ignored) {
-            PyUtil.showBalloon(project, PyLocalize.qfixActionFailed(), NotificationType.WARNING);
+            PythonUiService.getInstance().showBalloonWarning(project, PyLocalize.qfixActionFailed().get());
         }
     }
 }

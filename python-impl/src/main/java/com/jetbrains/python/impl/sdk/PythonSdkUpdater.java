@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.sdk;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.jetbrains.python.impl.codeInsight.userSkeletons.PyUserSkeletonsUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.sdk.skeletons.PySkeletonRefresher;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -324,11 +323,6 @@ public class PythonSdkUpdater implements PostStartupActivity {
                 results.add(skeletonsDir);
                 LOG.info("Binary skeletons directory for SDK " + getSdkPresentableName(sdk) + "): " + skeletonsDir.getPath());
             }
-        }
-        VirtualFile userSkeletonsDir = PyUserSkeletonsUtil.getUserSkeletonsDirectory();
-        if (userSkeletonsDir != null) {
-            results.add(userSkeletonsDir);
-            LOG.info("User skeletons directory for SDK " + getSdkPresentableName(sdk) + "): " + userSkeletonsDir.getPath());
         }
         return results;
     }

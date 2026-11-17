@@ -1,73 +1,75 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import org.jspecify.annotations.Nullable;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.language.psi.PsiExternalReferenceHost;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.StubBasedPsiElement;
-import consulo.language.psi.util.QualifiedName;
+import com.jetbrains.python.ast.PyAstTargetExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public interface PyTargetExpression extends PyQualifiedExpression, PsiNamedElement, PsiNameIdentifierOwner, PyDocStringOwner,
-		PyQualifiedNameOwner, PyReferenceOwner, StubBasedPsiElement<PyTargetExpressionStub>,
-		PyPossibleClassMember, PyTypeCommentOwner, PyAnnotationOwner {
-	PyTargetExpression[] EMPTY_ARRAY = new PyTargetExpression[0];
+import java.util.List;
 
-	/**
-	 * Find the value that maps to this target expression in an enclosing assignment expression.
-	 * Does not work with other expressions (e.g. if the target is in a 'for' loop).
-	 *
-	 * Operates at the AST level.
-	 *
-	 * @return the expression assigned to target via an enclosing assignment expression, or null.
-	 */
-	@Nullable
-	PyExpression findAssignedValue();
+public interface PyTargetExpression extends PyAstTargetExpression, PyQualifiedExpression, PsiNamedElement, PsiNameIdentifierOwner,
+        PsiExternalReferenceHost, PyDocStringOwner,
+        PyQualifiedNameOwner, PyReferenceOwner, StubBasedPsiElement<PyTargetExpressionStub>,
+        PyPossibleClassMember, PyTypeCommentOwner, PyAnnotationOwner {
+    PyTargetExpression[] EMPTY_ARRAY = new PyTargetExpression[0];
 
-	/**
-	 * Resolves the value that maps to this target expression in an enclosing assignment expression.
-	 *
-	 * This method does not access AST if underlying PSI is stub based and the context doesn't allow switching to AST.
-	 */
-	@Nullable
-	PsiElement resolveAssignedValue(PyResolveContext resolveContext);
+    @Override
+    @RequiredReadAction
+    default @Nullable PyAnnotation getAnnotation() {
+        return (PyAnnotation)PyAstTargetExpression.super.getAnnotation();
+    }
 
-	/**
-	 * Returns the qualified name (if there is any) assigned to the expression.
-	 *
-	 * This method does not access AST if underlying PSI is stub based.
-	 */
-	@Nullable
-	QualifiedName getAssignedQName();
+    @Override
+    @RequiredReadAction
+    default @Nullable PyExpression getQualifier() {
+        return (PyExpression)PyAstTargetExpression.super.getQualifier();
+    }
 
-	/**
-	 * If the value assigned to the target expression is a call, returns the (unqualified and unresolved) name of the
-	 * callee. Otherwise, returns null.
-	 *
-	 * @return the name of the callee or null if the assigned value is not a call.
-	 */
-	@Nullable
-	QualifiedName getCalleeName();
+    @Override
+    @RequiredReadAction
+    default @Nullable PyClass getContainingClass() {
+        return (PyClass)PyAstTargetExpression.super.getContainingClass();
+    }
 
-	PsiReference getReference();
+    @Override
+    @RequiredReadAction
+    default @Nullable PyStringLiteralExpression getDocStringExpression() {
+        return (PyStringLiteralExpression)PyAstTargetExpression.super.getDocStringExpression();
+    }
+
+    /**
+     * Find the value that maps to this target expression in an enclosing assignment expression.
+     * Does not work with other expressions (e.g. if the target is in a 'for' loop).
+     * <p>
+     * Operates at the AST level.
+     *
+     * @return the expression assigned to target via an enclosing assignment expression, or null.
+     */
+    @Override
+    @RequiredReadAction
+    default @Nullable PyExpression findAssignedValue() {
+        return (PyExpression)PyAstTargetExpression.super.findAssignedValue();
+    }
+
+    /**
+     * Multi-resolves the value that maps to this target expression in an enclosing assignment expression.
+     * <p>
+     * This method does not access AST if underlying PSI is stub based and the context doesn't allow switching to AST.
+     *
+     * @param resolveContext resolve context
+     * @return the resolved assigned values or an empty list.
+     * <i>Note: the returned list does not contain null values.</i>
+     */
+    List<PsiElement> multiResolveAssignedValue(PyResolveContext resolveContext);
+
+    @Override
+    PsiReference getReference();
 }

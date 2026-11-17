@@ -107,7 +107,7 @@ class InstanceFieldsManager extends FieldsManager
 	{
 		PyFunctionBuilder functionBuilder = new PyFunctionBuilder(PyNames.INIT, to);
 		functionBuilder.parameter(PyNames.CANONICAL_SELF); //TODO: Take param from codestyle?
-		PyFunction function = functionBuilder.buildFunction(to.getProject(), LanguageLevel.forElement(to));
+		PyFunction function = functionBuilder.buildFunction();
 		return PyClassRefactoringUtil.addMethods(to, true, function).get(0);
 	}
 

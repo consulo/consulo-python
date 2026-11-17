@@ -1,98 +1,59 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.navigation.ItemPresentation;
-import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameter;
 import com.jetbrains.python.psi.PyTupleParameter;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a tuple parameter as stubbed element.
  */
-public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub> implements PyTupleParameter
-{
+public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub> implements PyTupleParameter {
 
-	public PyTupleParameterImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+    public PyTupleParameterImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	public PyTupleParameterImpl(PyTupleParameterStub stub)
-	{
-		super(stub, PyStubElementTypes.TUPLE_PARAMETER);
-	}
+    public PyTupleParameterImpl(PyTupleParameterStub stub) {
+        super(stub, PyStubElementTypes.TUPLE_PARAMETER);
+    }
 
-	public PyNamedParameter getAsNamed()
-	{
-		return null;  // we're not named
-	}
+    @Override
+    public boolean hasDefaultValue() {
+        PyTupleParameterStub stub = getStub();
+        if (stub != null) {
+            return stub.getDefaultValueText() != null;
+        }
+        return PyTupleParameter.super.hasDefaultValue();
+    }
 
-	public PyTupleParameter getAsTuple()
-	{
-		return this;
-	}
+    @Override
+    public @Nullable String getDefaultValueText() {
+        PyTupleParameterStub stub = getStub();
+        if (stub != null) {
+            return stub.getDefaultValueText();
+        }
+        return PyTupleParameter.super.getDefaultValueText();
+    }
 
-	public PyExpression getDefaultValue()
-	{
-		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
-		if(nodes.length > 0)
-		{
-			return (PyExpression) nodes[0].getPsi();
-		}
-		return null;
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyTupleParameter(this);
+    }
 
-	public boolean hasDefaultValue()
-	{
-		PyTupleParameterStub stub = getStub();
-		if(stub != null)
-		{
-			return stub.hasDefaultValue();
-		}
-		return getDefaultValue() != null;
-	}
+    @Override
+    public PyParameter[] getContents() {
+        return getStubOrPsiChildren(PythonDialectsTokenSetProvider.getInstance().getParameterTokens(), new PyParameter[0]);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyTupleParameter(this);
-	}
-
-	public PyParameter[] getContents()
-	{
-		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.getInstance().getParameterTokens(), new PyParameter[0]);
-	}
-
-	@Override
-	public boolean isSelf()
-	{
-		return false;
-	}
-
-	@Override
-	public ItemPresentation getPresentation()
-	{
-		return new PyElementPresentation(this);
-	}
+    @Override
+    public ItemPresentation getPresentation() {
+        return new PyElementPresentation(this);
+    }
 }

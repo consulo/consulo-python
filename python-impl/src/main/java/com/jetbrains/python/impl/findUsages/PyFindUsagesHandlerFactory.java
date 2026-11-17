@@ -40,7 +40,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author yole
  */
-@ExtensionImpl
+@ExtensionImpl(id = "Python", order = "before default")
 public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public boolean canFindUsages(PsiElement element) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  */
 package com.jetbrains.python.psi.stubs;
 
-import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyAnnotation;
+import consulo.language.psi.stub.StubElement;
 
 public interface PyAnnotationStub extends StubElement<PyAnnotation> {
 }

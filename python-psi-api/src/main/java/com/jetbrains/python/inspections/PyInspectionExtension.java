@@ -1,74 +1,139 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.inspections;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportedNameDefiner;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 @ExtensionAPI(ComponentScope.APPLICATION)
 public abstract class PyInspectionExtension {
-  public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create(PyInspectionExtension.class);
+    public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create(PyInspectionExtension.class);
 
-  public boolean ignoreUnused(PsiElement local) {
-    return false;
-  }
+    public boolean ignoreUnused(PsiElement local, TypeEvalContext evalContext) {
+        return false;
+    }
 
-  public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner) {
-    return false;
-  }
+    public boolean ignoreShadowed(PsiElement element) {
+        return false;
+    }
 
-  public List<String> getFunctionParametersFromUsage(PsiElement elt) {
-    return null;
-  }
+    public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner) {
+        return false;
+    }
 
-  public boolean ignoreMethodParameters(PyFunction function) {
-    return false;
-  }
+    public List<String> getFunctionParametersFromUsage(PsiElement elt) {
+        return null;
+    }
 
-  public boolean ignorePackageNameInRequirements(PyQualifiedExpression importedExpression) {
-    return false;
-  }
+    /**
+     * @param function function that is inspecting in {@link com.jetbrains.python.inspections.PyMethodParametersInspection}
+     * @param context  type evaluation context
+     * @return true if the passed function could be ignored
+     */
+    public boolean ignoreMethodParameters(PyFunction function, TypeEvalContext context) {
+        return false;
+    }
 
-  public boolean ignoreUnresolvedReference(PyElement node, PsiReference reference) {
-    return false;
-  }
+    public boolean ignorePackageNameInRequirements(PyQualifiedExpression importedExpression) {
+        return false;
+    }
 
-  public boolean ignoreUnresolvedMember(PyType type, String name) {
-    return false;
-  }
+    /**
+     * Checks if unresolved reference could be ignored.
+     *
+     * @param node      element containing reference
+     * @param reference unresolved reference
+     * @return true if the unresolved reference could be ignored
+     */
+    public boolean ignoreUnresolvedReference(PyElement node, PsiReference reference, TypeEvalContext context) {
+        return false;
+    }
 
-  /**
-   * Returns true if access to protected (the one started with "_") symbol should not be treated as violation.
-   *
-   * @param expression access expression i.e. "_foo"
-   * @param context    type eval to be used
-   * @return true if ignore
-   */
-  public boolean ignoreProtectedSymbol(PyReferenceExpression expression, TypeEvalContext context) {
-    return false;
-  }
+    /**
+     * Enable "unresolved reference" inspection regardless of IDE type and initialized SDK.
+     *
+     * @return true -- Enable forcibly, false -- disable forcibly, null -- act as usual.
+     */
+    public @Nullable Boolean overrideUnresolvedReferenceInspection(PsiFile file) {
+        return null;
+    }
+
+    /**
+     * Checks if unresolved member could be ignored.
+     *
+     * @param type    type whose member will be checked
+     * @param name    member name
+     * @param context type evaluation context
+     * @return true if the unresolved member with the specified name could be ignored
+     */
+    public boolean ignoreUnresolvedMember(PyType type, String name, TypeEvalContext context) {
+        return false;
+    }
+
+    /**
+     * Returns true if access to protected (the one started with "_") symbol should not be treated as violation.
+     *
+     * @param expression access expression i.e. "_foo"
+     * @param context    type eval to be used
+     * @return true if ignore
+     */
+    public boolean ignoreProtectedSymbol(PyReferenceExpression expression, TypeEvalContext context) {
+        return false;
+    }
+
+    public boolean ignoreInitNewSignatures(PyFunction original, PyFunction complementary) {
+        return false;
+    }
+
+    /**
+     * Checks whether statement that probably has no effect should not be treated as violation.
+     *
+     * @param expressionStatement statement being analyzed
+     * @return true if no effect statement should be ignored
+     */
+    public boolean ignoreNoEffectStatement(PyExpressionStatement expressionStatement) {
+        return false;
+    }
+
+    /**
+     * Checks whether statement with trailing semicolon should not be treated as violation.
+     *
+     * @param statement statement being analyzed
+     * @return true if trailing semicolon should be ignored
+     */
+    public boolean ignoreTrailingSemicolon(PyStatement statement) {
+        return false;
+    }
+
+    /**
+     * Checks whether Python interpreter is required for the python file.
+     *
+     * @param file file being analyzed
+     * @return true if warnings produced by the Python interpreter notification should be ignored
+     */
+    public boolean ignoreInterpreterWarnings(PyFile file) {
+        return false;
+    }
+
+    /**
+     * @return Do not report "unused import"
+     */
+    public boolean ignoreUnusedImports(PyImportedNameDefiner importNameDefiner) { return false; }
 }

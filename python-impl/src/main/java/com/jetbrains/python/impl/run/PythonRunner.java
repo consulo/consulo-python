@@ -32,7 +32,7 @@ import consulo.process.ExecutionException;
 /**
  * @author yole
  */
-@ExtensionImpl
+@ExtensionImpl(order = "before defaultRunRunner")
 public class PythonRunner extends DefaultProgramRunner {
 
   public String getRunnerId() {

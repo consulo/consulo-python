@@ -16,8 +16,10 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
@@ -38,6 +40,8 @@ import consulo.python.impl.localize.PyLocalize;
  *
  * @author catherine
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyTransformConditionalExpressionIntention", categories = "Python", fileExtensions = "py")
 public class PyTransformConditionalExpressionIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {

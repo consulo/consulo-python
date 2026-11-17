@@ -1,234 +1,142 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
-import com.jetbrains.python.impl.psi.types.PyGenericType;
-import com.jetbrains.python.impl.psi.types.PyNoneType;
-import com.jetbrains.python.impl.psi.types.PyTypeChecker;
-import com.jetbrains.python.impl.psi.types.PyUnionType;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
-import consulo.language.ast.IElementType;
-import consulo.language.psi.PsiElement;
+import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiPolyVariantReference;
-import consulo.language.psi.util.PsiTreeUtil;
-import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.IncorrectOperationException;
-
+import consulo.util.lang.ThreeState;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyStructuralType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.impl.psi.types.PyUnsafeUnionType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-/**
- * @author yole
- */
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
+
 public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExpression {
-  public PyBinaryExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyBinaryExpression(this);
-  }
-
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public PyExpression getLeftExpression() {
-    return PsiTreeUtil.getChildOfType(this, PyExpression.class);
-  }
-
-  @Override
-  @RequiredReadAction
-  public PyExpression getRightExpression() {
-    return PsiTreeUtil.getNextSiblingOfType(getLeftExpression(), PyExpression.class);
-  }
-
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public PyElementType getOperator() {
-    PsiElement psiOperator = getPsiOperator();
-    return psiOperator != null ? (PyElementType)psiOperator.getNode().getElementType() : null;
-  }
-
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public PsiElement getPsiOperator() {
-    ASTNode node = getNode();
-    ASTNode child = node.findChildByType(PyTokenTypes.BINARY_OPS);
-    if (child != null) {
-      return child.getPsi();
+    public PyBinaryExpressionImpl(ASTNode astNode) {
+        super(astNode);
     }
-    return null;
-  }
 
-  @Override
-  @RequiredReadAction
-  public boolean isOperator(String chars) {
-    ASTNode child = getNode().getFirstChildNode();
-    StringBuilder buf = new StringBuilder();
-    while (child != null) {
-      IElementType elType = child.getElementType();
-      if (elType instanceof PyElementType && PyTokenTypes.BINARY_OPS.contains(elType)) {
-        buf.append(child.getText());
-      }
-      child = child.getTreeNext();
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyBinaryExpression(this);
     }
-    return buf.toString().equals(chars);
-  }
 
-  @Nullable
-  @Override
-  @RequiredReadAction
-  public PyExpression getOppositeExpression(PyExpression expression) throws IllegalArgumentException {
-    PyExpression right = getRightExpression();
-    PyExpression left = getLeftExpression();
-    if (expression.equals(left)) {
-      return right;
-    }
-    if (expression.equals(right)) {
-      return left;
-    }
-    throw new IllegalArgumentException("expression " + expression + " is neither left exp or right exp");
-  }
-
-  @Override
-  @RequiredWriteAction
-  public void deleteChildInternal(ASTNode child) {
-    PyExpression left = getLeftExpression();
-    PyExpression right = getRightExpression();
-    if (left == child.getPsi() && right != null) {
-      replace(right);
-    }
-    else if (right == child.getPsi() && left != null) {
-      replace(left);
-    }
-    else {
-      throw new IncorrectOperationException("Element " + child.getPsi() + " is neither left expression or right expression");
-    }
-  }
-
-  @Override
-  public PsiPolyVariantReference getReference() {
-    return getReference(PyResolveContext.noImplicits());
-  }
-
-  @Override
-  public PsiPolyVariantReference getReference(PyResolveContext context) {
-    return new PyOperatorReference(this, context);
-  }
-
-  @Override
-  @RequiredReadAction
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    if (isOperator("and") || isOperator("or")) {
-      PyExpression left = getLeftExpression();
-      PyType leftType = left != null ? context.getType(left) : null;
-      PyExpression right = getRightExpression();
-      PyType rightType = right != null ? context.getType(right) : null;
-      if (leftType == null && rightType == null) {
-        return null;
-      }
-      return PyUnionType.union(leftType, rightType);
-    }
-    List<PyTypeChecker.AnalyzeCallResults> results = PyTypeChecker.analyzeCallSite(this, context);
-    if (!results.isEmpty()) {
-      List<PyType> types = new ArrayList<>();
-      List<PyType> matchedTypes = new ArrayList<>();
-      for (PyTypeChecker.AnalyzeCallResults result : results) {
-        boolean matched = true;
-        for (Map.Entry<PyExpression, PyNamedParameter> entry : result.getArguments().entrySet()) {
-          PyExpression argument = entry.getKey();
-          PyNamedParameter parameter = entry.getValue();
-          if (parameter.isPositionalContainer() || parameter.isKeywordContainer()) {
-            continue;
-          }
-          Map<PyGenericType, PyType> substitutions = new HashMap<>();
-          PyType parameterType = context.getType(parameter);
-          PyType argumentType = context.getType(argument);
-          if (!PyTypeChecker.match(parameterType, argumentType, context, substitutions)) {
-            matched = false;
-          }
+    @Override
+    public void deleteChildInternal(ASTNode child) {
+        PyExpression left = getLeftExpression();
+        PyExpression right = getRightExpression();
+        if (left == child.getPsi() && right != null) {
+            replace(right);
         }
-        PyType type = result.getCallable().getCallType(context, this);
-        if (!PyTypeChecker.isUnknown(type) && !(type instanceof PyNoneType)) {
-          types.add(type);
-          if (matched) {
-            matchedTypes.add(type);
-          }
+        else if (right == child.getPsi() && left != null) {
+            replace(left);
         }
-      }
-      if (!matchedTypes.isEmpty()) {
-        return PyUnionType.union(matchedTypes);
-      }
-      if (!types.isEmpty()) {
-        return PyUnionType.union(types);
-      }
+        else {
+            throw new IncorrectOperationException("Element " + child.getPsi() + " is neither left expression or right expression");
+        }
     }
-    String referencedName = getReferencedName();
-    if (referencedName != null && PyNames.COMPARISON_OPERATORS.contains(referencedName)) {
-      return PyBuiltinCache.getInstance(this).getBoolType();
+
+    @Override
+    public PsiPolyVariantReference getReference() {
+        return getReference(PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(getProject())));
     }
-    return null;
-  }
 
-  @Override
-  @RequiredReadAction
-  public PyExpression getQualifier() {
-    return getLeftExpression();
-  }
+    @Override
+    public PsiPolyVariantReference getReference(PyResolveContext context) {
+        return new PyOperatorReference(this, context);
+    }
 
-  @Nullable
-  @Override
-  public QualifiedName asQualifiedName() {
-    return PyPsiUtils.asQualifiedName(this);
-  }
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        if (isOperator(PyNames.AND) || isOperator(PyNames.OR)) {
+            PyExpression left = getLeftExpression();
+            PyType leftType = left != null ? context.getType(left) : PyAnyType.getUnknown();
+            PyExpression right = getRightExpression();
+            PyType rightType = right != null ? context.getType(right) : PyAnyType.getUnknown();
+            if (left == null && right == null) {
+                return PyAnyType.getUnknown();
+            }
+            // `a or b` evaluates to `a` when `a` is truthy and to `b` otherwise.
+            // `a and b` evaluates to `a` when `a` is falsy and to `b` otherwise.
+            // So `a` contributes only the part of its type with the relevant truthiness (excluding e.g. `None`,
+            // `Literal[False]` or a class whose `__bool__` is `Literal[False]`), and `b` contributes only when it can be reached.
+            boolean isOr = isOperator(PyNames.OR);
+            ThreeState leftTruthiness = PyTypeUtil.getTypeTruthiness(leftType, left, context);
+            Ref<PyType> leftContribution = PyTypeUtil.narrowTypeByTruthiness(leftType, isOr, left, context);
+            boolean rightReachable = isOr ? leftTruthiness != ThreeState.YES : leftTruthiness != ThreeState.NO;
+            if (leftContribution == null) {
+                // `a` never yields its own value as the result (e.g. an always-falsy `a` in `a or b`).
+                return rightType != null ? rightType : PyAnyType.getUnknown();
+            }
+            if (!rightReachable) {
+                // `b` is never evaluated (e.g. an always-truthy `a` in `a or b`).
+                return leftContribution.get();
+            }
+            return PyUnionType.unionOrUnknown(leftContribution.get(), rightType);
+        }
+        String referencedName = getReferencedName();
+        if (PyNames.CONTAINS.equals(referencedName) || getOperator() == PyTokenTypes.IS_KEYWORD) {
+            PyClassType boolType = PyBuiltinCache.getInstance(this).getBoolType();
+            return boolType != null ? boolType : PyAnyType.getUnknown();
+        }
+        PyType callResultType = PyCallExpressionHelper.getCallType(this, context, key);
+        if (callResultType instanceof PyAnyType.Any) {
+            return callResultType;
+        }
+        if (isUnknown(callResultType)) {
+            if (referencedName != null && PyNames.COMPARISON_OPERATORS.contains(referencedName)) {
+                // it was not an explicit `Any`, so we form an unsafe union of `Unknown` and `bool`
+                PyClassType boolType = PyBuiltinCache.getInstance(this).getBoolType();
+                return PyUnsafeUnionType.unsafeUnion(callResultType, boolType != null ? boolType : PyAnyType.getUnknown());
+            }
+            return callResultType;
+        }
+        boolean bothOperandsAreKnown = operandIsKnown(getLeftExpression(), context) && operandIsKnown(getRightExpression(), context);
+        // TODO requires weak union. See PyTypeCheckerInspectionTest#testBinaryExpressionWithUnknownOperand
+        return bothOperandsAreKnown ? callResultType : PyUnionType.createWeakType(callResultType);
+    }
 
-  @Override
-  @RequiredReadAction
-  public boolean isQualified() {
-    return getQualifier() != null;
-  }
+    @Override
+    public PyExpression getLeftExpression() {
+        return PyBinaryExpression.super.getLeftExpression();
+    }
 
-  @Override
-  @RequiredReadAction
-  public String getReferencedName() {
-    PyElementType t = getOperator();
-    return t != null ? t.getSpecialMethodName() : null;
-  }
+    @Override
+    public @Nullable PyExpression getRightExpression() {
+        return PyBinaryExpression.super.getRightExpression();
+    }
 
-  @Override
-  @RequiredReadAction
-  public ASTNode getNameElement() {
-    PsiElement op = getPsiOperator();
-    return op != null ? op.getNode() : null;
-  }
+    @Override
+    public @Nullable PyExpression getQualifier() {
+        return PyBinaryExpression.super.getQualifier();
+    }
+
+    private static boolean operandIsKnown(@Nullable PyExpression operand, TypeEvalContext context) {
+        if (operand == null) {
+            return false;
+        }
+
+        PyType operandType = context.getType(operand);
+        if (operandType instanceof PyStructuralType || PyTypeChecker.isUnknown(operandType, context)) {
+            return false;
+        }
+
+        return true;
+    }
 }

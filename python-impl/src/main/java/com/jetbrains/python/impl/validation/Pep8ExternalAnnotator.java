@@ -21,7 +21,7 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.PythonHelper;
 import com.jetbrains.python.impl.codeInsight.imports.OptimizeImportsQuickFix;
-import com.jetbrains.python.impl.formatter.PyCodeStyleSettings;
+import com.jetbrains.python.formatter.PyCodeStyleSettings;
 import com.jetbrains.python.impl.inspections.PyPep8Inspection;
 import com.jetbrains.python.impl.inspections.PyPep8InspectionState;
 import com.jetbrains.python.impl.inspections.quickfix.PyFillParagraphFix;

@@ -20,10 +20,12 @@ import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
 import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.editor.template.Template;
 import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
@@ -42,6 +44,8 @@ import consulo.python.impl.localize.PyLocalize;
  *
  * @author ktisha
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.TypeAssertionIntention", categories = "Python", fileExtensions = "py")
 public class TypeAssertionIntention extends PyBaseIntentionAction {
     @Override
     public LocalizeValue getText() {

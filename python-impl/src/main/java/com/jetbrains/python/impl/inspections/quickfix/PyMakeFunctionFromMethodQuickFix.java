@@ -17,11 +17,10 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
-import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.psi.*;
-import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -34,7 +33,6 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -122,18 +120,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
 
     private static void removeFormerImport(PsiFile usageFile, boolean addImport) {
         if (usageFile instanceof PyFile && addImport) {
-            LocalInspectionToolSession session = new LocalInspectionToolSession(usageFile, 0, usageFile.getTextLength());
-            final PyUnresolvedReferencesInspection.Visitor visitor =
-                new PyUnresolvedReferencesInspection.Visitor(null, session, Collections.<String>emptyList());
-            usageFile.accept(new PyRecursiveElementVisitor() {
-                @Override
-                public void visitPyElement(PyElement node) {
-                    super.visitPyElement(node);
-                    node.accept(visitor);
-                }
-            });
-
-            visitor.optimizeImports();
+            PyClassRefactoringUtil.optimizeImports(usageFile);
         }
     }
 

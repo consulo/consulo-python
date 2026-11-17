@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.codeFragment;
 
+import com.jetbrains.python.ast.PyAstFunction;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
@@ -117,8 +118,8 @@ public class PyCodeFragmentUtil {
                             PyParameter[] parameters = parameterList.getParameters();
                             if (parameters.length > 0) {
                                 if (resolved == parameters[0]) {
-                                    PyFunction.Modifier modifier = function.getModifier();
-                                    if (modifier == null || modifier == PyFunction.Modifier.CLASSMETHOD) {
+                                    PyAstFunction.Modifier modifier = function.getModifier();
+                                    if (modifier == null || modifier == PyAstFunction.Modifier.CLASSMETHOD) {
                                         return true;
                                     }
                                 }

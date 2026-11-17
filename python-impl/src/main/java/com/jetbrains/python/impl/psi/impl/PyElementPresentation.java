@@ -1,37 +1,23 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
-
-import consulo.annotation.access.RequiredReadAction;
-import consulo.localize.LocalizeValue;
-import org.jspecify.annotations.Nullable;
 
 import consulo.ui.ex.ColoredItemPresentation;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyPossibleClassMember;
 import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
+import com.jetbrains.python.impl.pyi.PyiFile;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.image.Image;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author vlan
- */
 public class PyElementPresentation implements ColoredItemPresentation {
     private final PyElement myElement;
 
@@ -46,12 +32,38 @@ public class PyElementPresentation implements ColoredItemPresentation {
 
     @Override
     public LocalizeValue getPresentableText() {
-        return LocalizeValue.ofNullable(myElement.getName()).orIfEmpty(LocalizeValue.of(PyNames.UNNAMED_ELEMENT));
+        String name = myElement.getName();
+        return LocalizeValue.of(name != null ? name : PyNames.UNNAMED_ELEMENT);
     }
 
     @Override
+    @RequiredReadAction
     public @Nullable String getLocationString() {
-        return "(" + getPackageForFile(myElement.getContainingFile()) + ")";
+        PsiFile containingFile = myElement.getContainingFile();
+
+        String packageForFile = getPackageForFile(containingFile);
+        if (packageForFile == null) {
+            return null;
+        }
+
+        boolean isPyiFile = containingFile instanceof PyiFile;
+
+        PyClass containingClass = myElement instanceof PyPossibleClassMember ? ((PyPossibleClassMember)myElement).getContainingClass() : null;
+        if (containingClass != null) {
+            if (isPyiFile) {
+                return PyLocalize.elementPresentationLocationStringInClassStub(containingClass.getName(), packageForFile).get();
+            }
+            else {
+                return PyLocalize.elementPresentationLocationStringInClass(containingClass.getName(), packageForFile).get();
+            }
+        }
+
+        if (isPyiFile) {
+            return PyLocalize.elementPresentationLocationStringModuleStub(packageForFile).get();
+        }
+        else {
+            return PyLocalize.elementPresentationLocationStringModule(packageForFile).get();
+        }
     }
 
     @Override
@@ -60,15 +72,12 @@ public class PyElementPresentation implements ColoredItemPresentation {
         return IconDescriptorUpdaters.getIcon(myElement, 0);
     }
 
-    public static String getPackageForFile(PsiFile containingFile) {
+    public static @Nullable String getPackageForFile(PsiFile containingFile) {
         VirtualFile vFile = containingFile.getVirtualFile();
 
         if (vFile != null) {
-            String importableName = QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
-            if (importableName != null) {
-                return importableName;
-            }
+            return QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
         }
-        return "";
+        return null;
     }
 }

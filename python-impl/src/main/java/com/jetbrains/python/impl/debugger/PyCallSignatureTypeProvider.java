@@ -31,7 +31,7 @@ import consulo.util.lang.ref.Ref;
 /**
  * @author traff
  */
-@ExtensionImpl
+@ExtensionImpl(id = "pyCallSignatureTypeProvider", order = "after pyMockerFixtureTypeProvider")
 public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   @Override
   public Ref<PyType> getParameterType(PyNamedParameter param,

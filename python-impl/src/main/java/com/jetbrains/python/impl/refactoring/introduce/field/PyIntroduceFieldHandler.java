@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.introduce.field;
 
+import com.jetbrains.python.ast.PyAstFunction;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
@@ -156,8 +157,8 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
           PyFunction function = (PyFunction)myScope;
           PyParameter[] parameters = function.getParameterList().getParameters();
           if (parameters.length > 0 && result == parameters[0]) {
-            PyFunction.Modifier modifier = function.getModifier();
-            if (modifier != PyFunction.Modifier.STATICMETHOD) {
+            PyAstFunction.Modifier modifier = function.getModifier();
+            if (modifier != PyAstFunction.Modifier.STATICMETHOD) {
               // 'self' is not a local scope dependency
               return;
             }
@@ -210,7 +211,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     }
     PyFunctionBuilder builder = new PyFunctionBuilder(PythonUnitTestUtil.TESTCASE_SETUP_NAME, clazz);
     builder.parameter(PyNames.CANONICAL_SELF);
-    PyFunction setUp = builder.buildFunction(clazz.getProject(), LanguageLevel.getDefault());
+    PyFunction setUp = builder.buildFunction();
     PyStatementList statements = clazz.getStatementList();
     PsiElement anchor = statements.getFirstChild();
     setUp = (PyFunction)statements.addBefore(setUp, anchor);
@@ -240,7 +241,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   protected PyExpression createExpression(Project project, String name, PsiElement declaration) {
     String text = declaration.getText();
     String self_name = text.substring(0, text.indexOf('.'));
-    return PyElementGenerator.getInstance(project).createExpressionFromText(self_name + "." + name);
+    return PyElementGenerator.getInstance(project).createExpressionFromText(LanguageLevel.forElement(declaration), self_name + "." + name);
   }
 
   @Override
@@ -295,8 +296,8 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   private static boolean isInStaticMethod(PsiElement element) {
     PyFunction containingMethod = PsiTreeUtil.getParentOfType(element, PyFunction.class, false, PyClass.class);
     if (containingMethod != null) {
-      PyFunction.Modifier modifier = containingMethod.getModifier();
-      return modifier == PyFunction.Modifier.STATICMETHOD;
+      PyAstFunction.Modifier modifier = containingMethod.getModifier();
+      return modifier == PyAstFunction.Modifier.STATICMETHOD;
     }
     return false;
   }

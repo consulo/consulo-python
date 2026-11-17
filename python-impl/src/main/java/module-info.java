@@ -72,6 +72,8 @@ open module consulo.python.impl {
 
   requires com.google.common;
   requires com.google.gson;
+  requires com.dynatrace.hash4j;
+  requires one.util.streamex;
 
   requires xmlrpc.common;
   requires xmlrpc.server;
@@ -108,10 +110,16 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.codeInsight.imports;
   exports com.jetbrains.python.impl.codeInsight.intentions;
   exports com.jetbrains.python.impl.codeInsight.liveTemplates;
+  exports com.jetbrains.python.impl.codeInsight.mlcompletion;
   exports com.jetbrains.python.impl.codeInsight.override;
   exports com.jetbrains.python.impl.codeInsight.stdlib;
   exports com.jetbrains.python.impl.codeInsight.testIntegration;
-  exports com.jetbrains.python.impl.codeInsight.userSkeletons;
+  exports com.jetbrains.python.impl.codeInsight.functionTypeComments;
+  exports com.jetbrains.python.impl.codeInsight.functionTypeComments.psi;
+  exports com.jetbrains.python.impl.codeInsight.typeRepresentation;
+  exports com.jetbrains.python.impl.codeInsight.typeRepresentation.psi;
+  exports com.jetbrains.python.impl.codeInsight.typing;
+  exports com.jetbrains.python.impl.pyi;
   exports com.jetbrains.python.impl.configuration;
   exports com.jetbrains.python.impl.console;
   exports com.jetbrains.python.impl.console.actions;
@@ -178,6 +186,7 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.run;
   exports com.jetbrains.python.impl.sdk;
   exports com.jetbrains.python.impl.sdk.flavors;
+  exports com.jetbrains.python.impl.sdk.skeleton;
   exports com.jetbrains.python.impl.sdk.skeletons;
   exports com.jetbrains.python.impl.spellchecker;
   exports com.jetbrains.python.impl.statistics;

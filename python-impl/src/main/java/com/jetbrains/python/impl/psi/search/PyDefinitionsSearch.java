@@ -1,52 +1,63 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.search;
 
+import com.jetbrains.python.impl.pyi.PyiUtil;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.search.DefinitionsScopedSearch;
 import consulo.language.psi.search.DefinitionsScopedSearchExecutor;
 
 import java.util.function.Predicate;
 
-/**
- * @author yole
- */
+
 @ExtensionImpl
-public class PyDefinitionsSearch implements DefinitionsScopedSearchExecutor {
+public final class PyDefinitionsSearch implements DefinitionsScopedSearchExecutor {
     @Override
-    public boolean execute(
-        DefinitionsScopedSearch.SearchParameters parameters,
-        Predicate<? super PsiElement> consumer
-    ) {
+    public boolean execute(DefinitionsScopedSearch.SearchParameters parameters, Predicate<? super PsiElement> consumer) {
         PsiElement element = parameters.getElement();
-        if (element instanceof PyClass pyClass) {
-            return PyClassInheritorsSearch.search(pyClass, true).forEach(consumer::test);
+        if (element instanceof PyElement) {
+            PsiElement finalElement = element;
+            boolean isInsideStub = ReadAction.compute(() -> PyiUtil.isInsideStub(finalElement));
+            if (isInsideStub) {
+                var originalElement = ReadAction.compute(() -> PyiUtil.getOriginalElement((PyElement)finalElement));
+                if (originalElement != null) {
+                    element = originalElement;
+                    if (!consumer.test(element)) {
+                        return false;
+                    }
+                }
+            }
         }
-        else if (element instanceof PyFunction function) {
-            return PyOverridingMethodsSearch.search(function, true).forEach(consumer::test);
+        if (element instanceof PyClass) {
+            return processInheritors((PyClass)element, consumer);
         }
-        else if (element instanceof PyTargetExpression && element.getParent() instanceof PyAssignmentStatement assignment) {
-            return consumer.test(assignment); // PY-237
+        else if (element instanceof PyFunction) {
+            return processOverridingMethods((PyFunction)element, consumer);
+        }
+        else if (element instanceof PyTargetExpression) {
+            return processAssignmentStatement(element, consumer);
         }
         return true;
+    }
+
+    private static boolean processInheritors(PyClass pyClass, Predicate<? super PsiElement> consumer) {
+        return ReadAction.compute(() -> PyClassInheritorsSearch.search(pyClass, true)).forEach(consumer::test);
+    }
+
+    private static boolean processOverridingMethods(PyFunction pyFunction,
+                                                    Predicate<? super PsiElement> consumer) {
+        return ReadAction.compute(() -> PyOverridingMethodsSearch.search(pyFunction, true)).forEach(consumer::test);
+    }
+
+    private static boolean processAssignmentStatement(PsiElement element,
+                                                      Predicate<? super PsiElement> consumer) {
+        PsiElement parent = ReadAction.compute(() -> element.getParent());
+        return !(parent instanceof PyAssignmentStatement) || consumer.test(parent);
     }
 }

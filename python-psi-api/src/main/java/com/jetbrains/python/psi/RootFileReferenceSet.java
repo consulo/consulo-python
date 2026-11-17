@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
 import consulo.application.ApplicationManager;
@@ -24,8 +10,8 @@ import consulo.language.psi.path.FileReferenceSet;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.ManagingFS;
 import consulo.virtualFileSystem.fileType.FileType;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -34,51 +20,42 @@ import java.util.List;
  *
  * @author traff
  */
-public class RootFileReferenceSet extends FileReferenceSet
-{
-	public RootFileReferenceSet(String str,
-			PsiElement element,
-			int startInElement,
-			PsiReferenceProvider provider,
-			boolean caseSensitive,
-			boolean endingSlashNotAllowed,
-			@Nullable FileType[] suitableFileTypes)
-	{
-		super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed, suitableFileTypes);
-	}
+public class RootFileReferenceSet extends FileReferenceSet {
+    public RootFileReferenceSet(String str,
+                                PsiElement element,
+                                int startInElement,
+                                @Nullable PsiReferenceProvider provider,
+                                boolean caseSensitive,
+                                boolean endingSlashNotAllowed,
+                                FileType @Nullable [] suitableFileTypes) {
+        super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed, suitableFileTypes);
+    }
 
-	public RootFileReferenceSet(String s, PsiElement element, int offset, PsiReferenceProvider provider, boolean sensitive)
-	{
-		super(s, element, offset, provider, sensitive);
-	}
+    public RootFileReferenceSet(String s, PsiElement element, int offset, @Nullable PsiReferenceProvider provider, boolean sensitive) {
+        super(s, element, offset, provider, sensitive);
+    }
 
-	@Override
-	public boolean isAbsolutePathReference()
-	{
-		if(!ApplicationManager.getApplication().isUnitTestMode())
-		{
-			return FileUtil.isAbsolute(getPathString());
-		}
-		else
-		{
-			return super.isAbsolutePathReference();
-		}
-	}
+    @Override
+    public boolean isAbsolutePathReference() {
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            return FileUtil.isAbsolute(getPathString());
+        }
+        else {
+            return super.isAbsolutePathReference();
+        }
+    }
 
-	@Override
-	public Collection<PsiFileSystemItem> computeDefaultContexts()
-	{
-		PsiFile file = getContainingFile();
-		if(file == null)
-		{
-			return List.of();
-		}
+    @Override
+    public Collection<PsiFileSystemItem> computeDefaultContexts() {
+        PsiFile file = getContainingFile();
+        if (file == null) {
+            return List.of();
+        }
 
-		if(isAbsolutePathReference() && !ApplicationManager.getApplication().isUnitTestMode())
-		{
-			return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
-		}
+        if (isAbsolutePathReference() && !ApplicationManager.getApplication().isUnitTestMode()) {
+            return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
+        }
 
-		return super.computeDefaultContexts();
-	}
+        return super.computeDefaultContexts();
+    }
 }

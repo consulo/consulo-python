@@ -101,7 +101,7 @@ public class PyExtractMethodUtil
 		boolean isStaticMethod = flags != null && flags.isStaticMethod();
 
 		// collect statements
-		List<PsiElement> elementsRange = PyPsiUtils.collectElements(statement1, statement2);
+		List<PsiElement> elementsRange = getElementsOfRange(statement1, statement2);
 		if(elementsRange.isEmpty())
 		{
 			CommonRefactoringUtil.showErrorHint(
@@ -466,7 +466,7 @@ public class PyExtractMethodUtil
 	@RequiredWriteAction
     private static PsiElement replaceElements(SimpleMatch match, PsiElement element)
 	{
-		List<PsiElement> elementsRange = PyPsiUtils.collectElements(match.getStartElement(), match.getEndElement());
+		List<PsiElement> elementsRange = getElementsOfRange(match.getStartElement(), match.getEndElement());
 		Map<String, String> changedParameters = match.getChangedParameters();
 		PsiElement callElement = element;
 		PyElementGenerator generator = PyElementGenerator.getInstance(callElement.getProject());
@@ -562,7 +562,7 @@ public class PyExtractMethodUtil
 				builder.parameter(data.getName());
 			}
 		}
-		PyParameterList pyParameterList = builder.buildFunction(project, LanguageLevel.forElement(generatedMethod)).getParameterList();
+		PyParameterList pyParameterList = builder.buildFunction().getParameterList();
 		generatedMethod.getParameterList().replace(pyParameterList);
 	}
 
@@ -597,8 +597,8 @@ public class PyExtractMethodUtil
 			PsiElement target = parent instanceof PyClass pyClass ? pyClass.getStatementList() : parent;
 			PsiElement insertionAnchor = PyPsiUtils.getParentRightBefore(anchor, target);
 			assert insertionAnchor != null;
-			Couple<PsiComment> comments = PyPsiUtils.getPrecedingComments(insertionAnchor);
-			result = insertionAnchor.getParent().addBefore(generatedMethod, comments != null ? comments.getFirst() : insertionAnchor);
+			List<PsiComment> comments = PyPsiUtils.getPrecedingComments(insertionAnchor);
+			result = insertionAnchor.getParent().addBefore(generatedMethod, !comments.isEmpty() ? comments.get(0) : insertionAnchor);
 		}
 		// to ensure correct reformatting, mark the entire method as generated
 		result.accept(new PsiRecursiveElementVisitor()
@@ -639,7 +639,7 @@ public class PyExtractMethodUtil
 			text = expression.getText();
 		}
 		builder.statement("return " + text);
-		return builder.buildFunction(project, LanguageLevel.forElement(expression));
+		return builder.buildFunction();
 	}
 
 	@RequiredWriteAction
@@ -660,7 +660,7 @@ public class PyExtractMethodUtil
 		}
 		addDecorators(builder, flags);
 		addFakeParameters(builder, variableData);
-		PyFunction method = builder.buildFunction(project, LanguageLevel.forElement(elementsRange.get(0)));
+		PyFunction method = builder.buildFunction();
 		PyStatementList statementList = method.getStatementList();
 		for(PsiElement element : elementsRange)
 		{
@@ -861,5 +861,20 @@ public class PyExtractMethodUtil
 			return validator.isIdentifier(name, myProject);
 		}
 	}
-}
 
+	// TODO consulo: PsiTreeUtil.getElementsOfRange missing (copy of the JB platform method)
+	private static List<PsiElement> getElementsOfRange(PsiElement start, PsiElement end)
+	{
+		List<PsiElement> result = new ArrayList<>();
+		for(PsiElement e = start; e != end; e = e.getNextSibling())
+		{
+			if(e == null)
+			{
+				throw new IllegalArgumentException("Invalid start-end range");
+			}
+			result.add(e);
+		}
+		result.add(end);
+		return result;
+	}
+}

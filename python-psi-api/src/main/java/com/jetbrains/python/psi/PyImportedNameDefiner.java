@@ -15,27 +15,25 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
-
-
+import com.jetbrains.python.ast.PyAstImportedNameDefiner;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
+
+import java.util.List;
 
 /**
  * Name definer that defines names imported somehow from other modules.
  *
- * @author vlan
  */
-public interface PyImportedNameDefiner extends PyElement
-{
-	/**
-	 * Iterate over possibly resolved PSI elements available via this imported name definer.
-	 * <p>
-	 * TODO: Make the semantics of the returned elements clearer.
-	 */
-	Iterable<PyElement> iterateNames();
+public interface PyImportedNameDefiner extends PyAstImportedNameDefiner, PyElement {
+    /**
+     * Iterate over possibly resolved PSI elements available via this imported name definer.
+     *
+     * TODO: Make the semantics of the returned elements clearer.
+     */
+    Iterable<PyElement> iterateNames();
 
-	/**
-	 * Return the resolved PSI element available via this imported name definer.
-	 */
-	List<RatedResolveResult> multiResolveName(String name);
+    /**
+     * Return the resolved PSI element available via this imported name definer.
+     */
+    List<RatedResolveResult> multiResolveName(String name);
 }

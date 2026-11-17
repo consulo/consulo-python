@@ -1,45 +1,31 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-/*
- * Copyright 2013-2026 consulo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.ui.image.Image;
+import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.language.ast.ASTNode;
+import consulo.navigation.ItemPresentation;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.impl.PyStubElementTypes;
-import com.jetbrains.python.impl.codeInsight.PyTypingTypeProvider;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.PyTypeAliasStatement;
 import com.jetbrains.python.psi.PyTypeParameterList;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.psi.stubs.PyTypeAliasStatementStub;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.stub.IStubElementType;
-import consulo.language.util.IncorrectOperationException;
-import consulo.navigation.ItemPresentation;
-import consulo.platform.base.icon.PlatformIconGroup;
-import consulo.ui.image.Image;
 import org.jspecify.annotations.Nullable;
+
 
 public class PyTypeAliasStatementImpl extends PyBaseElementImpl<PyTypeAliasStatementStub> implements PyTypeAliasStatement {
     public PyTypeAliasStatementImpl(ASTNode astNode) {
@@ -79,7 +65,7 @@ public class PyTypeAliasStatementImpl extends PyBaseElementImpl<PyTypeAliasState
     }
 
     @Override
-    public @Nullable String getName() {
+    public String getName() {
         PyTypeAliasStatementStub stub = getStub();
 
         if (stub != null) {
@@ -110,9 +96,7 @@ public class PyTypeAliasStatementImpl extends PyBaseElementImpl<PyTypeAliasState
         if (typeAliasTypeClass != null) {
             return new PyClassTypeImpl(typeAliasTypeClass, false);
         }
-        // TODO consulo: JB returns PyAnyType.getUnknown(), which is null while the "python.type.any" support is disabled;
-        //  PyAnyType is not ported, so Consulo keeps the disabled-support result
-        return null;
+        return PyAnyType.getUnknown();
     }
 
     @Override
@@ -126,7 +110,6 @@ public class PyTypeAliasStatementImpl extends PyBaseElementImpl<PyTypeAliasState
     }
 
     @Override
-    @RequiredReadAction
     public int getTextOffset() {
         @Nullable PsiElement name = getNameIdentifier();
         return name != null ? name.getTextOffset() : super.getTextOffset();

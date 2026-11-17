@@ -1,58 +1,39 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.types;
 
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.types.PyType;
-import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.language.psi.PsiElement;
-import consulo.language.util.ProcessingContext;
-import consulo.platform.base.icon.PlatformIconGroup;
-import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import com.jetbrains.python.psi.types.PyType;
+import consulo.platform.base.icon.PlatformIconGroup;
 
-/**
- * @author vlan
- */
 public class PyStructuralType implements PyType {
     private final Set<String> myAttributes;
     private final boolean myInferredFromUsages;
 
     public PyStructuralType(Set<String> attributes, boolean inferredFromUsages) {
-        myAttributes = attributes;
+        myAttributes = new LinkedHashSet<>(attributes);
         myInferredFromUsages = inferredFromUsages;
     }
 
-    @Nullable
     @Override
-    public List<? extends RatedResolveResult> resolveMember(
-        String name,
-        @Nullable PyExpression location,
-        AccessDirection direction,
-        PyResolveContext resolveContext
-    ) {
+    public @Nullable List<? extends RatedResolveResult> resolveMember(String name,
+                                                                      @Nullable PyExpression location,
+                                                                      AccessDirection direction,
+                                                                      PyResolveContext resolveContext) {
         return Collections.emptyList();
     }
 
@@ -61,15 +42,15 @@ public class PyStructuralType implements PyType {
         List<Object> variants = new ArrayList<>();
         for (String attribute : myAttributes) {
             if (!attribute.equals(completionPrefix)) {
-                variants.add(LookupElementBuilder.create(attribute).withIcon(PlatformIconGroup.nodesField()));
+                variants.add(LookupElementBuilder.create(attribute).withIcon(
+                    PlatformIconGroup.nodesField()));
             }
         }
         return variants.toArray();
     }
 
-    @Nullable
     @Override
-    public String getName() {
+    public @Nullable String getName() {
         return "{" + StringUtil.join(myAttributes, ", ") + "}";
     }
 
@@ -92,6 +73,20 @@ public class PyStructuralType implements PyType {
     }
 
     public Set<String> getAttributeNames() {
-        return myAttributes;
+        return Collections.unmodifiableSet(myAttributes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PyStructuralType type = (PyStructuralType)o;
+        return myInferredFromUsages == type.myInferredFromUsages && Objects.equals(myAttributes, type.myAttributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(myAttributes, myInferredFromUsages);
     }
 }

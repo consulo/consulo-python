@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.ast.ASTNode;
@@ -33,28 +18,32 @@ import java.io.IOException;
  */
 public class PyTupleParameterElementType extends PyStubElementType<PyTupleParameterStub, PyTupleParameter> {
 
-  public PyTupleParameterElementType() {
-    super("TUPLE_PARAMETER");
-  }
+    public PyTupleParameterElementType() {
+        super("TUPLE_PARAMETER");
+    }
 
-  public PsiElement createElement(ASTNode node) {
-    return new PyTupleParameterImpl(node);
-  }
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyTupleParameterImpl(node);
+    }
 
-  public PyTupleParameter createPsi(PyTupleParameterStub stub) {
-    return new PyTupleParameterImpl(stub);
-  }
+    @Override
+    public PyTupleParameter createPsi(PyTupleParameterStub stub) {
+        return new PyTupleParameterImpl(stub);
+    }
 
-  public PyTupleParameterStub createStub(PyTupleParameter psi, StubElement parentStub) {
-    return new PyTupleParameterStubImpl(psi.hasDefaultValue(), parentStub);
-  }
+    @Override
+    public PyTupleParameterStub createStub(PyTupleParameter psi, StubElement parentStub) {
+        return new PyTupleParameterStubImpl(psi.getDefaultValueText(), parentStub);
+    }
 
-  public PyTupleParameterStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-    boolean hasDefaultValue = dataStream.readBoolean();
-    return new PyTupleParameterStubImpl(hasDefaultValue, parentStub);
-  }
+    @Override
+    public PyTupleParameterStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+        return new PyTupleParameterStubImpl(dataStream.readNameString(), parentStub);
+    }
 
-  public void serialize(PyTupleParameterStub stub, StubOutputStream dataStream) throws IOException {
-    dataStream.writeBoolean(stub.hasDefaultValue());
-  }
+    @Override
+    public void serialize(PyTupleParameterStub stub, StubOutputStream dataStream) throws IOException {
+        dataStream.writeName(stub.getDefaultValueText());
+    }
 }

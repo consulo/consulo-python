@@ -1,22 +1,8 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi;
 
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.console.PydevConsoleRunner;
+import com.jetbrains.python.impl.PythonRuntimeService;
 import com.jetbrains.python.parsing.console.PyConsoleParser;
 import com.jetbrains.python.parsing.console.PythonConsoleData;
 import com.jetbrains.python.parsing.console.PythonConsoleLexer;
@@ -47,11 +33,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class PyFileElementType extends IStubFileElementType<PyFileStub> {
-  public static PyFileElementType INSTANCE = new PyFileElementType(PythonLanguage.getInstance());
+  public static final PyFileElementType INSTANCE = new PyFileElementType(PythonLanguage.getInstance());
 
   protected PyFileElementType(Language language) {
     super(language);
@@ -68,38 +52,42 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     return 123;
   }
 
-  @Nullable
   @Override
-  public ASTNode parseContents(ASTNode node) {
+  public @Nullable ASTNode parseContents(ASTNode node) {
     LanguageLevel languageLevel = getLanguageLevel(node.getPsi());
-    if (PydevConsoleRunner.isPythonConsole(node)) {
-      return parseConsoleCode(node, PydevConsoleRunner.getPythonConsoleData(node));
-    }
-    else {
-      PsiElement psi = node.getPsi();
-      if (psi != null) {
-        Project project = psi.getProject();
-        PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-        Language language = getLanguage();
-        ParserDefinition parserDefinition = ParserDefinition.forLanguage(language);
-        if (parserDefinition == null) {
-          return null;
-        }
-        LanguageVersion defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
-        Lexer lexer = parserDefinition.createLexer(defaultVersion);
-        PsiParser parser = parserDefinition.createParser(defaultVersion);
-        PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
-        if (parser instanceof PyParser pythonParser) {
-          pythonParser.setLanguageLevel(languageLevel);
-        }
-        return parser.parse(this, builder, defaultVersion).getFirstChildNode();
+    PythonRuntimeService instance = PythonRuntimeService.getInstance();
+    if (instance != null) {
+      PythonConsoleData consoleData = instance.getPythonConsoleData(node);
+      if (consoleData != null) {
+        return parseConsoleCode(node, consoleData);
       }
-      return null;
     }
+    PsiElement psi = node.getPsi();
+    if (psi != null) {
+      Project project = psi.getProject();
+      PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+      Language language = getLanguage();
+      ParserDefinition parserDefinition = ParserDefinition.forLanguage(language);
+      if (parserDefinition == null) {
+        return null;
+      }
+      LanguageVersion languageVersion = LanguageVersionUtil.findDefaultVersion(language);
+      Lexer lexer = parserDefinition.createLexer(languageVersion);
+      PsiParser parser = parserDefinition.createParser(languageVersion);
+      PsiBuilder builder = factory.createBuilder(project, node, lexer, language, languageVersion, node.getChars());
+      if (parser instanceof PyParser pythonParser) {
+        pythonParser.setLanguageLevel(languageLevel);
+      }
+      var startTime = System.nanoTime();
+      var result = parser.parse(this, builder, languageVersion).getFirstChildNode();
+      // TODO consulo: ParsingDiagnostics missing
+      // ParsingDiagnostics.registerParse(builder, getLanguage(), System.nanoTime() - startTime);
+      return result;
+    }
+    return null;
   }
 
-  @Nullable
-  private ASTNode parseConsoleCode(ASTNode node, PythonConsoleData consoleData) {
+  private @Nullable ASTNode parseConsoleCode(ASTNode node, PythonConsoleData consoleData) {
     Lexer lexer = createConsoleLexer(node, consoleData);
     PsiElement psi = node.getPsi();
     if (psi != null) {
@@ -114,8 +102,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     return null;
   }
 
-  @Nullable
-  private Lexer createConsoleLexer(ASTNode node, PythonConsoleData consoleData) {
+  private @Nullable Lexer createConsoleLexer(ASTNode node, PythonConsoleData consoleData) {
     if (consoleData.isIPythonEnabled()) {
       return new PythonConsoleLexer();
     }
@@ -186,7 +173,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     dataStream.writeInt(result);
   }
 
-  public static void writeNullableList(StubOutputStream dataStream, List<String> names) throws IOException {
+  public static void writeNullableList(StubOutputStream dataStream, @Nullable List<String> names) throws IOException {
     if (names == null) {
       dataStream.writeBoolean(false);
     }
@@ -199,15 +186,14 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     }
   }
 
-  @Nullable
-  public static List<String> readNullableList(StubInputStream dataStream) throws IOException {
+  public static @Nullable List<String> readNullableList(StubInputStream dataStream) throws IOException {
     boolean hasNames = dataStream.readBoolean();
     List<String> names = null;
     if (hasNames) {
       int size = dataStream.readVarInt();
       names = new ArrayList<>(size);
       for (int i = 0; i < size; i++) {
-        names.add(dataStream.readName().getString());
+        names.add(dataStream.readNameString());
       }
     }
     return names;

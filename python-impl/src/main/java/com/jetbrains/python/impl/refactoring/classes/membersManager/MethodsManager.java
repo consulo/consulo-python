@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
+import consulo.util.collection.ContainerUtil;
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -129,7 +131,7 @@ class MethodsManager extends MembersManager<PyFunction>
 				PyFunctionBuilder functionBuilder = PyFunctionBuilder.copySignature(function, DECORATORS_MAY_BE_COPIED_TO_ABSTRACT);
 				functionBuilder.decorate(PyNames.ABSTRACTMETHOD);
 				LanguageLevel level = LanguageLevel.forElement(destClass);
-				PyClassRefactoringUtil.addMethods(destClass, false, functionBuilder.buildFunction(destClass.getProject(), level));
+				PyClassRefactoringUtil.addMethods(destClass, false, functionBuilder.buildFunction());
 				classesToAddMetaAbc.add(destClass);
 			}
 		}
@@ -171,12 +173,12 @@ class MethodsManager extends MembersManager<PyFunction>
 		if(languageLevel.isPy3K())
 		{ //TODO: Copy/paste, use strategy because we already has the same check in #couldBeAbstract
 			// Add (metaclass= for Py3K
-			PyClassRefactoringUtil.addSuperClassExpressions(aClass.getProject(), aClass, null, Collections.singletonList(Pair.create(PyNames.METACLASS, PyNames.ABC_META_CLASS)));
+			PyPsiRefactoringUtil.addSuperClassExpressions(aClass.getProject(), aClass, null, Collections.singletonList(Pair.create(PyNames.METACLASS, PyNames.ABC_META_CLASS)));
 		}
 		else
 		{
 			// Add __metaclass__ for Py2
-			PyClassRefactoringUtil.addClassAttributeIfNotExist(aClass, PyNames.DUNDER_METACLASS, PyNames.ABC_META_CLASS);
+			PyPsiRefactoringUtil.addClassAttributeIfNotExist(aClass, PyNames.DUNDER_METACLASS, PyNames.ABC_META_CLASS);
 		}
 		return true;
 	}
@@ -207,14 +209,9 @@ class MethodsManager extends MembersManager<PyFunction>
 		for(PyClass destClass : to)
 		{
 			//We move copies here because there may be several destinations
-			List<PyFunction> copies = new ArrayList<>(methodsToMove.size());
-			for(PyFunction element : methodsToMove)
-			{
-				PyFunction newMethod = (PyFunction) element.copy();
-				copies.add(newMethod);
-			}
-
-			result.addAll(PyClassRefactoringUtil.copyMethods(copies, destClass, skipIfExist));
+			//We move copies here because there may be several destinations
+			PyFunction[] copies = ContainerUtil.map2Array(methodsToMove, PyFunction.EMPTY_ARRAY, m -> (PyFunction) m.copy());
+			result.addAll(PyClassRefactoringUtil.addMethods(destClass, skipIfExist, copies));
 		}
 		deleteElements(methodsToMove);
 
@@ -235,7 +232,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	 */
 	private static boolean couldBeAbstract(PyFunction function)
 	{
-		if(PyUtil.isInit(function))
+		if(PyUtil.isInitMethod(function))
 		{
 			return false; // Who wants to make __init__ abstract?!
 		}
@@ -324,7 +321,7 @@ class MethodsManager extends MembersManager<PyFunction>
 						PyClass clazz = calleeFunction.getContainingClass();
 						if(clazz != null)
 						{
-							if(PyUtil.isInit(calleeFunction))
+							if(PyUtil.isInitMethod(calleeFunction))
 							{
 								return; // Init call should not be marked as dependency
 							}

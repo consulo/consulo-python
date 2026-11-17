@@ -17,6 +17,7 @@ package com.jetbrains.python.jython.psi.impl;
 
 import com.intellij.java.language.psi.*;
 import com.jetbrains.python.impl.psi.impl.ParamHelper;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
@@ -36,22 +37,21 @@ import java.util.List;
 /**
  * @author yole
  */
-@ExtensionImpl
+@ExtensionImpl(id = "pyJavaTypeProvider", order = "after pyCallSignatureTypeProvider")
 public class PyJavaTypeProvider extends PyTypeProviderBase {
-  @Nullable
-  public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
+  @Override
+  public @Nullable Ref<PyType> getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PsiClass) {
-      return new PyJavaClassType((PsiClass)referenceTarget, true);
+      return Ref.create(new PyJavaClassType((PsiClass)referenceTarget, true));
     }
     if (referenceTarget instanceof PsiJavaPackage) {
-      return new PyJavaPackageType((PsiJavaPackage)referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor));
+      return Ref.create(new PyJavaPackageType((PsiJavaPackage)referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor)));
     }
     if (referenceTarget instanceof PsiMethod) {
-      PsiMethod method = (PsiMethod)referenceTarget;
-      return new PyJavaMethodType(method);
+      return Ref.create(new PyJavaMethodType((PsiMethod)referenceTarget));
     }
     if (referenceTarget instanceof PsiField) {
-      return asPyType(((PsiField)referenceTarget).getType());
+      return PyTypeUtil.notNullToRef(asPyType(((PsiField)referenceTarget).getType()));
     }
     return null;
   }

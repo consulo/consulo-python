@@ -55,14 +55,7 @@ public class PyImplementMethodsQuickFix implements LocalQuickFix {
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
         if (editor != null) {
-            PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(
-                project,
-                editor,
-                myClass,
-                myToImplement,
-                "Select Methods to Implement",
-                true
-            );
+            PyOverrideImplementUtil.chooseAndImplementMethods(project, editor, myClass, myToImplement);
         }
     }
 

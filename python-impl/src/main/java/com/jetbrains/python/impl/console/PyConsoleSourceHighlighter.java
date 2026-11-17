@@ -23,7 +23,7 @@ import consulo.colorScheme.EditorColorsScheme;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.colorScheme.TextAttributes;
 import consulo.util.lang.Pair;
-import com.jetbrains.python.impl.highlighting.PyHighlighter;
+import com.jetbrains.python.highlighting.PyHighlighter;
 
 /**
 * @author traff

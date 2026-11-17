@@ -1,39 +1,32 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
 import com.google.common.collect.Lists;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.localize.LocalizeValue;
-import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExceptPart;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTryExceptStatement;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
 import java.util.ArrayList;
 
 public class PyMoveExceptQuickFix implements LocalQuickFix {
+
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameMoveExceptUp();
     }
 
+    @Override
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyExceptPart part = PsiTreeUtil.getParentOfType(element, PyExceptPart.class);
@@ -45,8 +38,8 @@ public class PyMoveExceptQuickFix implements LocalQuickFix {
             return;
         }
 
-        PsiElement exceptClass =
-            ((PyReferenceExpression) exceptClassExpression).followAssignmentsChain(PyResolveContext.noImplicits()).getElement();
+        var resolveContext = PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(project));
+        PsiElement exceptClass = ((PyReferenceExpression)exceptClassExpression).followAssignmentsChain(resolveContext).getElement();
         if (exceptClass instanceof PyClass) {
             PyTryExceptStatement statement = PsiTreeUtil.getParentOfType(part, PyTryExceptStatement.class);
             if (statement == null) {
@@ -54,14 +47,13 @@ public class PyMoveExceptQuickFix implements LocalQuickFix {
             }
 
             PyExceptPart prevExceptPart = PsiTreeUtil.getPrevSiblingOfType(part, PyExceptPart.class);
-            ArrayList<PyClass> superClasses = Lists.newArrayList(((PyClass) exceptClass).getSuperClasses(null));
+            ArrayList<PyClass> superClasses = Lists.newArrayList(((PyClass)exceptClass).getSuperClasses(null));
             while (prevExceptPart != null) {
                 PyExpression classExpression = prevExceptPart.getExceptClass();
                 if (classExpression == null) {
                     return;
                 }
-                PsiElement aClass =
-                    ((PyReferenceExpression) classExpression).followAssignmentsChain(PyResolveContext.noImplicits()).getElement();
+                PsiElement aClass = ((PyReferenceExpression)classExpression).followAssignmentsChain(resolveContext).getElement();
                 if (aClass instanceof PyClass) {
                     if (superClasses.contains(aClass)) {
                         statement.addBefore(part, prevExceptPart);

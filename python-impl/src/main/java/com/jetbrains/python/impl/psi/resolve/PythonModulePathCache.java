@@ -1,67 +1,23 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.resolve;
 
-import com.jetbrains.python.impl.sdk.PythonSdkType;
-import consulo.annotation.component.ComponentScope;
-import consulo.annotation.component.ServiceAPI;
-import consulo.annotation.component.ServiceImpl;
 import consulo.content.bundle.Sdk;
-import consulo.disposer.Disposable;
 import consulo.module.Module;
-import consulo.module.content.layer.event.ModuleRootAdapter;
-import consulo.module.content.layer.event.ModuleRootEvent;
-import consulo.module.content.layer.event.ModuleRootListener;
-import consulo.virtualFileSystem.VirtualFileManager;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-/**
- * @author yole
- */
-@ServiceAPI(ComponentScope.MODULE)
-@ServiceImpl
-@Singleton
-public class PythonModulePathCache extends PythonPathCache implements Disposable {
+public final class PythonModulePathCache extends PythonPathCache {
   public static PythonPathCache getInstance(Module module) {
-    return module.getInstance(PythonModulePathCache.class);
+    return PythonModulePathCacheManager.getInstance(module.getProject()).getPythonPathCache(module);
   }
 
-  @Inject
-  public PythonModulePathCache(final Module module, VirtualFileManager virtualFileManager) {
-    module.getMessageBus().connect().subscribe(ModuleRootListener.class, new ModuleRootAdapter() {
-      public void rootsChanged(ModuleRootEvent event) {
-        updateCacheForSdk(module);
-        clearCache();
-      }
-    });
-    virtualFileManager.addVirtualFileListener(new MyVirtualFileAdapter(), this);
+  public PythonModulePathCache(Module module) {
     updateCacheForSdk(module);
   }
 
   private static void updateCacheForSdk(Module module) {
-    Sdk sdk = PythonSdkType.findPythonSdk(module);
-    if (sdk != null) {
-      // initialize cache for SDK
-      PythonSdkPathCache.getInstance(module.getProject(), sdk);
+    final Sdk interpreter = MainPythonSdkKt.pythonSdkIfReady(module);
+    if (interpreter != null) {
+      // initialize cache for the interpreter
+      PythonSdkPathCache.getInstance(module.getProject(), interpreter);
     }
-  }
-
-  @Override
-  public void dispose() {
   }
 }

@@ -1,5 +1,4 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-
 /*
  * Copyright 2013-2026 consulo.io
  *
@@ -17,10 +16,25 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.localize.LocalizeValue;
+import consulo.ui.image.Image;
+import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.language.ast.ASTNode;
+import consulo.navigation.ItemPresentation;
+import consulo.util.lang.Pair;
+import consulo.document.util.TextRange;
+import consulo.language.psi.ContributedReferenceHost;
+import consulo.language.psi.PsiLiteralValue;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.PsiReferenceService.Hints;
+import consulo.language.psi.FileContextUtil;
+import consulo.language.psi.ReferenceProvidersRegistry;
+import consulo.language.ast.IElementType;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.FutureFeature;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -33,26 +47,12 @@ import com.jetbrains.python.psi.PyStringElement;
 import com.jetbrains.python.psi.PyStringLiteralCoreUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.types.PyAnyType;
 import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.document.util.TextRange;
-import consulo.language.ast.ASTNode;
-import consulo.language.ast.IElementType;
-import consulo.language.psi.ContributedReferenceHost;
-import consulo.language.psi.FileContextUtil;
-import consulo.language.psi.PsiLiteralValue;
-import consulo.language.psi.PsiReference;
-import consulo.language.psi.PsiReferenceService;
-import consulo.language.psi.ReferenceProvidersRegistry;
-import consulo.localize.LocalizeValue;
-import consulo.navigation.ItemPresentation;
-import consulo.platform.base.icon.PlatformIconGroup;
-import consulo.ui.image.Image;
-import consulo.util.collection.ArrayUtil;
-import consulo.util.collection.ContainerUtil;
-import consulo.util.lang.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -82,7 +82,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public List<TextRange> getStringValueTextRanges() {
         List<TextRange> result = myValueTextRanges;
         if (result == null) {
@@ -114,7 +113,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public List<Pair<TextRange, String>> getDecodedFragments() {
         List<Pair<TextRange, String>> result = myDecodedFragments;
         if (result == null) {
@@ -124,7 +122,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public boolean isInterpolated() {
         return getStringElements().stream()
             .filter(PyFormattedStringElement.class::isInstance)
@@ -133,7 +130,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public String getStringValue() {
         //ASTNode child = getNode().getFirstChildNode();
         //assert child != null;
@@ -145,25 +141,22 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public @Nullable Object getValue() {
         return getStringValue();
     }
 
     @Override
-    @RequiredReadAction
     public String toString() {
         return super.toString() + ": " + getStringValue();
     }
 
     @Override
-    @RequiredReadAction
-    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-        // TODO consulo: JB returns PyAnyType.getUnknown() when the type is null (the project has no builtins), PyAnyType is not ported yet
-        return getBuiltinOrLiteralType();
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyType type = getBuiltinOrLiteralType();
+        // The type is null only when the project has no builtins.
+        return type != null ? type : PyAnyType.getUnknown();
     }
 
-    @RequiredReadAction
     private @Nullable PyType getBuiltinOrLiteralType() {
         PyFile file = PyUtil.as(FileContextUtil.getContextFile(this), PyFile.class);
         PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(file == null ? this : file);
@@ -188,20 +181,19 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
             else if (firstNode.getElementType() == PyTokenTypes.DOCSTRING) {
                 return builtinCache.getStrType();
             }
-            else if (((PyStringElement) firstNode).isBytes()) {
+            else if (((PyStringElement)firstNode).isBytes()) {
                 return builtinCache.getBytesType(languageLevel);
             }
 
-            IElementType type = PythonHighlightingLexer.convertStringType(
-                firstNode.getElementType(),
-                firstNode.getText(),
-                languageLevel,
-                (file != null && file.hasImportFromFuture(FutureFeature.UNICODE_LITERALS))
-            );
+            IElementType type = PythonHighlightingLexer.convertStringType(firstNode.getElementType(),
+                                                                                firstNode.getText(),
+                                                                                languageLevel,
+                                                                                (file != null &&
+                                                                                 file.hasImportFromFuture(FutureFeature.UNICODE_LITERALS)));
             if (PyTokenTypes.UNICODE_NODES.contains(type)) {
-                // TODO consulo: JB returns PyLiteralType.stringLiteral(this, getStringValue()) for Python 3
-                //  when PyLiteralType.inferLiteralTypeForLiteralExpressions() is on, PyLiteralType is not ported yet
-                return builtinCache.getUnicodeType(languageLevel);
+                return languageLevel.isPython2() || !PyLiteralType.inferLiteralTypeForLiteralExpressions()
+                       ? builtinCache.getUnicodeType(languageLevel)
+                       : PyLiteralType.stringLiteral(this, getStringValue());
             }
         }
         return builtinCache.getStrType();
@@ -218,11 +210,11 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 
     @Override
     public final PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this, Hints.NO_HINTS);
     }
 
     @Override
-    public @Nullable PsiReference getReference() {
+    public PsiReference getReference() {
         return ArrayUtil.getFirstElement(getReferences());
     }
 
@@ -230,7 +222,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
             @Override
-            @RequiredReadAction
             public LocalizeValue getPresentableText() {
                 return LocalizeValue.of(getStringValue());
             }
@@ -249,7 +240,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
     }
 
     @Override
-    @RequiredReadAction
     public int valueOffsetToTextOffset(int valueOffset) {
         return createLiteralTextEscaper().getOffsetInHost(valueOffset, getStringValueTextRange());
     }

@@ -185,7 +185,7 @@ public class PyPackageUtil {
         }
         if (requires instanceof PyReferenceExpression) {
             TypeEvalContext context = TypeEvalContext.deepCodeInsight(module.getProject());
-            PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
+            PyResolveContext resolveContext = PyResolveContext.defaultContext(context);
             QualifiedResolveResult result = ((PyReferenceExpression) requires).followAssignmentsChain(resolveContext);
             PsiElement element = result.getElement();
             if (element instanceof PyListLiteralExpression) {

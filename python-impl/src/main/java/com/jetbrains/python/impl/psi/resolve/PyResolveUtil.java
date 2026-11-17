@@ -1,151 +1,770 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.resolve;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import org.jspecify.annotations.Nullable;
-
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiNamedElement;
-import consulo.language.psi.resolve.ResolveState;
-import consulo.language.psi.resolve.PsiScopeProcessor;
-import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
+import consulo.util.collection.Lists;
+import com.google.common.collect.Iterables;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
+import com.jetbrains.python.impl.psi.impl.PyCallExpressionNavigator;
+import com.jetbrains.python.impl.psi.impl.ResolveResultList;
+import com.jetbrains.python.impl.psi.search.PySearchUtilBase;
+import com.jetbrains.python.impl.psi.stubs.PyClassAttributesIndex;
+import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
+import com.jetbrains.python.impl.psi.types.PyModuleType;
+import com.jetbrains.python.impl.psi.types.PyOverloadType;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.impl.pyi.PyiFile;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.FutureFeature;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.Property;
+import com.jetbrains.python.psi.PyAnnotation;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionCodeFragment;
 import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyGlobalStatement;
-import com.jetbrains.python.psi.PyImportedNameDefiner;
+import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyNonlocalStatement;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyPossibleClassMember;
+import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTypeAliasStatement;
+import com.jetbrains.python.psi.PyTypeParameter;
+import com.jetbrains.python.psi.PyTypeParameterListOwner;
+import com.jetbrains.python.psi.PyTypedElement;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.psi.types.PyCallableType;
+import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeMember;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.resolve.PsiScopeProcessor;
+import consulo.language.psi.resolve.ResolveState;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.project.Project;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.VirtualFile;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+import one.util.streamex.StreamEx;
+import org.jspecify.annotations.Nullable;
 
 /**
- * @author vlan
- *         <p>
- *         TODO: Merge it with {@link ScopeUtil}
+ * TODO: Merge it with {@link ScopeUtil}
  */
-public class PyResolveUtil
-{
-	private PyResolveUtil()
-	{
-	}
+public final class PyResolveUtil {
+  private PyResolveUtil() {
+  }
 
-	/**
-	 * Crawls up scopes of the PSI tree, checking named elements and name definers.
-	 */
-	public static void scopeCrawlUp(PsiScopeProcessor processor, PsiElement element, @Nullable String name, @Nullable PsiElement roof)
-	{
-		// Use real context here to enable correct completion and resolve in case of PyExpressionCodeFragment!!!
-		PsiElement realContext = PyPsiUtils.getRealContext(element);
-		ScopeOwner originalOwner;
-		if(realContext != element && realContext instanceof PyFile)
-		{
-			originalOwner = (PyFile) realContext;
-		}
-		else
-		{
-			originalOwner = ScopeUtil.getScopeOwner(realContext);
-		}
-		PsiElement parent = element.getParent();
-		boolean isGlobalOrNonlocal = parent instanceof PyGlobalStatement || parent instanceof PyNonlocalStatement;
-		ScopeOwner owner = originalOwner;
-		if(isGlobalOrNonlocal)
-		{
-			ScopeOwner outerScopeOwner = ScopeUtil.getScopeOwner(owner);
-			if(outerScopeOwner != null)
-			{
-				owner = outerScopeOwner;
-			}
-		}
-		scopeCrawlUp(processor, owner, originalOwner, name, roof);
-	}
+  /**
+   * Crawls up scopes of the PSI tree, checking named elements and name definers.
+   */
+  public static void scopeCrawlUp(PsiScopeProcessor processor, PsiElement element, @Nullable String name,
+                                  @Nullable PsiElement roof) {
+    ScopeOwner originalOwner = ScopeUtil.getScopeOwner(element);
+    PsiElement parent = element.getParent();
+    ScopeOwner owner = originalOwner;
+    if (parent instanceof PyNonlocalStatement) {
+      /* we need to search in one step out scope for nonlocal statements */
+      if (owner == roof) {
+        return;
+      }
+      owner = ScopeUtil.getScopeOwner(owner);
+      if (owner == null) {
+        return;
+      }
+    }
+    else if (parent instanceof PyGlobalStatement) {
+      /* we need to search directly in the global scope of the module for global statements */
+      final PsiFile globalScope = element.getContainingFile();
+      if (globalScope instanceof PyFile) {
+        owner = (PyFile)globalScope;
+      }
+    }
+    if (owner instanceof PyFunction function && function.getTypeParameterList() != null) {
+      // Type parameters of generic functions and methods need to be visible in their parameter and return type annotations,
+      // so we resolve names in these annotations starting from the containing function's scope, "lowering" their scope in
+      // ScopeUtil.getScopeOwner().
+      // At the same time, these annotations still need to see names from the class scope, such as nested classes defined there,
+      // as if these names were evaluated on a class-level scope.
+      PyAnnotation annotation = PsiTreeUtil.getParentOfType(element, PyAnnotation.class);
+      if (PsiTreeUtil.getParentOfType(annotation, PyFunction.class, true, PyStatement.class) == function) {
+        originalOwner = ScopeUtil.getScopeOwner(function);
+      }
+    }
+    if (owner instanceof PyClass pyClass && pyClass.getTypeParameterList() != null) {
+      // The same logic applies to the list of base classes of a generic class
+      PyArgumentList superclassList = PsiTreeUtil.getParentOfType(element, PyArgumentList.class);
+      if (superclassList != null && superclassList.getParent() == pyClass) {
+        originalOwner = ScopeUtil.getScopeOwner(pyClass);
+      }
+    }
+    scopeCrawlUp(processor, owner, originalOwner, name, roof);
+  }
 
-	public static void scopeCrawlUp(PsiScopeProcessor processor, ScopeOwner scopeOwner, @Nullable String name, @Nullable PsiElement roof)
-	{
-		scopeCrawlUp(processor, scopeOwner, scopeOwner, name, roof);
-	}
+  public static void scopeCrawlUp(PsiScopeProcessor processor, ScopeOwner scopeOwner, @Nullable String name,
+                                  @Nullable PsiElement roof) {
+    scopeCrawlUp(processor, scopeOwner, scopeOwner, name, roof);
+  }
 
-	public static void scopeCrawlUp(PsiScopeProcessor processor, @Nullable ScopeOwner scopeOwner, @Nullable ScopeOwner originalScopeOwner, @Nullable String name, @Nullable PsiElement roof)
-	{
-		while(scopeOwner != null)
-		{
-			if(!(scopeOwner instanceof PyClass) || scopeOwner == originalScopeOwner)
-			{
-				Scope scope = ControlFlowCache.getScope(scopeOwner);
-				if(name != null)
-				{
-					boolean includeNestedGlobals = scopeOwner instanceof PyFile;
-					for(PsiNamedElement resolved : scope.getNamedElements(name, includeNestedGlobals))
-					{
-						if(!processor.execute(resolved, ResolveState.initial()))
-						{
-							return;
-						}
-					}
-				}
-				else
-				{
-					for(PsiNamedElement element : scope.getNamedElements())
-					{
-						if(!processor.execute(element, ResolveState.initial()))
-						{
-							return;
-						}
-					}
-				}
-				for(PyImportedNameDefiner definer : scope.getImportedNameDefiners())
-				{
-					if(!processor.execute(definer, ResolveState.initial()))
-					{
-						return;
-					}
-				}
-			}
-			if(scopeOwner == roof)
-			{
-				return;
-			}
-			scopeOwner = ScopeUtil.getScopeOwner(scopeOwner);
-		}
-	}
+  public static void scopeCrawlUp(PsiScopeProcessor processor, @Nullable ScopeOwner scopeOwner,
+                                  @Nullable ScopeOwner originalScopeOwner, @Nullable String name, @Nullable PsiElement roof) {
+    while (scopeOwner != null) {
+      final Scope scope = ControlFlowCache.getScope(scopeOwner);
+      final Collection<PsiNamedElement> namedElements;
+      if (name != null) {
+        final boolean includeNestedGlobals = scopeOwner instanceof PyFile;
+        namedElements = scope.getNamedElements(name, includeNestedGlobals);
+      }
+      else {
+        namedElements = scope.getNamedElements();
+      }
+      Iterable<PsiElement> elements = Iterables.concat(Iterables.filter(namedElements, t -> !(t instanceof PyTypeParameter)),
+                                                       scope.getImportedNameDefiners(),
+                                                       Iterables.filter(namedElements, PyTypeParameter.class));
+      for (PsiElement element : elements) {
+        if (isClassLevelDefinitionInvisibleToReference(element, scopeOwner, originalScopeOwner)) continue;
+        if (!processor.execute(element, ResolveState.initial())) {
+          return;
+        }
+      }
+      if (scopeOwner == roof) {
+        return;
+      }
+      if (name != null && scopeOwner instanceof PyClass && scopeOwner == originalScopeOwner) {
+        scopeOwner = parentScopeForUnresolvedClassLevelName((PyClass)scopeOwner, name);
+      }
+      else {
+        scopeOwner = ScopeUtil.getScopeOwner(scopeOwner);
+      }
+    }
+  }
 
-	public static Collection<PsiElement> resolveLocally(PyReferenceExpression referenceExpression)
-	{
-		String referenceName = referenceExpression.getName();
+  private static boolean isClassLevelDefinitionInvisibleToReference(PsiElement definition,
+                                                                    ScopeOwner definitionScope,
+                                                                    @Nullable ScopeOwner referenceScope) {
+    return definitionScope instanceof PyClass pyClass && pyClass != referenceScope && !(definition instanceof PyTypeParameter);
+  }
 
-		if(referenceName == null)
-		{
-			return Collections.emptyList();
-		}
+  /**
+   * Resolves the passed expression in its containing file.
+   * Does not go outside this file.
+   */
+  public static Collection<PsiElement> resolveLocally(PyReferenceExpression referenceExpression) {
+    final String referenceName = referenceExpression.getName();
 
-		PyResolveProcessor processor = new PyResolveProcessor(referenceName, true);
-		scopeCrawlUp(processor, referenceExpression, referenceName, null);
+    if (referenceName == null || referenceExpression.isQualified()) {
+      return Collections.emptyList();
+    }
 
-		return processor.getElements();
-	}
+    final PyResolveProcessor processor = new PyResolveProcessor(referenceName, true);
+    scopeCrawlUp(processor, referenceExpression, referenceName, null);
 
-	public static Collection<PsiElement> resolveLocally(ScopeOwner scopeOwner, String name)
-	{
-		PyResolveProcessor processor = new PyResolveProcessor(name, true);
-		scopeCrawlUp(processor, scopeOwner, name, null);
+    return processor.getElements();
+  }
 
-		return processor.getElements();
-	}
+  /**
+   * Resolves the passed name in its containing file starting from the passed scope.
+   * Does not go outside this file.
+   */
+  public static Collection<PsiElement> resolveLocally(ScopeOwner scopeOwner, String name) {
+    final PyResolveProcessor processor = new PyResolveProcessor(name, true);
+    scopeCrawlUp(processor, scopeOwner, name, null);
+
+    return processor.getElements();
+  }
+
+  /**
+   * If the passed expression resolves to import elements, returns their qualified names.
+   * Does not go outside the file containing this expression.
+   */
+  public static List<QualifiedName> resolveImportedElementQNameLocally(PyReferenceExpression expression) {
+    // SUPPORTED CASES:
+
+    // import six
+    // six.with_metaclass(...)
+
+    // from six import metaclass
+    // with_metaclass(...)
+
+    // from six import with_metaclass as w_m
+    // w_m(...)
+
+    // For star imports, returns all candidate QNames without checking the originating module:
+    // from six import *
+    // from other_module import *
+    // with_metaclass(...)  ->  [six.with_metaclass, other_module.with_metaclass]
+
+    final PyExpression qualifier = expression.getQualifier();
+    if (qualifier instanceof PyReferenceExpression) {
+      final String name = expression.getName();
+
+      return name == null
+             ? Collections.emptyList()
+             : ContainerUtil.map(resolveImportedElementQNameLocally((PyReferenceExpression)qualifier), qn -> qn.append(name));
+    }
+    else {
+      List<QualifiedName> result = fullMultiResolveLocally(expression, new HashSet<>())
+        .select(PyImportElement.class)
+        .map(PyResolveUtil::getImportedElementQName)
+        .nonNull()
+        .toList();
+      if (!result.isEmpty()) return result;
+      if (expression.getName() == null) return result;
+
+      PsiFile containingFile = expression.getContainingFile();
+      if (!(containingFile instanceof PyFile)) return result;
+      List<PyFromImportStatement> fromImports = ((PyFile)containingFile).getFromImports();
+      return StreamEx.of(fromImports)
+        .filter(it -> it.isStarImport())
+        .map(it -> it.getImportSourceQName())
+        .nonNull()
+        .map(it -> it.append(expression.getName()))
+        .toList();
+    }
+  }
+
+  private static @Nullable QualifiedName getImportedElementQName(PyImportElement element) {
+    final PyStatement importStatement = element.getContainingImportStatement();
+
+    if (importStatement instanceof PyFromImportStatement) {
+      final QualifiedName importSourceQName = ((PyFromImportStatement)importStatement).getImportSourceQName();
+      final QualifiedName importedQName = element.getImportedQName();
+
+      if (importSourceQName != null && importedQName != null) {
+        return importSourceQName.append(importedQName);
+      }
+    }
+
+    return element.getImportedQName();
+  }
+
+  /**
+   * Resolve a symbol by its qualified name, climbing up from the specified scope until the first component
+   * of the qualified is resolved and then following the chain of type members.
+   * <p>
+   * This type of resolve is stub-safe, i.e. it's not supposed to cause any un-stubbing of external files unless it is explicitly
+   * allowed by the given type evaluation context.
+   *
+   * @param qualifiedName name of a symbol to resolve
+   * @param scopeOwner    scope which serves as a starting point for resolve
+   * @return all possible candidates that can be found by the given qualified name
+   */
+  public static List<PsiElement> resolveQualifiedNameInScope(QualifiedName qualifiedName,
+                                                                      ScopeOwner scopeOwner,
+                                                                      TypeEvalContext context) {
+    final List<RatedResolveResult> results = PyUtil.getParameterizedCachedValue(
+      scopeOwner, Pair.create(qualifiedName, context),
+      param -> doResolveQualifiedNameInScope(param.getFirst(), scopeOwner, param.getSecond(), false)
+    );
+    return ContainerUtil.mapNotNull(results, RatedResolveResult::getElement);
+  }
+
+  public static List<RatedResolveResult> resolveQualifiedNameInScopeNew(QualifiedName qualifiedName,
+                                                                                 ScopeOwner scopeOwner,
+                                                                                 TypeEvalContext context) {
+    return PyUtil.getParameterizedCachedValue(scopeOwner, Pair.create(qualifiedName, context), param -> {
+      return doResolveQualifiedNameInScope(param.getFirst(), scopeOwner, param.getSecond(), true);
+    });
+  }
+
+  /**
+   * If {@param inferType} is `true`, infers the type of {@param qualifiedName} (this includes method binding and
+   * {@code @overload} processing) and returns that type wrapped in {@link PyTypeMember}.
+   * Otherwise, just returns the resolved PSI elements wrapped in {@link RatedResolveResult}.
+   */
+  private static List<RatedResolveResult> doResolveQualifiedNameInScope(QualifiedName qualifiedName,
+                                                                                 ScopeOwner scopeOwner,
+                                                                                 TypeEvalContext context,
+                                                                                 boolean inferType) {
+    final String firstName = qualifiedName.getFirstComponent();
+    if (firstName == null || !(scopeOwner instanceof PyTypedElement)) return Collections.emptyList();
+
+    final PyResolveContext resolveContext = PyResolveContext.defaultContext(context);
+
+    List<RatedResolveResult> unqualifiedResults = new ArrayList<>();
+    ScopeOwner curScope = scopeOwner;
+    // Ideally, we should do `while (curScope != null && unqualifiedResults.isEmpty())` but
+    // because of flow insensitivity it will break down for cases like the following in 
+    // flask_sqlalchemy/__init__.pyi:
+    // 
+    // from .model import DefaultMeta as DefaultMeta, Model as Model
+    //
+    // class SQLAlchemy:
+    //    Model: Model  # Model in the type hints resolves to its own target expression
+    while (curScope != null) {
+      final List<? extends RatedResolveResult> scopeResults = resolveShortNameInSingleScope(curScope, firstName, resolveContext);
+      unqualifiedResults.addAll(scopeResults);
+      // A parameter binds its name for the whole body and can be neither `global` nor `nonlocal`, so unlike the
+      // flow-insensitive cases above it shadows every enclosing scope and a module-level namesake must not join in.
+      if (ContainerUtil.exists(scopeResults, it -> it.getElement() instanceof PyParameter)) break;
+      curScope = ScopeUtil.getScopeOwner(curScope);
+    }
+
+    if (unqualifiedResults.isEmpty()) {
+      final PsiElement builtin = PyBuiltinCache.getInstance(scopeOwner).getByName(firstName);
+      if (builtin == null) {
+        return Collections.emptyList();
+      }
+      unqualifiedResults.add(new RatedResolveResult(RatedResolveResult.RATE_NORMAL, builtin));
+    }
+
+    if (inferType) {
+      unqualifiedResults = getTypeOfMember(unqualifiedResults, context);
+    }
+
+    final List<String> remainingNames = qualifiedName.removeHead(1).getComponents();
+    final List<RatedResolveResult> result = StreamEx.of(remainingNames).foldLeft(StreamEx.of(unqualifiedResults), (prev, name) ->
+        prev.flatMap(r -> {
+          List<? extends RatedResolveResult> results = null;
+          @Nullable Ref<PyType> typeRef = null;
+          if (r instanceof PyTypeMember typeMember) {
+            typeRef = Ref.create(typeMember.getType());
+          }
+          else if (r.getElement() instanceof PyTypedElement element) {
+            typeRef = Ref.create(context.getType(element));
+          }
+          if (typeRef != null) {
+            PyType type = typeRef.get();
+            if (type != null) {
+            // An instance type has access to instance attributes defined in __init__, a class type does not.
+            final PyType instanceType = type instanceof PyClassLikeType ? ((PyClassLikeType)type).toInstance() : type;
+            results = inferType
+                      ? findMember(instanceType, name, scopeOwner, resolveContext)
+                      : resolveMember(instanceType, name, scopeOwner, resolveContext);
+            }
+          }
+          else if (r.getElement() instanceof PsiDirectory dir) {
+            results = PyModuleType.resolveMemberInPackageOrModule(null, dir, name, scopeOwner, resolveContext);
+          }
+          return results != null ? StreamEx.of(results) : StreamEx.<RatedResolveResult>empty();
+        })
+      )
+      .toList();
+    return PyUtil.filterTopPriorityResults(result);
+  }
+
+  private static @Nullable List<? extends RatedResolveResult> resolveMember(PyType type,
+                                                                            String name,
+                                                                            @Nullable PsiElement scopeOwner,
+                                                                            PyResolveContext resolveContext) {
+    if (type instanceof PyModuleType moduleType) {
+      return moduleType.resolveModuleMember(name, scopeOwner, AccessDirection.READ, resolveContext);
+    }
+    return type.resolveMember(name, null, AccessDirection.READ, resolveContext);
+  }
+
+  private static @Nullable List<? extends RatedResolveResult> findMember(PyType type,
+                                                                         String name,
+                                                                         @Nullable PsiElement scopeOwner,
+                                                                         PyResolveContext resolveContext) {
+    TypeEvalContext context = resolveContext.getTypeEvalContext();
+    if (type instanceof PyClassType classType) {
+      Property property = classType.getPyClass().findProperty(name, true, context);
+      if (property != null) {
+        PyType propertyType = property.getType(classType, context);
+        return List.of(new PyTypeMember(property, propertyType));
+      }
+
+      var resolveResults = resolveMember(classType, name, scopeOwner, resolveContext.withoutProperties());
+      if (resolveResults != null) {
+        PyType memberType = PyTypeUtil.getTypeOfBoundMember(classType, resolveResults, context);
+        RatedResolveResult resolveResult = ContainerUtil.getLastItem(resolveResults);
+        PsiElement element = resolveResult != null ? resolveResult.getElement() : null;
+        boolean isClassVar = element instanceof PyTargetExpression target && PyTypingTypeProvider.isClassVar(target, context);
+        return List.of(new PyTypeMember(element, memberType, isClassVar));
+      }
+
+      return Collections.emptyList();
+    }
+    if (type instanceof PyModuleType) {
+      var resolveResults = resolveMember(type, name, scopeOwner, resolveContext);
+      return resolveResults != null ? getTypeOfMember(resolveResults, context) : resolveResults;
+    }
+    return resolveMember(type, name, scopeOwner, resolveContext);
+  }
+
+  private static List<RatedResolveResult> getTypeOfMember(List<? extends RatedResolveResult> resolveResults,
+                                                                   TypeEvalContext context) {
+    if (resolveResults.isEmpty()) return Collections.emptyList();
+    PyType memberType = PyTypeUtil.getTypeOfMember(resolveResults, context);
+    RatedResolveResult resolveResult = ContainerUtil.getLastItem(resolveResults);
+    PsiElement element = resolveResult != null ? resolveResult.getElement() : null;
+    return List.of(new PyTypeMember(element, memberType));
+  }
+
+  private static List<? extends RatedResolveResult> resolveShortNameInSingleScope(ScopeOwner scopeOwner,
+                                                                                           String name,
+                                                                                           PyResolveContext resolveContext) {
+    if (scopeOwner instanceof PyiFile fileScope) {
+      // pyi-stubs are special cased because
+      // `resolveMember` delegates to `multiResolveName(..., true)` and
+      // it skips elements that are imported without `as`
+      return fileScope.multiResolveName(name, false);
+    }
+    else if (scopeOwner instanceof PyFunction functionScope) {
+      final Stream<PsiNamedElement> targets = StreamEx
+        .of(PsiTreeUtil.getStubChildrenOfTypeAsList(scopeOwner, PyTargetExpression.class))
+        .filter(it -> !it.isQualified())
+        .select(PsiNamedElement.class);
+
+      final Stream<PsiNamedElement> parameters = StreamEx
+        .of(functionScope.getParameterList().getParameters())
+        .select(PsiNamedElement.class);
+
+      return StreamEx
+        .of(targets)
+        .append(parameters)
+        .filter(it -> name.equals(it.getName()))
+        .map(it -> new RatedResolveResult(RatedResolveResult.RATE_NORMAL, it))
+        .append(resolveTypeParameters(functionScope, name))
+        .toList();
+    }
+    else if (scopeOwner instanceof PyTypeAliasStatement) {
+      return resolveTypeParameters((PyTypeParameterListOwner)scopeOwner, name);
+    }
+    else {
+      final PyType scopeType = resolveContext.getTypeEvalContext().getType((PyTypedElement)scopeOwner);
+      if (scopeType == null) return Collections.emptyList();
+      List<? extends RatedResolveResult> typeMembers = scopeType.resolveMember(name, null, AccessDirection.READ, resolveContext);
+      if (scopeOwner instanceof PyClass pyClass) {
+        return ContainerUtil.concat(Lists.notNullize(typeMembers), resolveTypeParameters(pyClass, name));
+      }
+      else {
+        return Lists.notNullize(typeMembers);
+      }
+    }
+  }
+
+  public static @Nullable String resolveStrArgument(PyCallExpression callExpression, int index, String keyword) {
+    // SUPPORTED CASES:
+
+    // name = "Point"
+    // Point = namedtuple(name, ...)
+
+    // Point = namedtuple("Point", ...)
+
+    // Point = namedtuple(("Point"), ...)
+
+    // Point = namedtuple(typename="Point", ...)
+
+    PyExpression argument = callExpression.getArgument(index, keyword, PyExpression.class);
+    return resolveStrArgument(argument);
+  }
+
+  public static @Nullable String resolveStrArgument(@Nullable PyExpression argument) {
+    final PyExpression expression = PyPsiUtils.flattenParens(argument);
+
+    if (expression instanceof PyReferenceExpression) {
+      return PyPsiUtils.strValue(fullResolveLocally((PyReferenceExpression)expression));
+    }
+
+    return PyPsiUtils.strValue(expression);
+  }
+
+  /**
+   * Follows one of 'target-reference` chain and returns assigned value or null.
+   * Does not go outside the file containing the passed expression.
+   *
+   * @param referenceExpression expression to resolve
+   * @return resolved assigned value.
+   */
+  public static @Nullable PyExpression fullResolveLocally(PyReferenceExpression referenceExpression) {
+    return fullMultiResolveLocally(referenceExpression, new HashSet<>()).select(PyExpression.class).findFirst().orElse(null);
+  }
+
+  /**
+   * Runs DFS on assignment chains and returns all reached assigned values.
+   * Does not go outside the file containing the passed expression.
+   *
+   * @param referenceExpression expression to resolve
+   * @param visited             set to store visited references to prevent recursion
+   * @return resolved assigned values.
+   * <i>Note: the returned stream could contain null values.</i>
+   */
+  private static StreamEx<PsiElement> fullMultiResolveLocally(PyReferenceExpression referenceExpression,
+                                                                       Set<PyReferenceExpression> visited) {
+    return StreamEx
+      .of(resolveLocally(referenceExpression))
+      .flatMap(
+        element -> {
+          if (element instanceof PyTargetExpression) {
+            final PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();
+
+            if (assignedValue instanceof PyReferenceExpression && visited.add((PyReferenceExpression)assignedValue)) {
+              return fullMultiResolveLocally((PyReferenceExpression)assignedValue, visited);
+            }
+
+            return StreamEx.of(assignedValue);
+          }
+
+          return StreamEx.of(element);
+        }
+      );
+  }
+
+  /**
+   * Check whether forward references are allowed for the given element.
+   */
+  public static boolean allowForwardReferences(PyQualifiedExpression element) {
+    // Allow forward references in Pyi files
+    if (PyiUtil.isInsideStub(element)) {
+      return true;
+    }
+    PsiFile file = element.getContainingFile();
+    if (file instanceof PyExpressionCodeFragment) {
+      return true;
+    }
+    // Forward references are allowed in annotations according to PEP 563
+    if (file instanceof PyFile pyFile) {
+      boolean nonEagerEvaluationEnabled = pyFile.hasImportFromFuture(FutureFeature.ANNOTATIONS) ||
+                                          pyFile.getLanguageLevel().isAtLeast(LanguageLevel.PYTHON314);
+      boolean insideAnnotation = PsiTreeUtil.getParentOfType(element, PyAnnotation.class) != null;
+      if (insideAnnotation && nonEagerEvaluationEnabled) return true;
+
+      boolean isReferenceFromTypeParameterList = PsiTreeUtil.getParentOfType(element, PyTypeParameter.class, true) != null;
+      if (isReferenceFromTypeParameterList) return true;
+    }
+    return false;
+  }
+
+  public static @Nullable ScopeOwner parentScopeForUnresolvedClassLevelName(PyClass cls, String name) {
+    // com.jetbrains.python.codeInsight.dataflow.scope.Scope.containsDeclaration could not be used
+    // because it runs resolve on imports that is forbidden during indexing
+    return containsDeclaration(cls, name) ? PyUtil.as(cls.getContainingFile(), PyFile.class) : ScopeUtil.getScopeOwner(cls);
+  }
+
+  private static boolean containsDeclaration(PyClass cls, String name) {
+    final Scope scope = ControlFlowCache.getScope(cls);
+
+    if (!scope.getNamedElements(name, false).isEmpty()) return true;
+
+    return StreamEx
+      .of(scope.getImportedNameDefiners())
+      .select(PyImportElement.class)
+      .anyMatch(e -> name.equals(e.getVisibleName()));
+  }
+
+  public static void addImplicitResolveResults(String referencedName,
+                                               ResolveResultList ret,
+                                               PyQualifiedExpression element) {
+    final Project project = element.getProject();
+    final GlobalSearchScope scope = PySearchUtilBase.excludeSdkTestsScope(project);
+    final Collection<PyFunction> functions = PyFunctionNameIndex.find(referencedName, project, scope);
+    final PsiFile containingFile = element.getContainingFile();
+    final List<QualifiedName> imports;
+    if (containingFile instanceof PyFile) {
+      imports = collectImports((PyFile)containingFile);
+    }
+    else {
+      imports = Collections.emptyList();
+    }
+    for (PyFunction function : functions) {
+      if (function.getContainingClass() != null) {
+        ret.add(new ImplicitResolveResult(function, getImplicitResultRate(function, imports, element)));
+      }
+    }
+
+    PyClassAttributesIndex
+      .findClassAndInstanceAttributes(referencedName, project, scope)
+      .forEach(attribute -> ret.add(new ImplicitResolveResult(attribute, getImplicitResultRate(attribute, imports, element))));
+  }
+
+  private static List<QualifiedName> collectImports(PyFile containingFile) {
+    List<QualifiedName> imports = new ArrayList<>();
+    for (PyFromImportStatement anImport : containingFile.getFromImports()) {
+      final QualifiedName source = anImport.getImportSourceQName();
+      if (source != null) {
+        imports.add(source);
+      }
+    }
+    for (PyImportElement importElement : containingFile.getImportTargets()) {
+      final QualifiedName qName = importElement.getImportedQName();
+      if (qName != null) {
+        imports.add(qName.removeLastComponent());
+      }
+    }
+    return imports;
+  }
+
+  private static int getImplicitResultRate(PyElement target, List<QualifiedName> imports, PyQualifiedExpression element) {
+    int rate = RatedResolveResult.RATE_LOW;
+    if (target.getContainingFile() == element.getContainingFile()) {
+      rate += 200;
+    }
+    else {
+      final VirtualFile vFile = target.getContainingFile().getVirtualFile();
+      if (vFile != null) {
+        if (GlobalSearchScope.projectScope(element.getProject()).contains(vFile)) {
+          rate += 80;
+        }
+        final QualifiedName qName = QualifiedNameFinder.findShortestImportableQName(element, vFile);
+        if (qName != null && imports.contains(qName)) {
+          rate += 70;
+        }
+      }
+    }
+    if (element.getParent() instanceof PyCallExpression) {
+      if (target instanceof PyFunction) rate += 50;
+    }
+    else {
+      if (!(target instanceof PyFunction)) rate += 50;
+    }
+    return rate;
+  }
+
+  public static List<PsiElement> multiResolveDeclaration(PsiReference reference,
+                                                                           PyResolveContext resolveContext) {
+    final PsiElement element = reference.getElement();
+
+    final var context = resolveContext.getTypeEvalContext();
+    final var call = context.maySwitchToAST(element) ? PyCallExpressionNavigator.getPyCallExpressionByCallee(element) : null;
+    if (call != null && element instanceof PyTypedElement typedElement &&
+        context.getType(typedElement) instanceof PyClassType type) {
+      if (type.isDefinition() && type.getDeclarationElement() instanceof PyClass cls) {
+        PyType constructorType = PyCallExpressionHelper.createCallableFromClass(type, resolveContext);
+        if (constructorType instanceof PyOverloadType overloadType) {
+          // TODO consulo: Ref.deref missing
+          Ref<PyType> implRef = overloadType.getImpl();
+          PyType implType = implRef != null ? implRef.get() : null;
+          constructorType = implType != null ? implType : ContainerUtil.getFirstItem(overloadType.getItems());
+        }
+        if (!(constructorType instanceof PyClassLikeType) && constructorType instanceof PyCallableType callableType) {
+          PsiElement constructor = callableType.getCallable();
+          if (constructor instanceof PyPossibleClassMember possibleClassMember && possibleClassMember.getContainingClass() == cls) {
+            return List.of(constructor);
+          }
+        }
+      }
+    }
+
+    if (reference instanceof PsiPolyVariantReference multiReference) {
+      return PyUtil.multiResolveTopPriority(multiReference);
+    }
+    return ContainerUtil.createMaybeSingletonList(reference.resolve());
+  }
+
+  public static @Nullable PsiElement resolveDeclaration(PsiReference reference, PyResolveContext resolveContext) {
+    return ContainerUtil.getFirstItem(multiResolveDeclaration(reference, resolveContext));
+  }
+
+  private static List<RatedResolveResult> resolveTypeParameters(PyTypeParameterListOwner typeParameterListOwner,
+                                                                         String name) {
+    if (typeParameterListOwner.getTypeParameterList() != null) {
+      return StreamEx.of(typeParameterListOwner.getTypeParameterList().getTypeParameters())
+        .filter(it -> name.equals(it.getName()))
+        .map(it -> new RatedResolveResult(RatedResolveResult.RATE_NORMAL, it))
+        .toList();
+    }
+    else {
+      return Collections.emptyList();
+    }
+  }
+
+  /**
+   * Resolves a fully qualified name like "package.module.Class.method" by walking through the hierarchy.
+   * The longest prefix that resolves to a module wins, as with a class's {@code __module__}; the rest is walked as nested classes and methods.
+   *
+   * @param qualifiedName The qualified name to resolve (e.g., "test.A.f")
+   * @param anchor The PSI element to use as context for resolution
+   * @param context The type evaluation context
+   * @return The resolved element, or null if not found
+   */
+  public static @Nullable PsiElement resolveFullyQualifiedName(QualifiedName qualifiedName,
+                                                                PsiElement anchor,
+                                                                TypeEvalContext context) {
+    PyQualifiedNameResolveContext resolveContext = PyResolveImportUtil.fromFoothold(anchor);
+    for (int moduleLength = qualifiedName.getComponentCount(); moduleLength > 0; moduleLength--) {
+      QualifiedName memberPath = qualifiedName.removeHead(moduleLength);
+      for (PsiElement module : PyResolveImportUtil.resolveQualifiedName(qualifiedName.subQualifiedName(0, moduleLength), resolveContext)) {
+        PsiElement member = resolveMemberPath(module, memberPath, context);
+        if (member != null) {
+          return member;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Resolves a member path like "Class.method" by walking from {@code start} (a package, a module or a class) through nested classes and methods.
+   */
+  public static @Nullable PsiElement resolveMemberPath(@Nullable PsiElement start,
+                                                       QualifiedName memberPath,
+                                                       TypeEvalContext context) {
+    PsiElement current = PyUtil.turnDirIntoInit(start);
+    for (String componentName : memberPath.getComponents()) {
+      if (componentName == null) {
+        return null;
+      }
+
+      if (current instanceof PyFile) {
+        List<RatedResolveResult> members = ((PyFile)current).multiResolveName(componentName);
+        RatedResolveResult firstMember = ContainerUtil.getFirstItem(members);
+        // A submodule imported into a package resolves to its directory
+        current = firstMember != null ? PyUtil.turnDirIntoInit(firstMember.getElement()) : null;
+      }
+      else if (current instanceof PyClass) {
+        PyClass pyClass = (PyClass)current;
+        // Try nested class first, then methods
+        PsiElement nestedClass = pyClass.findNestedClass(componentName, false);
+        if (nestedClass != null) {
+          current = nestedClass;
+        }
+        else {
+          PyFunction method = pyClass.findMethodByName(componentName, false, context);
+          if (method != null) {
+            current = method;
+          }
+          else {
+            return null;
+          }
+        }
+      }
+      else {
+        return null;
+      }
+
+      if (current == null) {
+        return null;
+      }
+    }
+
+    return current;
+  }
 }

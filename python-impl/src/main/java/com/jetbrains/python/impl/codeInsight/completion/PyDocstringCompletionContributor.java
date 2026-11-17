@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.codeInsight.completion;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
+import com.jetbrains.python.documentation.PyDocumentationSettings;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
@@ -40,7 +40,7 @@ import static consulo.language.pattern.PlatformPatterns.psiElement;
 /**
  * User : ktisha
  */
-@ExtensionImpl
+@ExtensionImpl(id = "PyDocstringCompletionContributor")
 public class PyDocstringCompletionContributor extends CompletionContributor {
   public PyDocstringCompletionContributor() {
     extend(CompletionType.BASIC,

@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.formatter;
 
+import com.jetbrains.python.formatter.PyCodeStyleSettings;
 import com.jetbrains.python.PythonLanguage;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationBundle;

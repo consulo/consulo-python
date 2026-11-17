@@ -15,6 +15,15 @@
  */
 package com.jetbrains.python.impl.actions;
 
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.resolve.PyResolveImportUtil;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import consulo.module.ModuleManager;
+import consulo.module.Module;
+import consulo.language.psi.util.QualifiedName;
+import java.util.List;
+import consulo.language.psi.scope.GlobalSearchScope;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.PyClass;
@@ -50,13 +59,7 @@ public class PyQualifiedNameProvider implements QualifiedNameProvider {
       return ((PyClass)element).getQualifiedName();
     }
     if (element instanceof PyFunction) {
-      PyClass containingClass = ((PyFunction)element).getContainingClass();
-      if (containingClass != null) {
-        return containingClass.getQualifiedName() + "#" + ((PyFunction)element).getName();
-      }
-      else {
-        return ((PyFunction)element).getQualifiedName();
-      }
+      return ((PyFunction)element).getQualifiedName();
     }
     return null;
   }
@@ -64,27 +67,29 @@ public class PyQualifiedNameProvider implements QualifiedNameProvider {
   @Nullable
   @Override
   public PsiElement qualifiedNameToElement(String fqn, Project project) {
-    PyClass aClass = PyClassNameIndex.findClass(fqn, project);
-    if (aClass != null) {
-      return aClass;
+    GlobalSearchScope entireProjectScope = GlobalSearchScope.allScope(project);
+    List<PyClass> classes = PyClassNameIndex.findByQualifiedName(fqn, project, entireProjectScope);
+    if (!classes.isEmpty()) {
+      return classes.get(0);
     }
-    Collection<PyFunction> functions = PyFunctionNameIndex.find(fqn, project);
+    List<PyFunction> functions = PyFunctionNameIndex.findByQualifiedName(fqn, project, entireProjectScope);
     if (!functions.isEmpty()) {
-      return ContainerUtil.getFirstItem(functions);
+      return functions.get(0);
     }
-    int sharpIdx = fqn.indexOf("#");
-    if (sharpIdx > -1) {
-      String className = StringUtil.getPackageName(fqn, '#');
-      aClass = PyClassNameIndex.findClass(className, project);
-      if (aClass != null) {
-        String memberName = StringUtil.getShortName(fqn, '#');
-        PyClass nestedClass = aClass.findNestedClass(memberName, false);
-        if (nestedClass != null) {
-          return nestedClass;
-        }
-        PyFunction methodByName = aClass.findMethodByName(memberName, false, null);
-        if (methodByName != null) {
-          return methodByName;
+    return qualifiedNameToModule(fqn, project);
+  }
+
+  /**
+   * Resolves a module/package qualified name (e.g. {@code collections}) to its file, turning a package
+   * directory into its {@code __init__} file so navigation lands on the module rather than the directory.
+   */
+  private static @Nullable PsiElement qualifiedNameToModule(String fqn, Project project) {
+    QualifiedName qualifiedName = QualifiedName.fromDottedString(fqn);
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
+      PyQualifiedNameResolveContext context = PyResolveImportUtil.fromModule(module);
+      for (PsiElement resolved : PyResolveImportUtil.resolveQualifiedName(qualifiedName, context)) {
+        if (PyUtil.turnDirIntoInit(resolved) instanceof PyFile file) {
+          return file;
         }
       }
     }

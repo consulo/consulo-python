@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.PyNames;
@@ -67,7 +68,7 @@ class SuperClassesManager extends MembersManager<PyClass> {
                                               PyClass... to) {
     Collection<PyClass> elements = fetchElements(members);
     for (PyClass destClass : to) {
-      PyClassRefactoringUtil.addSuperclasses(from.getProject(), destClass, elements.toArray(new PyClass[members.size()]));
+      PyPsiRefactoringUtil.addSuperclasses(from.getProject(), destClass, elements.toArray(new PyClass[members.size()]));
     }
 
     List<PyExpression> expressionsToDelete = getExpressionsBySuperClass(from, elements);

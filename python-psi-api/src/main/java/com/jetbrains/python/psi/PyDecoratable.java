@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.ast.PyAstDecoratable;
 import org.jspecify.annotations.Nullable;
 
 /**
- * TODO: Add description
- * User: dcheryasov
- * Date: Jul 8, 2010 3:48:14 AM
+ * Indicates a language construct that can be decorated, primarily class and function definitions.
  */
-public interface PyDecoratable {
-  @Nullable
-  PyDecoratorList getDecoratorList();
+public interface PyDecoratable extends PyAstDecoratable, PyElement {
+    @Override
+    @Nullable
+    PyDecoratorList getDecoratorList();
 }

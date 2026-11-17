@@ -1,57 +1,92 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyYieldExpression;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyExpectedTypeJudgement;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
+
+
 public class PyYieldExpressionImpl extends PyElementImpl implements PyYieldExpression {
-  public PyYieldExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyYieldExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyYieldExpression(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyYieldExpression(this);
+    }
 
-  @Override
-  public PyExpression getExpression() {
-    PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
-    return (expressions != null && expressions.length > 0) ? expressions[0] : null;
-  }
+    @Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        if (isDelegating()) {
+            PyExpression e = getExpression();
+            PyType type = e != null ? context.getType(e) : null;
+            PyTypingTypeProvider.GeneratorTypeDescriptor generatorDesc = PyTypingTypeProvider.GeneratorTypeDescriptor.fromGeneratorOrProtocol(type, context);
+            if (generatorDesc != null) {
+                return generatorDesc.returnType();
+            }
+            return getNoneTypeOrUnknown();
+        }
+        else {
+            return getSendType(context);
+        }
+    }
 
-  @Override
-  public boolean isDelegating() {
-    return getNode().findChildByType(PyTokenTypes.FROM_KEYWORD) != null;
-  }
+    @Override
+    public @Nullable PyType getYieldType(TypeEvalContext context) {
+        PyExpression expr = getExpression();
+        PyType type = expr != null ? context.getType(expr) : getNoneTypeOrUnknown();
 
-  @Override
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    PyExpression e = getExpression();
-    return e != null ? context.getType(e) : null;
-  }
+        if (isDelegating()) {
+            return PyTargetExpressionImpl.getIterationType(type, this, false, context);
+        }
+        return type;
+    }
+
+    @Override
+    public @Nullable PyType getSendType(TypeEvalContext context) {
+        if (ScopeUtil.getScopeOwner(this) instanceof PyFunction function) {
+            if (function.getAnnotation() != null || function.getTypeCommentAnnotation() != null) {
+                PyType returnType = context.getReturnType(function);
+                PyTypingTypeProvider.GeneratorTypeDescriptor generatorDesc = PyTypingTypeProvider.GeneratorTypeDescriptor.fromGeneratorOrProtocol(returnType, context);
+                if (generatorDesc != null) {
+                    return generatorDesc.sendType();
+                }
+            }
+        }
+
+        PyType expectedType = PyExpectedTypeJudgement.getExpectedType(this, context);
+        if (expectedType != null && !isUnknown(expectedType)) {
+            return expectedType;
+        }
+
+        if (isDelegating()) {
+            PyExpression e = getExpression();
+            PyType type = e != null ? context.getType(e) : null;
+            PyTypingTypeProvider.GeneratorTypeDescriptor generatorDesc = PyTypingTypeProvider.GeneratorTypeDescriptor.fromGeneratorOrProtocol(type, context);
+            if (generatorDesc != null) {
+                return generatorDesc.sendType();
+            }
+            return getNoneTypeOrUnknown();
+        }
+        return PyAnyType.getUnknown();
+    }
+
+    /** The type of `None`, or an unknown type when the project has no builtins. */
+    private @Nullable PyType getNoneTypeOrUnknown() {
+        PyClassType noneType = PyBuiltinCache.getInstance(this).getNoneType();
+        return noneType != null ? noneType : PyAnyType.getUnknown();
+    }
 }

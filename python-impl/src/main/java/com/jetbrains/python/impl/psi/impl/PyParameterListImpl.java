@@ -1,41 +1,31 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyStubElementTypes;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+
 import consulo.language.ast.ASTNode;
+import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
-import consulo.localize.LocalizeValue;
 import consulo.util.collection.ArrayUtil;
-import consulo.util.lang.ref.SimpleReference;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyParameterList;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.stubs.PyParameterListStub;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
+import java.util.Arrays;
+import java.util.List;
+
+
+// TODO consulo: com.intellij.psi.PsiListLikeElement missing
 public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> implements PyParameterList {
     public PyParameterListImpl(ASTNode astNode) {
         super(astNode);
@@ -55,7 +45,6 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
     }
 
     @Override
-    @RequiredReadAction
     public PyParameter[] getParameters() {
         return getStubOrPsiChildren(PythonDialectsTokenSetProvider.getInstance().getParameterTokens(), new PyParameter[0]);
     }
@@ -83,22 +72,16 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
                 }
             }
             ASTNode previous = PyPsiUtils.getPrevNonWhitespaceSibling(beforeWhat);
-            PyUtil.addListNode(
-                this,
-                param,
-                beforeWhat,
-                !isLast || params.length == 0 || previous.getElementType() == PyTokenTypes.COMMA,
-                isLast,
-                beforeWhat.getElementType() != PyTokenTypes.RPAR
-            );
+            PyUtil.addListNode(this, param, beforeWhat, !isLast || params.length == 0 ||
+                                                        previous.getElementType() == PyTokenTypes.COMMA, isLast,
+                               beforeWhat.getElementType() != PyTokenTypes.RPAR);
         }
     }
 
     @Override
-    @RequiredReadAction
     public boolean hasPositionalContainer() {
         for (PyParameter parameter : getParameters()) {
-            if (parameter instanceof PyNamedParameter named && named.isPositionalContainer()) {
+            if (parameter instanceof PyNamedParameter && ((PyNamedParameter)parameter).isPositionalContainer()) {
                 return true;
             }
         }
@@ -106,10 +89,9 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
     }
 
     @Override
-    @RequiredReadAction
     public boolean hasKeywordContainer() {
         for (PyParameter parameter : getParameters()) {
-            if (parameter instanceof PyNamedParameter named && named.isKeywordContainer()) {
+            if (parameter instanceof PyNamedParameter && ((PyNamedParameter)parameter).isKeywordContainer()) {
                 return true;
             }
         }
@@ -117,85 +99,39 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
     }
 
     @Override
-    @Nullable
-    @RequiredReadAction
-    public PyNamedParameter findParameterByName(final String name) {
-        SimpleReference<PyNamedParameter> result = new SimpleReference<>();
-        ParamHelper.walkDownParamArray(
-            getParameters(),
-            new ParamHelper.ParamVisitor() {
-                @Override
-                public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
-                    if (name.equals(param.getName())) {
-                        result.set(param);
-                    }
+    public @Nullable PyNamedParameter findParameterByName(String name) {
+        Ref<PyNamedParameter> result = new Ref<>();
+        ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamVisitor() {
+            @Override
+            public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
+                if (name.equals(param.getName())) {
+                    result.set(param);
                 }
             }
-        );
+        });
         return result.get();
     }
 
     @Override
-    @RequiredReadAction
-    public LocalizeValue getPresentableText(final boolean includeDefaultValue) {
-        final StringBuilder target = new StringBuilder();
-        final String COMMA = ", ";
-        target.append("(");
-        ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamWalker() {
-            @Override
-            public void enterTupleParameter(PyTupleParameter param, boolean first, boolean last) {
-                target.append("(");
-            }
-
-            @Override
-            public void leaveTupleParameter(PyTupleParameter param, boolean first, boolean last) {
-                target.append(")");
-                if (!last) {
-                    target.append(COMMA);
-                }
-            }
-
-            @Override
-            public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
-                target.append(param.getRepr(includeDefaultValue));
-                if (!last) {
-                    target.append(COMMA);
-                }
-            }
-
-            @Override
-            public void visitSlashParameter(@Nullable PySlashParameter param, boolean first, boolean last) {
-                target.append(PySlashParameter.TEXT);
-                if (!last) {
-                    target.append(COMMA);
-                }
-            }
-
-            @Override
-            public void visitSingleStarParameter(@Nullable PySingleStarParameter param, boolean first, boolean last) {
-                target.append('*');
-                if (!last) {
-                    target.append(COMMA);
-                }
-            }
-        });
-        target.append(")");
-        return LocalizeValue.of(target.toString());
-    }
-
-    @Nullable
-    @Override
-    @RequiredReadAction
-    public PyFunction getContainingFunction() {
-        return getParentByStub() instanceof PyFunction f ? f : null;
+    public String getPresentableText(boolean includeDefaultValue, @Nullable TypeEvalContext context) {
+        return ParamHelper.getPresentableText(getParameters(), includeDefaultValue, context);
     }
 
     @Override
-    @RequiredWriteAction
+    public @Nullable PyCallable getContainingCallable() {
+        PsiElement parent = getParentByStub();
+        return parent instanceof PyCallable callable ? callable : null;
+    }
+
+    @Override
     public void deleteChildInternal(ASTNode node) {
         if (ArrayUtil.contains(node.getPsi(), getParameters())) {
             PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, node.getPsi());
         }
         super.deleteChildInternal(node);
+    }
+
+    public List<? extends PsiElement> getComponents() {
+        return Arrays.asList(getParameters());
     }
 }

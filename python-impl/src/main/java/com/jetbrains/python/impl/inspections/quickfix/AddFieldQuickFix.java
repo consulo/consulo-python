@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.PythonUiService;
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
@@ -86,7 +88,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
     if (!FileModificationService.getInstance().preparePsiElementForWrite(statementList)) {
       return null;
     }
-    PsiElement result = PyUtil.addElementToStatementList(newStmt, statementList, true);
+    PsiElement result = PyPsiRefactoringUtil.addElementToStatementList(newStmt, statementList, true);
     PyPsiUtils.removeRedundantPass(statementList);
     return result;
   }
@@ -110,14 +112,14 @@ public class AddFieldQuickFix implements LocalQuickFix {
                                             .createFromText(LanguageLevel.getDefault(),
                                                             PyStatement.class,
                                                             myIdentifier + " = " + myInitializer);
-      initStatement = PyUtil.addElementToStatementList(field, cls.getStatementList(), true);
+      initStatement = PyPsiRefactoringUtil.addElementToStatementList(field, cls.getStatementList(), true);
     }
     if (initStatement != null) {
       showTemplateBuilder(initStatement, cls.getContainingFile());
       return;
     }
     // somehow we failed. tell about this
-    PyUtil.showBalloon(project, PyLocalize.qfixFailedToAddField(), NotificationType.ERROR);
+    PythonUiService.getInstance().showBalloonError(project, PyLocalize.qfixFailedToAddField().get());
   }
 
   private static PyClassType getClassType(PsiElement element) {
@@ -191,11 +193,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
         PyStatementList clsContent = cls.getStatementList();
         newInit = (PyFunction)clsContent.addAfter(newInit, addAnchor);
 
-        PyUtil.showBalloon(
-            project,
-            PyLocalize.qfixAddedConstructor$0ForField$1(cls.getName(), itemName),
-            NotificationType.INFO
-        );
+        PythonUiService.getInstance().showBalloonInfo(project, PyLocalize.qfixAddedConstructor$0ForField$1(cls.getName(), itemName).get());
         PyStatementList statementList = newInit.getStatementList();
         PyStatement[] statements = statementList.getStatements();
         return statements.length != 0 ? statements[0] : null;

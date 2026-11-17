@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.psi.PyIndentUtil;
+import com.jetbrains.python.psi.PyIndentUtil;
 import com.jetbrains.python.lexer.PythonIndentingLexerForLazyElements;
 import com.jetbrains.python.lexer.PythonIndentingProcessor;
 import com.jetbrains.python.parsing.PyLazyParser;

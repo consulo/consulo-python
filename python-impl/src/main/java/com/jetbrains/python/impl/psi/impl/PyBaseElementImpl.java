@@ -1,241 +1,171 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.ast.PyAstElementVisitor;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyReferenceOwner;
+import com.jetbrains.python.psi.PyTypeCommentOwner;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.stubs.PyTypeCommentOwnerStub;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
-import consulo.language.ast.IElementType;
-import consulo.language.ast.TokenSet;
 import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
-import consulo.language.psi.*;
+import consulo.language.psi.OuterLanguageElement;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiMultiReference;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ReferenceRange;
+import consulo.language.psi.StubBasedPsiElement;
 import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.stub.StubElement;
 import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author max
- */
-public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElementBase<T> implements PyElement
-{
-	public PyBaseElementImpl(T stub, IStubElementType nodeType)
-	{
-		super(stub, nodeType);
-	}
+public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElementBase<T> implements PyElement {
+    public PyBaseElementImpl(T stub, IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
 
-	public PyBaseElementImpl(ASTNode node)
-	{
-		super(node);
-	}
-
-	@Override
-    @RequiredReadAction
-	public PythonLanguage getLanguage()
-	{
-		return (PythonLanguage) PythonFileType.INSTANCE.getLanguage();
-	}
-
-	@Override
-	public String toString()
-	{
-		String className = getClass().getName();
-		int pos = className.lastIndexOf('.');
-		if(pos >= 0)
-		{
-			className = className.substring(pos + 1);
-		}
-		className = StringUtil.trimEnd(className, "Impl");
-		return className;
-	}
+    public PyBaseElementImpl(ASTNode node) {
+        super(node);
+    }
 
     @Override
-	public void accept(PsiElementVisitor visitor)
-	{
-		PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(this));
-		if(visitor instanceof PyElementVisitor)
-		{
-			acceptPyVisitor(((PyElementVisitor) visitor));
-		}
-		else
-		{
-			super.accept(visitor);
-		}
-	}
-
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyElement(this);
-	}
-
-	@RequiredReadAction
-    protected <T extends PyElement> T[] childrenToPsi(TokenSet filterSet, T[] array)
-	{
-		ASTNode[] nodes = getNode().getChildren(filterSet);
-		return PyPsiUtils.nodesToPsi(nodes, array);
-	}
-
-	@Nullable
     @RequiredReadAction
-	protected <T extends PyElement> T childToPsi(TokenSet filterSet, int index)
-	{
-		ASTNode[] nodes = getNode().getChildren(filterSet);
-		if(nodes.length <= index)
-		{
-			return null;
-		}
-		//noinspection unchecked
-		return (T) nodes[index].getPsi();
-	}
+    public PythonLanguage getLanguage() {
+        return (PythonLanguage) PythonFileType.INSTANCE.getLanguage();
+    }
 
-	@Nullable
+    @Override
+    public String toString() {
+        String className = getClass().getName();
+        int pos = className.lastIndexOf('.');
+        if (pos >= 0) {
+            className = className.substring(pos + 1);
+        }
+        className = StringUtil.trimEnd(className, "Impl");
+        return className;
+    }
+
+    @Override
+    public void accept(PsiElementVisitor visitor) {
+        PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(this));
+        if (visitor instanceof PyElementVisitor pyVisitor) {
+            acceptPyVisitor(pyVisitor);
+        }
+        else if (visitor instanceof PyAstElementVisitor pyVisitor) {
+            acceptPyVisitor(pyVisitor);
+        }
+        else {
+            super.accept(visitor);
+        }
+    }
+
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyElement(this);
+    }
+
+    /**
+     * Overrides the findReferenceAt() logic in order to provide a resolve context with origin file for returned references.
+     * The findReferenceAt() is usually invoked from UI operations, and it helps to be able to do deeper analysis in the
+     * current file for such operations.
+     *
+     * @param offset the offset to find the reference at
+     * @return the reference or null.
+     */
+    @Override
     @RequiredReadAction
-	protected <T extends PyElement> T childToPsi(IElementType elType)
-	{
-		ASTNode node = getNode().findChildByType(elType);
-		if(node == null)
-		{
-			return null;
-		}
-
-		//noinspection unchecked
-		return (T) node.getPsi();
-	}
-
-	@Nullable
-    @RequiredReadAction
-	protected <T extends PyElement> T childToPsi(TokenSet elTypes)
-	{
-		ASTNode node = getNode().findChildByType(elTypes);
-		//noinspection unchecked
-		return node != null ? (T) node.getPsi() : null;
-	}
-
-	@RequiredReadAction
-    protected <T extends PyElement> T childToPsiNotNull(TokenSet filterSet, int index)
-	{
-		PyElement child = childToPsi(filterSet, index);
-		if(child == null)
-		{
-			throw new RuntimeException("child must not be null: expression text " + getText());
-		}
-		//noinspection unchecked
-		return (T) child;
-	}
-
-	@RequiredReadAction
-    protected <T extends PyElement> T childToPsiNotNull(IElementType elType)
-	{
-		PyElement child = childToPsi(elType);
-		if(child == null)
-		{
-			throw new RuntimeException("child must not be null; expression text " + getText());
-		}
-		//noinspection unchecked
-		return (T) child;
-	}
-
-	/**
-	 * Overrides the findReferenceAt() logic in order to provide a resolve context with origin file for returned references.
-	 * The findReferenceAt() is usually invoked from UI operations, and it helps to be able to do deeper analysis in the
-	 * current file for such operations.
-	 *
-	 * @param offset the offset to find the reference at
-	 * @return the reference or null.
-	 */
-	@Override
-    @RequiredReadAction
-	public PsiReference findReferenceAt(int offset)
-	{
-		return findReferenceAt(this, offset);
-	}
-
-	@RequiredReadAction
-	static @Nullable PsiReference findReferenceAt(PsiElement target, int offset)
-	{
-		// copy/paste from SharedPsiElementImplUtil
-		PsiElement element = target.findElementAt(offset);
-		if(element == null || element instanceof OuterLanguageElement)
-		{
-			return null;
-		}
-		offset = target.getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
-
-		List<PsiReference> referencesList = new ArrayList<>();
-		PsiFile file = element.getContainingFile();
-		PyResolveContext resolveContext = file != null ? PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(file.getProject(), file)) : PyResolveContext
-				.defaultContext();
-		while(element != null)
-		{
-			addReferences(offset, element, referencesList, resolveContext);
-			offset = element.getStartOffsetInParent() + offset;
-			if(element instanceof PsiFile)
-			{
-				break;
-			}
-			element = element.getParent();
-		}
-
-		if(referencesList.isEmpty())
-		{
-			return null;
-		}
-		if(referencesList.size() == 1)
-		{
-			return referencesList.get(0);
-		}
-		return new PsiMultiReference(referencesList.toArray(new PsiReference[referencesList.size()]), referencesList.get(referencesList.size() - 1).getElement());
-	}
+    public PsiReference findReferenceAt(int offset) {
+        return findReferenceAt(this, offset);
+    }
 
     @RequiredReadAction
-	private static void addReferences(int offset, PsiElement element, Collection<PsiReference> outReferences, PyResolveContext resolveContext)
-	{
-		PsiReference[] references;
-		if(element instanceof PyReferenceOwner)
-		{
-			PsiPolyVariantReference reference = ((PyReferenceOwner) element).getReference(resolveContext);
-			references = reference == null ? PsiReference.EMPTY_ARRAY : new PsiReference[]{reference};
-		}
-		else
-		{
-			references = element.getReferences();
-		}
-		for(PsiReference reference : references)
-		{
-			for(TextRange range : ReferenceRange.getRanges(reference))
-			{
-				assert range != null : reference;
-				if(range.containsOffset(offset))
-				{
-					outReferences.add(reference);
-				}
-			}
-		}
-	}
+    protected static <T extends StubBasedPsiElement<? extends PyTypeCommentOwnerStub> & PyTypeCommentOwner>
+    @Nullable String getTypeCommentAnnotationFromStubOrPsi(T elem) {
+        PyTypeCommentOwnerStub stub = elem.getStub();
+        if (stub != null) {
+            return stub.getTypeComment();
+        }
+        PsiComment comment = elem.getTypeComment();
+        if (comment != null) {
+            return PyTypingTypeProvider.getTypeCommentValue(comment.getText());
+        }
+        return null;
+    }
+
+    @Override
+    public <E extends PsiElement> @Nullable E getStubOrPsiParentOfType(Class<E> parentClass) {
+        return super.getStubOrPsiParentOfType(parentClass);
+    }
+
+    @RequiredReadAction
+    static @Nullable PsiReference findReferenceAt(PsiElement target, int offset) {
+        PsiElement element = target.findElementAt(offset);
+        if (element == null || element instanceof OuterLanguageElement) {
+            return null;
+        }
+        offset = target.getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
+
+        List<PsiReference> referencesList = new ArrayList<>();
+        PsiFile file = element.getContainingFile();
+        TypeEvalContext context =
+            file != null ? TypeEvalContext.codeAnalysis(file.getProject(), file) : TypeEvalContext.codeInsightFallback(element.getProject());
+        PyResolveContext resolveContext = PyResolveContext.implicitContext(context);
+        while (element != null) {
+            addReferences(offset, element, referencesList, resolveContext);
+            offset = element.getStartOffsetInParent() + offset;
+            if (element instanceof PsiFile) {
+                break;
+            }
+            element = element.getParent();
+        }
+
+        if (referencesList.isEmpty()) {
+            return null;
+        }
+        if (referencesList.size() == 1) {
+            return referencesList.get(0);
+        }
+        return new PsiMultiReference(referencesList.toArray(PsiReference.EMPTY_ARRAY),
+            referencesList.get(referencesList.size() - 1).getElement());
+    }
+
+    @RequiredReadAction
+    private static void addReferences(int offset,
+                                      PsiElement element,
+                                      Collection<PsiReference> outReferences,
+                                      PyResolveContext resolveContext) {
+        PsiReference[] references;
+        if (element instanceof PyReferenceOwner owner) {
+            PsiPolyVariantReference reference = owner.getReference(resolveContext);
+            references = new PsiReference[]{reference};
+        }
+        else {
+            references = element.getReferences();
+        }
+        for (PsiReference reference : references) {
+            for (TextRange range : ReferenceRange.getRanges(reference)) {
+                assert range != null : reference;
+                if (range.containsOffset(offset)) {
+                    outReferences.add(reference);
+                }
+            }
+        }
+    }
 }

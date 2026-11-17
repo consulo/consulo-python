@@ -22,6 +22,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.ast.impl.PyUtilCore;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassLikeType;
@@ -164,7 +165,7 @@ public class PyPep8NamingInspection extends PyInspection {
             if (name == null) {
                 return;
             }
-            if (containingClass != null && (PyUtil.isSpecialName(name) || isIgnoredOrHasIgnoredAncestor(containingClass))) {
+            if (containingClass != null && (PyUtilCore.isSpecialName(name) || isIgnoredOrHasIgnoredAncestor(containingClass))) {
                 return;
             }
             if (!LOWERCASE_REGEX.matcher(name).matches()) {

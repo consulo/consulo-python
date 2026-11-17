@@ -17,7 +17,7 @@ package consulo.ironPython.psi.impl;
 
 import com.jetbrains.python.impl.psi.impl.ResolveResultList;
 import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
@@ -84,7 +84,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Override
     @RequiredReadAction
-	public void visitMembers(Predicate<PsiElement> processor, boolean inherited, TypeEvalContext context)
+	public void visitMembers(Predicate<? super PsiElement> processor, boolean inherited, TypeEvalContext context)
 	{
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
 		{
@@ -159,7 +159,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, PyElement callSite)
 	{
 		if(myDefinition)
 		{
@@ -185,6 +185,12 @@ public class PyDotNetClassType implements PyClassLikeType
 	public PyClassLikeType toInstance()
 	{
 		return myDefinition ? new PyDotNetClassType(myClass, false) : this;
+	}
+
+	@Override
+	public PyClassLikeType toClass()
+	{
+		return myDefinition ? this : new PyDotNetClassType(myClass, true);
 	}
 
 	@Nullable

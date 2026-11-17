@@ -1,29 +1,14 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.impl.psi.PyFileElementType;
+import com.jetbrains.python.impl.psi.impl.PyFileImpl;
 import com.jetbrains.python.lexer.PythonIndentingLexer;
 import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.psi.PyElementType;
-import com.jetbrains.python.impl.psi.PyFileElementType;
 import com.jetbrains.python.psi.PyStubElementType;
-import com.jetbrains.python.impl.psi.impl.PyFileImpl;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.ast.ASTNode;
@@ -39,71 +24,64 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 
-
-/**
- * @author yole
- * @author Keith Lea
- */
 @ExtensionImpl
 public class PythonParserDefinition implements ParserDefinition {
-  private final TokenSet myWhitespaceTokens;
-  private final TokenSet myCommentTokens;
-  private final TokenSet myStringLiteralTokens;
 
-  public PythonParserDefinition() {
-    myWhitespaceTokens = TokenSet.create(PyTokenTypes.LINE_BREAK, PyTokenTypes.SPACE, PyTokenTypes.TAB, PyTokenTypes.FORMFEED);
-    myCommentTokens = TokenSet.create(PyTokenTypes.END_OF_LINE_COMMENT);
-    myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, PyTokenTypes.FSTRING_TOKENS);
-  }
-
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
-
-  public Lexer createLexer(LanguageVersion languageVersion) {
-    return new PythonIndentingLexer();
-  }
-
-  public IFileElementType getFileNodeType() {
-    return PyFileElementType.INSTANCE;
-  }
-
-  public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
-    return myWhitespaceTokens;
-  }
-
-  public TokenSet getCommentTokens(LanguageVersion languageVersion) {
-    return myCommentTokens;
-  }
-
-  public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
-    return myStringLiteralTokens;
-  }
-
-  public PsiParser createParser(LanguageVersion languageVersion) {
-    return new PyParser();
-  }
-
-  public PsiElement createElement(ASTNode node) {
-    IElementType type = node.getElementType();
-    if (type instanceof PyElementType) {
-      PyElementType pyElType = (PyElementType)type;
-      return pyElType.createElement(node);
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
     }
-    else if (type instanceof PyStubElementType) {
-      return ((PyStubElementType)type).createElement(node);
+
+    @Override
+    public Lexer createLexer(LanguageVersion languageVersion) {
+        return new PythonIndentingLexer();
     }
-    return new ASTWrapperPsiElement(node);
-  }
 
-  public PsiFile createFile(FileViewProvider viewProvider) {
-    return new PyFileImpl(viewProvider);
-  }
+    @Override
+    public IFileElementType getFileNodeType() {
+        return PyFileElementType.INSTANCE;
+    }
 
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-    // see LanguageTokenSeparatorGenerator instead
-    return SpaceRequirements.MAY;
-  }
+    @Override
+    public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
+        return TokenSet.create(PyTokenTypes.LINE_BREAK, PyTokenTypes.SPACE, PyTokenTypes.TAB, PyTokenTypes.FORMFEED);
+    }
 
+    @Override
+    public TokenSet getCommentTokens(LanguageVersion languageVersion) {
+        return TokenSet.create(PyTokenTypes.END_OF_LINE_COMMENT);
+    }
+
+    @Override
+    public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
+        return TokenSet.orSet(PyTokenTypes.STRING_NODES, PyTokenTypes.FSTRING_TOKENS);
+    }
+
+    @Override
+    public PsiParser createParser(LanguageVersion languageVersion) {
+        return new PyParser();
+    }
+
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        IElementType type = node.getElementType();
+        if (type instanceof PyElementType pyElType) {
+            return pyElType.createElement(node);
+        }
+        else if (type instanceof PyStubElementType) {
+            return ((PyStubElementType<?, ?>)type).createElement(node);
+        }
+        return new ASTWrapperPsiElement(node);
+    }
+
+    @Override
+    public PsiFile createFile(FileViewProvider viewProvider) {
+        return new PyFileImpl(viewProvider);
+    }
+
+    @Override
+    public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+        // see LanguageTokenSeparatorGenerator instead
+        return SpaceRequirements.MAY;
+    }
 }

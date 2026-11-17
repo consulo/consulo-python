@@ -560,7 +560,6 @@ public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLin
     return null;
   }
 
-  @Override
   public String getExternalDocumentationRoot(Sdk sdk) {
     String versionString = sdk.getVersionString();
     if (versionString != null && StringUtil.startsWithIgnoreCase(versionString, "jython")) {

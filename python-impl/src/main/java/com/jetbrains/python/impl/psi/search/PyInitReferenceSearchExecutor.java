@@ -1,70 +1,79 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.search;
 
-import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.impl.PyCallExpressionNavigator;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessRule;
+import consulo.application.ReadAction;
 import consulo.content.scope.SearchScope;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.language.psi.search.RequestResultProcessor;
+import consulo.language.psi.search.SingleTargetRequestResultProcessor;
 import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
 
 import java.util.function.Predicate;
 
-/**
- * @author yole
- */
+
 @ExtensionImpl
-public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
+public final class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>
+    implements ReferencesSearchQueryExecutor {
     @Override
-    public void processQuery(
-        ReferencesSearch.SearchParameters queryParameters,
-        Predicate<? super PsiReference> consumer
-    ) {
+    public void processQuery(ReferencesSearch.SearchParameters queryParameters, Predicate<? super PsiReference> consumer) {
         PsiElement element = queryParameters.getElementToSearch();
-        if (!(element instanceof PyFunction function)) {
+        if (!(element instanceof PyFunction)) {
             return;
         }
 
-        if (!PyNames.INIT.equals(AccessRule.read(function::getName))) {
-            return;
-        }
-        PyClass pyClass = AccessRule.read(function::getContainingClass);
-        if (pyClass == null) {
-            return;
-        }
-        String className = AccessRule.read(pyClass::getName);
-        if (className == null) {
-            return;
+        ReadAction.run(() -> {
+            String className;
+            SearchScope searchScope;
+            PyFunction function = (PyFunction)element;
+            PyClass pyClass = PyUtil.turnConstructorIntoClass(function);
+            if (pyClass == null) {
+                return;
+            }
+            className = pyClass.getName();
+            if (className == null) {
+                return;
+            }
+
+            searchScope = queryParameters.getEffectiveSearchScope();
+            if (searchScope instanceof GlobalSearchScope) {
+                searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, PythonFileType.INSTANCE);
+            }
+
+
+            var processor = new ClassInitializationProcessor(pyClass);
+            queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, pyClass, processor);
+        });
+    }
+
+    private static class ClassInitializationProcessor extends RequestResultProcessor {
+
+        private final SingleTargetRequestResultProcessor myProcessor;
+
+        private ClassInitializationProcessor(PyClass cls) {
+            super(cls);
+            myProcessor = new SingleTargetRequestResultProcessor(cls);
         }
 
-        SearchScope searchScope = queryParameters.getEffectiveSearchScope();
-        if (searchScope instanceof GlobalSearchScope globalSearchScope) {
-            searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, PythonFileType.INSTANCE);
-        }
+        @Override
+        public boolean processTextOccurrence(PsiElement element,
+                                             int offsetInElement,
+                                             Predicate<? super PsiReference> consumer) {
+            if (PyCallExpressionNavigator.getPyCallExpressionByCallee(element) != null) {
+                return myProcessor.processTextOccurrence(element, offsetInElement, consumer);
+            }
 
-        queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
+            return true;
+        }
     }
 }

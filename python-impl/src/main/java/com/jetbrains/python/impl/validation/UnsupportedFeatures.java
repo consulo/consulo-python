@@ -1,26 +1,15 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.validation;
 
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyElement;
-import consulo.annotation.access.RequiredReadAction;
+import com.jetbrains.python.validation.PyAnnotationHolder;
+import com.jetbrains.python.validation.PyAnnotatorBase;
 import consulo.document.util.TextRange;
+import consulo.language.editor.annotation.AnnotationBuilder;
+import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.language.editor.impl.inspection.ProblemDescriptorImpl;
 import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.intention.IntentionAction;
 import consulo.language.editor.intention.QuickFixWrapper;
@@ -28,75 +17,63 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
-/**
- * @author Alexey.Ivanov
- */
-public class UnsupportedFeatures extends CompatibilityVisitor {
-    public UnsupportedFeatures() {
-        super(new ArrayList<>());
+public class UnsupportedFeatures extends PyAnnotatorBase {
+    @Override
+    protected void annotate(PsiElement element, PyAnnotationHolder holder) {
+        element.accept(new MyVisitor(holder, List.of(LanguageLevel.forElement(element))));
     }
 
-    @Override
-    public void visitPyElement(PyElement node) {
-        setVersionsToProcess(Arrays.asList(LanguageLevel.forElement(node)));
-    }
+    private static class MyVisitor extends PyCompatibilityVisitor {
+        private final PyAnnotationHolder myHolder;
 
-    @Override
-    @RequiredReadAction
-    protected void registerProblem(
-        PsiElement node,
-        TextRange range,
-        String message,
-        @Nullable LocalQuickFix localQuickFix,
-        boolean asError
-    ) {
-        if (range.isEmpty()) {
-            return;
+        private MyVisitor(PyAnnotationHolder holder, List<LanguageLevel> versionsToProcess) {
+            super(versionsToProcess);
+            myHolder = holder;
         }
 
-        if (localQuickFix != null) {
-            if (asError) {
-                getHolder().createErrorAnnotation(range, message)
-                    .registerFix(createIntention(node, LocalizeValue.of(message), localQuickFix));
+        @Override
+        protected void registerProblem(PsiElement node,
+                                       TextRange range,
+                                       String message,
+                                       boolean asError,
+                                       LocalQuickFix... fixes) {
+            if (range.isEmpty()) {
+                return;
+            }
+
+            HighlightSeverity severity = asError ? HighlightSeverity.ERROR : HighlightSeverity.WARNING;
+            if (fixes.length > 0) {
+                AnnotationBuilder annotationBuilder = myHolder.newAnnotation(severity, message).range(range);
+                for (LocalQuickFix fix : fixes) {
+                    if (fix != null) {
+                        annotationBuilder = annotationBuilder.withFix(createIntention(node, message, fix));
+                    }
+                }
+                annotationBuilder.create();
             }
             else {
-                getHolder().createWarningAnnotation(range, message)
-                    .registerFix(createIntention(node, LocalizeValue.of(message), localQuickFix));
+                myHolder.newAnnotation(severity, message).range(range).create();
             }
         }
-        else {
-            if (asError) {
-                getHolder().createErrorAnnotation(range, message);
-            }
-            else {
-                getHolder().createWarningAnnotation(range, message);
-            }
+
+        private static IntentionAction createIntention(PsiElement node,
+                                                       String message,
+                                                       LocalQuickFix localQuickFix) {
+            return createIntention(node, null, message, localQuickFix);
         }
-    }
 
-    @RequiredReadAction
-    private static IntentionAction createIntention(
-        PsiElement node,
-        LocalizeValue message,
-        LocalQuickFix localQuickFix
-    ) {
-        return createIntention(node, node.getTextRange(), message, localQuickFix);
-    }
+        private static IntentionAction createIntention(PsiElement node,
+                                                       @Nullable TextRange range,
+                                                       String message,
+                                                       LocalQuickFix localQuickFix) {
+            LocalQuickFix[] quickFixes = {localQuickFix};
+            ProblemDescriptor descr =
+                new ProblemDescriptorImpl(node, node, LocalizeValue.of(message), quickFixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true,
+                    range, true);
 
-    @RequiredReadAction
-    private static IntentionAction createIntention(
-        PsiElement node,
-        @Nullable TextRange range,
-        LocalizeValue message,
-        LocalQuickFix localQuickFix
-    ) {
-        LocalQuickFix[] quickFixes = {localQuickFix};
-        ProblemDescriptorImpl descr =
-            new ProblemDescriptorImpl(node, node, message, quickFixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, range, true);
-
-        return QuickFixWrapper.wrap(descr, 0);
+            return QuickFixWrapper.wrap(descr, 0);
+        }
     }
 }

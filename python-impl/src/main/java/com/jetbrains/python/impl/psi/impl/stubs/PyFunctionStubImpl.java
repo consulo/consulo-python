@@ -1,89 +1,100 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import org.jspecify.annotations.Nullable;
-
+import com.google.common.collect.RangeSet;
+import consulo.util.lang.Version;
+import consulo.util.lang.StringUtil;
 import consulo.language.psi.stub.IStubElementType;
-import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.stubs.PyFunctionStub;
+import org.jspecify.annotations.Nullable;
 
-public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFunctionStub
-{
-	private final String myName;
-	private final String myDocString;
-	private final String myDeprecationMessage;
-	private final boolean myAsync;
-	private final String myTypeComment;
+public class PyFunctionStubImpl extends PyVersionSpecificStubBase<PyFunction> implements PyFunctionStub {
+    private final String myName;
+    private final String myDocString;
+    private final String myDeprecationMessage;
+    private final boolean myAsync;
+    private final boolean myGenerator;
+    private final boolean myOnlyRaisesNotImplementedError;
+    private final String myTypeComment;
+    private final String myAnnotation;
 
-	public PyFunctionStubImpl(@Nullable String name,
-			@Nullable String docString,
-			@Nullable String deprecationMessage,
-			boolean isAsync,
-			@Nullable String typeComment,
-			StubElement parent,
-			IStubElementType stubElementType)
-	{
-		super(parent, stubElementType);
-		myName = name;
-		myDocString = docString;
-		myDeprecationMessage = deprecationMessage;
-		myAsync = isAsync;
-		myTypeComment = typeComment;
-	}
+    public PyFunctionStubImpl(@Nullable String name,
+                              @Nullable String docString,
+                              @Nullable String deprecationMessage,
+                              boolean isAsync,
+                              boolean isGenerator,
+                              boolean onlyRaisesNotImplementedError,
+                              @Nullable String typeCommentContent,
+                              @Nullable String annotation,
+                              StubElement parent,
+                              IStubElementType stubElementType,
+                              RangeSet<Version> versions) {
+        super(parent, stubElementType, versions);
+        myName = name;
+        myDocString = docString;
+        myDeprecationMessage = deprecationMessage;
+        myAsync = isAsync;
+        myGenerator = isGenerator;
+        myOnlyRaisesNotImplementedError = onlyRaisesNotImplementedError;
+        myTypeComment = typeCommentContent;
+        myAnnotation = annotation;
+    }
 
-	@Nullable
-	@Override
-	public String getName()
-	{
-		return myName;
-	}
+    @Override
+    public @Nullable String getName() {
+        return myName;
+    }
 
-	@Nullable
-	@Override
-	public String getDocString()
-	{
-		return myDocString;
-	}
+    @Override
+    public @Nullable String getDocString() {
+        return myDocString;
+    }
 
-	@Nullable
-	@Override
-	public String getDeprecationMessage()
-	{
-		return myDeprecationMessage;
-	}
+    @Override
+    public @Nullable String getDeprecationMessage() {
+        return myDeprecationMessage;
+    }
 
-	@Nullable
-	@Override
-	public String getTypeComment()
-	{
-		return myTypeComment;
-	}
+    @Override
+    public @Nullable String getTypeComment() {
+        return myTypeComment;
+    }
 
-	@Override
-	public boolean isAsync()
-	{
-		return myAsync;
-	}
+    @Override
+    public @Nullable String getAnnotation() {
+        return myAnnotation;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "PyFunctionStub(" + myName + ")";
-	}
+    @Override
+    public boolean isAsync() {
+        return myAsync;
+    }
+
+    @Override
+    public boolean isGenerator() {
+        return myGenerator;
+    }
+
+    @Override
+    public boolean onlyRaisesNotImplementedError() {
+        return myOnlyRaisesNotImplementedError;
+    }
+
+    @Override
+    public String toString() {
+        // @formatter:off
+        return "PyFunctionStubImpl{" +
+               "myName='" + myName + '\'' +
+               ", myDocString='" + (myDocString != null ? StringUtil.escapeStringCharacters(myDocString) : null) + '\'' +
+               ", myDeprecationMessage='" + (myDeprecationMessage != null ? StringUtil.escapeStringCharacters(myDeprecationMessage) : null) + '\'' +
+               ", myAsync=" + myAsync +
+               ", myGenerator=" + myGenerator +
+               ", myOnlyRaisesNotImplementedError=" + myOnlyRaisesNotImplementedError +
+               ", myTypeComment='" + myTypeComment + '\'' +
+               ", myAnnotation='" + myAnnotation + '\'' +
+               '}';
+        // @formatter:on
+    }
 }

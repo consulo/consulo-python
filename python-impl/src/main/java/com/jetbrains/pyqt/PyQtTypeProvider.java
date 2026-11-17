@@ -15,6 +15,8 @@
  */
 package com.jetbrains.pyqt;
 
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyClass;
@@ -48,7 +50,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
         if (classQName != null) {
           QualifiedName name = QualifiedName.fromDottedString(classQName);
           String qtVersion = name.getComponents().get(0);
-          PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, function.getProject());
+          PyClass aClass = ContainerUtil.getFirstItem(PyClassNameIndex.findByQualifiedName(qtVersion + "." + ourQtBoundSignal, function.getProject(), GlobalSearchScope.allScope(function.getProject())));
           if (aClass != null) {
             PyType type = new PyClassTypeImpl(aClass, false);
             return Ref.create(type);
@@ -69,7 +71,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
         String qtVersion = name.getComponents().get(0);
         String docstring = ((PyFunction)callable).getDocStringValue();
         if (docstring != null && docstring.contains("[signal]")) {
-          PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, callable.getProject());
+          PyClass aClass = ContainerUtil.getFirstItem(PyClassNameIndex.findByQualifiedName(qtVersion + "." + ourQtBoundSignal, callable.getProject(), GlobalSearchScope.allScope(callable.getProject())));
           if (aClass != null) {
             return new PyClassTypeImpl(aClass, false);
           }

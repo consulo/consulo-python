@@ -1,45 +1,32 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.stubs;
 
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.psi.impl.PropertyBunch;
+import com.jetbrains.python.impl.psi.impl.stubs.PropertyStubType;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyNoneLiteralExpression;
+import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
+import com.jetbrains.python.toolbox.Maybe;
 import consulo.language.psi.stub.StubInputStream;
 import consulo.language.psi.stub.StubOutputStream;
-import consulo.index.io.StringRef;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.impl.psi.impl.PropertyBunch;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
-import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
-import com.jetbrains.python.impl.psi.impl.stubs.PropertyStubType;
-import com.jetbrains.python.toolbox.Maybe;
-import org.jspecify.annotations.Nullable;
-
+import consulo.util.lang.StringUtil;
 import java.io.IOException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Packs property description for storage in a stub.
- * @author dcheryasov
- * @since 2010-06-03
  */
 public class PropertyStubStorage extends PropertyBunch<String> implements CustomTargetExpressionStub {
 
   @Override
   protected Maybe<String> translate(@Nullable PyExpression ref) {
-    if (ref != null) {
-      String name = ref.getName();
+    if (ref instanceof PyNoneLiteralExpression) {
+      return new Maybe<>(PyNames.NONE);
+    }
+    else if (ref != null) {
+      final String name = ref.getName();
       return name != null ? new Maybe<>(name) : unknown;
     }
     return none;
@@ -48,12 +35,16 @@ public class PropertyStubStorage extends PropertyBunch<String> implements Custom
   private static final String IMPOSSIBLE_NAME = "#";
 
   private static void writeOne(Maybe<String> what, StubOutputStream stream) throws IOException {
-    if (what.isDefined()) stream.writeName(what.value());
-    else stream.writeName(IMPOSSIBLE_NAME);
+    if (what.isDefined()) {
+      stream.writeName(what.value());
+    }
+    else {
+      stream.writeName(IMPOSSIBLE_NAME);
+    }
   }
 
   @Override
-  public Class<? extends CustomTargetExpressionStubType> getTypeClass() {
+  public Class<PropertyStubType> getTypeClass() {
     return PropertyStubType.class;
   }
 
@@ -70,35 +61,47 @@ public class PropertyStubStorage extends PropertyBunch<String> implements Custom
     return null;  // ??
   }
 
+  @Override
+  public String toString() {
+    return "PropertyStubStorage(" +
+           "getter=" + myGetter.valueOrNull() +
+           ", setter=" + mySetter.valueOrNull() +
+           ", deleter=" + myDeleter.valueOrNull() +
+           ", doc=" + (myDoc != null ? "'" + StringUtil.escapeStringCharacters(myDoc) + "'" : null) +
+           ')';
+  }
+
   public static PropertyStubStorage deserialize(StubInputStream stream) throws IOException {
     PropertyStubStorage me = new PropertyStubStorage();
-    me.myGetter  = readOne(stream);
-    me.mySetter  = readOne(stream);
+    me.myGetter = readOne(stream);
+    me.mySetter = readOne(stream);
     me.myDeleter = readOne(stream);
     //
-    StringRef ref = stream.readName();
-    me.myDoc = ref != null? ref.getString() : null;
+    me.myDoc = stream.readNameString();
     return me;
   }
 
   private static final Maybe<String> unknown = new Maybe<>();
   private static final Maybe<String> none = new Maybe<>(null);
 
-  @Nullable
-  private static Maybe<String> readOne(StubInputStream stream) throws IOException {
-    StringRef ref = stream.readName();
-    if (ref == null) return none;
+  private static @Nullable Maybe<String> readOne(StubInputStream stream) throws IOException {
+    String s = stream.readNameString();
+    if (s == null) {
+      return none;
+    }
     else {
-      String s = ref.getString();
-      if (IMPOSSIBLE_NAME.equals(s)) return unknown;
-      else return new Maybe<>(s);
+      if (IMPOSSIBLE_NAME.equals(s)) {
+        return unknown;
+      }
+      else {
+        return new Maybe<>(s);
+      }
     }
   }
 
-  @Nullable
-  public static PropertyStubStorage fromCall(@Nullable PyExpression expr) {
-    PropertyStubStorage prop = new PropertyStubStorage();
-    boolean success = fillFromCall(expr, prop);
-    return success? prop : null;
+  public static @Nullable PropertyStubStorage fromCall(@Nullable PyExpression expr) {
+    final PropertyStubStorage prop = new PropertyStubStorage();
+    final boolean success = fillFromCall(expr, prop);
+    return success ? prop : null;
   }
 }

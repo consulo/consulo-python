@@ -1,419 +1,1003 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight.stdlib;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Streams;
+import com.jetbrains.python.ProtectionLevel;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.psi.PyKnownDecorator;
+import com.jetbrains.python.impl.psi.PyKnownDecoratorUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
-import com.jetbrains.python.impl.psi.impl.stubs.PyNamedTupleStubImpl;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.impl.psi.types.*;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.psi.impl.PyEvaluator;
+import com.jetbrains.python.impl.psi.impl.PyTargetExpressionImpl;
+import com.jetbrains.python.impl.psi.impl.stubs.PyEnumAttributeStubType;
+import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
+import com.jetbrains.python.impl.psi.stubs.PyEnumAttributeStub;
+import com.jetbrains.python.impl.psi.types.PyCallableTypeImpl;
+import com.jetbrains.python.impl.psi.types.PyCollectionTypeImpl;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
+import com.jetbrains.python.impl.psi.types.PyTupleType;
+import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.impl.pyi.PyiFile;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyCallExpression.PyArgumentsMapping;
+import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyCallable;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecoratable;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNumericLiteralExpression;
+import com.jetbrains.python.psi.PyQualifiedNameOwner;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PySequenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTypedElement;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.impl.PyTypeProvider;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
+import com.jetbrains.python.psi.stubs.PyLiteralKind;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
-import com.jetbrains.python.psi.types.*;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyCallableParameter;
+import com.jetbrains.python.psi.types.PyCallableType;
+import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyEnumMemberDeclarationProvider;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeProviderBase;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.RecursionManager;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.ref.Ref;
-import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
-import java.util.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.jetbrains.python.PyNames.isDunder;
+import static com.jetbrains.python.PyNames.isSunder;
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-/**
- * @author yole
- */
-@ExtensionImpl
-public class PyStdlibTypeProvider extends PyTypeProviderBase {
-  private static final Set<String> OPEN_FUNCTIONS = ImmutableSet.of("__builtin__.open", "io.open", "os.fdopen", "pathlib.Path.open");
 
-  private static final String PY2K_FILE_TYPE = "file";
-  private static final String PY3K_BINARY_FILE_TYPE = "io.FileIO[bytes]";
-  private static final String PY3K_TEXT_FILE_TYPE = "io.TextIOWrapper[unicode]";
+@ExtensionImpl(id = "pyStdlibTypeProvider")
+public final class PyStdlibTypeProvider extends PyTypeProviderBase {
 
-  @Nullable
-  public static PyStdlibTypeProvider getInstance() {
-    return PyTypeProvider.EP_NAME.findExtensionOrFail(PyStdlibTypeProvider.class);
-  }
-
-  @Override
-  public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
-    PyType type = getBaseStringType(referenceTarget);
-    if (type != null) {
-      return type;
-    }
-    type = getNamedTupleType(referenceTarget, context, anchor);
-    if (type != null) {
-      return type;
-    }
-    type = getEnumType(referenceTarget, context, anchor);
-    if (type != null) {
-      return type;
-    }
-    return null;
-  }
-
-  @Nullable
-  private static PyType getBaseStringType(PsiElement referenceTarget) {
-    PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(referenceTarget);
-    if (referenceTarget instanceof PyElement && builtinCache.isBuiltin(referenceTarget) &&
-      "basestring".equals(((PyElement)referenceTarget).getName())) {
-      return builtinCache.getStringType(LanguageLevel.forElement(referenceTarget));
-    }
-    return null;
-  }
-
-  @Nullable
-  private static PyType getEnumType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
-    if (referenceTarget instanceof PyTargetExpression) {
-      PyTargetExpression target = (PyTargetExpression)referenceTarget;
-      ScopeOwner owner = ScopeUtil.getScopeOwner(target);
-      if (owner instanceof PyClass) {
-        PyClass cls = (PyClass)owner;
-        List<PyClassLikeType> types = cls.getAncestorTypes(context);
-        for (PyClassLikeType type : types) {
-          if (type != null && "enum.Enum".equals(type.getClassQName())) {
-            PyType classType = context.getType(cls);
-            if (classType instanceof PyClassType) {
-              return ((PyClassType)classType).toInstance();
+    public static @Nullable PyStdlibTypeProvider getInstance() {
+        for (PyTypeProvider typeProvider : PyTypeProvider.EP_NAME.getExtensionList()) {
+            if (typeProvider instanceof PyStdlibTypeProvider) {
+                return (PyStdlibTypeProvider)typeProvider;
             }
-          }
         }
-      }
+        return null;
     }
-    if (referenceTarget instanceof PyQualifiedNameOwner) {
-      PyQualifiedNameOwner qualifiedNameOwner = (PyQualifiedNameOwner)referenceTarget;
-      String name = qualifiedNameOwner.getQualifiedName();
-      if ("enum.Enum.name".equals(name)) {
-        return PyBuiltinCache.getInstance(referenceTarget).getStrType();
-      }
-      else if ("enum.Enum.value".equals(name) && anchor instanceof PyReferenceExpression && context.maySwitchToAST(anchor)) {
-        PyReferenceExpression anchorExpr = (PyReferenceExpression)anchor;
-        PyExpression qualifier = anchorExpr.getQualifier();
-        if (qualifier instanceof PyReferenceExpression) {
-          PyReferenceExpression qualifierExpr = (PyReferenceExpression)qualifier;
-          PsiElement resolvedQualifier = qualifierExpr.getReference().resolve();
-          if (resolvedQualifier instanceof PyTargetExpression) {
-            PyTargetExpression qualifierTarget = (PyTargetExpression)resolvedQualifier;
-            // Requires switching to AST, we cannot use getType(qualifierTarget) here, because its type is overridden by this type provider
-            if (context.maySwitchToAST(qualifierTarget)) {
-              PyExpression value = qualifierTarget.findAssignedValue();
-              if (value != null) {
-                return context.getType(value);
-              }
+
+    @Override
+    public @Nullable Ref<PyType> getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
+        PyType type = getBaseStringType(referenceTarget);
+        if (type != null) {
+            return Ref.create(type);
+        }
+        Ref<PyType> enumType = getEnumType(referenceTarget, context, anchor);
+        if (enumType != null) {
+            return enumType;
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable PyType getCallableType(PyCallable callable, TypeEvalContext context) {
+        Ref<PyType> type = getTransformedEnumAttributeType(callable, context);
+        // TODO consulo: Ref.deref missing
+        return type != null ? type.get() : null;
+    }
+
+    @Override
+    public @Nullable PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context) {
+        if (!referenceExpression.isQualified()) {
+            final String name = referenceExpression.getReferencedName();
+            if (PyNames.NONE.equals(name)) {
+                return PyBuiltinCache.getInstance(referenceExpression).getNoneType();
             }
-          }
+            else if (PyNames.FALSE.equals(name) || PyNames.TRUE.equals(name)) {
+                return PyBuiltinCache.getInstance(referenceExpression).getBoolType();
+            }
+            return getEnumMemberValueTypeInClassBody(referenceExpression, context);
         }
-      }
-      else if ("enum.EnumMeta.__members__".equals(name)) {
-        return PyTypeParser.getTypeByName(referenceTarget, "dict[str, unknown]");
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
-    if (callSite != null && isListGetItem(function)) {
-      PyExpression receiver = PyTypeChecker.getReceiver(callSite, function);
-      Map<PyExpression, PyNamedParameter> mapping = PyCallExpressionHelper.mapArguments(callSite, function, context);
-      Map<PyGenericType, PyType> substitutions = PyTypeChecker.unifyGenericCall(receiver, mapping, context);
-      if (substitutions != null) {
-        return analyzeListGetItemCallType(receiver, mapping, substitutions, context);
-      }
+        return getEnumValueTypeOfStubOverride(referenceExpression, context);
     }
 
-    String qname = getQualifiedName(function, callSite);
-    if (qname != null) {
-      if (OPEN_FUNCTIONS.contains(qname) && callSite instanceof PyCallExpression) {
-        PyCallExpression callExpr = (PyCallExpression)callSite;
-        PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
-        PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(resolveContext);
-        if (mapping.getMarkedCallee() != null) {
-          return getOpenFunctionType(qname, mapping.getMappedParameters(), callSite);
+    /**
+      * In the body of an enum class, the name of a member refers to its assigned value, as in {@code B = A + 1}.
+      * The metaclass turns the values into members only after the class body is executed.
+      */
+    private static @Nullable PyType getEnumMemberValueTypeInClassBody(PyReferenceExpression referenceExpression,
+                                                                                                                                        TypeEvalContext context) {
+        if (!(ScopeUtil.getScopeOwner(referenceExpression) instanceof PyClass cls)) return null;
+        // A base class is not in the statement list, so the metaclass below cannot lead back to this method through a base
+        if (!PsiTreeUtil.isAncestor(cls.getStatementList(), referenceExpression, true)) return null;
+        // A value can name its own attribute, as in `A = A + 1`, and `__metaclass__` can name an attribute of the class
+        return RecursionManager.doPreventingRecursion(referenceExpression, false, () -> {
+            // Resolve first, so that a name from an outer scope, as in `__metaclass__ = Meta`, never needs the metaclass
+            if (!(resolveInEnumClassBody(referenceExpression, cls, context) instanceof PyTargetExpression target)) return null;
+            if (!isCustomEnum(cls, context)) return null;
+            EnumAttributeInfo info = getEnumAttributeInfo(cls, target, context);
+            if (info == null || info.attributeKind != EnumAttributeKind.MEMBER) return null;
+            return info.assignedValueType != null ? info.assignedValueType : PyAnyType.getUnknown();
+        });
+    }
+
+    /**
+      * Returns the attribute of {@code enumClass} that the unqualified {@code referenceExpression} in its body refers to.
+      */
+    private static @Nullable PsiElement resolveInEnumClassBody(PyReferenceExpression referenceExpression,
+                                                                                                                          PyClass enumClass,
+                                                                                                                          TypeEvalContext context) {
+        if (referenceExpression.isQualified()) return null;
+        List<PsiElement> resolved = PyUtil.multiResolveTopPriority(referenceExpression, PyResolveContext.defaultContext(context));
+        PsiElement element = ContainerUtil.getOnlyItem(resolved);
+        return element != null && ScopeUtil.getScopeOwner(element) == enumClass ? element : null;
+    }
+
+    private static @Nullable PyType getBaseStringType(PsiElement referenceTarget) {
+        final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(referenceTarget);
+        if (referenceTarget instanceof PyElement && builtinCache.isBuiltin(referenceTarget) &&
+                PyNames.BASESTRING.equals(((PyElement)referenceTarget).getName())) {
+            return builtinCache.getStrOrUnicodeType(true);
         }
-      }
-      else if ("__builtin__.tuple.__init__".equals(qname) && callSite instanceof PyCallExpression) {
-        return getTupleInitializationType((PyCallExpression)callSite, context);
-      }
-      else if ("__builtin__.tuple.__add__".equals(qname) && callSite instanceof PyBinaryExpression) {
-        return getTupleConcatenationResultType((PyBinaryExpression)callSite, context);
-      }
-      else if ("__builtin__.tuple.__mul__".equals(qname) && callSite instanceof PyBinaryExpression) {
-        return getTupleMultiplicationResultType((PyBinaryExpression)callSite, context);
-      }
+        return null;
     }
 
-    return null;
-  }
-
-  private static boolean isListGetItem(PyFunction function) {
-    return PyNames.GETITEM.equals(function.getName()) && Optional.ofNullable(PyBuiltinCache.getInstance(function).getListType())
-                                                                 .map(PyClassType::getPyClass)
-                                                                 .map(cls -> cls.equals(function
-                                                                                          .getContainingClass()))
-                                                                 .orElse(false);
-  }
-
-  @Nullable
-  private static Ref<PyType> analyzeListGetItemCallType(@Nullable PyExpression receiver,
-                                                        Map<PyExpression, PyNamedParameter> parameters,
-                                                        Map<PyGenericType, PyType> substitutions,
-                                                        TypeEvalContext context) {
-    if (parameters.size() != 1 || substitutions.size() > 1) {
-      return null;
+    /**
+      * If {@code element} is an enum member returns it's {@link PyLiteralType}, otherwise {@code null}.
+      */
+    public static @Nullable PyLiteralType getEnumMemberType(PsiElement element, TypeEvalContext context) {
+        Ref<PyType> type = getTransformedEnumAttributeType(element, context);
+        // TODO consulo: Ref.deref missing
+        return ObjectUtil.tryCast(type != null ? type.get() : null, PyLiteralType.class);
     }
 
-    PyType firstArgumentType = Optional.ofNullable(parameters.keySet().iterator().next()).map(context::getType).orElse(null);
-
-    if (firstArgumentType == null) {
-      return null;
-    }
-
-    if (PyABCUtil.isSubtype(firstArgumentType, PyNames.ABC_INTEGRAL, context)) {
-      PyType result = substitutions.isEmpty() ? null : substitutions.values().iterator().next();
-      return Ref.create(result);
-    }
-
-    if (PyNames.SLICE.equals(firstArgumentType.getName()) && firstArgumentType.isBuiltin()) {
-      return Ref.create(Optional.ofNullable(receiver)
-                                .map(context::getType)
-                                .orElseGet(() -> PyTypeChecker.substitute(PyBuiltinCache.getInstance(receiver).getListType(), substitutions,
-                                                                          context)));
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private static Ref<PyType> getTupleMultiplicationResultType(PyBinaryExpression multiplication,
-                                                              TypeEvalContext context) {
-    PyTupleType leftTupleType = as(context.getType(multiplication.getLeftExpression()), PyTupleType.class);
-    if (leftTupleType == null) {
-      return null;
-    }
-
-    PyExpression rightExpression = multiplication.getRightExpression();
-    if (rightExpression instanceof PyReferenceExpression) {
-      PsiElement target = ((PyReferenceExpression)rightExpression).getReference().resolve();
-      if (target instanceof PyTargetExpression) {
-        rightExpression = ((PyTargetExpression)target).findAssignedValue();
-      }
-    }
-
-    if (rightExpression instanceof PyNumericLiteralExpression && ((PyNumericLiteralExpression)rightExpression).isIntegerLiteral()) {
-      if (leftTupleType.isHomogeneous()) {
-        return Ref.create(leftTupleType);
-      }
-
-      int multiplier = ((PyNumericLiteralExpression)rightExpression).getBigIntegerValue().intValue();
-      int originalSize = leftTupleType.getElementCount();
-      // Heuristic
-      if (originalSize * multiplier <= 20) {
-        PyType[] elementTypes = new PyType[leftTupleType.getElementCount() * multiplier];
-        for (int i = 0; i < multiplier; i++) {
-          for (int j = 0; j < originalSize; j++) {
-            elementTypes[i * originalSize + j] = leftTupleType.getElementType(j);
-          }
+    private static @Nullable Ref<PyType> getEnumType(PsiElement referenceTarget, TypeEvalContext context,
+                                                                                                      @Nullable PsiElement anchor) {
+        @Nullable Ref<PyType> enumAttributeType = getTransformedEnumAttributeType(referenceTarget, context);
+        if (enumAttributeType != null) {
+            return enumAttributeType;
         }
-        return Ref.create(PyTupleType.create(multiplication, Arrays.asList(elementTypes)));
-      }
+        if (referenceTarget instanceof PyQualifiedNameOwner qualifiedNameOwner) {
+            final String name = qualifiedNameOwner.getQualifiedName();
+            if ((PyNames.TYPE_ENUM + ".name").equals(name)) {
+                var nameType = getEnumNameType(referenceTarget, context, anchor);
+                return Ref.create(nameType != null ? nameType : ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(referenceTarget).getStrType(), PyAnyType.getUnknown()));
+            }
+            else if ((PyNames.TYPE_ENUM_FLAG + ".name").equals(name)) {
+                return Ref.create(ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(referenceTarget).getStrType(), PyAnyType.getUnknown()));
+            }
+            else if ("enum.IntEnum.value".equals(name) && anchor instanceof PyReferenceExpression) {
+                PyType memberValueType = getEnumValueTypeFromQualifier(anchor, context);
+                return Ref.create(memberValueType != null ? memberValueType : ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(referenceTarget).getIntType(), PyAnyType.getUnknown()));
+            }
+            else if ("enum.StrEnum.value".equals(name) && anchor instanceof PyReferenceExpression) {
+                PyType memberValueType = getEnumValueTypeFromQualifier(anchor, context);
+                return Ref.create(memberValueType != null ? memberValueType : ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(referenceTarget).getStrType(), PyAnyType.getUnknown()));
+            }
+            else if ((PyNames.TYPE_ENUM_FLAG + ".value").equals(name) && anchor instanceof PyReferenceExpression) {
+                PyType memberValueType = getEnumValueTypeFromQualifier(anchor, context);
+                return Ref.create(memberValueType != null ? memberValueType : ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(referenceTarget).getIntType(), PyAnyType.getUnknown()));
+            }
+            else if ((PyNames.TYPE_ENUM + ".value").equals(name) && anchor instanceof PyReferenceExpression) {
+                // An enum value is retrieved programmatically, e.g. MyEnum[name].value, or just type-hinted
+                PyType memberValueType = getEnumValueTypeFromQualifier(anchor, context);
+                if (memberValueType != null) {
+                    return Ref.create(memberValueType);
+                }
+            }
+            else if ("enum.EnumMeta.__members__".equals(name)) {
+                Ref<PyType> membersType = getEnumMembersMappingType(referenceTarget, anchor, context);
+                if (membersType != null) {
+                    return membersType;
+                }
+            }
+        }
+        @Nullable PyType enumAutoType = getEnumAutoConstructorType(referenceTarget, context, anchor);
+        if (enumAutoType != null) {
+            return Ref.create(enumAutoType);
+        }
+        return null;
     }
 
-    return null;
-  }
+    /**
+      * The value type of the enum member (or enum instance) that qualifies a {@code .value} access at {@code anchor}, or
+      * {@code null} when the AST is unavailable or the qualifier is not a custom enum. If the qualifier is a specific
+      * member (e.g. {@code MyEnum.B}), its own value type is used; otherwise the union of all members' value types.
+      */
+    private static @Nullable PyType getEnumValueTypeFromQualifier(@Nullable PsiElement anchor, TypeEvalContext context) {
+        if (!(anchor instanceof PyReferenceExpression anchorExpr) || !context.maySwitchToAST(anchor)) return null;
+        final PyExpression qualifier = anchorExpr.getQualifier();
+        if (qualifier == null) return null;
+        PyClassType enumType = as(context.getType(qualifier), PyClassType.class);
+        if (enumType == null || !isCustomEnum(enumType.getPyClass(), context)) return null;
+        String memberName = enumType instanceof PyLiteralType literalType ? literalType.getEnumMemberName() : null;
+        return getEnumMemberValueType(enumType.getPyClass(), memberName, context);
+    }
 
-  @Nullable
-  private static Ref<PyType> getTupleConcatenationResultType(PyBinaryExpression addition, TypeEvalContext context) {
-    if (addition.getRightExpression() != null) {
-      PyTupleType leftTupleType = as(context.getType(addition.getLeftExpression()), PyTupleType.class);
-      PyTupleType rightTupleType = as(context.getType(addition.getRightExpression()), PyTupleType.class);
+    private static final Set<String> ENUM_PROPERTY_DECORATORS = Set.of("enum.property", "types.DynamicClassAttribute");
 
-      if (leftTupleType != null && rightTupleType != null) {
-        if (leftTupleType.isHomogeneous() || rightTupleType.isHomogeneous()) {
-          // We may try to find the common type of elements of two homogeneous tuple as an alternative
-          return null;
+    /**
+      * The value type of the enum member that qualifies {@code referenceExpression}, when the expression accesses {@code value}
+      * and {@code value} resolves to an override in a stub. The stub declares the override as an enum property.
+      * The qualifier is a member or an instance of the enum, not the enum class.
+      * The member value type is used only when it is known and matches the declared return type of the override.
+      * Otherwise, returns {@code null}.
+      * The overrides in the {@code enum} module are out of scope, because {@link #getEnumType} gives their types.
+      */
+    private static @Nullable PyType getEnumValueTypeOfStubOverride(PyReferenceExpression referenceExpression,
+                                                                                                                                  TypeEvalContext context) {
+        if (!"value".equals(referenceExpression.getReferencedName()) || AccessDirection.of(referenceExpression) != AccessDirection.READ) {
+            return null;
+        }
+        List<PsiElement> resolved = PyUtil.multiResolveTopPriority(referenceExpression, PyResolveContext.defaultContext(context));
+        if (!(ContainerUtil.getOnlyItem(resolved) instanceof PyFunction function) ||
+                !(function.getContainingFile() instanceof PyiFile stubFile)) {
+            return null;
+        }
+        PyClass cls = function.getContainingClass();
+        if (cls == null || !isCustomEnum(cls, context) || isInEnumModule(cls) || !isEnumProperty(function, stubFile, context)) return null;
+        PyType memberValueType = getEnumValueTypeFromQualifier(referenceExpression, context);
+        if (memberValueType == null || hasAnyOrUnknownMember(memberValueType)) return null;
+        if (context.getType(Objects.requireNonNull(referenceExpression.getQualifier())) instanceof PyClassType qualifierType &&
+                qualifierType.isDefinition()) {
+            return null;
+        }
+        return PyTypeChecker.match(context.getReturnType(function), memberValueType, context) ? memberValueType : null;
+    }
+
+    private static boolean hasAnyOrUnknownMember(PyType type) {
+        Collection<PyType> members = type instanceof PyUnionType unionType ? unionType.getMembers() : List.of(type);
+        return ContainerUtil.exists(members, member -> member == null || member instanceof PyAnyType);
+    }
+
+    private static boolean isInEnumModule(PyClass cls) {
+        String qualifiedName = cls.getQualifiedName();
+        return qualifiedName != null && qualifiedName.startsWith("enum.");
+    }
+
+    private static boolean isEnumProperty(PyFunction function, PyiFile stubFile, TypeEvalContext context) {
+        PyDecoratorList decoratorList = function.getDecoratorList();
+        if (decoratorList == null) return false;
+        for (PyDecorator decorator : decoratorList.getDecorators()) {
+            QualifiedName qualifiedName = decorator.getQualifiedName();
+            if (qualifiedName == null) continue;
+            // The imports name the decorator also where it does not resolve, as `enum.property` before Python 3.11
+            List<QualifiedName> importedNames = PyKnownDecoratorUtil.importedQualifiedNames(qualifiedName, stubFile);
+            if (importedNames != null && ContainerUtil.exists(importedNames, name -> ENUM_PROPERTY_DECORATORS.contains(name.toString()))) {
+                return true;
+            }
+            for (PsiElement resolved : PyResolveUtil.resolveQualifiedNameInScope(qualifiedName, stubFile, context)) {
+                if (resolved instanceof PyQualifiedNameOwner owner && ENUM_PROPERTY_DECORATORS.contains(owner.getQualifiedName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Returns the type of enum attribute value transformed by 'EnumType' metaclass or null, if the attribute value is not transformed
+    private static @Nullable Ref<PyType> getTransformedEnumAttributeType(PsiElement element, TypeEvalContext context) {
+        return RecursionManager.doPreventingRecursion(element, false, () -> getTransformedEnumAttributeTypeImpl(element, context));
+    }
+
+    private static @Nullable Ref<PyType> getTransformedEnumAttributeTypeImpl(PsiElement element, TypeEvalContext context) {
+        if (!(element instanceof PyTargetExpression) && !(element instanceof PyDecoratable)) return null;
+        if (!(ScopeUtil.getScopeOwner(element) instanceof PyClass cls && isCustomEnum(cls, context))) return null;
+
+        if (element instanceof PyTargetExpression targetExpression) {
+            EnumAttributeInfo info = getEnumAttributeInfo(cls, targetExpression, context);
+            if (info != null) {
+                PyType type;
+                if (info.attributeKind == EnumAttributeKind.MEMBER) {
+                    type = PyLiteralType.enumMember(cls, Objects.requireNonNull(targetExpression.getName()));
+                }
+                else {
+                    type = info.assignedValueType;
+                }
+                return Ref.create(type);
+            }
+        }
+        else if (isEnumMember((PyDecoratable)element, context)) {
+            if (element instanceof PyQualifiedNameOwner qualifiedNameOwner) {
+                String name = qualifiedNameOwner.getName();
+                if (name != null) {
+                    return Ref.create(PyLiteralType.enumMember(cls, name));
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isCustomEnum(PyClass cls, TypeEvalContext context) {
+        return isEnum(cls, context) && !PyNames.TYPE_ENUM.equals(cls.getQualifiedName());
+    }
+
+    public static boolean isEnum(PyClass cls, TypeEvalContext context) {
+        return cls.getMetaClassType(true, context) instanceof PyClassType metaClassType &&
+                      metaClassType.getPyClass().isSubclass(PyNames.TYPE_ENUM_META, context);
+    }
+
+    /**
+      * Returns true if and only if {@code cls} is an enum class with one member or more.
+      * Such a class accepts no subclass.
+      */
+    public static boolean isFinalEnum(PyClass cls, TypeEvalContext context) {
+        // The stream can hold a null for a member without a name, so do not use findAny()
+        return isCustomEnum(cls, context) && getEnumMembers(cls, context).iterator().hasNext();
+    }
+
+    public static Stream<@Nullable PyLiteralType> getEnumMembers(PyClass enumClass, TypeEvalContext context) {
+        assert isCustomEnum(enumClass, context);
+
+        return Streams
+            .concat(
+                enumClass.getClassAttributes().stream().filter(targetExpr -> {
+                    EnumAttributeInfo info = getEnumAttributeInfo(enumClass, targetExpr, context);
+                    return info != null && info.attributeKind == EnumAttributeKind.MEMBER;
+                }),
+                Stream.of(enumClass.getNestedClasses()).filter(cls -> isEnumMember(cls, context)),
+                Stream.of(enumClass.getMethods()).filter(method -> isEnumMember(method, context))
+            )
+            .map(element -> {
+                String name = element.getName();
+                return name != null ? PyLiteralType.enumMember(enumClass, name) : null;
+            });
+    }
+
+    /**
+      * The names that the {@code _ignore_} attribute of {@code enumClass} lists. The metaclass removes them from the
+      * class, so they are no members. The value is a list or a tuple of names, or one string that holds the names
+      * separated by a space or a comma.
+      */
+    public static Set<String> getIgnoredNames(PyClass enumClass, TypeEvalContext context) {
+        return PyUtil.getParameterizedCachedValue(enumClass, context, ctx -> computeIgnoredNames(enumClass, ctx));
+    }
+
+    private static Set<String> computeIgnoredNames(PyClass enumClass, TypeEvalContext context) {
+        PyTargetExpression ignoreAttribute = enumClass.findClassAttribute("_ignore_", false, context);
+        if (ignoreAttribute == null || !context.maySwitchToAST(ignoreAttribute)) return Collections.emptySet();
+        PyExpression value = PyPsiUtils.flattenParens(ignoreAttribute.findAssignedValue());
+
+        String names = PyEvaluator.evaluate(value, String.class);
+        if (names != null) {
+            return Arrays.stream(names.replace(',', ' ').split(" ")).map(String::trim).filter(n -> !n.isEmpty())
+                .collect(Collectors.toSet());
+        }
+        if (value instanceof PySequenceExpression sequence) {
+            return Arrays.stream(sequence.getElements()).map(element -> PyEvaluator.evaluate(element, String.class))
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+    public static @Nullable EnumAttributeInfo getEnumAttributeInfo(PyClass enumClass,
+                                                                                                                                  PyTargetExpression targetExpression,
+                                                                                                                                  TypeEvalContext context) {
+        assert isCustomEnum(enumClass, context);
+
+        var name = targetExpression.getName();
+        var protection = targetExpression.getProtectionLevel();
+        if (protection == ProtectionLevel.PRIVATE || name == null || isSunder(name) || isDunder(name)) return null;
+        if (getIgnoredNames(enumClass, context).contains(name)) return null;
+
+        if (context.maySwitchToAST(targetExpression)) {
+            PyExpression value = targetExpression.findAssignedValue();
+            if (value == null) return null;
+
+            // An alias names another member in the class body, as in `R = RED`
+            if (PyPsiUtils.flattenParens(value) instanceof PyReferenceExpression referenceExpression) {
+                PsiElement aliased = resolveInEnumClassBody(referenceExpression, enumClass, context);
+                PyLiteralType aliasedMemberType = aliased != null ? getEnumMemberType(aliased, context) : null;
+                if (aliasedMemberType != null) {
+                    return new EnumAttributeInfo(aliasedMemberType, EnumAttributeKind.MEMBER_ALIAS);
+                }
+            }
+
+            // Framework enums (e.g. Django Choices) transform the declaration before constructing the member: their
+            // metaclass/constructor consumes extra tuple elements such as a trailing label. Let a provider model that so
+            // the resulting member value type is consistent across the inspection, the `value` attribute, and completion.
+            for (var provider : PyEnumMemberDeclarationProvider.EP_NAME.getExtensionList()) {
+                Ref<PyType> transformed = provider.getMemberValueType(enumClass, value, context);
+                if (transformed != null) {
+                    return getEnumAttributeInfo(enumClass, transformed.get(), context);
+                }
+            }
+
+            var type = context.getType(value);
+            return getEnumAttributeInfo(enumClass, type, context);
+        }
+        else {
+            if (!targetExpression.hasAssignedValue()) return null;
+
+            // Handle enum.member(), enum.nonmember()
+            PyTargetExpressionStub stub = targetExpression.getStub();
+            PyEnumAttributeStub attributeStub = stub != null
+                                                                                    ? stub.getCustomStub(PyEnumAttributeStub.class)
+                                                                                    : new PyEnumAttributeStubType().createStub(targetExpression);
+            if (attributeStub != null) {
+                PyLiteralKind literalKind = attributeStub.getLiteralKind();
+                PyType type = literalKind != null ? PyUtil.convertToType(literalKind, PyBuiltinCache.getInstance(targetExpression)) : PyAnyType.getUnknown();
+                return new EnumAttributeInfo(type, attributeStub.isMember() ? EnumAttributeKind.MEMBER : EnumAttributeKind.NONMEMBER);
+            }
+
+            // Handle enum.auto()
+            QualifiedName calleeName = targetExpression.getCalleeName();
+            if (calleeName != null) {
+                PsiElement resolved = ContainerUtil.getFirstItem(PyResolveUtil.resolveQualifiedNameInScope(calleeName, enumClass, context));
+                if (resolved instanceof PyTypedElement) {
+                    PyType resolvedType = context.getType((PyTypedElement)resolved);
+                    if (resolvedType instanceof PyClassType && PyNames.TYPE_ENUM_AUTO.equals(((PyClassType)resolvedType).getClassQName())) {
+                        return getEnumAttributeInfo(enumClass, resolvedType, context);
+                    }
+                }
+            }
+
+            QualifiedName assignedQName = targetExpression.getAssignedQName();
+            if (assignedQName != null) {
+                PsiElement resolved = ContainerUtil.getFirstItem(PyResolveUtil.resolveQualifiedNameInScope(assignedQName, enumClass, context));
+                PyType type = resolved instanceof PyTypedElement ? context.getType((PyTypedElement)resolved) : PyAnyType.getUnknown();
+                return getEnumAttributeInfo(enumClass, type, context);
+            }
+
+            PyLiteralKind literalKind = stub != null
+                                                                    ? stub.getAssignedLiteralKind()
+                                                                    : PyLiteralKind.fromExpression(targetExpression.findAssignedValue());
+            if (literalKind == null) {
+                return new EnumAttributeInfo(PyAnyType.getUnknown(), EnumAttributeKind.MEMBER);
+            }
+            PyType type = null;
+            if (PyLiteralType.inferLiteralTypeForLiteralExpressions()) {
+                String literalValue = stub != null
+                                                            ? stub.getAssignedLiteralValue()
+                                                            : PyTargetExpressionImpl.getAssignedLiteralValueText(targetExpression.findAssignedValue());
+                if (literalValue != null) {
+                    type = PyLiteralType.fromLiteralKind(targetExpression, literalKind, literalValue);
+                }
+            }
+            if (type == null) {
+                type = PyUtil.convertToType(literalKind, PyBuiltinCache.getInstance(targetExpression));
+            }
+            return new EnumAttributeInfo(type, EnumAttributeKind.MEMBER);
+        }
+    }
+
+    private static EnumAttributeInfo getEnumAttributeInfo(PyClass enumClass,
+                                                                                                                                  @Nullable PyType type,
+                                                                                                                                  TypeEvalContext context) {
+        Boolean isMember = null;
+        if (type instanceof PyClassType genericType && genericType.isParameterized()) {
+            if (PyNames.TYPE_ENUM_MEMBER.equals(genericType.getClassQName())) {
+                type = ContainerUtil.getOnlyItem(genericType.getTypeArguments());
+                isMember = true;
+            }
+            if (PyNames.TYPE_ENUM_NONMEMBER.equals(genericType.getClassQName())) {
+                type = ContainerUtil.getOnlyItem(genericType.getTypeArguments());
+                isMember = false;
+            }
+        }
+        if (type instanceof PyClassType classType && PyNames.TYPE_ENUM_AUTO.equals(classType.getClassQName())) {
+            type = getEnumAutoValueType(enumClass, context);
         }
 
-        List<PyType> newElementTypes =
-          ContainerUtil.concat(leftTupleType.getElementTypes(context), rightTupleType.getElementTypes(context));
-        return Ref.create(PyTupleType.create(addition, newElementTypes));
-      }
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private static Ref<PyType> getTupleInitializationType(PyCallExpression call, TypeEvalContext context) {
-    PyExpression[] arguments = call.getArguments();
-
-    if (arguments.length != 1) {
-      return null;
-    }
-
-    PyExpression argument = arguments[0];
-    PyType argumentType = context.getType(argument);
-
-    if (argumentType instanceof PyTupleType) {
-      return Ref.create(argumentType);
-    }
-    else if (argumentType instanceof PyCollectionType) {
-      PyType iteratedItemType = ((PyCollectionType)argumentType).getIteratedItemType();
-      return Ref.create(PyTupleType.createHomogeneous(call, iteratedItemType));
-    }
-
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public PyType getContextManagerVariableType(PyClass contextManager,
-                                              PyExpression withExpression,
-                                              TypeEvalContext context) {
-    if ("contextlib.closing".equals(contextManager.getQualifiedName()) && withExpression instanceof PyCallExpression) {
-      PyExpression closee = ((PyCallExpression)withExpression).getArgument(0, PyExpression.class);
-      if (closee != null) {
-        return context.getType(closee);
-      }
-    }
-    String name = contextManager.getName();
-    if ("FileIO".equals(name) || "TextIOWrapper".equals(name) || "IOBase".equals(name) || "_IOBase".equals(name)) {
-      return context.getType(withExpression);
-    }
-    return null;
-  }
-
-  @Nullable
-  private static PyType getNamedTupleType(PsiElement referenceTarget,
-                                          TypeEvalContext context,
-                                          @Nullable PsiElement anchor) {
-    if (referenceTarget instanceof PyTargetExpression) {
-      PyTargetExpression target = (PyTargetExpression)referenceTarget;
-      PyTargetExpressionStub stub = target.getStub();
-
-      if (stub != null) {
-        return getNamedTupleTypeFromStub(target, stub.getCustomStub(PyNamedTupleStub.class), 1);
-      }
-      else {
-        return getNamedTupleTypeFromAST(target, context, 1);
-      }
-    }
-    else if (referenceTarget instanceof PyFunction && anchor instanceof PyCallExpression) {
-      return getNamedTupleTypeFromAST((PyCallExpression)anchor, context, 2);
-    }
-    return null;
-  }
-
-  private static Ref<PyType> getOpenFunctionType(String callQName,
-                                                 Map<PyExpression, PyNamedParameter> arguments,
-                                                 PsiElement anchor) {
-    String mode = "r";
-    for (Map.Entry<PyExpression, PyNamedParameter> entry : arguments.entrySet()) {
-      PyNamedParameter parameter = entry.getValue();
-      if ("mode".equals(parameter.getName())) {
-        PyExpression argument = entry.getKey();
-        if (argument instanceof PyKeywordArgument) {
-          argument = ((PyKeywordArgument)argument).getValueExpression();
+        if (isMember == null) {
+            isMember = true;
+            if (type != null) {
+                if (type.getDeclarationElement() instanceof PyCallable) {
+                    isMember = false;
+                }
+                else {
+                    boolean isDescriptor = !ContainerUtil.isEmpty(
+                        type.resolveMember(PyNames.DUNDER_GET, null, AccessDirection.READ, PyResolveContext.defaultContext(context)));
+                    if (isDescriptor) {
+                        isMember = false;
+                    }
+                }
+            }
         }
-        if (argument instanceof PyStringLiteralExpression) {
-          mode = ((PyStringLiteralExpression)argument).getStringValue();
-          break;
+
+        EnumAttributeKind attributeKind;
+        if (isMember) {
+            attributeKind = type instanceof PyLiteralType literalType && literalType.getPyClass().equals(enumClass)
+                                            ? EnumAttributeKind.MEMBER_ALIAS
+                                            : EnumAttributeKind.MEMBER;
         }
-      }
+        else {
+            attributeKind = EnumAttributeKind.NONMEMBER;
+        }
+        return new EnumAttributeInfo(type, attributeKind);
     }
 
-    if (LanguageLevel.forElement(anchor).isAtLeast(LanguageLevel.PYTHON30) || "io.open".equals(callQName)) {
-      if (mode.contains("b")) {
-        return Ref.create(PyTypeParser.getTypeByName(anchor, PY3K_BINARY_FILE_TYPE));
-      }
-      else {
-        return Ref.create(PyTypeParser.getTypeByName(anchor, PY3K_TEXT_FILE_TYPE));
-      }
+    private static @Nullable PyType getEnumAutoValueType(PyClass enumClass, TypeEvalContext context) {
+        PyFunction generateNextValueMethod = enumClass.findMethodByName("_generate_next_value_", true, context);
+        if (generateNextValueMethod != null) {
+            // Ignore 'Enum._generate_next_value_' as its declared return type is 'Any' in the typeshed stubs.
+            PyClass containingClass = generateNextValueMethod.getContainingClass();
+            if (containingClass != null && !PyNames.TYPE_ENUM.equals(containingClass.getQualifiedName())) {
+                return context.getReturnType(generateNextValueMethod);
+            }
+        }
+        final PyType intType = PyBuiltinCache.getInstance(enumClass).getIntType();
+        return intType != null ? intType : PyAnyType.getUnknown();
     }
 
-    return Ref.create(PyTypeParser.getTypeByName(anchor, PY2K_FILE_TYPE));
-  }
-
-  @Nullable
-  private static String getQualifiedName(PyFunction f, @Nullable PsiElement callSite) {
-    PyPsiUtils.assertValid(f);
-    String result = f.getName();
-    PyClass c = f.getContainingClass();
-    VirtualFile vfile = f.getContainingFile().getVirtualFile();
-    if (vfile != null) {
-      String module = QualifiedNameFinder.findShortestImportableName(callSite != null ? callSite : f, vfile);
-      if ("builtins".equals(module)) {
-        module = "__builtin__";
-      }
-      result = String.format("%s.%s%s", module, c != null ? c.getName() + "." : "", result);
-      QualifiedName qname = PyStdlibCanonicalPathProvider.restoreStdlibCanonicalPath(QualifiedName.fromDottedString(result));
-      if (qname != null) {
-        return qname.toString();
-      }
-    }
-    return result;
-  }
-
-  @Nullable
-  private static PyType getNamedTupleTypeFromStub(PsiElement referenceTarget,
-                                                  @Nullable PyNamedTupleStub stub,
-                                                  int definitionLevel) {
-    if (stub == null) {
-      return null;
+    public record EnumAttributeInfo(@Nullable PyType assignedValueType, EnumAttributeKind attributeKind) {
     }
 
-    PyClass tupleClass = PyBuiltinCache.getInstance(referenceTarget).getClass(PyNames.FAKE_NAMEDTUPLE);
-    if (tupleClass == null) {
-      return null;
+    public enum EnumAttributeKind {
+        MEMBER,
+        MEMBER_ALIAS,
+        NONMEMBER
     }
 
-    return new PyNamedTupleType(tupleClass, referenceTarget, stub.getName(), stub.getFields(), definitionLevel);
-  }
-
-  @Nullable
-  private static PyType getNamedTupleTypeFromAST(PyTargetExpression expression,
-                                                 TypeEvalContext context,
-                                                 int definitionLevel) {
-    if (context.maySwitchToAST(expression)) {
-      return getNamedTupleTypeFromStub(expression, PyNamedTupleStubImpl.create(expression), definitionLevel);
+    private static boolean isEnumMember(PyDecoratable decoratable, TypeEvalContext context) {
+        return PyKnownDecoratorUtil.knownDecoratorsOf(decoratable, context).contains(PyKnownDecorator.ENUM_MEMBER);
     }
 
-    return null;
-  }
-
-  @Nullable
-  private static PyType getNamedTupleTypeFromAST(PyCallExpression expression,
-                                                 TypeEvalContext context,
-                                                 int definitionLevel) {
-    if (context.maySwitchToAST(expression)) {
-      return getNamedTupleTypeFromStub(expression, PyNamedTupleStubImpl.create(expression), definitionLevel);
+    private static @Nullable PyType getEnumAutoConstructorType(PsiElement target,
+                                                                                                                          TypeEvalContext context,
+                                                                                                                          @Nullable PsiElement anchor) {
+        if (target instanceof PyClass &&
+                PyNames.TYPE_ENUM_AUTO.equals(((PyClass)target).getQualifiedName()) &&
+                anchor instanceof PyCallExpression) {
+            PyClassLikeType classType = as(context.getType((PyTypedElement)target), PyClassLikeType.class);
+            if (classType != null) {
+                return new PyCallableTypeImpl(Collections.emptyList(), classType.toInstance());
+            }
+        }
+        return null;
     }
 
-    return null;
-  }
+    /**
+      * Returns the <em>nominal</em> value type of an enum, derived from its base classes: {@code int} for
+      * {@code IntEnum}/{@code IntFlag}/{@code Flag} (and plain {@code int} mixins), {@code str} for {@code StrEnum}
+      * (and plain {@code str} mixins), {@code bytes}/{@code float} for the respective mixins, and otherwise the union
+      * of the members' assigned value types. This is the type members are checked against (an {@code IntEnum} member
+      * must be an {@code int}), and the fallback for {@code .value} access on enums that declare no members.
+      */
+    public static @Nullable PyType getEnumValueType(PyClass enumClass, TypeEvalContext context) {
+        PyType mixinValueType = getEnumMixinValueType(enumClass, context);
+        if (mixinValueType != null) {
+            return mixinValueType;
+        }
+        List<PyType> memberValueTypes = getEnumMemberValueTypes(enumClass, context);
+        if (memberValueTypes.isEmpty()) {
+            return PyBuiltinCache.getInstance(enumClass).getObjectType();
+        }
+        // The union collapses to the common type for homogeneous enums (e.g. 'int') and widens to e.g. 'int | str' for
+        // heterogeneous ones, instead of incorrectly reporting just the first member's type.
+        return PyUnionType.unionOrUnknown(memberValueTypes);
+    }
+
+    /**
+      * The primitive value type contributed by an enum's data-type mixin (e.g. {@code int} for {@code IntEnum}/{@code IntFlag},
+      * {@code str} for {@code StrEnum} or a {@code str}-mixed enum), or {@code null} if the enum has no such mixin. Such a
+      * mixin constructs the member via {@code DataType(*value)}, so a (possibly transformed) tuple value collapses to a scalar.
+      */
+    public static @Nullable PyType getEnumMixinValueType(PyClass enumClass, TypeEvalContext context) {
+        PyBuiltinCache cache = PyBuiltinCache.getInstance(enumClass);
+
+        if (enumClass.isSubclass("enum.IntEnum", context) ||
+                enumClass.isSubclass("enum.IntFlag", context) ||
+                enumClass.isSubclass("enum.Flag", context)) {
+            return cache.getIntType();
+        }
+        if (enumClass.isSubclass("enum.StrEnum", context)) {
+            return cache.getStrType();
+        }
+        if (enumClass.isSubclass(PyNames.FQN.STR, context)) {
+            return cache.getStrType();
+        }
+        if (enumClass.isSubclass(PyNames.FQN.INT, context)) {
+            return cache.getIntType();
+        }
+        if (enumClass.isSubclass(PyNames.FQN.BYTES, context)) {
+            return cache.getBytesType(LanguageLevel.forElement(enumClass));
+        }
+        if (enumClass.isSubclass(PyNames.FQN.FLOAT, context)) {
+            return cache.getFloatType();
+        }
+        return null;
+    }
+
+    /**
+      * Whether code outside the {@code enum} module builds the member values of {@code enumClass}.
+      * This is a custom {@code __new__} of the enum, or the metaclass of Django choices, which drops the label of a member.
+      * Then a member value need not have the data type of the enum.
+      * Another metaclass passes the declaration on unchanged, as far as the type checker can tell.
+      * An enum that a {@link PyEnumMemberDeclarationProvider} models does not count.
+      */
+    public static boolean hasCustomMemberConstruction(PyClass enumClass, TypeEvalContext context) {
+        for (var provider : PyEnumMemberDeclarationProvider.EP_NAME.getExtensionList()) {
+            if (provider.isApplicable(enumClass, context)) return false;
+        }
+        PyFunction newMethod = enumClass.findMethodByName(PyNames.NEW, true, context);
+        // Only an enum builds its members itself. A `__new__` of a plain mixin is the data type, and its value is checked.
+        if (isCustomEnumMachinery(newMethod) && isEnum(Objects.requireNonNull(newMethod).getContainingClass(), context)) return true;
+        return enumClass.getMetaClassType(true, context) instanceof PyClassType metaClassType &&
+                      metaClassType.getPyClass().isSubclass(DJANGO_CHOICES_TYPE, context);
+    }
+
+    private static final String DJANGO_CHOICES_TYPE = "django.db.models.enums.ChoicesType";
+
+    private static boolean isCustomEnumMachinery(@Nullable PyFunction method) {
+        PyClass cls = method != null ? method.getContainingClass() : null;
+        if (cls == null || PyBuiltinCache.getInstance(cls).isBuiltin(cls)) return false;
+        String qualifiedName = cls.getQualifiedName();
+        return qualifiedName == null || !qualifiedName.startsWith("enum.");
+    }
+
+    /**
+      * Returns the type of the {@code value} attribute accessed on an enum member. A member that resolves to a specific
+      * declaration keeps its precise {@link PyLiteralType literal} value, e.g. {@code I.a.value} is {@code Literal[1]}.
+      * Without such a member, the "specific" enum types ({@code IntEnum}, {@code StrEnum}) and plain {@code Enum}s keep
+      * the union of all members' literals, e.g. {@code i.value} for a general {@code i: I} is {@code Literal[1, 2]}.
+      * {@code Flag}/{@code IntFlag} (whose values combine bitwise), enums pinned by a plain builtin mixin (e.g.
+      * {@code class C(str, Enum)}), and enums without members keep the nominal value type.
+      */
+    private static @Nullable PyType getEnumMemberValueType(PyClass enumClass,
+                                                                                                                  @Nullable String memberName,
+                                                                                                                  TypeEvalContext context) {
+        // A data type other than a builtin one constructs the member from the declaration, e.g. a namedtuple base turns
+        // `POINT = 10, 20` into `Point(10, 20)`, so the value is an instance of that base and not the declared tuple.
+        PyType dataTypeValueType = getEnumDataTypeValueType(enumClass, context);
+        if (dataTypeValueType != null) {
+            return dataTypeValueType;
+        }
+        // For a specific member, prefer its own (possibly transformed) value type so literals are preserved,
+        // e.g. `MyIntChoices.OK.value` is `Literal[1]`, not the widened `int` from the data-type mixin.
+        PyTargetExpression memberExpr = memberName != null ? enumClass.findClassAttribute(memberName, false, context) : null;
+        if (memberExpr != null) {
+            EnumAttributeInfo attributeInfo = getEnumAttributeInfo(enumClass, memberExpr, context);
+            if (attributeInfo != null && attributeInfo.attributeKind == EnumAttributeKind.MEMBER) {
+                return attributeInfo.assignedValueType;
+            }
+        }
+        if (hasNominalValueType(enumClass, context)) {
+            return getEnumValueType(enumClass, context);
+        }
+        List<PyType> memberValueTypes = getEnumMemberValueTypes(enumClass, context);
+        if (memberValueTypes.isEmpty()) {
+            return getEnumValueType(enumClass, context);
+        }
+        // The union collapses to the common type for homogeneous enums (e.g. 'int') and widens to e.g. 'int | str' for
+        // heterogeneous ones, instead of incorrectly reporting just the first member's type.
+        return PyUnionType.unionOrUnknown(memberValueTypes);
+    }
+
+    /**
+      * The value type of an enum whose data type is a named tuple, as in {@code class Points(Point, Enum)}.
+      * The {@code __new__} of the named tuple builds each member from the declaration, so {@code Points.POINT.value}
+      * is a {@code Point} and not the declared tuple. Returns {@code null} for an enum without such a base.
+      */
+    private static @Nullable PyType getEnumDataTypeValueType(PyClass enumClass, TypeEvalContext context) {
+        if (getEnumMixinValueType(enumClass, context) != null) return null;
+        for (PyClassLikeType ancestorType : enumClass.getAncestorTypes(context)) {
+            // An enum base without members can derive from the named tuple too, but the member is built by the named tuple
+            if (ancestorType instanceof PyClassType classType && !isEnum(classType.getPyClass(), context) &&
+                    PyNamedTupleTypeProvider.Helper.isNamedTuple(classType, context)) {
+                return classType.toInstance();
+            }
+        }
+        return null;
+    }
+
+    /**
+      * Whether an enum member's {@code value} keeps its nominal type rather than the union of the members' literals:
+      * {@code Flag}/{@code IntFlag} (values combine bitwise) and enums with a plain builtin mixin base other than
+      * {@code IntEnum}/{@code StrEnum} (e.g. {@code class C(str, Enum)}, {@code bytes}/{@code float} mixins).
+      */
+    private static boolean hasNominalValueType(PyClass enumClass, TypeEvalContext context) {
+        return enumClass.isSubclass(PyNames.FQN.ENUM_FLAG, context) ||
+                      enumClass.isSubclass(PyNames.FQN.BYTES, context) ||
+                      enumClass.isSubclass(PyNames.FQN.FLOAT, context) ||
+                      enumClass.isSubclass(PyNames.FQN.STR, context) && !enumClass.isSubclass("enum.StrEnum", context) ||
+                      enumClass.isSubclass(PyNames.FQN.INT, context) && !enumClass.isSubclass("enum.IntEnum", context);
+    }
+
+    /**
+      * The value types of the enum's declared MEMBERS, in declaration order. Non-members such as helpers and descriptors
+      * are left out. The list is empty when the enum declares no member.
+      */
+    private static List<PyType> getEnumMemberValueTypes(PyClass enumClass, TypeEvalContext context) {
+        List<PyType> memberValueTypes = new ArrayList<>();
+        for (PyTargetExpression targetExpr : enumClass.getClassAttributes()) {
+            EnumAttributeInfo attributeInfo = getEnumAttributeInfo(enumClass, targetExpr, context);
+            if (attributeInfo != null && attributeInfo.attributeKind == EnumAttributeKind.MEMBER) {
+                memberValueTypes.add(attributeInfo.assignedValueType);
+            }
+        }
+        return memberValueTypes;
+    }
+
+    private static @Nullable PyType getEnumNameType(PsiElement referenceTarget,
+                                                                                                    TypeEvalContext context,
+                                                                                                    @Nullable PsiElement anchor) {
+        if (!(anchor instanceof PyReferenceExpression anchorExpr) || !context.maySwitchToAST(anchor)) {
+            return null;
+        }
+        final PyExpression qualifier = anchorExpr.getQualifier();
+        if (qualifier == null) {
+            return null;
+        }
+        return getEnumNameType(context.getType(qualifier), referenceTarget, context);
+    }
+
+    private static @Nullable PyType getEnumNameType(@Nullable PyType qualifierType,
+                                                                                                    PsiElement anchor,
+                                                                                                    TypeEvalContext context) {
+        // E.g. Literal[MyEnum.A, MyEnum.B].name -> Literal["A", "B"]
+        if (qualifierType instanceof PyUnionType unionType) {
+            List<PyType> memberNameTypes = new ArrayList<>();
+            for (PyType member : unionType.getMembers()) {
+                PyType memberNameType = getEnumNameType(member, anchor, context);
+                if (memberNameType == null) {
+                    return null;
+                }
+                memberNameTypes.add(memberNameType);
+            }
+            return PyUnionType.unionOrUnknown(memberNameTypes);
+        }
+        // A specific enum member (e.g. MyEnum.A) carries its name as a literal value -> Literal["A"]
+        if (qualifierType instanceof PyLiteralType literalType && literalType.getEnumMemberName() != null) {
+            return PyLiteralType.stringLiteral(anchor, literalType.getEnumMemberName());
+        }
+        // A plain enum-typed value (e.g. a parameter of type MyEnum) -> the union of all member names.
+        // Flag enums are excluded because their composite members have a 'None' name.
+        if (qualifierType instanceof PyClassType enumType) {
+            PyClass enumClass = enumType.getPyClass();
+            if (isCustomEnum(enumClass, context) && !enumClass.isSubclass(PyNames.TYPE_ENUM_FLAG, context)) {
+                List<PyType> memberNameTypes = getEnumMembers(enumClass, context)
+                    .map(PyLiteralType::getEnumMemberName)
+                    .filter(Objects::nonNull)
+                    .map(memberName -> (PyType)PyLiteralType.stringLiteral(anchor, memberName))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+                if (!memberNameTypes.isEmpty()) {
+                    return PyUnionType.unionOrUnknown(memberNameTypes);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+      * Returns the type of {@code Enum.__members__}, a read-only mapping from each member name to the member itself, e.g. for
+      * {@code class Color(Enum): red = 1; green = 2} it is {@code MappingProxyType[Literal["red", "green"], Literal[Color.red, Color.green]]}.
+      */
+    private static @Nullable Ref<PyType> getEnumMembersMappingType(PsiElement referenceTarget,
+                                                                                                                                  @Nullable PsiElement anchor,
+                                                                                                                                  TypeEvalContext context) {
+        if (!(anchor instanceof PyReferenceExpression anchorExpr) || !context.maySwitchToAST(anchor)) {
+            return null;
+        }
+        final PyExpression qualifier = anchorExpr.getQualifier();
+        if (qualifier == null) {
+            return null;
+        }
+        final PyClassType enumType = as(context.getType(qualifier), PyClassType.class);
+        if (enumType == null) {
+            return null;
+        }
+        final PyClass enumClass = enumType.getPyClass();
+        if (!isCustomEnum(enumClass, context)) {
+            return null;
+        }
+
+        final List<PyType> memberNameTypes = new ArrayList<>();
+        final List<PyType> memberTypes = new ArrayList<>();
+        getEnumMembers(enumClass, context)
+            .filter(Objects::nonNull)
+            .forEach(member -> {
+                final String memberName = member.getEnumMemberName();
+                final PyLiteralType memberNameType = memberName != null ? PyLiteralType.stringLiteral(referenceTarget, memberName) : null;
+                if (memberNameType != null) {
+                    memberNameTypes.add(memberNameType);
+                    memberTypes.add(member);
+                }
+            });
+
+        final var builtins = PyBuiltinCache.getInstance(referenceTarget);
+        final PyType keyType = memberTypes.isEmpty() ? builtins.getStrType() : PyUnionType.unionOrUnknown(memberNameTypes);
+        final PyType valueType = memberTypes.isEmpty() ? getEnumValueType(enumClass, context) : PyUnionType.unionOrUnknown(memberTypes);
+
+        final PyCollectionTypeImpl mappingType =
+            PyCollectionTypeImpl.createTypeByQName(
+                referenceTarget, "types.MappingProxyType", false, Arrays.asList(keyType, valueType));
+        return mappingType != null ? Ref.create(mappingType) : null;
+    }
+
+    @Override
+    public @Nullable Ref<PyType> getCallType(PyFunction function,
+                                                                                      PyCallSiteExpression callSite,
+                                                                                      TypeEvalContext context) {
+        final String qname = PyNames.FQN.unqualifyBuiltinName(function.getQualifiedName());
+        if (qname != null) {
+            if ("tuple.__new__".equals(qname) && callSite instanceof PyCallExpression) {
+                return getTupleInitializationType((PyCallExpression)callSite, context);
+            }
+            else if ("tuple.__add__".equals(qname) && callSite instanceof PyBinaryExpression) {
+                return getTupleConcatenationResultType((PyBinaryExpression)callSite, context);
+            }
+            else if ("tuple.__mul__".equals(qname) && callSite instanceof PyBinaryExpression) {
+                return getTupleMultiplicationResultType((PyBinaryExpression)callSite, context);
+            }
+            else if ("object.__new__".equals(qname) && callSite instanceof PyCallExpression) {
+                // TODO (PY-89087): remove
+                final PyExpression firstArgument = ((PyCallExpression)callSite).getArgument(0, PyExpression.class);
+                final PyClassLikeType classLikeType = as(firstArgument != null ? context.getType(firstArgument) : null, PyClassLikeType.class);
+                return classLikeType != null ? Ref.create(classLikeType.toInstance()) : null;
+            }
+            else if ("functools.partial.__new__".equals(qname) && callSite instanceof PyCallExpression callExpression) {
+                return getFunctoolsPartialType(callExpression, context);
+            }
+        }
+
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getTupleMultiplicationResultType(PyBinaryExpression multiplication,
+                                                                                                                                                TypeEvalContext context) {
+        final PyTupleType leftTupleType = as(context.getType(multiplication.getLeftExpression()), PyTupleType.class);
+        if (leftTupleType == null) {
+            return null;
+        }
+
+        PyExpression rightExpression = multiplication.getRightExpression();
+        if (rightExpression instanceof PyReferenceExpression) {
+            final PsiElement target = ((PyReferenceExpression)rightExpression).getReference().resolve();
+            if (target instanceof PyTargetExpression) {
+                rightExpression = ((PyTargetExpression)target).findAssignedValue();
+            }
+        }
+
+        if (rightExpression instanceof PyNumericLiteralExpression && ((PyNumericLiteralExpression)rightExpression).isIntegerLiteral()) {
+            if (leftTupleType.isHomogeneous()) {
+                return Ref.create(leftTupleType);
+            }
+
+            final int multiplier = ((PyNumericLiteralExpression)rightExpression).getBigIntegerValue().intValue();
+            final int originalSize = leftTupleType.getElementCount();
+            // Heuristic
+            if (originalSize * multiplier <= 20) {
+                final PyType[] elementTypes = new PyType[leftTupleType.getElementCount() * multiplier];
+                for (int i = 0; i < multiplier; i++) {
+                    for (int j = 0; j < originalSize; j++) {
+                        elementTypes[i * originalSize + j] = leftTupleType.getElementType(j);
+                    }
+                }
+                return Ref.create(PyTupleType.create(multiplication, Arrays.asList(elementTypes)));
+            }
+        }
+
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getTupleConcatenationResultType(PyBinaryExpression addition,
+                                                                                                                                              TypeEvalContext context) {
+        if (addition.getRightExpression() != null) {
+            final PyTupleType leftTupleType = as(context.getType(addition.getLeftExpression()), PyTupleType.class);
+            final PyTupleType rightTupleType = as(context.getType(addition.getRightExpression()), PyTupleType.class);
+
+            if (leftTupleType != null && rightTupleType != null) {
+                if (leftTupleType.isHomogeneous() || rightTupleType.isHomogeneous()) {
+                    // We may try to find the common type of elements of two homogeneous tuple as an alternative
+                    return null;
+                }
+
+                final List<PyType> newElementTypes = ContainerUtil.concat(leftTupleType.getElementTypes(),
+                                                                                                                                    rightTupleType.getElementTypes());
+                return Ref.create(PyTupleType.create(addition, newElementTypes));
+            }
+        }
+
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getTupleInitializationType(PyCallExpression call, TypeEvalContext context) {
+        final PyExpression[] arguments = call.getArguments();
+
+        if (arguments.length != 1) return null;
+
+        final PyExpression argument = arguments[0];
+        final PyType argumentType = context.getType(argument);
+
+        if (argumentType instanceof PyTupleType) {
+            return Ref.create(argumentType);
+        }
+        else if (argumentType instanceof PyClassType classType && classType.isParameterized()) {
+            final PyType iteratedItemType = classType.getIteratedItemType();
+            return Ref.create(PyTupleType.createHomogeneous(call, iteratedItemType));
+        }
+
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getFunctoolsPartialType(PyCallExpression call,
+                                                                                                                              TypeEvalContext context) {
+        PyExpression[] callArgs = call.getArguments();
+        if (callArgs.length == 0) return null;
+
+        if (!(context.getType(callArgs[0]) instanceof PyCallableType callableType)) return null;
+
+        List<PyCallableParameter> originalParams = callableType.getParameters(context);
+        if (originalParams == null) return null;
+
+        List<PyExpression> providedArguments = List.of(callArgs).subList(1, callArgs.length);
+        PyArgumentsMapping mapping = PyCallExpressionHelper.mapArguments(call, providedArguments, callableType, context);
+        Set<PyCallableParameter> boundParameters = new HashSet<>(mapping.getMappedParameters().values());
+        List<PyCallableParameter> remaining = new ArrayList<>();
+        for (PyCallableParameter param : originalParams) {
+            if (!(param.isPositionalContainer() || param.isKeywordContainer()) && boundParameters.contains(param)) {
+                continue;
+            }
+            remaining.add(param);
+        }
+
+        return Ref.create(new PyCallableTypeImpl(cleanupSeparators(remaining), callableType.getReturnType(context)));
+    }
+
+    private static List<PyCallableParameter> cleanupSeparators(List<PyCallableParameter> params) {
+        List<PyCallableParameter> result = new ArrayList<>(params);
+
+        // Remove '/' if it's the first parameter (no positional-only params precede it)
+        if (!result.isEmpty() && result.get(0).isPositionOnlySeparator()) {
+            result.remove(0);
+        }
+
+        // Remove '*' if it's the last parameter, or second-to-last when '**kwargs' is last
+        int starIdx = result.size() - 1;
+        if (starIdx >= 0 && result.get(starIdx).isKeywordContainer()) {
+            starIdx--;
+        }
+        if (starIdx >= 0 && result.get(starIdx).isKeywordOnlySeparator()) {
+            result.remove(starIdx);
+        }
+
+        return result;
+    }
+
+    @Override
+    public @Nullable PyType getContextManagerVariableType(PyClass contextManager,
+                                                                                                                PyExpression withExpression,
+                                                                                                                TypeEvalContext context) {
+        if ("contextlib.closing".equals(contextManager.getQualifiedName()) && withExpression instanceof PyCallExpression) {
+            PyExpression closee = ((PyCallExpression)withExpression).getArgument(0, PyExpression.class);
+            if (closee != null) {
+                return context.getType(closee);
+            }
+        }
+        final String name = contextManager.getName();
+        if ("FileIO".equals(name) || "TextIOWrapper".equals(name) || "IOBase".equals(name) || "_IOBase".equals(name)) {
+            return context.getType(withExpression);
+        }
+        return null;
+    }
 }

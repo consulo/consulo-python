@@ -1,0 +1,12 @@
+python.code.style.default.title:
+    text: Default
+python.code.style.classic.title:
+    text: Classic
+formatter.panel.dict.alignment.do.not.align:
+    text: Do not align
+formatter.panel.dict.alignment.align.on.colon:
+    text: Align on colon
+formatter.panel.dict.alignment.align.on.value:
+    text: Align on value
+INSP.python.trailing.suffix.not.support:
+    text: Python does not support a trailing ''{0}''

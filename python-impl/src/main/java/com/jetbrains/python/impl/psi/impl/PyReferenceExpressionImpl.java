@@ -1,634 +1,878 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.util.collection.Lists;
+import consulo.util.lang.ref.SoftReference;
+import com.jetbrains.python.psi.impl.PyTypeProvider;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+
+import consulo.language.controlFlow.ConditionalInstruction;
+import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.Instruction;
+import consulo.language.ast.ASTNode;
+import consulo.application.progress.ProgressManager;
+import consulo.util.lang.ref.Ref;
+import consulo.application.util.registry.Registry;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.language.psi.FileContextUtil;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.console.pydev.ConsoleCommunication;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.impl.PythonRuntimeService;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
+import com.jetbrains.python.impl.codeInsight.controlflow.PyTypeAssertionEvaluator;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.console.PydevConsoleRunner;
-import com.jetbrains.python.impl.console.completion.PydevConsoleReference;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
+import com.jetbrains.python.impl.inspections.PyInspectionMessages.ProblemMessage;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.Property;
+import com.jetbrains.python.psi.PyAugAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyDecoratorList;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionCodeFragment;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTypedElement;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.references.PyImportReference;
 import com.jetbrains.python.impl.psi.impl.references.PyQualifiedReference;
 import com.jetbrains.python.impl.psi.impl.references.PyReferenceImpl;
 import com.jetbrains.python.impl.psi.resolve.ImplicitResolveResult;
-import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.impl.psi.types.*;
-import com.jetbrains.python.impl.refactoring.PyDefUseUtil;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.impl.PyTypeProvider;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
+import com.jetbrains.python.psi.resolve.QualifiedRatedResolveResult;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyCallableArgument;
+import com.jetbrains.python.psi.types.PyCallableType;
+import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyCompositeType;
+import com.jetbrains.python.impl.psi.types.PyDescriptorTypeUtil;
+import com.jetbrains.python.impl.psi.types.PyImportedModuleType;
+import com.jetbrains.python.psi.types.PyInstantiableType;
+import com.jetbrains.python.impl.psi.types.PyIntersectionType;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
+import com.jetbrains.python.impl.psi.types.PyModuleType;
+import com.jetbrains.python.impl.psi.types.PyNarrowedType;
+import com.jetbrains.python.impl.psi.types.PyOverloadType;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.psi.types.PyTypeVarType;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.impl.psi.types.PyUnsafeUnionType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.component.extension.ExtensionException;
-import consulo.component.extension.Extensions;
-import consulo.language.ast.ASTNode;
-import consulo.language.controlFlow.Instruction;
-import consulo.language.psi.*;
-import consulo.language.psi.util.PsiTreeUtil;
-import consulo.language.psi.util.QualifiedName;
-import consulo.logging.Logger;
-import consulo.util.lang.ref.Ref;
-
+import com.jetbrains.python.impl.psi.types.TypeEvalContextImpl;
+import com.jetbrains.python.impl.pyi.PyiUtil;
+import com.jetbrains.python.impl.refactoring.PyDefUseUtil;
 import org.jspecify.annotations.Nullable;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import static com.jetbrains.python.impl.psi.types.PyNoneTypeKt.isNoneType;
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isAny;
+import static com.jetbrains.python.impl.psi.types.PyTypeUtilKt.isUnknown;
 
 /**
  * Implements reference expression PSI.
- *
- * @author yole
  */
-public class PyReferenceExpressionImpl extends PyElementImpl implements PyReferenceExpression
-{
-	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.psi.impl.PyReferenceExpressionImpl");
-	private QualifiedName myQualifiedName = null;
+public class PyReferenceExpressionImpl extends PyElementImpl implements PyReferenceExpression {
 
-	public PyReferenceExpressionImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+    // PY-89956: guards against re-entrant def-use chain warming (see warmEarlierDefinitionTypes).
+    private static final ThreadLocal<Boolean> ourWarmingDefUseChain = ThreadLocal.withInitial(() -> Boolean.FALSE);
+    // Minimum number of earlier same-name definitions before we pre-warm their types; short chains are left untouched.
+    private static final int WARM_DEF_USE_THRESHOLD = 64;
+    private static final int CYCLE_FIXED_POINT_ANALYSIS_ITERATION_THRESHOLD = 5;
 
-	@Override
-	public PsiPolyVariantReference getReference()
-	{
-		TypeEvalContext context = TypeEvalContext.codeAnalysis(getProject(), getContainingFile());
-		return getReference(PyResolveContext.defaultContext().withTypeEvalContext(context));
-	}
+    private record ControlFlowTypeResult(@Nullable PyType type, boolean foundPrefixCall) {
+        private ControlFlowTypeResult {
+            PyAnyType.validate(type);
+        }
+    }
 
-	@Override
-	public PsiPolyVariantReference getReference(PyResolveContext context)
-	{
-		PsiFile file = getContainingFile();
-		PyExpression qualifier = getQualifier();
+    private volatile @Nullable QualifiedName myQualifiedName = null;
 
-		// Handle import reference
-		PsiElement importParent = PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
-		if(importParent != null)
-		{
-			return PyImportReference.forElement(this, importParent, context);
-		}
+    public PyReferenceExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-		// Return special reference
-		ConsoleCommunication communication = file.getCopyableUserData(PydevConsoleRunner.CONSOLE_KEY);
-		if(communication != null)
-		{
-			if(qualifier != null)
-			{
-				return new PydevConsoleReference(this, communication, qualifier.getText() + ".", context.allowRemote());
-			}
-			return new PydevConsoleReference(this, communication, "", context.allowRemote());
-		}
+    @Override
+    public PsiPolyVariantReference getReference() {
+        assert !(this instanceof StubBasedPsiElement);
+        TypeEvalContext context = TypeEvalContext.codeAnalysis(getProject(), getContainingFile());
+        return getReference(PyResolveContext.defaultContext(context));
+    }
 
-		if(qualifier != null)
-		{
-			return new PyQualifiedReference(this, context);
-		}
+    @Override
+    public PsiPolyVariantReference getReference(PyResolveContext context) {
+        // Handle import reference
+        PsiElement importParent = getImportParent();
+        if (importParent != null) {
+            return PyImportReference.forElement(this, importParent, context);
+        }
 
-		return new PyReferenceImpl(this, context);
-	}
+        PyExpression qualifier = getQualifier();
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyReferenceExpression(this);
-	}
+        // Return special reference
+        PsiPolyVariantReference ref = PythonRuntimeService.getInstance().getPydevConsoleReference(this, context);
+        if (ref != null) {
+            return ref;
+        }
 
-	@Nullable
-	public PyExpression getQualifier()
-	{
-		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
-		return (PyExpression) (nodes.length == 1 ? nodes[0].getPsi() : null);
-	}
+        if (qualifier != null) {
+            return new PyQualifiedReference(this, context);
+        }
 
-	@Override
-	public boolean isQualified()
-	{
-		return getQualifier() != null;
-	}
+        return new PyReferenceImpl(this, context);
+    }
 
-	@Nullable
-	public String getReferencedName()
-	{
-		ASTNode nameElement = getNameElement();
-		return nameElement != null ? nameElement.getText() : null;
-	}
+    private @Nullable PsiElement getImportParent() {
+        return PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
+    }
 
-	@Nullable
-	public ASTNode getNameElement()
-	{
-		return getNode().findChildByType(PyTokenTypes.IDENTIFIER);
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyReferenceExpression(this);
+    }
 
-	@Nullable
-	@Override
-	public String getName()
-	{
-		return getReferencedName();
-	}
+    @Override
+    public @Nullable String getName() {
+        return PyReferenceExpression.super.getName();
+    }
 
+    @Override
+    public QualifiedResolveResult followAssignmentsChain(PyResolveContext resolveContext) {
+        List<QualifiedRatedResolveResult> resolveResults = multiFollowAssignmentsChain(resolveContext);
 
-	private static final QualifiedResolveResult EMPTY_RESULT = new QualifiedResolveResultEmpty();
+        return resolveResults
+            .stream()
+            .filter(result -> !result.isImplicit())
+            .findFirst()
+            .map(QualifiedResolveResult.class::cast)
+            .orElseGet(
+                () -> {
+                    QualifiedResolveResult first = ContainerUtil.getFirstItem(resolveResults);
+                    return first == null ? QualifiedResolveResult.EMPTY : first;
+                }
+            );
+    }
 
-	public QualifiedResolveResult followAssignmentsChain(PyResolveContext resolveContext)
-	{
-		PyReferenceExpression seeker = this;
-		QualifiedResolveResult ret = null;
-		List<PyExpression> qualifiers = new ArrayList<>();
-		PyExpression qualifier = seeker.getQualifier();
-		if(qualifier != null)
-		{
-			qualifiers.add(qualifier);
-		}
-		Set<PsiElement> visited = new HashSet<>();
-		visited.add(this);
-		SEARCH:
-		while(ret == null)
-		{
-			ResolveResult[] targets = seeker.getReference(resolveContext).multiResolve(false);
-			for(ResolveResult target : targets)
-			{
-				PsiElement elt = target.getElement();
-				if(elt instanceof PyTargetExpression)
-				{
-					PyTargetExpression expr = (PyTargetExpression) elt;
-					TypeEvalContext context = resolveContext.getTypeEvalContext();
-					PsiElement assigned_from;
-					if(context.maySwitchToAST(expr))
-					{
-						assigned_from = expr.findAssignedValue();
-					}
-					else
-					{
-						assigned_from = expr.resolveAssignedValue(resolveContext);
-					}
-					if(assigned_from instanceof PyReferenceExpression)
-					{
-						if(visited.contains(assigned_from))
-						{
-							break;
-						}
-						visited.add(assigned_from);
-						seeker = (PyReferenceExpression) assigned_from;
-						if(seeker.getQualifier() != null)
-						{
-							qualifiers.add(seeker.getQualifier());
-						}
-						continue SEARCH;
-					}
-					else if(assigned_from != null)
-					{
-						ret = new QualifiedResolveResultImpl(assigned_from, qualifiers, false);
-					}
-				}
-				else if(ret == null && elt instanceof PyElement && target.isValidResult())
-				{
-					// remember this result, but a further reference may be the next resolve result
-					ret = new QualifiedResolveResultImpl(elt, qualifiers, target instanceof ImplicitResolveResult);
-				}
-			}
-			// all resolve results checked, reassignment not detected, nothing more to do
-			break;
-		}
-		if(ret == null)
-		{
-			ret = EMPTY_RESULT;
-		}
-		return ret;
-	}
+    @Override
+    public List<QualifiedRatedResolveResult> multiFollowAssignmentsChain(PyResolveContext resolveContext,
+                                                                                  Predicate<? super PyTargetExpression> follow) {
+        List<QualifiedRatedResolveResult> result = new ArrayList<>();
+        Queue<MultiFollowQueueNode> queue = new LinkedList<>();
+        Set<PyReferenceExpression> visited = new HashSet<>();
 
-	@Nullable
-	public QualifiedName asQualifiedName()
-	{
-		if(myQualifiedName == null)
-		{
-			myQualifiedName = PyPsiUtils.asQualifiedName(this);
-		}
-		return myQualifiedName;
-	}
+        queue.add(MultiFollowQueueNode.create(null, this));
+        visited.add(this);
+        TypeEvalContext context = resolveContext.getTypeEvalContext();
 
-	@Override
-	public String toString()
-	{
-		return "PyReferenceExpression: " + getReferencedName();
-	}
+        while (!queue.isEmpty()) {
+            MultiFollowQueueNode node = queue.remove();
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
-	{
-		if(!TypeEvalStack.mayEvaluate(this))
-		{
-			return null;
-		}
-		try
-		{
-			boolean qualified = isQualified();
-			if(!qualified)
-			{
-				String name = getReferencedName();
-				if(PyNames.NONE.equals(name))
-				{
-					return PyNoneType.INSTANCE;
-				}
-			}
-			PyType providedType = getTypeFromProviders(context);
-			if(providedType != null)
-			{
-				return providedType;
-			}
-			if(qualified)
-			{
-				if(!context.maySwitchToAST(this))
-				{
-					return null;
-				}
-				PyType maybe_type = PyUtil.getSpecialAttributeType(this, context);
-				if(maybe_type != null)
-				{
-					return maybe_type;
-				}
-				Ref<PyType> typeOfProperty = getTypeOfProperty(context);
-				if(typeOfProperty != null)
-				{
-					return typeOfProperty.get();
-				}
-				PyType typeByControlFlow = getQualifiedReferenceTypeByControlFlow(context);
-				if(typeByControlFlow != null)
-				{
-					return typeByControlFlow;
-				}
-			}
-			PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
-			List<PsiElement> targets = PyUtil.multiResolveTopPriority(reference);
+            for (ResolveResult resolveResult : node.myReferenceExpression.getReference(resolveContext).multiResolve(false)) {
+                PsiElement element = resolveResult.getElement();
+                if (element instanceof PyTargetExpression target && follow.test(target)) {
 
-			List<PyType> members = new ArrayList<>();
-			for(PsiElement target : targets)
-			{
-				if(target == this || target == null)
-				{
-					continue;
-				}
-				if(!target.isValid())
-				{
-		  /*LOG.error("Reference " + this + " resolved to invalid element " + target + " (text=" + target.getText() + ")");
-          continue;*/
-					throw new PsiInvalidElementAccessException(this);
-				}
-				members.add(getTypeFromTarget(target, context, this));
-			}
-			PyType type = PyUnionType.union(members);
-			if(qualified && type instanceof PyNoneType)
-			{
-				return null;
-			}
-			return type;
-		}
-		finally
-		{
-			TypeEvalStack.evaluated(this);
-		}
-	}
+                    List<PsiElement> assignedFromElements = context.maySwitchToAST(target)
+                                                                  ? Collections.singletonList(target.findAssignedValue())
+                                                                  : target.multiResolveAssignedValue(resolveContext);
 
-	@Nullable
-	private PyType getQualifiedReferenceTypeByControlFlow(TypeEvalContext context)
-	{
-		PyExpression qualifier = getQualifier();
-		if(context.allowDataFlow(this) && qualifier != null)
-		{
-			PyExpression next = qualifier;
-			while(next != null)
-			{
-				qualifier = next;
-				next = qualifier instanceof PyQualifiedExpression ? ((PyQualifiedExpression) qualifier).getQualifier() : null;
-			}
-			ScopeOwner scopeOwner = ScopeUtil.getScopeOwner(this);
-			QualifiedName qname = asQualifiedName();
-			if(qname != null && scopeOwner != null)
-			{
-				return getTypeByControlFlow(qname.toString(), context, qualifier, scopeOwner);
-			}
-		}
-		return null;
-	}
+                    for (PsiElement assignedFrom : assignedFromElements) {
+                        if (assignedFrom instanceof PyReferenceExpression assignedReference) {
 
-	@Nullable
-	private Ref<PyType> getTypeOfProperty(TypeEvalContext context)
-	{
-		PyExpression qualifier = getQualifier();
-		String name = getName();
-		if(name != null && qualifier != null)
-		{
-			PyType qualifierType = context.getType(qualifier);
-			return getTypeOfProperty(qualifierType, name, context);
-		}
-		return null;
-	}
+                            if (!visited.add(assignedReference)) {
+                                continue;
+                            }
 
-	@Nullable
-	private Ref<PyType> getTypeOfProperty(@Nullable PyType qualifierType, String name, TypeEvalContext context)
-	{
-		if(qualifierType instanceof PyClassType)
-		{
-			PyClassType classType = (PyClassType) qualifierType;
-			PyClass pyClass = classType.getPyClass();
-			Property property = pyClass.findProperty(name, true, context);
-			if(property != null)
-			{
-				if(classType.isDefinition())
-				{
-					return Ref.<PyType>create(PyBuiltinCache.getInstance(pyClass).getObjectType(PyNames.PROPERTY));
-				}
-				if(AccessDirection.of(this) == AccessDirection.READ)
-				{
-					PyType type = property.getType(context);
-					if(type != null)
-					{
-						return Ref.create(type);
-					}
-				}
-				return Ref.create();
-			}
-		}
-		else if(qualifierType instanceof PyUnionType)
-		{
-			PyUnionType unionType = (PyUnionType) qualifierType;
-			for(PyType type : unionType.getMembers())
-			{
-				Ref<PyType> result = getTypeOfProperty(type, name, context);
-				if(result != null)
-				{
-					return result;
-				}
-			}
-		}
-		return null;
-	}
+                            queue.add(MultiFollowQueueNode.create(node, assignedReference));
+                        }
+                        else if (assignedFrom != null) {
+                            result.add(
+                                new QualifiedRatedResolveResult(
+                                    assignedFrom,
+                                    node.myQualifiers,
+                                    resolveResult instanceof RatedResolveResult ? ((RatedResolveResult)resolveResult).getRate() : 0,
+                                    resolveResult instanceof ImplicitResolveResult
+                                )
+                            );
+                        }
+                    }
+                }
+                else if (element != null && resolveResult.isValidResult()) {
+                    result.add(
+                        new QualifiedRatedResolveResult(
+                            element,
+                            node.myQualifiers,
+                            resolveResult instanceof RatedResolveResult ? ((RatedResolveResult)resolveResult).getRate() : 0,
+                            resolveResult instanceof ImplicitResolveResult
+                        )
+                    );
+                }
+            }
+        }
 
-	@Nullable
-	private PyType getTypeFromProviders(TypeEvalContext context)
-	{
-		for(PyTypeProvider provider : Extensions.getExtensions(PyTypeProvider.EP_NAME))
-		{
-			try
-			{
-				PyType type = provider.getReferenceExpressionType(this, context);
-				if(type != null)
-				{
-					return type;
-				}
-			}
-			catch(AbstractMethodError e)
-			{
-				LOG.info(new ExtensionException(provider.getClass()));
-			}
-		}
-		return null;
-	}
+        return result;
+    }
 
-	@Nullable
-	private static PyType getTypeFromTarget(PsiElement target, TypeEvalContext context, PyReferenceExpression anchor)
-	{
-		PyType type = getGenericTypeFromTarget(target, context, anchor);
-		if(context.maySwitchToAST(anchor))
-		{
-			PyExpression qualifier = anchor.getQualifier();
-			if(qualifier != null)
-			{
-				if(!(type instanceof PyFunctionType) && PyTypeChecker.hasGenerics(type, context))
-				{
-					Map<PyExpression, PyNamedParameter> parameters = Collections.emptyMap();
-					Map<PyGenericType, PyType> substitutions = PyTypeChecker.unifyGenericCall(qualifier, parameters, context);
-					if(substitutions != null && !substitutions.isEmpty())
-					{
-						PyType substituted = PyTypeChecker.substitute(type, substitutions, context);
-						if(substituted != null)
-						{
-							return substituted;
-						}
-					}
-				}
-			}
-		}
-		return type;
-	}
+    @Override
+    public @Nullable QualifiedName asQualifiedName() {
+        if (myQualifiedName == null) {
+            myQualifiedName = PyPsiUtils.asQualifiedName(this);
+        }
+        return myQualifiedName;
+    }
 
-	@Nullable
-	private static PyType getGenericTypeFromTarget(PsiElement target, TypeEvalContext context, PyReferenceExpression anchor)
-	{
-		if(!(target instanceof PyTargetExpression))
-		{  // PyTargetExpression will ask about its type itself
-			PyType pyType = getReferenceTypeFromProviders(target, context, anchor);
-			if(pyType != null)
-			{
-				return pyType;
-			}
-		}
-		if(target instanceof PyTargetExpression)
-		{
-			String name = ((PyTargetExpression) target).getName();
-			if(PyNames.NONE.equals(name))
-			{
-				return PyNoneType.INSTANCE;
-			}
-			if(PyNames.TRUE.equals(name) || PyNames.FALSE.equals(name))
-			{
-				return PyBuiltinCache.getInstance(target).getBoolType();
-			}
-		}
-		if(target instanceof PyFile)
-		{
-			return new PyModuleType((PyFile) target);
-		}
-		if(target instanceof PyImportedModule)
-		{
-			return new PyImportedModuleType((PyImportedModule) target);
-		}
-		if((target instanceof PyTargetExpression || target instanceof PyNamedParameter) && anchor != null && context.allowDataFlow(anchor))
-		{
-			ScopeOwner scopeOwner = PsiTreeUtil.getStubOrPsiParentOfType(anchor, ScopeOwner.class);
-			if(scopeOwner != null && scopeOwner == PsiTreeUtil.getStubOrPsiParentOfType(target, ScopeOwner.class))
-			{
-				String name = ((PyElement) target).getName();
-				if(name != null)
-				{
-					PyType type = getTypeByControlFlow(name, context, anchor, scopeOwner);
-					if(type != null)
-					{
-						return type;
-					}
-				}
-			}
-		}
-		if(target instanceof PyFunction)
-		{
-			PyDecoratorList decoratorList = ((PyFunction) target).getDecoratorList();
-			if(decoratorList != null)
-			{
-				PyDecorator propertyDecorator = decoratorList.findDecorator(PyNames.PROPERTY);
-				if(propertyDecorator != null)
-				{
-					return PyBuiltinCache.getInstance(target).getObjectType(PyNames.PROPERTY);
-				}
-				for(PyDecorator decorator : decoratorList.getDecorators())
-				{
-					QualifiedName qName = decorator.getQualifiedName();
-					if(qName != null && (qName.endsWith(PyNames.SETTER) || qName.endsWith(PyNames.DELETER) ||
-							qName.endsWith(PyNames.GETTER)))
-					{
-						return PyBuiltinCache.getInstance(target).getObjectType(PyNames.PROPERTY);
-					}
-				}
-			}
-		}
-		if(target instanceof PyTypedElement)
-		{
-			return context.getType((PyTypedElement) target);
-		}
-		if(target instanceof PsiDirectory)
-		{
-			PsiDirectory dir = (PsiDirectory) target;
-			PsiFile file = dir.findFile(PyNames.INIT_DOT_PY);
-			if(file != null)
-			{
-				return getTypeFromTarget(file, context, anchor);
-			}
-			if(PyUtil.isPackage(dir, anchor))
-			{
-				PsiFile containingFile = anchor.getContainingFile();
-				if(containingFile instanceof PyFile)
-				{
-					QualifiedName qualifiedName = QualifiedNameFinder.findShortestImportableQName(dir);
-					if(qualifiedName != null)
-					{
-						PyImportedModule module = new PyImportedModule(null, (PyFile) containingFile, qualifiedName);
-						return new PyImportedModuleType(module);
-					}
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public String toString() {
+        return "PyReferenceExpression: " + getReferencedName();
+    }
 
-	private static PyType getTypeByControlFlow(String name, TypeEvalContext context, PyExpression anchor, ScopeOwner scopeOwner)
-	{
-		PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(anchor, PyAugAssignmentStatement.class);
-		PyElement element = augAssignment != null ? augAssignment : anchor;
-		try
-		{
-			List<Instruction> defs = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false);
-			if(!defs.isEmpty())
-			{
-				ReadWriteInstruction firstInstruction = PyUtil.as(defs.get(0), ReadWriteInstruction.class);
-				PyType type = firstInstruction != null ? firstInstruction.getType(context, anchor) : null;
-				for(int i = 1; i < defs.size(); i++)
-				{
-					ReadWriteInstruction instruction = PyUtil.as(defs.get(i), ReadWriteInstruction.class);
-					type = PyUnionType.union(type, instruction != null ? instruction.getType(context, anchor) : null);
-				}
-				return type;
-			}
-		}
-		catch(PyDefUseUtil.InstructionNotFoundException ignored)
-		{
-		}
-		return null;
-	}
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyType type = PyTypeProvider.EP_NAME.computeSafeIfAny(provider -> provider.getReferenceExpressionType(this, context));
+        if (type != null) {
+            return type;
+        }
 
-	@Nullable
-	public static PyType getReferenceTypeFromProviders(PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
-	{
-		for(PyTypeProvider provider : Extensions.getExtensions(PyTypeProvider.EP_NAME))
-		{
-			PyType result = provider.getReferenceType(target, context, anchor);
-			if(result != null)
-			{
-				return result;
-			}
-		}
+        if (getImportParent() == null) {
+            if (isQualified()) {
+                return getQualifiedReferenceType(this, context, null);
+            }
+            else {
+                PyType typeByControlFlow = getUnqualifiedReferenceTypeByControlFlow(this, context);
+                if (!isUnknown(typeByControlFlow)) {
+                    return typeByControlFlow;
+                }
+            }
+        }
 
-		return null;
-	}
+        PsiFile realFile = FileContextUtil.getContextFile(this);
+        if (!(getContainingFile() instanceof PyExpressionCodeFragment) || (realFile != null && context.maySwitchToAST(realFile))) {
+            PyResolveContext resolveContext = PyResolveContext.defaultContext(context);
+            return getTypeFromTargets(PyUtil.multiResolveTopPriority(getReference(resolveContext)), context, this);
+        }
 
-	@Override
-	public void subtreeChanged()
-	{
-		super.subtreeChanged();
-		myQualifiedName = null;
-	}
+        return PyAnyType.getAny();
+    }
 
-	private static class QualifiedResolveResultImpl extends RatedResolveResult implements QualifiedResolveResult
-	{
-		// a trivial implementation
-		private List<PyExpression> myQualifiers;
-		private boolean myIsImplicit;
+    public static @Nullable PyType getQualifiedReferenceType(PyReferenceExpression refExpr,
+                                                             TypeEvalContext context,
+                                                             @Nullable List<ProblemMessage> errors) {
+        if (AccessDirection.of(refExpr) != AccessDirection.READ) {
+            return PyAnyType.getUnknown();
+        }
 
-		public boolean isImplicit()
-		{
-			return myIsImplicit;
-		}
+        String attrName = refExpr.getName();
+        if (attrName == null) {
+            return PyAnyType.getUnknown();
+        }
 
-		private QualifiedResolveResultImpl(PsiElement element, List<PyExpression> qualifiers, boolean isImplicit)
-		{
-			super(isImplicit ? RATE_LOW : RATE_NORMAL, element);
-			myQualifiers = qualifiers;
-			myIsImplicit = isImplicit;
-		}
+        PyExpression qualifier = Objects.requireNonNull(refExpr.getQualifier());
+        PyType qualifierType = PyLiteralType.getLiteralType(qualifier, context);
+        if (qualifierType == null) {
+            qualifierType = context.getType(qualifier);
+        }
 
-		@Override
-		public List<PyExpression> getQualifiers()
-		{
-			return myQualifiers;
-		}
-	}
+        // Skip type narrowing for properties.
+        if (resolvesToProperty(qualifierType, attrName, context)) {
+            return PyTypeUtil.derefOrUnknown(getTypeOfMember(qualifierType, null, attrName, refExpr, context, errors));
+        }
 
-	private static class QualifiedResolveResultEmpty implements QualifiedResolveResult
-	{
-		// a trivial implementation
+        // This code performs a backwards traversal through the Control Flow Graph to analyze assignments.
+        // It searches for WRITE instructions involving `qualifier.this_name` with the following behavior:
+        //
+        // 1. If WRITE instructions are found on all possible execution paths:
+        //    - Returns a union type combining the types from all getType() calls on those instructions
+        //
+        // 2. If a WRITE instruction involving just the `qualifier` is found on any path
+        //    (via PyTargetExpression or PyNamedParameter):
+        //    - The analysis stops and returns null, ignoring any other paths
+        //
+        // 3. If a CallInstruction involving just the `qualifier` as an argument is found on any path:
+        //    - We assume the call *might* have affeted the tupe of `this_name`, and return UnsafeUnion[result_from_cfg, result_from_targets]
+        //
+        // (see PyDefUseUtil.getLatestDefs)
+        //
+        // Note on getType() behavior for PyTargetExpression:
+        // - First queries PyTypeProviders (including PyTypingTypeProvider)
+        // - PyTypingTypeProvider checks if qualifier's class has a type annotation for 'this_name'
+        //   and returns that annotated type if found
+        // - If no providers return a type, falls back to returning the type of the assigned value
 
-		private QualifiedResolveResultEmpty()
-		{
-		}
+        PyType finalQualifierType = qualifierType;
+        return narrowQualifiedReferenceType(
+            refExpr, context, () -> PyTypeUtil.derefOrUnknown(getTypeOfMember(finalQualifierType, null, attrName, refExpr, context, errors)));
+    }
 
-		@Override
-		public List<PyExpression> getQualifiers()
-		{
-			return Collections.emptyList();
-		}
+    /**
+     * Returns the type of the qualified reference {@code refExpr} after the control flow narrows {@code declaredType}.
+     * For example, {@code x.attr} has the type {@code str} after {@code if x.attr is not None:}, when its declared type is {@code str | None}.
+     * A type provider that gives the declared type of an attribute in {@link PyTypeProvider#getReferenceExpressionType}
+     * calls this function, because the control flow facts apply only when no type provider gives the type.
+     *
+     * @param declaredType gives the type of the attribute without the control flow facts
+     */
+    public static @Nullable PyType narrowQualifiedReferenceType(PyReferenceExpression refExpr,
+                                                                TypeEvalContext context,
+                                                                Supplier<? extends @Nullable PyType> declaredType) {
+        ControlFlowTypeResult controlFlowResult = getQualifiedReferenceTypeByControlFlow(refExpr, context);
+        PyType typeByControlFlow = controlFlowResult.type();
+        if (!isUnknown(typeByControlFlow)) {
+            if (controlFlowResult.foundPrefixCall()) {
+                // A call with prefix as receiver/argument may or may not mutate it, so return UnsafeUnion of narrowed and declared types (PY-88265)
+                PyType type = declaredType.get();
+                if (isNoneType(type)) {
+                    type = PyAnyType.getUnknown();
+                }
+                return PyUnsafeUnionType.unsafeUnion(typeByControlFlow, type);
+            }
+            return typeByControlFlow;
+        }
 
-		public PsiElement getElement()
-		{
-			return null;
-		}
+        return declaredType.get();
+    }
 
-		public boolean isValidResult()
-		{
-			return false;
-		}
+    private static boolean resolvesToProperty(@Nullable PyType type,
+                                              String name,
+                                              TypeEvalContext context) {
+        return switch (type) {
+            case PyCompositeType compositeType ->
+                ContainerUtil.exists(compositeType.getMembers(), member -> resolvesToProperty(member, name, context));
+            case PyTypeVarType typeVarType ->
+                typeVarType.getEffectiveBound() != null && resolvesToProperty(typeVarType.getEffectiveBound(), name, context);
+            case PyClassType classType -> findProperty(classType, name, context) != null;
+            case null, default -> false;
+        };
+    }
 
-		public boolean isImplicit()
-		{
-			return false;
-		}
-	}
+    private static @Nullable PyType getTypeFromTargets(List<PsiElement> targets,
+                                                       TypeEvalContext context,
+                                                       PyQualifiedExpression anchor) {
+        List<PyType> members = new ArrayList<>();
+        List<PyFunction> overloadMembers = new ArrayList<>();
+        for (PsiElement target : targets) {
+            if (target == anchor) {
+                continue;
+            }
 
+            if (overloadMembers.contains(target)) {
+                continue;
+            }
+
+            if (!target.isValid()) {
+                throw new PsiInvalidElementAccessException(anchor);
+            }
+
+            Ref<PyType> member = getTypeFromTarget(target, context, anchor);
+            if (SoftReference.deref(member) instanceof PyOverloadType && target instanceof PyFunction function) {
+                overloadMembers.addAll(PyiUtil.getOverloads(function, context));
+            }
+            if (member != null) {
+                members.add(member.get());
+            }
+        }
+
+        return PyUnionType.unionOrUnknown(members);
+    }
+
+    private static @Nullable PyType getUnqualifiedReferenceTypeByControlFlow(PyReferenceExpression refExpr,
+                                                                             TypeEvalContext context) {
+        if (context.allowDataFlow(refExpr)) {
+            ScopeOwner scopeOwner = ScopeUtil.getScopeOwner(refExpr);
+            String name = refExpr.getReferencedName();
+            if (name != null && scopeOwner != null) {
+                Scope scope = ControlFlowCache.getScope(scopeOwner);
+                boolean useCfg = !scope.getNamedElements(name, false).isEmpty() && !scope.isGlobal(name) && !scope.isNonlocal(name) ||
+                                 ScopeUtil.getElementsOfAccessType(name, scopeOwner, ReadWriteInstruction.ACCESS.ASSERTTYPE).iterator().hasNext() ||
+                                 ScopeUtil.getElementsOfAccessType(name, scopeOwner, ReadWriteInstruction.ACCESS.READWRITE).iterator().hasNext();
+                if (useCfg) {
+                    return getTypeByControlFlow(name, context, refExpr, scopeOwner).type();
+                }
+            }
+        }
+        return PyAnyType.getUnknown();
+    }
+
+    private static ControlFlowTypeResult getQualifiedReferenceTypeByControlFlow(PyReferenceExpression refExpr,
+                                                                                         TypeEvalContext context) {
+        PyExpression qualifier = refExpr.getQualifier();
+        if (context.allowDataFlow(refExpr) && qualifier != null) {
+            PyExpression next = qualifier;
+            while (next != null) {
+                qualifier = next;
+                next = qualifier instanceof PyQualifiedExpression ? ((PyQualifiedExpression)qualifier).getQualifier() : null;
+            }
+            ScopeOwner scopeOwner = ScopeUtil.getScopeOwner(refExpr);
+            QualifiedName qname = refExpr.asQualifiedName();
+            if (qname != null && scopeOwner != null) {
+                return getTypeByControlFlow(qname.toString(), context, qualifier, scopeOwner);
+            }
+        }
+        return new ControlFlowTypeResult(PyAnyType.getUnknown(), false);
+    }
+
+    private static @Nullable PropertyResolveResult findProperty(PyClassType classType,
+                                                                String name,
+                                                                TypeEvalContext context) {
+        // TODO PY-90645: This special-casing should be revisited and possibly removed once we handle data descriptors generically.
+        // on a class object, a property defined on the metaclass is a data descriptor and takes
+        // precedence over a member of the same name on the class itself. The class is an instance of its
+        // metaclass, so the metaclass property's getter is invoked with the class object as the receiver.
+        if (classType.isDefinition()
+            && classType.getMetaClassType(context, true) instanceof PyClassType metaClassType) {
+            Property metaProperty = metaClassType.getPyClass().findProperty(name, true, context);
+            if (metaProperty != null) {
+                return new PropertyResolveResult(metaProperty, classType, true);
+            }
+        }
+        Property property = classType.getPyClass().findProperty(name, true, context);
+        return property != null ? new PropertyResolveResult(property, classType, false) : null;
+    }
+
+    private record PropertyResolveResult(Property property, PyClassType selfType, boolean onMetaclass) {}
+
+    /**
+     * Returns the type of the attribute `attrName` of `type`.
+     * The access goes through `type` itself, or through `selfType` when it is not `null`.
+     *
+     * @return a {@link Ref} that holds the attribute type, or `null` when `type` has no attribute `attrName`
+     */
+    private static @Nullable Ref<PyType> getTypeOfMember(@Nullable PyType type,
+                                                         @Nullable PyInstantiableType<?> selfType,
+                                                         String attrName,
+                                                         PyQualifiedExpression anchor,
+                                                         TypeEvalContext context,
+                                                         @Nullable List<ProblemMessage> errors) {
+        if (type instanceof PyCompositeType compositeType) {
+            List<@Nullable Ref<PyType>> members = ContainerUtil.map(
+                compositeType.getMembers(), it -> getTypeOfMember(it, selfType, attrName, anchor, context, errors));
+            if (compositeType instanceof PyIntersectionType) {
+                List<@Nullable PyType> memberTypes = members.stream().filter(Objects::nonNull).map(Ref::get).toList();
+                return memberTypes.isEmpty() ? null : Ref.create(PyIntersectionType.intersectionOrUnknown(memberTypes));
+            }
+            if (ContainerUtil.and(members, Objects::isNull)) {
+                return null;
+            }
+            List<@Nullable PyType> memberTypes = ContainerUtil.map(members, PyTypeUtil::derefOrUnknown);
+            return Ref.create(compositeType instanceof PyUnsafeUnionType
+                              ? PyUnsafeUnionType.unsafeUnion(memberTypes)
+                              : PyUnionType.unionOrUnknown(memberTypes));
+        }
+
+        // Return `str` for `__doc__` if a docstring is present; otherwise fall through to the regular `object.__doc__` attribute.
+        if (PyNames.DOC.equals(attrName)) {
+            PyDocStringOwner docStringOwner = switch (type) {
+                case PyClassType classType -> classType.getPyClass();
+                case PyModuleType moduleType -> moduleType.getModule();
+                case PyCallableType callableType when callableType.getCallable() instanceof PyFunction function -> function;
+                case null, default -> null;
+            };
+            if (docStringOwner != null && docStringOwner.getDocStringValue() != null) {
+                return Ref.create(PyBuiltinCache.getInstance(docStringOwner).getStrType());
+            }
+        }
+
+        if (type instanceof PyClassType classType) {
+            return getTypeOfClassMember(classType, selfType == null ? classType : selfType, attrName, anchor, context, errors);
+        }
+        if (type instanceof PyTypeVarType typeVarType) {
+            // Use type var bound/constraints for attribute resolution. Bind to type var itself.
+            if (!typeVarType.getConstraints().isEmpty()) {
+                List<@Nullable Ref<PyType>> types = ContainerUtil.map(typeVarType.getConstraints(),
+                                                                      it -> getTypeOfMember(it, typeVarType, attrName, anchor, context, errors));
+                if (ContainerUtil.and(types, Objects::isNull)) {
+                    return null;
+                }
+                return Ref.create(PyUnionType.unionOrUnknown(ContainerUtil.map(types, PyTypeUtil::derefOrUnknown)));
+            }
+            else if (typeVarType.getBound() != null) {
+                return getTypeOfMember(typeVarType.getBound(), typeVarType, attrName, anchor, context, errors);
+            }
+            return null;
+        }
+        // A qualifier of an unknown type declares no attribute. `Any` does declare every attribute, with the type `Any`.
+        if (isUnknown(type)) {
+            return null;
+        }
+        if (isAny(type)) {
+            return Ref.create(PyAnyType.getAny());
+        }
+        List<? extends RatedResolveResult> resolveResults = type.resolveMember(attrName, anchor, AccessDirection.READ, PyResolveContext.defaultContext(context));
+        if (resolveResults != null) {
+            List<PsiElement> resolvedElements = PyUtil.filterTopPriorityElements(resolveResults);
+            return Ref.create(getTypeFromTargets(resolvedElements, context, anchor));
+        }
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getTypeOfClassMember(PyClassType classType,
+                                                              PyInstantiableType<?> selfType,
+                                                              String name,
+                                                              PyQualifiedExpression anchor,
+                                                              TypeEvalContext context,
+                                                              @Nullable List<ProblemMessage> errors) {
+        PropertyResolveResult propertyResult = findProperty(classType, name, context);
+        if (propertyResult != null) {
+            if (!classType.isDefinition() || propertyResult.onMetaclass()) {
+                return Ref.create(propertyResult.property().getType(propertyResult.selfType(), context));
+            }
+            return Ref.create(ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(anchor).getObjectType(PyNames.PROPERTY), PyAnyType.getUnknown()));
+        }
+
+        List<? extends RatedResolveResult> resolveResults =
+            classType.resolveMember(name, null, AccessDirection.READ, PyResolveContext.noProperties(context));
+        if (ContainerUtil.isEmpty(resolveResults)) {
+            PyType nameArg = Optional.<PyType>ofNullable(PyLiteralType.stringLiteral(anchor, name)).orElse(PyAnyType.getUnknown());
+            return PyCallExpressionHelper.getSpecialMethodCallType(classType, PyNames.GETATTR, List.of(new PyCallableArgument(nameArg)), context);
+        }
+
+        PyType memberType = PyTypeUtil.getTypeOfMember(resolveResults, context, anchor);
+        PyType specializedMemberType = PyTypeUtil.specializeMemberType(classType, selfType, memberType, context);
+
+        boolean isFunction = specializedMemberType instanceof PyCallableType && !(specializedMemberType instanceof PyClassLikeType) ||
+                             specializedMemberType instanceof PyOverloadType;
+        if (isFunction) {
+            // Callable that is also an instance attribute, as opposed to a normal method definition, as in:
+            //
+            // class C:
+            //     attr: Callable[..., int]
+            //
+            // C().attr() # attr does not need binding its first parameter upon accessing it
+            if (!selfType.isDefinition() && PyTypeUtil.isInstanceMember(resolveResults, context)) {
+                return Ref.create(specializedMemberType);
+            }
+            PyClass memberOwner = PyTypeUtil.getContainingClass(resolveResults);
+            return Ref.create(PyTypeUtil.bindFunction(selfType, specializedMemberType, memberOwner, context, errors));
+        }
+
+        PyClassType noneType = PyBuiltinCache.getInstance(anchor).getNoneType();
+        return Ref.create(noneType == null
+                          ? specializedMemberType
+                          : PyDescriptorTypeUtil.applyDescriptorGet(selfType, specializedMemberType, noneType, context));
+    }
+
+    private static @Nullable Ref<PyType> getTypeFromTarget(PsiElement target,
+                                                           TypeEvalContext context,
+                                                           PyQualifiedExpression anchor) {
+        if (!(target instanceof PyTargetExpression)) {  // PyTargetExpression will ask about its type itself
+            Ref<PyType> pyType = getReferenceTypeFromProviders(target, context, anchor);
+            if (pyType != null) {
+                return pyType;
+            }
+        }
+        if (target instanceof PyFunction function) {
+            PyDecoratorList decoratorList = function.getDecoratorList();
+            if (decoratorList != null) {
+                PyDecorator propertyDecorator = decoratorList.findDecorator(PyNames.PROPERTY);
+                if (propertyDecorator != null) {
+                    return Ref.create(ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(target).getObjectType(PyNames.PROPERTY), PyAnyType.getUnknown()));
+                }
+                for (PyDecorator decorator : decoratorList.getDecorators()) {
+                    QualifiedName qName = decorator.getQualifiedName();
+                    if (qName != null && (qName.endsWith(PyNames.SETTER) || qName.endsWith(PyNames.DELETER) || qName.endsWith(PyNames.GETTER))) {
+                        return Ref.create(ObjectUtil.chooseNotNull(PyBuiltinCache.getInstance(target).getObjectType(PyNames.PROPERTY), PyAnyType.getUnknown()));
+                    }
+                }
+            }
+            List<PyFunction> overloads = PyiUtil.getOverloads(function, context);
+            if (!overloads.isEmpty()) {
+                List<PyCallableType> items = new ArrayList<>();
+                for (PyFunction overload : overloads) {
+                    PyType overloadType = context.getType(overload);
+                    // A type engine gives an overload the type of the whole overloaded function
+                    if (overloadType instanceof PyOverloadType overloadedType) {
+                        return Ref.create(overloadedType);
+                    }
+                    if (overloadType instanceof PyCallableType callableType) {
+                        items.add(callableType);
+                    }
+                }
+                return Ref.create(new PyOverloadType(items, PyiUtil.isOverload(function, context) ? null : Ref.create(context.getType(function))));
+            }
+        }
+        if (target instanceof PyTypedElement) {
+            PyType type = context.getType((PyTypedElement)target);
+            // Widen literal types for non-Final instance attributes in cross-method access.
+            // Same-function flow-sensitive access takes an early return via getQualifiedReferenceTypeByControlFlow
+            // and never reaches this code, so widening here only applies to cross-scope resolution.
+            if (anchor.isQualified() && target instanceof PyTargetExpression targetExpr && targetExpr.isQualified()) {
+                type = PyTypeUtil.upcastAttributeLiteral(targetExpr, type, context);
+            }
+            return Ref.create(type);
+        }
+        if (target instanceof PsiDirectory dir) {
+            PsiFile file = dir.findFile(PyNames.INIT_DOT_PY);
+            if (file instanceof PyFile pyFile) {
+                return Ref.create(context.getType(pyFile));
+            }
+            if (PyUtil.isPackage(dir, anchor)) {
+                PsiFile containingFile = anchor.getContainingFile();
+                if (containingFile instanceof PyFile) {
+                    QualifiedName qualifiedName = QualifiedNameFinder.findShortestImportableQName(dir);
+                    if (qualifiedName != null) {
+                        PyImportedModule module = new PyImportedModule(null, (PyFile)containingFile, qualifiedName);
+                        return Ref.create(new PyImportedModuleType(module));
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static ControlFlowTypeResult getTypeByControlFlow(String name,
+                                                                        TypeEvalContext context,
+                                                                        PyExpression anchor,
+                                                                        ScopeOwner scopeOwner) {
+        if (!Registry.is("python.use.better.control.flow.type.inference", true)) {
+            return getTypeByControlFlowOld(name, context, anchor, scopeOwner);
+        }
+
+        PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(anchor, PyAugAssignmentStatement.class);
+        PyElement element = augAssignment != null ? augAssignment : anchor;
+
+        Instruction[] flow = ControlFlowCache.getControlFlow(scopeOwner).getInstructions();
+        int thisInstructionIdx = ControlFlowUtil.findInstructionNumberByElement(flow, element);
+        if (thisInstructionIdx == -1) {
+            return new ControlFlowTypeResult(PyAnyType.getUnknown(), false);
+        }
+        Instruction thisInstruction = flow[thisInstructionIdx];
+
+        PyDefUseUtil.LatestDefsResult defsResult = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false, context);
+        List<Instruction> defs = defsResult.defs();
+
+        // Pre-warm the types of earlier definitions so the recursive evaluation below stays shallow (PY-89956).
+        warmEarlierDefinitionTypes(context, anchor, flow, name, thisInstruction.num());
+
+        // If earlier definitions were not found, variable may be unbound. Choose Unknown as type.
+        PyType deducedType = defs.stream()
+            .filter(def -> def.num() < thisInstruction.num())
+            .map(def -> getTypeFromInstruction(context, anchor, def))
+            .filter(Objects::nonNull)
+            .map(r -> Objects.requireNonNull(r).get())
+            .collect(PyTypeUtil.toUnion());
+
+        boolean foundPrefixCall = defsResult.foundPrefixCall();
+        List<Instruction> laterDefs = defs.stream().filter(def -> def.num() > thisInstruction.num()).toList();
+        if (laterDefs.isEmpty()) {
+            return new ControlFlowTypeResult(deducedType, foundPrefixCall);
+        }
+
+        for (int i = 0; i < CYCLE_FIXED_POINT_ANALYSIS_ITERATION_THRESHOLD; i++) {
+            PyType t = deducedType;
+            @Nullable Ref<PyType> typeOfLaterDefinitions = context.assumeType(anchor, deducedType, ctx -> {
+                List<PyType> types = new ArrayList<>();
+                for (Instruction def : laterDefs) {
+                    PyType type = null;
+                    if (t != null && ctx instanceof TypeEvalContextImpl.AssumptionContext assumptionCtx) {
+                        type = assumptionCtx.getKnownTypeForInstruction(anchor, t, def.num());
+                    }
+                    if (type == null) {
+                        @Nullable Ref<PyType> typeRef = getTypeFromInstruction(ctx, anchor, def);
+                        if (typeRef != null) {
+                            PyType typeFromInstruction = typeRef.get();
+                            if (t != null && typeFromInstruction != null && ctx instanceof TypeEvalContextImpl.AssumptionContext assumptionCtx) {
+                                assumptionCtx.setKnownTypeForInstruction(anchor, t, def.num(), typeFromInstruction);
+                            }
+                            types.add(typeFromInstruction);
+                        }
+                    }
+                    else {
+                        types.add(type);
+                    }
+                }
+                return types.isEmpty() ? null : Ref.create(PyUnionType.unionOrUnknown(types));
+            });
+
+            if (typeOfLaterDefinitions == null) {
+                return new ControlFlowTypeResult(deducedType, foundPrefixCall);
+            }
+            PyType newType = PyUnionType.unionOrUnknown(deducedType, typeOfLaterDefinitions.get());
+            if (Objects.equals(deducedType, newType)) {
+                return new ControlFlowTypeResult(deducedType, foundPrefixCall);
+            }
+            deducedType = newType;
+        }
+
+        // No fixed point: an operation such as `x = -~x` makes a new literal on each iteration.
+        return new ControlFlowTypeResult(PyLiteralType.upcastLiteralToClass(deducedType), foundPrefixCall);
+    }
+
+    /**
+     * Pre-computes, in ascending control-flow order, the types of all earlier definitions of {@code name}
+     * in the scope, so they are memoized in {@code context} before the recursive def-use evaluation in
+     * {@link #getTypeByControlFlow} needs them.
+     * <p>
+     * Without this, a long linear chain of definitions where each depends on the previous one (e.g. repeated
+     * {@code x = x}) is walked one definition per stack frame and overflows the stack (PY-89956): the
+     * per-element {@link com.intellij.openapi.util.RecursionManager} key differs on every lap, and the lazy
+     * type cache only fills on unwind -- after the descent has already reached full depth. Evaluating
+     * earliest-first makes every later step hit the cache, which bounds the recursion depth. This only
+     * reorders evaluation; it never changes the computed types, and short chains are left untouched.
+     */
+    private static void warmEarlierDefinitionTypes(TypeEvalContext context,
+                                                   PyExpression anchor,
+                                                   Instruction[] flow,
+                                                   String name,
+                                                   int thisInstructionNum) {
+        if (Boolean.TRUE.equals(ourWarmingDefUseChain.get())) {
+            return;
+        }
+        List<ReadWriteInstruction> earlierWrites = Arrays.stream(flow)
+            .filter(ReadWriteInstruction.class::isInstance)
+            .map(ReadWriteInstruction.class::cast)
+            .filter(rw -> rw.num() < thisInstructionNum && rw.getAccess().isWriteAccess() && name.equals(rw.getName()))
+            .toList();
+        if (earlierWrites.size() < WARM_DEF_USE_THRESHOLD) {
+            return;
+        }
+        ourWarmingDefUseChain.set(Boolean.TRUE);
+        try {
+            for (ReadWriteInstruction def : earlierWrites) {
+                ProgressManager.checkCanceled();
+                getTypeFromInstruction(context, anchor, def);
+            }
+        }
+        finally {
+            ourWarmingDefUseChain.set(Boolean.FALSE);
+        }
+    }
+
+    private static @Nullable Ref<PyType> getTypeFromInstruction(TypeEvalContext context,
+                                                                PyExpression anchor,
+                                                                Instruction instr) {
+        if (instr instanceof ReadWriteInstruction readWriteInstruction) {
+            return readWriteInstruction.getType(context, anchor);
+        }
+        if (instr instanceof ConditionalInstruction conditionalInstruction) {
+            PyType conditionType = context.getType((PyTypedElement)conditionalInstruction.getCondition());
+            if (conditionType instanceof PyNarrowedType narrowedType && narrowedType.isBound()) {
+                PyExpression[] arguments = narrowedType.getOriginal().getArguments();
+                if (!ArrayUtil.isEmpty(arguments)) {
+                    PyExpression firstArgument = arguments[0];
+                    PyType type = narrowedType.getNarrowedType();
+                    if (firstArgument instanceof PyReferenceExpression && type != null) {
+                        @Nullable PyType initial = context.getType(firstArgument);
+                        boolean positive = conditionalInstruction.getResult() ^ narrowedType.getNegated();
+                        if (narrowedType.getTypeIs()) {
+                            return PyTypeAssertionEvaluator.createAssertionType(initial, type, positive, true, context);
+                        }
+                        return Ref.create((positive) ? type : initial);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static ControlFlowTypeResult getTypeByControlFlowOld(String name,
+                                                                           TypeEvalContext context,
+                                                                           PyExpression anchor,
+                                                                           ScopeOwner scopeOwner) {
+        PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(anchor, PyAugAssignmentStatement.class);
+        PyElement element = augAssignment != null ? augAssignment : anchor;
+        PyDefUseUtil.LatestDefsResult defsResult = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false, context);
+        List<Instruction> defs = defsResult.defs();
+        PyType combinedType = defs.stream()
+            .map(instr -> {
+                if (instr.getElement() == anchor) {
+                    // exclude recursive definition (example: type of 'i++' inside a loop)
+                    return null;
+                }
+                if (instr instanceof ReadWriteInstruction readWriteInstruction) {
+                    return readWriteInstruction.getType(context, anchor);
+                }
+                if (instr instanceof ConditionalInstruction conditionalInstruction) {
+                    if (context.getType((PyTypedElement)conditionalInstruction.getCondition()) instanceof PyNarrowedType narrowedType
+                        && narrowedType.isBound()) {
+                        PyExpression[] arguments = narrowedType.getOriginal().getArguments();
+                        if (!ArrayUtil.isEmpty(arguments)) {
+                            PyExpression firstArgument = arguments[0];
+                            PyType type = narrowedType.getNarrowedType();
+                            if (firstArgument instanceof PyReferenceExpression && type != null) {
+                                @Nullable PyType initial = context.getType(firstArgument);
+                                boolean positive = conditionalInstruction.getResult() ^ narrowedType.getNegated();
+                                if (narrowedType.getTypeIs()) {
+                                    return PyTypeAssertionEvaluator.createAssertionType(initial, type, positive, false, context);
+                                }
+                                return Ref.create(positive ? type : initial);
+                            }
+                        }
+                    }
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .map(r -> Objects.requireNonNull(r).get())
+            .collect(PyTypeUtil.toUnion());
+        return new ControlFlowTypeResult(combinedType, defsResult.foundPrefixCall());
+    }
+
+    public static @Nullable Ref<PyType> getReferenceTypeFromProviders(PsiElement target,
+                                                                      TypeEvalContext context,
+                                                                      @Nullable PsiElement anchor) {
+        return PyTypeProvider.EP_NAME.computeSafeIfAny(provider -> provider.getReferenceType(target, context, anchor));
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        myQualifiedName = null;
+    }
+
+    private static final class MultiFollowQueueNode {
+
+        private final PyReferenceExpression myReferenceExpression;
+
+        private final List<PyExpression> myQualifiers;
+
+        private MultiFollowQueueNode(PyReferenceExpression referenceExpression, List<PyExpression> qualifiers) {
+            myReferenceExpression = referenceExpression;
+            myQualifiers = qualifiers;
+        }
+
+        public static MultiFollowQueueNode create(@Nullable MultiFollowQueueNode previous,
+                                                           PyReferenceExpression referenceExpression) {
+            PyExpression qualifier = referenceExpression.getQualifier();
+            List<PyExpression> previousQualifiers = previous == null ? Collections.emptyList() : previous.myQualifiers;
+            List<PyExpression> newQualifiers = qualifier == null ? previousQualifiers : Lists.append(previousQualifiers, qualifier);
+
+            return new MultiFollowQueueNode(referenceExpression, newQualifiers);
+        }
+    }
 }
-

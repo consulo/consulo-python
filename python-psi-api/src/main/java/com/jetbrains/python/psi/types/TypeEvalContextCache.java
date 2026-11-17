@@ -18,25 +18,25 @@ package com.jetbrains.python.psi.types;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 
-
 /**
  * Project service to cache {@link TypeEvalContext}
- *
  * @author Ilya.Kazakevich
  */
 @ServiceAPI(ComponentScope.PROJECT)
 public interface TypeEvalContextCache {
-  /**
-   * Returns context from cache (if exist) or returns the one you provided (and puts it into cache).
-   * To use this method, do the following:
-   * <ol>
-   * <li>Instantiate {@link TypeEvalContext} you want to use</li>
-   * <li>Pass its instance here as argument</li>
-   * <li>Use result</li>
-   * </ol>
-   *
-   * @param standard context you want to use. Just instantiate it and pass here.
-   * @return context from cache (the one equals by constraints to yours or the one you provided)
-   */
-  TypeEvalContext getContext(TypeEvalContext standard);
+    /**
+     * Returns context from cache (if exist) or returns the one you provided (and puts it into cache).
+     * To use this method, do the following:
+     * <ol>
+     * <li>Instantiate {@link TypeEvalContext} you want to use</li>
+     * <li>Pass its instance here as argument</li>
+     * <li>Use result</li>
+     * </ol>
+     *
+     * @param standard context you want to use. Just instantiate it and pass here.
+     * @return context from cache (the one equals by constraints to yours or the one you provided)
+     */
+    TypeEvalContext getContext(TypeEvalContext standard);
+
+    TypeEvalContext getLibraryContext(TypeEvalContext standard);
 }

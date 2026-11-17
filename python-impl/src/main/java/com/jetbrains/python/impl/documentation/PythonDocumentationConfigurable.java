@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.documentation;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableMap;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
 import consulo.disposer.Disposable;
@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author yole
@@ -72,26 +72,26 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
   @Override
   public void reset() {
     myPanel.getData().clear();
-    myPanel.getData().addAll(PythonDocumentationMap.getInstance().getEntries());
+    myPanel.getData().addAll(PythonDocumentationMap.getInstance().getEntries().entrySet());
   }
 
   @Override
   public boolean isModified() {
-    HashSet<PythonDocumentationMap.Entry> originalEntries = Sets.newHashSet(PythonDocumentationMap.getInstance().getEntries());
-    HashSet<PythonDocumentationMap.Entry> editedEntries = Sets.newHashSet(myPanel.getData());
+    Map<String, String> originalEntries = Map.copyOf(PythonDocumentationMap.getInstance().getEntries());
+    Map<String, String> editedEntries = ImmutableMap.copyOf(myPanel.getData());
     return !editedEntries.equals(originalEntries);
   }
 
   @Override
   public void apply() throws ConfigurationException {
-    PythonDocumentationMap.getInstance().setEntries(myPanel.getData());
+    PythonDocumentationMap.getInstance().setEntries(ImmutableMap.copyOf(myPanel.getData()));
   }
 
   @Override
   public void disposeUIResources() {
   }
 
-  private static class PythonDocumentationTableModel extends AddEditRemovePanel.TableModel<PythonDocumentationMap.Entry> {
+  private static class PythonDocumentationTableModel extends AddEditRemovePanel.TableModel<Map.Entry<String, String>> {
     @Override
     public int getColumnCount() {
       return 2;
@@ -103,16 +103,16 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
     }
 
     @Override
-    public Object getField(PythonDocumentationMap.Entry o, int columnIndex) {
-      return columnIndex == 0 ? o.getPrefix() : o.getUrlPattern();
+    public Object getField(Map.Entry<String, String> o, int columnIndex) {
+      return columnIndex == 0 ? o.getKey() : o.getValue();
     }
   }
 
   private static final PythonDocumentationTableModel ourModel = new PythonDocumentationTableModel();
 
-  private static class PythonDocumentationPanel extends AddEditRemovePanel<PythonDocumentationMap.Entry> {
+  private static class PythonDocumentationPanel extends AddEditRemovePanel<Map.Entry<String, String>> {
     public PythonDocumentationPanel() {
-      super(ourModel, new ArrayList<PythonDocumentationMap.Entry>());
+      super(ourModel, new ArrayList<>());
       setRenderer(1, new ColoredTableCellRenderer() {
         @Override
         protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
@@ -135,11 +135,11 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
     }
 
     @Override
-    protected PythonDocumentationMap.Entry addItem() {
+    protected Map.Entry<String, String> addItem() {
       return showEditor(null);
     }
 
-    private PythonDocumentationMap.@Nullable Entry showEditor(PythonDocumentationMap.Entry entry) {
+    private Map.@Nullable Entry<String, String> showEditor(Map.Entry<String, String> entry) {
       PythonDocumentationEntryEditor editor = new PythonDocumentationEntryEditor(this);
       if (entry != null) {
         editor.setEntry(entry);
@@ -152,12 +152,12 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
     }
 
     @Override
-    protected boolean removeItem(PythonDocumentationMap.Entry o) {
+    protected boolean removeItem(Map.Entry<String, String> o) {
       return true;
     }
 
     @Override
-    protected PythonDocumentationMap.Entry editItem(PythonDocumentationMap.Entry o) {
+    protected Map.Entry<String, String> editItem(Map.Entry<String, String> o) {
       return showEditor(o);
     }
   }

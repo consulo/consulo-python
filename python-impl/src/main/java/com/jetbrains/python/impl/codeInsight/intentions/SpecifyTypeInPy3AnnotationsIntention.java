@@ -22,11 +22,13 @@ import com.jetbrains.python.impl.debugger.PySignatureCacheManager;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
 import consulo.fileEditor.FileEditorManager;
 import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.editor.template.Template;
 import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
@@ -50,6 +52,8 @@ import consulo.util.lang.StringUtil;
  *
  * @author ktisha
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.SpecifyTypeInPy3AnnotationsIntention", categories = "Python", fileExtensions = "py")
 public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
     private LocalizeValue myText = PyLocalize.intnSpecifyTypeInAnnotation();
 

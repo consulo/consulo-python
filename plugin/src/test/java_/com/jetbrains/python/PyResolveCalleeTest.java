@@ -1,5 +1,6 @@
 package com.jetbrains.python;
 
+import com.jetbrains.python.ast.PyAstFunction;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
@@ -48,6 +49,6 @@ public abstract class PyResolveCalleeTest extends PyTestCase {
     PyCallExpression.PyMarkedCallee resolved = resolveCallee();
     assertNotNull(resolved.getCallable());
     assertEquals(0, resolved.getImplicitOffset());
-    assertEquals(resolved.getModifier(), PyFunction.Modifier.STATICMETHOD);
+    assertEquals(resolved.getModifier(), PyAstFunction.Modifier.STATICMETHOD);
   }
 }

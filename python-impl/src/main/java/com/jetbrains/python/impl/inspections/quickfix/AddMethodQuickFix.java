@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.impl.PythonUiService;
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -131,7 +133,7 @@ public class AddMethodQuickFix implements LocalQuickFix {
           builder.parameter("param");
         }
       }
-      PyFunction method = builder.buildFunction(project, LanguageLevel.getDefault());
+      PyFunction method = builder.buildFunction();
       if (decoratorName != null) {
         PyElementGenerator generator = PyElementGenerator.getInstance(project);
         PyDecoratorList decoratorList =
@@ -142,14 +144,14 @@ public class AddMethodQuickFix implements LocalQuickFix {
         method.addBefore(decoratorList, method.getFirstChild()); // in the very beginning
       }
 
-      method = (PyFunction)PyUtil.addElementToStatementList(method, clsStmtList, PyNames.INIT.equals(method.getName()));
+      method = (PyFunction)PyPsiRefactoringUtil.addElementToStatementList(method, clsStmtList, PyNames.INIT.equals(method.getName()));
       if (myReplaceUsage) {
         showTemplateBuilder(method);
       }
     }
     catch (IncorrectOperationException ignored) {
       // we failed. tell about this
-      PyUtil.showBalloon(project, PyLocalize.qfixFailedToAddMethod(), NotificationType.ERROR);
+      PythonUiService.getInstance().showBalloonError(project, PyLocalize.qfixFailedToAddMethod().get());
     }
   }
 

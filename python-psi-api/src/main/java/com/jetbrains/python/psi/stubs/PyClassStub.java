@@ -1,47 +1,48 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
 /*
  * @author max
  */
 package com.jetbrains.python.psi.stubs;
 
+import com.jetbrains.python.psi.PyClass;
+import consulo.language.psi.stub.NamedStub;
+import consulo.language.psi.util.QualifiedName;
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 
-import org.jspecify.annotations.Nullable;
+public interface PyClassStub extends NamedStub<PyClass>, PyVersionSpecificStub {
 
-import consulo.language.psi.stub.NamedStub;
-import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.psi.PyClass;
+    /**
+     * @return a {@code Map} which contains imported class names as keys and their original names as values.
+     * <i>Note: the returned {@code Map} could contain nulls as keys and as values.</i>
+     */
+    Map<QualifiedName, QualifiedName> getSuperClasses();
 
-public interface PyClassStub extends NamedStub<PyClass>
-{
+    @Nullable
+    QualifiedName getMetaClass();
 
-	/**
-	 * @return a {@code Map} which contains imported class names as keys and their original names as values
-	 */
-	Map<QualifiedName, QualifiedName> getSuperClasses();
+    @Nullable
+    List<String> getSlots();
 
-	@Nullable
-	QualifiedName getMetaClass();
+    @Nullable
+    List<String> getMatchArgs();
 
-	@Nullable
-	List<String> getSlots();
+    @Nullable
+    String getDocString();
 
-	@Nullable
-	String getDocString();
+    @Nullable
+    String getDeprecationMessage();
+
+    /**
+     * @return literal text of expressions in the base classes list.
+     */
+    List<String> getSuperClassesText();
+
+
+    default <T> @Nullable T getCustomStub(Class<T> stubClass) {
+        return null;
+    }
 }

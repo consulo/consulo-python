@@ -1,74 +1,40 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
-import com.jetbrains.python.impl.psi.types.PyCollectionType;
-import com.jetbrains.python.impl.psi.types.PyUnionType;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.ide.impl.idea.util.containers.ContainerUtil;
+import java.util.Collections;
 import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
+import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
-import consulo.language.psi.util.QualifiedName;
-
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypingTypeProvider;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyElementType;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyPrefixExpression;
+import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyAnyType;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.impl.psi.types.PyLiteralType;
+import com.jetbrains.python.impl.psi.types.PyNarrowedType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExpression {
     public PyPrefixExpressionImpl(ASTNode astNode) {
         super(astNode);
-    }
-
-    @Override
-    public PyExpression getOperand() {
-        return (PyExpression) childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
-    }
-
-    @Nullable
-    @RequiredReadAction
-    public PsiElement getPsiOperator() {
-        ASTNode node = getNode();
-        ASTNode child = node.findChildByType(PyTokenTypes.UNARY_OPS);
-        return child != null ? child.getPsi() : null;
-    }
-
-    @Override
-    @RequiredReadAction
-    public PyElementType getOperator() {
-        PsiElement op = getPsiOperator();
-        assert op != null;
-        return (PyElementType) op.getNode().getElementType();
     }
 
     @Override
@@ -78,7 +44,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 
     @Override
     public PsiReference getReference() {
-        return getReference(PyResolveContext.noImplicits());
+        return getReference(PyResolveContext.defaultContext(TypeEvalContext.codeInsightFallback(getProject())));
     }
 
     @Override
@@ -87,87 +53,111 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
     }
 
     @Override
-    @RequiredReadAction
     public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression operand = getOperand();
+        PyType operandType = operand != null ? context.getType(operand) : null;
         if (getOperator() == PyTokenTypes.NOT_KEYWORD) {
-            return PyBuiltinCache.getInstance(this).getBoolType();
+            if (operandType instanceof PyNarrowedType narrowedType) {
+                return narrowedType.negate();
+            }
+            PyType literalResultType = getLiteralOperationType(operandType);
+            if (literalResultType != null) {
+                return literalResultType;
+            }
+            PyClassType boolType = PyBuiltinCache.getInstance(this).getBoolType();
+            return boolType != null ? boolType : PyAnyType.getUnknown();
         }
         boolean isAwait = getOperator() == PyTokenTypes.AWAIT_KEYWORD;
         if (isAwait) {
-            PyExpression operand = getOperand();
             if (operand != null) {
-                PyType operandType = context.getType(operand);
-                PyType type = getGeneratorReturnType(operandType, context);
+                Ref<PyType> type = getGeneratorReturnType(operandType);
                 if (type != null) {
-                    return type;
+                    return type.get();
                 }
             }
         }
-        PsiReference ref = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
-        PsiElement resolved = ref.resolve();
-        if (resolved instanceof PyCallable callable) {
-            // TODO: Make PyPrefixExpression a PyCallSiteExpression, use getCallType() here and analyze it in PyTypeChecker.analyzeCallSite()
-            PyType returnType = callable.getReturnType(context, key);
-            return isAwait ? getGeneratorReturnType(returnType, context) : returnType;
+        else {
+            PyType literalResultType = getLiteralOperationType(operandType);
+            if (literalResultType != null) {
+                return literalResultType;
+            }
+        }
+
+        return PyCallExpressionHelper.mapArguments(this, PyResolveContext.defaultContext(context)).stream()
+            .map(PyCallExpression.PyArgumentsMapping::getCallableType)
+            .filter(Objects::nonNull)
+            .map(callableType -> callableType.getCallType(context, this, Collections.emptyList()))
+            .map(callType -> {
+                if (!isAwait) {
+                    return callType;
+                }
+                Ref<PyType> returnType = getGeneratorReturnType(callType);
+                return returnType != null ? returnType.get() : PyAnyType.getUnknown();
+            })
+            .collect(PyTypeUtil.toUnion());
+    }
+
+    /**
+     * Evaluates {@code -}, {@code +} and {@code ~} on an {@code int} literal, and {@code not} on a {@code bool} literal.
+     * A union of such literals gives the union of the results.
+     * Returns {@code null} if a member of the operand type is not such a literal.
+     */
+    private @Nullable PyType getLiteralOperationType(@Nullable PyType operandType) {
+        if (operandType instanceof PyLiteralType literalType) {
+            return getLiteralOperationType(literalType);
+        }
+        if (operandType instanceof PyUnionType unionType) {
+            List<PyType> resultTypes = new ArrayList<>();
+            for (PyType member : unionType.getMembers()) {
+                PyType resultType = member instanceof PyLiteralType literalType ? getLiteralOperationType(literalType) : null;
+                if (resultType == null) {
+                    return null;
+                }
+                resultTypes.add(resultType);
+            }
+            return PyUnionType.unionOrUnknown(resultTypes);
         }
         return null;
     }
 
-    @Override
-    public PyExpression getQualifier() {
-        return getOperand();
-    }
-
-    @Nullable
-    @Override
-    public QualifiedName asQualifiedName() {
-        return PyPsiUtils.asQualifiedName(this);
-    }
-
-    @Override
-    public boolean isQualified() {
-        return getQualifier() != null;
-    }
-
-    @Override
-    @RequiredReadAction
-    public String getReferencedName() {
-        PyElementType t = getOperator();
-        if (t == PyTokenTypes.PLUS) {
-            return PyNames.POS;
+    private @Nullable PyLiteralType getLiteralOperationType(PyLiteralType literalType) {
+        if (literalType.isDefinition()) {
+            return null;
         }
-        else if (t == PyTokenTypes.MINUS) {
-            return PyNames.NEG;
-        }
-        return getOperator().getSpecialMethodName();
-    }
-
-    @Override
-    @RequiredReadAction
-    public ASTNode getNameElement() {
-        PsiElement op = getPsiOperator();
-        return op != null ? op.getNode() : null;
-    }
-
-    @Nullable
-    private static PyType getGeneratorReturnType(@Nullable PyType type, TypeEvalContext context) {
-        if (type instanceof PyClassLikeType classLikeType && type instanceof PyCollectionType collectionType) {
-            // TODO: Understand typing.Generator as well
-            String classQName = classLikeType.getClassQName();
-            if (PyNames.FAKE_GENERATOR.equals(classQName)) {
-                return ContainerUtil.getOrElse(collectionType.getElementTypes(context), 2, null);
+        PyElementType operator = getOperator();
+        BigInteger intValue = literalType.getIntValue();
+        if (intValue != null) {
+            if (operator == PyTokenTypes.PLUS) {
+                return literalType;
             }
-            else if (PyNames.FAKE_COROUTINE.equals(classQName)
-                || type instanceof PyClassType classType && PyNames.AWAITABLE.equals(classType.getPyClass().getName())) {
-                return collectionType.getIteratedItemType();
+            if (operator == PyTokenTypes.MINUS) {
+                return PyLiteralType.intLiteral(this, intValue.negate());
+            }
+            if (operator == PyTokenTypes.TILDE) {
+                return PyLiteralType.intLiteral(this, intValue.not());
             }
         }
-        else if (type instanceof PyUnionType unionType) {
-            List<PyType> memberReturnTypes = new ArrayList<>();
-            for (PyType member : unionType.getMembers()) {
-                memberReturnTypes.add(getGeneratorReturnType(member, context));
+        Boolean boolValue = literalType.getBoolValue();
+        if (boolValue != null && operator == PyTokenTypes.NOT_KEYWORD) {
+            return PyLiteralType.boolLiteral(this, !boolValue);
+        }
+        return null;
+    }
+
+    private static @Nullable Ref<PyType> getGeneratorReturnType(@Nullable PyType type) {
+        if (type instanceof PyClassType classType && classType.isParameterized()) {
+            if (PyNames.AWAITABLE.equals(classType.getPyClass().getName())) {
+                return Ref.create(classType.getIteratedItemType());
             }
-            return PyUnionType.union(memberReturnTypes);
+            else {
+                return PyTypingTypeProvider.coroutineOrGeneratorElementType(type);
+            }
+        }
+        else if (type instanceof PyUnionType) {
+            return PyTypeUtil
+                .toStream(type)
+                .map(PyPrefixExpressionImpl::getGeneratorReturnType)
+                .collect(PyTypeUtil.toUnionFromRef(type));
         }
         return null;
     }

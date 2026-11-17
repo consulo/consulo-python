@@ -60,10 +60,10 @@ public final class PyVersionSpecificStubBaseKt {
     private PyVersionSpecificStubBaseKt() {
     }
 
-    public static Iterable<StubElement> getChildrenStubs(StubElement<?> stub, LanguageLevel languageLevel) {
+    public static Iterable<StubElement<?>> getChildrenStubs(StubElement<?> stub, LanguageLevel languageLevel) {
         Version version = new Version(languageLevel.getMajorVersion(), languageLevel.getMinorVersion(), 0);
-        List<StubElement> result = new ArrayList<>();
-        for (StubElement it : stub.getChildrenStubs()) {
+        List<StubElement<?>> result = new ArrayList<>();
+        for (StubElement<?> it : stub.getChildrenStubs()) {
             if (!(it instanceof PyVersionSpecificStub versionSpecificStub) || versionSpecificStub.getVersions().contains(version)) {
                 result.add(it);
             }

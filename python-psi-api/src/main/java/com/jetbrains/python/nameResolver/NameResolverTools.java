@@ -1,23 +1,17 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.nameResolver;
 
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyQualifiedNameOwner;
+import com.jetbrains.python.psi.PyReferenceOwner;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.application.util.RecursionManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiModificationTracker;
@@ -25,217 +19,241 @@ import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiCacheKey;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
+import consulo.logging.Logger;
 import consulo.util.lang.Pair;
 import consulo.util.lang.function.Condition;
-
 import org.jspecify.annotations.Nullable;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
  * @author Ilya.Kazakevich
  */
 public final class NameResolverTools {
-  /**
-   * Cache: pair [qualified element name, class name (may be null)] by any psi element.
-   */
-  private static final PsiCacheKey<Pair<String, String>, PyElement> QUALIFIED_AND_CLASS_NAME =
-    PsiCacheKey.create(NameResolverTools.class.getName(), new QualifiedAndClassNameObtainer(),
-                       PsiModificationTracker.MODIFICATION_COUNT);
 
-  private NameResolverTools() {
+    private static final Logger LOG = Logger.getInstance(NameResolverTools.class);
 
-  }
+    /**
+     * Cache: pair [qualified element name, class name (may be null)] by any psi element.
+     */
+    private static final PsiCacheKey<Pair<@Nullable String, @Nullable String>, PyElement> QUALIFIED_AND_CLASS_NAME =
+        PsiCacheKey.create(
+            NameResolverTools.class.getName(),
+            new QualifiedAndClassNameObtainer(),
+            PsiModificationTracker.MODIFICATION_COUNT
+        );
 
-  /**
-   * For each provided element checks if FQ element name is one of provided names
-   *
-   * @param elements       element to check
-   * @param namesProviders some enum that has one or more names
-   * @return true if element's fqn is one of names, provided by provider
-   */
-  public static boolean isElementWithName(Collection<? extends PyElement> elements,
-                                          FQNamesProvider... namesProviders) {
-    for (PyElement element : elements) {
-      if (isName(element, namesProviders)) {
-        return true;
-      }
-    }
-    return false;
-  }
+    private NameResolverTools() {
 
-  /**
-   * Checks if FQ element name is one of provided names. May be <strong>heavy</strong>.
-   * It is always better to use less accurate but lighter {@link #isCalleeShortCut(PyCallExpression, FQNamesProvider)}
-   *
-   * @param element        element to check
-   * @param namesProviders some enum that has one or more names
-   * @return true if element's fqn is one of names, provided by provider
-   */
-  public static boolean isName(PyElement element, FQNamesProvider... namesProviders) {
-    assert element.isValid();
-    Pair<String, String> qualifiedAndClassName = QUALIFIED_AND_CLASS_NAME.getValue(element);
-    String qualifiedName = qualifiedAndClassName.first;
-    String className = qualifiedAndClassName.second;
-
-    for (FQNamesProvider provider : namesProviders) {
-      List<String> names = Arrays.asList(provider.getNames());
-      if (qualifiedName != null && names.contains(qualifiedName)) {
-        return true;
-      }
-      if (className != null && provider.isClass() && names.contains(className)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Looks for parent call of certain function
-   *
-   * @param anchor       element to look parent for
-   * @param functionName function to find
-   * @return parent call or null if not found
-   */
-  @Nullable
-  public static PyCallExpression findCallExpParent(PsiElement anchor, FQNamesProvider functionName) {
-    PsiElement parent = PsiTreeUtil.findFirstParent(anchor, new MyFunctionCondition(functionName));
-    if (parent instanceof PyCallExpression) {
-      return (PyCallExpression)parent;
-    }
-    return null;
-  }
-
-  /**
-   * Same as {@link #isName(PyElement, FQNamesProvider...)} for call expr, but first checks name.
-   * Aliases not supported, but much lighter that way
-   *
-   * @param call     expr
-   * @param function names to check
-   * @return true if callee is correct
-   */
-  public static boolean isCalleeShortCut(PyCallExpression call, FQNamesProvider function) {
-    PyExpression callee = call.getCallee();
-    if (callee == null) {
-      return false;
     }
 
-    String callableName = callee.getName();
-
-    Collection<String> possibleNames = new LinkedList<>();
-    for (String lastComponent : getLastComponents(function)) {
-      possibleNames.add(lastComponent);
-    }
-    return possibleNames.contains(callableName) && call.isCallee(function);
-  }
-
-  private static List<String> getLastComponents(FQNamesProvider provider) {
-    List<String> result = new ArrayList<>();
-    for (String name : provider.getNames()) {
-      String component = QualifiedName.fromDottedString(name).getLastComponent();
-      if (component != null) {
-        result.add(component);
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Checks if some string contains last component one of name
-   *
-   * @param text  test to check
-   * @param names
-   */
-  public static boolean isContainsName(String text, FQNamesProvider names) {
-    for (String lastComponent : getLastComponents(names)) {
-      if (text.contains(lastComponent)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks if some file contains last component one of name
-   *
-   * @param file  file to check
-   * @param names
-   */
-  public static boolean isContainsName(PsiFile file, FQNamesProvider names) {
-    return isContainsName(file.getText(), names);
-  }
-
-  /**
-   * Check if class has parent with some name
-   *
-   * @param child class to check
-   */
-  public static boolean isSubclass(PyClass child,
-                                   FQNamesProvider parentName,
-                                   TypeEvalContext context) {
-    for (String nameToCheck : parentName.getNames()) {
-      if (child.isSubclass(nameToCheck, context)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Looks for call of some function
-   */
-  private static class MyFunctionCondition implements Condition<PsiElement> {
-    private final FQNamesProvider myNameToSearch;
-
-    MyFunctionCondition(FQNamesProvider name) {
-      myNameToSearch = name;
-    }
-
-    @Override
-    public boolean value(PsiElement element) {
-      if (element instanceof PyCallExpression) {
-        return ((PyCallExpression)element).isCallee(myNameToSearch);
-      }
-      return false;
-    }
-  }
-
-  /**
-   * Returns pair [qualified name, class name (may be null)] by psi element
-   */
-  private static class QualifiedAndClassNameObtainer implements Function<PyElement, Pair<String, String>>
-  {
-    @Override
-    public Pair<String, String> apply(PyElement param) {
-      PyElement elementToCheck = param;
-
-      // Trying to use no implicit context if possible...
-      PsiReference reference;
-      if (param instanceof PyReferenceOwner) {
-        reference = ((PyReferenceOwner)param).getReference(PyResolveContext.noImplicits());
-      }
-      else {
-        reference = param.getReference();
-      }
-
-      if (reference != null) {
-        PsiElement resolvedElement = reference.resolve();
-        if (resolvedElement instanceof PyElement) {
-          elementToCheck = (PyElement)resolvedElement;
+    /**
+     * For each provided element checks if FQ element name is one of provided names
+     *
+     * @param elements       element to check
+     * @param namesProviders some enum that has one or more names
+     * @return true if element's fqn is one of names, provided by provider
+     */
+    public static boolean isElementWithName(Collection<? extends PyElement> elements, FQNamesProvider... namesProviders) {
+        for (PyElement element : elements) {
+            if (isName(element, namesProviders)) {
+                return true;
+            }
         }
-      }
-      String qualifiedName = null;
-      if (elementToCheck instanceof PyQualifiedNameOwner) {
-        qualifiedName = ((PyQualifiedNameOwner)elementToCheck).getQualifiedName();
-      }
-      String className = null;
-      if (elementToCheck instanceof PyFunction) {
-        PyClass aClass = ((PyFunction)elementToCheck).getContainingClass();
-        if (aClass != null) {
-          className = aClass.getQualifiedName();
-        }
-      }
-      return Pair.create(qualifiedName, className);
+        return false;
     }
-  }
+
+    /**
+     * Same as {@link #isName(PyElement, FQNamesProvider...)} for named elements, but only checks name.
+     * Aliases not supported, but much lighter that way
+     */
+    public static boolean isNameShortCut(PyElement element, FQNamesProvider... namesProviders) {
+        String name = element.getName();
+        if (name == null) {
+            return false;
+        }
+        return Arrays.stream(namesProviders).anyMatch(o -> getLastComponents(o).contains(name));
+    }
+
+    /**
+     * Checks if FQ element name is one of provided names. May be <strong>heavy</strong>.
+     * It is always better to use less accurate but lighter {@link #isCalleeShortCut(PyCallExpression, FQNamesProvider)}
+     * and {@link #isNameShortCut(PyElement, FQNamesProvider...)}
+     *
+     * @param element        element to check
+     * @param namesProviders some enum that has one or more names
+     * @return true if element's fqn is one of names, provided by provider
+     */
+    public static boolean isName(PyElement element, FQNamesProvider... namesProviders) {
+        assert element.isValid();
+        Pair<@Nullable String, @Nullable String> qualifiedAndClassName = RecursionManager.doPreventingRecursion(
+            element,
+            false,
+            () -> QUALIFIED_AND_CLASS_NAME.getValue(element)
+        );
+        if (qualifiedAndClassName == null) {
+            LOG.debug("Could not get qualified name for " + element);
+            return false;
+        }
+        String qualifiedName = qualifiedAndClassName.first;
+        String className = qualifiedAndClassName.second;
+
+        for (FQNamesProvider provider : namesProviders) {
+            List<String> names = Arrays.asList(provider.getNames());
+            if (qualifiedName != null &&
+                (names.contains(qualifiedName) || names.contains(PyNames.FQN.unqualifyBuiltinName(qualifiedName)))) {
+                // The second check lets providers that list a builtin by its short name (e.g. "super") keep matching,
+                // since QualifiedNameFinder now qualifies builtins as "builtins.<name>".
+                return true;
+            }
+            if (className != null && provider.isClass() && names.contains(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Looks for parent call of certain function
+     *
+     * @param anchor       element to look parent for
+     * @param functionName function to find
+     * @return parent call or null if not found
+     */
+    public static @Nullable PyCallExpression findCallExpParent(PsiElement anchor, FQNamesProvider functionName) {
+        PsiElement parent = PsiTreeUtil.findFirstParent(anchor, new MyFunctionCondition(functionName));
+        if (parent instanceof PyCallExpression) {
+            return (PyCallExpression)parent;
+        }
+        return null;
+    }
+
+    /**
+     * Same as {@link #isName(PyElement, FQNamesProvider...)} for call expr, but only checks name.
+     * Aliases not supported, but much lighter that way
+     *
+     * @param call     expr
+     * @param function names to check
+     * @return true if callee is correct
+     */
+    public static boolean isCalleeShortCut(PyCallExpression call, FQNamesProvider... function) {
+        PyExpression callee = call.getCallee();
+        if (callee == null) {
+            return false;
+        }
+
+        String callableName = callee.getName();
+
+        return Arrays.stream(function).anyMatch(o -> getLastComponents(o).contains(callableName));
+    }
+
+    private static List<String> getLastComponents(FQNamesProvider provider) {
+        List<String> result = new ArrayList<>();
+        for (String name : provider.getNames()) {
+            String component = QualifiedName.fromDottedString(name).getLastComponent();
+            if (component != null) {
+                result.add(component);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks if some string contains last component one of name
+     *
+     * @param text test to check
+     */
+    public static boolean isContainsName(String text, FQNamesProvider names) {
+        for (String lastComponent : getLastComponents(names)) {
+            if (text.contains(lastComponent)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if some file contains last component one of name
+     *
+     * @param file file to check
+     */
+    public static boolean isContainsName(PsiFile file, FQNamesProvider names) {
+        return isContainsName(file.getText(), names);
+    }
+
+    /**
+     * Check if class has parent with some name
+     *
+     * @param child class to check
+     */
+    public static boolean isSubclass(PyClass child, FQNamesProvider parentName, TypeEvalContext context) {
+        for (String nameToCheck : parentName.getNames()) {
+            if (child.isSubclass(nameToCheck, context)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Looks for call of some function
+     */
+    private static class MyFunctionCondition implements Condition<PsiElement> {
+        private FQNamesProvider myNameToSearch;
+
+        MyFunctionCondition(FQNamesProvider name) {
+            myNameToSearch = name;
+        }
+
+        @Override
+        public boolean value(PsiElement element) {
+            if (element instanceof PyCallExpression callExpression) {
+                return isCalleeShortCut(callExpression, myNameToSearch);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Returns pair [qualified name, class name (may be null)] by psi element
+     */
+    private static class QualifiedAndClassNameObtainer implements Function<PyElement, Pair<@Nullable String, @Nullable String>> {
+        @Override
+        public Pair<@Nullable String, @Nullable String> apply(PyElement param) {
+            PyElement elementToCheck = param;
+
+            // Trying to use no implicit context if possible...
+            PsiReference reference;
+            if (param instanceof PyReferenceOwner) {
+                TypeEvalContext context = TypeEvalContext.codeInsightFallback(param.getProject());
+                reference = ((PyReferenceOwner)param).getReference(PyResolveContext.defaultContext(context));
+            }
+            else {
+                reference = param.getReference();
+            }
+
+            if (reference != null) {
+                PsiElement resolvedElement = reference.resolve();
+                if (resolvedElement instanceof PyElement) {
+                    elementToCheck = (PyElement)resolvedElement;
+                }
+            }
+            String qualifiedName = null;
+            if (elementToCheck instanceof PyQualifiedNameOwner) {
+                qualifiedName = ((PyQualifiedNameOwner)elementToCheck).getQualifiedName();
+            }
+            String className = null;
+            if (elementToCheck instanceof PyFunction) {
+                PyClass aClass = ((PyFunction)elementToCheck).getContainingClass();
+                if (aClass != null) {
+                    className = aClass.getQualifiedName();
+                }
+            }
+            return Pair.create(qualifiedName, className);
+        }
+    }
 }

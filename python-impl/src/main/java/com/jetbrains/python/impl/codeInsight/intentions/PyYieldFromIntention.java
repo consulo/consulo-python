@@ -16,8 +16,10 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -30,6 +32,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author vlan
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.PyYieldFromIntention", categories = "Python", fileExtensions = "py")
 public class PyYieldFromIntention extends BaseIntentionAction {
     @Override
     public LocalizeValue getText() {

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.rest;
 
-import com.jetbrains.python.impl.documentation.doctest.PyDocstringLanguageDialect;
+import com.jetbrains.python.impl.documentation.doctest.PyDoctestLanguageDialect;
 import com.jetbrains.rest.psi.RestLine;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
@@ -54,13 +54,13 @@ public class PyRestDocstringLanguageInjector implements LanguageInjector {
                 if (!trimmedString.startsWith(">>>") && !trimmedString.startsWith("...") && gotExample && start < end) {
                     gotExample = false;
                     if (!endsWithSlash) {
-                        injectionPlacesRegistrar.addPlace(PyDocstringLanguageDialect.INSTANCE, TextRange.create(start, end), null, null);
+                        injectionPlacesRegistrar.addPlace(PyDoctestLanguageDialect.getInstance(), TextRange.create(start, end), null, null);
                     }
                 }
                 if (endsWithSlash) {
                     endsWithSlash = false;
                     injectionPlacesRegistrar.addPlace(
-                        PyDocstringLanguageDialect.INSTANCE,
+                        PyDoctestLanguageDialect.getInstance(),
                         TextRange.create(start, getEndOffset(currentPosition, string)), null, null
                     );
                 }
@@ -87,12 +87,12 @@ public class PyRestDocstringLanguageInjector implements LanguageInjector {
                 currentPosition += string.length();
             }
             if (gotExample && start < end) {
-                injectionPlacesRegistrar.addPlace(PyDocstringLanguageDialect.INSTANCE, TextRange.create(start, end), null, null);
+                injectionPlacesRegistrar.addPlace(PyDoctestLanguageDialect.getInstance(), TextRange.create(start, end), null, null);
             }
         }
     }
 
-    private int getEndOffset(int start, String s) {
+    private static int getEndOffset(int start, String s) {
         int length = s.length();
         int end = start + length;
         if (s.endsWith("\n")) {

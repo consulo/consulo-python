@@ -1,10 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.psi.impl;
 
+import com.jetbrains.python.ast.PyAstFile;
+import com.jetbrains.python.ast.PyAstStringElement;
 import com.jetbrains.python.psi.FutureFeature;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyStringElement;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiFile;
@@ -58,9 +58,9 @@ public class PyStringLiteralDecoder {
         return map;
     }
 
-    private final PyStringElement myNode;
+    private final PyAstStringElement myNode;
 
-    public PyStringLiteralDecoder(PyStringElement node) {
+    public PyStringLiteralDecoder(PyAstStringElement node) {
         myNode = node;
     }
 
@@ -156,7 +156,7 @@ public class PyStringLiteralDecoder {
             return true;
         }
         PsiFile file = myNode.getContainingFile();
-        if (file instanceof PyFile pyFile) {
+        if (file instanceof PyAstFile pyFile) {
             return pyFile.hasImportFromFuture(FutureFeature.UNICODE_LITERALS);
         }
         return false;

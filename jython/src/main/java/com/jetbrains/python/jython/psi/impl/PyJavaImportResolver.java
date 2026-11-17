@@ -20,7 +20,7 @@ import com.intellij.java.language.psi.JavaPsiFacade;
 import com.intellij.java.language.psi.PsiClass;
 import com.intellij.java.language.psi.PsiJavaPackage;
 import com.jetbrains.python.psi.impl.PyImportResolver;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.jython.module.extension.JythonModuleExtension;
 import consulo.language.psi.PsiElement;
@@ -39,7 +39,7 @@ public class PyJavaImportResolver implements PyImportResolver
 {
 	@Override
 	@Nullable
-	public PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context)
+	public PsiElement resolveImportReference(QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots)
 	{
 		String fqn = name.toString();
 		JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(context.getProject());

@@ -1,45 +1,31 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.StubBasedPsiElement;
+import com.jetbrains.python.ast.PyAstParameterList;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-
-import consulo.localize.LocalizeValue;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Represents function parameter list.
- * @since 2005-05-29
  */
-public interface PyParameterList extends PyElement, StubBasedPsiElement<PyParameterListStub> {
+public interface PyParameterList extends PyAstParameterList, PyElement, StubBasedPsiElement<PyParameterListStub> {
+
     /**
      * Extracts the individual parameters.
      * Note that tuple parameters are flattened by this method.
-     *
-     * @return a possibly empty array of named parameters.
+     * @return a possibly empty array of named paramaters.
      */
+    @Override
     PyParameter[] getParameters();
 
     @Nullable
     PyNamedParameter findParameterByName(String name);
 
     /**
-     * Adds a parameter to list, after all other parameters.
-     *
+     * Adds a paramter to list, after all other parameters.
      * @param param what to add
      */
     void addParameter(PyNamedParameter param);
@@ -54,8 +40,33 @@ public interface PyParameterList extends PyElement, StubBasedPsiElement<PyParame
      */
     boolean hasKeywordContainer();
 
-    LocalizeValue getPresentableText(boolean includeDefaultValue);
+    /**
+     * @param includeDefaultValue if true, include the default values after an "=".
+     * @return representation of parameter list
+     */
+    @RequiredReadAction
+    default String getPresentableText(boolean includeDefaultValue) {
+        return getPresentableText(includeDefaultValue, null);
+    }
+
+    /**
+     * @param includeDefaultValue if true, include the default values after an "=".
+     * @param context             context to be used to resolve argument type
+     * @return representation of parameter list
+     * Also includes expected argument type for every parameter if {@code context} is not null and resolved type is not unknown.
+     */
+    String getPresentableText(boolean includeDefaultValue, @Nullable TypeEvalContext context);
+
+    /**
+     * @deprecated migrate to `getContainingCallable`
+     */
+    @Deprecated
+    @Nullable
+    @RequiredReadAction
+    default PyFunction getContainingFunction() {
+        return getContainingCallable() instanceof PyFunction function ? function : null;
+    }
 
     @Nullable
-    PyFunction getContainingFunction();
+    PyCallable getContainingCallable();
 }

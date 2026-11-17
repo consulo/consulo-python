@@ -25,11 +25,10 @@ import java.util.regex.Pattern;
 
 /**
  * Substring with explicit offsets within its parent string.
- * <p>
+ * <p/>
  * Regular java.lang.String objects share a single char buffer for results of substring(), trim(), etc., but the offset and count
  * fields of Strings are unfortunately private.
  *
- * @author vlan
  */
 public class Substring implements CharSequence {
   private static final Pattern RE_NL = Pattern.compile("(\\r?\\n)");
@@ -94,8 +93,8 @@ public class Substring implements CharSequence {
   }
 
   public List<Substring> split(Pattern pattern, int maxSplits) {
-    List<Substring> result = new ArrayList<>();
-    Matcher m = pattern.matcher(myString);
+    final List<Substring> result = new ArrayList<>();
+    final Matcher m = pattern.matcher(myString);
     int start = myStartOffset;
     int end = myEndOffset;
     int splitCount = 0;
@@ -146,6 +145,7 @@ public class Substring implements CharSequence {
     return myEndOffset - myStartOffset;
   }
 
+  @Override
   public boolean isEmpty() {
     return length() <= 0;
   }
@@ -177,20 +177,18 @@ public class Substring implements CharSequence {
     return indexOf(s) >= 0;
   }
 
-  @SuppressWarnings({"MethodNamesDifferingOnlyByCase"})
   public Substring substring(int start) {
     return substring(start, length());
   }
 
-  @SuppressWarnings({"MethodNamesDifferingOnlyByCase"})
   public Substring substring(int start, int end) {
     return createAnotherSubstring(myStartOffset + start, myStartOffset + end);
   }
 
   public String concatTrimmedLines(String separator) {
-    StringBuilder b = new StringBuilder();
+    final StringBuilder b = new StringBuilder();
     List<Substring> lines = splitLines();
-    int n = lines.size();
+    final int n = lines.size();
     for (int i = 0; i < n; i++) {
       b.append(lines.get(i).trim().toString());
       if (i < n - 1) {
@@ -211,7 +209,7 @@ public class Substring implements CharSequence {
     if (!myString.equals(other.myString)) {
       throw new IllegalArgumentException(String.format("Substrings '%s' and '%s' must belong to the same origin", this, other));
     }
-    TextRange unionRange = getTextRange().union(other.getTextRange());
+    final TextRange unionRange = getTextRange().union(other.getTextRange());
     return new Substring(getSuperString(), unionRange.getStartOffset(), unionRange.getEndOffset());
   }
 

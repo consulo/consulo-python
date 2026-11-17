@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.ast.PyAstStatementListContainer;
 
 /**
  * @author Ilya.Kazakevich
  */
-public interface PyStatementListContainer extends PyElement
-{
-	PyStatementList getStatementList();
+public interface PyStatementListContainer extends PyAstStatementListContainer, PyElement {
+    @Override
+    PyStatementList getStatementList();
 }

@@ -1,5 +1,6 @@
 package com.jetbrains.python.ast;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
 import consulo.language.ast.TokenSet;
@@ -15,13 +16,14 @@ import java.util.function.Predicate;
 
 /**
  * Top-level functions of JB {@code PyAstElement.kt}.
- * <p>
- * TODO consulo: the {@code PyAstElement} interface itself (python-ast layer) is not ported yet.
+ *
+ * @see PyAstElement
  */
 public final class PyAstElementKt {
     private PyAstElementKt() {
     }
 
+    @RequiredReadAction
     public static <T> @Nullable T findChildByClass(PsiElement element, Class<T> aClass) {
         PsiElement cur = element.getFirstChild();
         while (cur != null) {
@@ -33,6 +35,7 @@ public final class PyAstElementKt {
         return null;
     }
 
+    @RequiredReadAction
     public static <T> T[] findChildrenByClass(PsiElement element, Class<T> aClass) {
         List<T> result = new ArrayList<>();
         PsiElement cur = element.getFirstChild();
@@ -45,29 +48,35 @@ public final class PyAstElementKt {
         return result.toArray(ArrayUtil.newArray(aClass, result.size()));
     }
 
+    @RequiredReadAction
     public static <T> T findNotNullChildByClass(PsiElement element, Class<T> aClass) {
         return nonNullChild(element, findChildByClass(element, aClass));
     }
 
     @SuppressWarnings("unchecked")
+    @RequiredReadAction
     public static <T extends PsiElement> @Nullable T findChildByType(PsiElement element, IElementType elementType) {
         ASTNode node = element.getNode().findChildByType(elementType);
         return node != null ? (T) node.getPsi() : null;
     }
 
+    @RequiredReadAction
     public static <T extends PsiElement> T findChildByTypeNotNull(PsiElement element, IElementType elementType) {
         return nonNullChild(element, findChildByType(element, elementType));
     }
 
+    @RequiredReadAction
     public static <T extends PsiElement> List<T> findChildrenByType(PsiElement element, TokenSet elementType) {
         return findChildrenByType(element, elementType::contains);
     }
 
+    @RequiredReadAction
     public static <T extends PsiElement> List<T> findChildrenByType(PsiElement element, IElementType elementType) {
         return findChildrenByType(element, it -> elementType == it);
     }
 
     @SuppressWarnings("unchecked")
+    @RequiredReadAction
     private static <T extends PsiElement> List<T> findChildrenByType(PsiElement element, Predicate<IElementType> filter) {
         List<T> result = null;
         ASTNode child = element.getNode().getFirstChildNode();
@@ -83,6 +92,7 @@ public final class PyAstElementKt {
         return result != null ? result : Collections.emptyList();
     }
 
+    @RequiredReadAction
     private static <T> T nonNullChild(PsiElement element, @Nullable T child) {
         return Objects.requireNonNull(child, () -> "child must not be null: expression text " + element.getText());
     }

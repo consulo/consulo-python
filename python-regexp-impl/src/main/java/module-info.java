@@ -10,4 +10,5 @@ module consulo.python.regexp {
     requires com.intellij.regexp;
 
     requires consulo.python.language.api;
+    requires consulo.python.impl;
 }

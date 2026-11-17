@@ -19,10 +19,10 @@ package com.jetbrains.python.impl.grazie;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.documentation.docstrings.SphinxDocString;
+import com.jetbrains.python.documentation.docstrings.SphinxDocString;
 import com.jetbrains.python.impl.documentation.docstrings.SphinxReferences;
-import com.jetbrains.python.inspections.PyStringFormatParser;
-import com.jetbrains.python.inspections.PyStringFormatParser.ConstantChunk;
+import com.jetbrains.python.impl.PyStringFormatParser;
+import com.jetbrains.python.impl.PyStringFormatParser.ConstantChunk;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyFormattedStringElement;
 import com.jetbrains.python.psi.PyStringElement;

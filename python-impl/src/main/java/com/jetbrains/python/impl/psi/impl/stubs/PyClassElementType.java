@@ -1,185 +1,220 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.psi.impl.stubs.*;
+import com.google.common.collect.RangeSet;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.Version;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.language.psi.stub.IndexSink;
+import consulo.language.psi.stub.StubElement;
+import consulo.language.psi.stub.StubInputStream;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.impl.PyStubElementTypes;
-import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.psi.PyFileElementType;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStubElementType;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyClassImpl;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
 import com.jetbrains.python.impl.psi.stubs.PyClassAttributesIndex;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndexInsensitive;
-import com.jetbrains.python.impl.psi.stubs.PySuperClassIndex;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.stubs.PyClassStub;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.index.io.StringRef;
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.stub.*;
-import consulo.language.psi.util.QualifiedName;
-
+import com.jetbrains.python.impl.psi.stubs.PyExportedModuleAttributeIndex;
+import com.jetbrains.python.psi.stubs.PyFileStub;
+import com.jetbrains.python.impl.psi.stubs.PySuperClassIndex;
 import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
-/**
- * @author max
- */
 public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
-{
+    implements PyCustomizableStubElementType<PyClass, PyCustomClassStub, PyCustomClassStubType<? extends PyCustomClassStub>> {
 
-	public PyClassElementType()
-	{
-		this("CLASS_DECLARATION");
-	}
+    public PyClassElementType() {
+        this("CLASS_DECLARATION");
+    }
 
-	public PyClassElementType(String debugName)
-	{
-		super(debugName);
-	}
+    public PyClassElementType(String debugName) {
+        super(debugName);
+    }
 
-	@Override
-    public PsiElement createElement(ASTNode node)
-	{
-		return new PyClassImpl(node);
-	}
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyClassImpl(node);
+    }
 
-	@Override
-    public PyClass createPsi(PyClassStub stub)
-	{
-		return new PyClassImpl(stub);
-	}
+    @Override
+    public PyClass createPsi(PyClassStub stub) {
+        return new PyClassImpl(stub);
+    }
 
-	@Override
-    @RequiredReadAction
-    public PyClassStub createStub(PyClass psi, StubElement parentStub)
-	{
-        return new PyClassStubImpl(
-            psi.getName(),
-            parentStub,
-            getSuperClassQNames(psi),
-            PyPsiUtils.toQualifiedName(psi.getMetaClassExpression()),
-            psi.getOwnSlots(),
-            PyPsiUtils.strValue(psi.getDocStringExpression()),
-            getStubElementType()
-        );
-	}
+    @Override
+    public PyClassStub createStub(PyClass psi, StubElement parentStub) {
+        return new PyClassStubImpl(psi.getName(),
+                                   parentStub,
+                                   getSuperClassQNames(psi),
+                                   ContainerUtil.map(psi.getSuperClassExpressions(), PsiElement::getText),
+                                   PyPsiUtils.asQualifiedName(psi.getMetaClassExpression()),
+                                   psi.getOwnSlots(),
+                                   psi.getOwnMatchArgs(),
+                                   PyPsiUtils.strValue(psi.getDocStringExpression()),
+                                   psi.getDeprecationMessage(),
+                                   getStubElementType(),
+                                   PyVersionSpecificStubBaseKt.evaluateVersionsForElement(psi),
+                                   createCustomStub(psi));
+    }
 
-	public static Map<QualifiedName, QualifiedName> getSuperClassQNames(PyClass pyClass)
-	{
-		Map<QualifiedName, QualifiedName> result = new LinkedHashMap<>();
+    public static Map<QualifiedName, QualifiedName> getSuperClassQNames(PyClass pyClass) {
+        Map<QualifiedName, QualifiedName> result = new LinkedHashMap<>();
 
-		Arrays.stream(pyClass.getSuperClassExpressions()).filter(expression -> !PyKeywordArgument.class.isInstance(expression)).map(PyClassImpl::unfoldClass).forEach(expression -> result.put
-				(PyPsiUtils.toQualifiedName(expression), resolveOriginalSuperClassQName(expression)));
+        for (PyExpression expression : PyClassImpl.getUnfoldedSuperClassExpressions(pyClass)) {
+            QualifiedName importedQName = PyPsiUtils.asQualifiedName(expression);
+            QualifiedName originalQName = resolveOriginalSuperClassQName(expression);
 
-		return result;
-	}
+            result.put(importedQName, originalQName);
+        }
 
-	@Nullable
-	private static QualifiedName resolveOriginalSuperClassQName(PyExpression superClassExpression)
-	{
-		if(superClassExpression instanceof PyReferenceExpression)
-		{
-			PyReferenceExpression reference = (PyReferenceExpression) superClassExpression;
-			String referenceName = reference.getName();
+        return result;
+    }
 
-			if(referenceName == null)
-			{
-				return PyPsiUtils.toQualifiedName(superClassExpression);
-			}
+    private static @Nullable QualifiedName resolveOriginalSuperClassQName(PyExpression superClassExpression) {
+        if (superClassExpression instanceof PyReferenceExpression reference) {
+            String referenceName = reference.getName();
 
-			Optional<QualifiedName> qualifiedName = PyResolveUtil.resolveLocally(reference).stream().filter(PyImportElement.class::isInstance).map(PyImportElement.class::cast).filter(element
-					-> element.getAsName() != null).map(PyImportElement::getImportedQName).findAny();
+            if (referenceName == null) {
+                return PyPsiUtils.asQualifiedName(superClassExpression);
+            }
 
-			if(qualifiedName.isPresent())
-			{
-				return qualifiedName.get();
-			}
-		}
+            Optional<QualifiedName> qualifiedName = PyResolveUtil.resolveLocally(reference).stream()
+                .filter(PyImportElement.class::isInstance)
+                .map(PyImportElement.class::cast)
+                .filter(element -> element.getAsName() != null)
+                .map(PyImportElement::getImportedQName)
+                .filter(Objects::nonNull)
+                .findAny();
 
-		return PyPsiUtils.toQualifiedName(superClassExpression);
-	}
+            if (qualifiedName.isPresent()) {
+                return qualifiedName.get();
+            }
+        }
 
-	@Override
-    public void serialize(PyClassStub pyClassStub, StubOutputStream dataStream) throws IOException
-	{
-		dataStream.writeName(pyClassStub.getName());
+        return PyPsiUtils.asQualifiedName(superClassExpression);
+    }
 
-		Map<QualifiedName, QualifiedName> superClasses = pyClassStub.getSuperClasses();
-		dataStream.writeByte(superClasses.size());
-		for(Map.Entry<QualifiedName, QualifiedName> entry : superClasses.entrySet())
-		{
-			QualifiedName.serialize(entry.getKey(), dataStream);
-			QualifiedName.serialize(entry.getValue(), dataStream);
-		}
+    @Override
+    public void serialize(PyClassStub pyClassStub, StubOutputStream dataStream) throws IOException {
+        dataStream.writeName(pyClassStub.getName());
 
-		QualifiedName.serialize(pyClassStub.getMetaClass(), dataStream);
+        Map<QualifiedName, QualifiedName> superClasses = pyClassStub.getSuperClasses();
+        dataStream.writeByte(superClasses.size());
+        for (Map.Entry<QualifiedName, QualifiedName> entry : superClasses.entrySet()) {
+            QualifiedName.serialize(entry.getKey(), dataStream);
+            QualifiedName.serialize(entry.getValue(), dataStream);
+        }
 
-		PyFileElementType.writeNullableList(dataStream, pyClassStub.getSlots());
+        List<String> baseClassesText = pyClassStub.getSuperClassesText();
+        dataStream.writeByte(baseClassesText.size());
+        for (String text : baseClassesText) {
+            dataStream.writeName(text);
+        }
 
-		String docString = pyClassStub.getDocString();
-		dataStream.writeUTFFast(docString != null ? docString : "");
-	}
+        QualifiedName.serialize(pyClassStub.getMetaClass(), dataStream);
 
-	@Override
-    public PyClassStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
-	{
-		String name = StringRef.toString(dataStream.readName());
+        PyFileElementType.writeNullableList(dataStream, pyClassStub.getSlots());
+        PyFileElementType.writeNullableList(dataStream, pyClassStub.getMatchArgs());
 
-		int superClassCount = dataStream.readByte();
-		Map<QualifiedName, QualifiedName> superClasses = new LinkedHashMap<>();
-		for(int i = 0; i < superClassCount; i++)
-		{
-			superClasses.put(QualifiedName.deserialize(dataStream), QualifiedName.deserialize(dataStream));
-		}
+        String docString = pyClassStub.getDocString();
+        dataStream.writeUTFFast(docString != null ? docString : "");
+        dataStream.writeName(pyClassStub.getDeprecationMessage());
 
-		QualifiedName metaClass = QualifiedName.deserialize(dataStream);
+        PyVersionSpecificStubBaseKt.serializeVersions(pyClassStub.getVersions(), dataStream);
 
-		List<String> slots = PyFileElementType.readNullableList(dataStream);
+        serializeCustomStub(pyClassStub.getCustomStub(PyCustomClassStub.class), dataStream);
+    }
 
-		String docStringInStub = dataStream.readUTFFast();
-		String docString = docStringInStub.length() > 0 ? docStringInStub : null;
+    @Override
+    public PyClassStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+        String name = dataStream.readNameString();
 
-		return new PyClassStubImpl(name, parentStub, superClasses, metaClass, slots, docString, getStubElementType());
-	}
+        int superClassCount = dataStream.readByte();
+        Map<QualifiedName, QualifiedName> superClasses = new LinkedHashMap<>();
+        for (int i = 0; i < superClassCount; i++) {
+            superClasses.put(QualifiedName.deserialize(dataStream), QualifiedName.deserialize(dataStream));
+        }
 
-	@Override
-    public void indexStub(PyClassStub stub, IndexSink sink)
-	{
-		String name = stub.getName();
-		if(name != null)
-		{
-			sink.occurrence(PyClassNameIndex.KEY, name);
-			sink.occurrence(PyClassNameIndexInsensitive.KEY, name.toLowerCase());
-		}
+        byte baseClassesCount = dataStream.readByte();
+        ArrayList<String> baseClassesText = new ArrayList<>();
+        for (int i = 0; i < baseClassesCount; i++) {
+            baseClassesText.add(dataStream.readNameString());
+        }
 
-		for(String attribute : PyClassAttributesIndex.getAllDeclaredAttributeNames(createPsi(stub)))
-		{
-			sink.occurrence(PyClassAttributesIndex.KEY, attribute);
-		}
 
-		stub.getSuperClasses().values().stream().filter(Objects::nonNull).map(QualifiedName::getLastComponent).filter(Objects::nonNull).forEach(className -> sink.occurrence(PySuperClassIndex.KEY,
-				className));
-	}
+        QualifiedName metaClass = QualifiedName.deserialize(dataStream);
 
-	protected IStubElementType getStubElementType()
-	{
-		return PyStubElementTypes.CLASS_DECLARATION;
-	}
+        List<String> slots = PyFileElementType.readNullableList(dataStream);
+        List<String> matchArgs = PyFileElementType.readNullableList(dataStream);
+
+        String docStringInStub = dataStream.readUTFFast();
+        String docString = StringUtil.nullize(docStringInStub);
+
+        String deprecationMessage = dataStream.readNameString();
+
+        RangeSet<Version> versions = PyVersionSpecificStubBaseKt.deserializeVersions(dataStream);
+
+        PyCustomClassStub customStub = deserializeCustomStub(dataStream);
+
+        return new PyClassStubImpl(name, parentStub, superClasses, baseClassesText, metaClass, slots, matchArgs, docString, deprecationMessage,
+                                   getStubElementType(), versions, customStub);
+    }
+
+    @Override
+    public void indexStub(PyClassStub stub, IndexSink sink) {
+        String name = stub.getName();
+        if (name != null) {
+            sink.occurrence(PyClassNameIndex.KEY, name);
+            sink.occurrence(PyClassNameIndexInsensitive.KEY, StringUtil.toLowerCase(name));
+            if (stub.getParentStub() instanceof PyFileStub && PyUtil.getInitialUnderscores(name) == 0) {
+                sink.occurrence(PyExportedModuleAttributeIndex.KEY, name);
+            }
+        }
+
+        for (String attribute : PyClassAttributesIndex.getAllDeclaredAttributeNames(stub.getPsi())) {
+            sink.occurrence(PyClassAttributesIndex.KEY, attribute);
+        }
+
+        stub.getSuperClasses().values()
+            .stream()
+            .filter(Objects::nonNull)
+            .map(QualifiedName::getLastComponent)
+            .filter(Objects::nonNull)
+            .forEach(className -> sink.occurrence(PySuperClassIndex.KEY, className));
+
+        for (PyCustomClassStubType stubType : getExtensions()) {
+            stubType.indexStub(stub, sink);
+        }
+    }
+
+    protected IStubElementType getStubElementType() {
+        return PyStubElementTypes.CLASS_DECLARATION;
+    }
+
+    @Override
+    public List<PyCustomClassStubType<? extends PyCustomClassStub>> getExtensions() {
+        return PyCustomClassStubType.EP_NAME.getExtensionList();
+    }
 }

@@ -1,69 +1,78 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyType;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
-import consulo.ide.ServiceManager;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.QualifiedName;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
-
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeRendererFeature;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-/**
- * @author yole
- */
 @ServiceAPI(ComponentScope.PROJECT)
 public abstract class PyPsiFacade {
-  public static PyPsiFacade getInstance(Project project) {
-    return ServiceManager.getService(project, PyPsiFacade.class);
-  }
+    public static PyPsiFacade getInstance(Project project) {
+        return project.getInstance(PyPsiFacade.class);
+    }
 
-  public abstract QualifiedNameResolver qualifiedNameResolver(String qNameString);
+    public abstract List<PsiElement> resolveQualifiedName(QualifiedName name,
+            PyQualifiedNameResolveContext context);
 
-  public abstract QualifiedNameResolver qualifiedNameResolver(QualifiedName qualifiedName);
+    public abstract PyQualifiedNameResolveContext createResolveContextFromFoothold(PsiElement foothold);
 
-  /**
-   * @deprecated use {@link #createClassByQName(String, PsiElement)} or skeleton may be found
-   */
-  @Deprecated
-  @Nullable
-  public abstract PyClass findClass(String qName);
+    public abstract PyClassType createClassType(PyClass pyClass, boolean isDefinition);
 
-  public abstract PyClassType createClassType(PyClass pyClass, boolean isDefinition);
+    public abstract @Nullable PyType createUnionType(Collection<PyType> members);
 
-  @Nullable
-  public abstract PyType createUnionType(Collection<PyType> members);
+    public abstract @Nullable PyType createTupleType(List<PyType> members, PsiElement anchor);
 
-  @Nullable
-  public abstract PyType createTupleType(List<PyType> members, PsiElement anchor);
+    public abstract @Nullable PyType parseTypeAnnotation(String annotation, PsiElement anchor);
 
-  @Nullable
-  public abstract PyType parseTypeAnnotation(String annotation, PsiElement anchor);
+    /**
+     * Render a {@link PyType} into a human-readable string, e.g. for presentation in the UI.
+     *
+     * @param type     the type to render, or {@code null} to render the "unknown" type
+     * @param context  context used to infer extra types
+     * @param features optional features tweaking the rendering, e.g.
+     *                 {@link PyTypeRendererFeature#TYPE_VAR_BOUNDS} to render {@code T ≤: str} instead of just {@code T}
+     * @return a plain-text representation of the type
+     */
+    public abstract String renderType(@Nullable PyType type,
+            TypeEvalContext context,
+            Set<PyTypeRendererFeature> features);
 
-  @Nullable
-  public abstract PyClass createClassByQName(String qName, PsiElement anchor);
+    /**
+     * Retrieve a top-level class by its qualified name. The name provided is supposed to be <em>fully qualified absolute name</em>
+     * of the class, neither relative to the containing file of the anchor element, nor dependent on its imports.
+     * <p>
+     * The only exception to the rule above are built-in classes as it's too cumbersome to explicitly specify "__builtin__" or "builtins"
+     * prefix for them each time, and, overall, it's rather intuitive that these classes can be found solely by their short names.
+     * <p>
+     * The anchor element is needed only to detect the corresponding module and its SDK.
+     *
+     * @param qName  qualified name of the required class
+     * @param anchor arbitrary element located in the same module/SDK as the required class
+     */
+    public @Nullable PyClass createClassByQName(QualifiedName qName, PsiElement anchor) {
+        return createClassByQName(qName.toString(), anchor);
+    }
 
-  @Nullable
-  public abstract String findShortestImportableName(VirtualFile targetFile, PsiElement anchor);
+    public abstract @Nullable PyClass createClassByQName(String qName, PsiElement anchor);
+
+    public abstract @Nullable String findShortestImportableName(VirtualFile targetFile, PsiElement anchor);
+
+    /**
+     * @deprecated Use {@link LanguageLevel#forElement(PsiElement)}
+     */
+    @Deprecated(forRemoval = true)
+    public abstract LanguageLevel getLanguageLevel(PsiElement element);
 }

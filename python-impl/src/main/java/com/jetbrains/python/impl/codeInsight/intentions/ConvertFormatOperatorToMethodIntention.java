@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import static com.jetbrains.python.impl.psi.PyUtil.guessLanguageLevel;
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
 import java.util.ArrayList;
@@ -25,6 +24,8 @@ import java.util.regex.Pattern;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.intention.IntentionMetaData;
 import consulo.python.impl.localize.PyLocalize;
 import org.jspecify.annotations.Nullable;
 
@@ -42,7 +43,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.inspections.PyStringFormatParser;
+import com.jetbrains.python.impl.PyStringFormatParser;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
@@ -60,6 +61,8 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  * @author Alexey.Ivanov
  * @author dcheryasov
  */
+@ExtensionImpl
+@IntentionMetaData(ignoreId = "python.ConvertFormatOperatorToMethodIntention", categories = "Python", fileExtensions = "py")
 public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionAction {
     private static final Pattern FORMAT_PATTERN =
         Pattern.compile("%(?:\\((\\w+)\\))?([-#0+ ]*)((?:\\*|\\d+)?(?:\\.(?:\\*|\\d+))?)?[hlL]?([diouxXeEfFgGcrs%])");
@@ -316,8 +319,10 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
         PyType rhsType = context.getType(rhs);
         String prefix = "";
-        LanguageLevel languageLevel = guessLanguageLevel(project);
-        if (!languageLevel.isPy3K() && PyTypeChecker.match(PyBuiltinCache.getInstance(rhs).getObjectType("unicode"), rhsType, context)) {
+        LanguageLevel languageLevel = LanguageLevel.forElement(element);
+        PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(rhs);
+        if (languageLevel.isPython2() && PyTypeChecker.match(builtinCache.getUnicodeType(languageLevel), rhsType, context) &&
+            !PyTypeChecker.match(builtinCache.getBytesType(languageLevel), rhsType, context)) {
             prefix = "u";
         }
         PyStringLiteralExpression leftExpression = (PyStringLiteralExpression) element.getLeftExpression();

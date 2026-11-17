@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.move;
 
+import com.jetbrains.python.impl.refactoring.PyPsiRefactoringUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
@@ -287,7 +288,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 						{
 							// Leave relative imports as they are after #updateRelativeImportsInModule
 							TypeEvalContext typeEvalContext = TypeEvalContext.userInitiated(usageFile.getProject(), usageFile);
-							PyResolveContext resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(typeEvalContext);
+							PyResolveContext resolveContext = PyResolveContext.implicitContext(typeEvalContext);
 							if(ContainerUtil.getFirstItem(PyUtil.multiResolveTopPriority(usageElement, resolveContext)) == movedElement)
 							{
 								continue;
@@ -328,7 +329,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 						}
 						else
 						{
-							QualifiedName newName = QualifiedName.fromComponents(PyClassRefactoringUtil.getOriginalName(movedElement));
+							QualifiedName newName = QualifiedName.fromComponents(PyPsiRefactoringUtil.getOriginalName(movedElement));
 							replaceWithQualifiedExpression(usageElement, newName);
 						}
 					}
@@ -351,7 +352,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 
 	private static PsiElement replaceWithQualifiedExpression(PsiElement oldElement, @Nullable QualifiedName newElementName)
 	{
-		if(newElementName != null && PyClassRefactoringUtil.isValidQualifiedName(newElementName))
+		if(newElementName != null && PyPsiRefactoringUtil.isValidQualifiedName(newElementName))
 		{
 			PyElementGenerator generator = PyElementGenerator.getInstance(oldElement.getProject());
 			PsiElement newElement = generator.createExpressionFromText(LanguageLevel.forElement(oldElement), newElementName.toString());

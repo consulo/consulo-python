@@ -1,175 +1,181 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import consulo.annotation.component.ComponentScope;
-import consulo.annotation.component.ServiceAPI;
-import consulo.ide.ServiceManager;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
-
 import org.jspecify.annotations.Nullable;
 
-@ServiceAPI(ComponentScope.PROJECT)
-public abstract class PyElementGenerator {
-  public static PyElementGenerator getInstance(Project project) {
-    return ServiceManager.getService(project, PyElementGenerator.class);
-  }
+public abstract class PyElementGenerator extends PyAstElementGenerator {
+    @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
+    public static PyElementGenerator getInstance(Project project) {
+        return (PyElementGenerator)PyAstElementGenerator.getInstance(project);
+    }
 
-  public abstract ASTNode createNameIdentifier(String name, LanguageLevel languageLevel);
+    public PyElementGenerator(Project project) {
+        super(project);
+    }
 
-  /**
-   * str must have quotes around it and be fully escaped.
-   */
-  public abstract PyStringLiteralExpression createStringLiteralAlreadyEscaped(String str);
+    public abstract ASTNode createNameIdentifier(String name, LanguageLevel languageLevel);
+
+    /**
+     * str must have quotes around it and be fully escaped.
+     */
+    public abstract PyStringLiteralExpression createStringLiteralAlreadyEscaped(String str);
 
 
-  /**
-   * Creates a string literal, adding appropriate quotes, properly escaping characters inside.
-   *
-   * @param destination where the literal is destined to; used to determine the encoding.
-   * @param unescaped   the string
-   * @param preferUTF8  try to use UTF8 (would use ascii if false)
-   * @return a newly created literal
-   */
-  public abstract PyStringLiteralExpression createStringLiteralFromString(@Nullable PsiFile destination,
-                                                                          String unescaped,
-                                                                          boolean preferUTF8);
+    /**
+     * Creates a string literal, adding appropriate quotes, properly escaping characters inside.
+     *
+     * @param destination        where the literal is destined to; used to determine the encoding.
+     * @param unescaped          the string
+     * @param preferUTF8         try to use UTF8 (would use ascii if false)
+     * @param preferDoubleQuotes try to use double/single quotes
+     * @return a newly created literal
+     */
+    protected abstract PyStringLiteralExpression createStringLiteralFromString(@Nullable PsiFile destination,
+                                                                               String unescaped,
+                                                                               boolean preferUTF8, boolean preferDoubleQuotes);
 
-  public abstract PyStringLiteralExpression createStringLiteralFromString(String unescaped);
+    public abstract PyStringLiteralExpression createStringLiteralFromString(String unescaped, boolean preferDoubleQuotes);
 
-  public abstract PyStringLiteralExpression createStringLiteral(PyStringLiteralExpression oldElement, String unescaped);
+    public abstract PyStringLiteralExpression createStringLiteralFromString(String unescaped);
 
-  public abstract PyListLiteralExpression createListLiteral();
+    public abstract PyStringLiteralExpression createStringLiteral(StringLiteralExpression oldElement, String unescaped);
 
-  public abstract ASTNode createComma();
+    public abstract PyListLiteralExpression createListLiteral();
 
-  public abstract ASTNode createDot();
+    public abstract ASTNode createDot();
 
-  public abstract PyBinaryExpression createBinaryExpression(String s, PyExpression expr, PyExpression listLiteral);
+    public abstract PyBinaryExpression createBinaryExpression(String operator,
+                                                              PyExpression leftOperand,
+                                                              PyExpression rightOperand);
 
-  /**
-   * @param text the text to create an expression from
-   * @return the expression
-   * @deprecated use the overload with language level specified
-   */
-  public abstract PyExpression createExpressionFromText(String text);
+    @Override
+    public PyExpression createExpressionFromText(LanguageLevel languageLevel, String text)
+        throws IncorrectOperationException {
+        return (PyExpression)super.createExpressionFromText(languageLevel, text);
+    }
 
-  public abstract PyExpression createExpressionFromText(LanguageLevel languageLevel, String text);
+    public abstract PyPattern createPatternFromText(LanguageLevel languageLevel, String text)
+        throws IncorrectOperationException;
 
-  /**
-   * Adds elements to list inserting required commas.
-   * Method is like {@link #insertItemIntoList(PyElement, PyExpression, PyExpression)} but does not add unneeded commas.
-   *
-   * @param list      where to add
-   * @param afterThis after which element it should be added (null for add to the head)
-   * @param toInsert  what to insert
-   * @return newly inserted element
-   */
-  public abstract PsiElement insertItemIntoListRemoveRedundantCommas(PyElement list,
-                                                                     @Nullable PyExpression afterThis,
-                                                                     PyExpression toInsert);
+    /**
+     * Adds elements to list inserting required commas.
+     * Method is like {@link #insertItemIntoList(PyElement, PyExpression, PyExpression)} but does not add unneeded commas.
+     *
+     * @param list      where to add
+     * @param afterThis after which element it should be added (null for add to the head)
+     * @param toInsert  what to insert
+     * @return newly inserted element
+     */
+    public abstract PsiElement insertItemIntoListRemoveRedundantCommas(
+        PyElement list,
+        @Nullable PyExpression afterThis,
+        PyExpression toInsert);
 
-  public abstract PsiElement insertItemIntoList(PyElement list,
-                                                @Nullable PyExpression afterThis,
-                                                PyExpression toInsert) throws IncorrectOperationException;
+    public abstract PsiElement insertItemIntoList(PyElement list, @Nullable PyExpression afterThis, PyExpression toInsert)
+        throws IncorrectOperationException;
 
-  public abstract PyCallExpression createCallExpression(LanguageLevel langLevel, String functionName);
+    public abstract PyCallExpression createCallExpression(LanguageLevel langLevel, String functionName);
 
-  public abstract PyImportElement createImportElement(LanguageLevel languageLevel, String name);
+    public abstract PyImportElement createImportElement(LanguageLevel languageLevel, String name, @Nullable String alias);
 
-  public abstract PyFunction createProperty(LanguageLevel languageLevel,
-                                            String propertyName,
-                                            String fieldName,
-                                            AccessDirection accessDirection);
+    public abstract PyFunction createProperty(LanguageLevel languageLevel,
+                                              String propertyName,
+                                              String fieldName,
+                                              AccessDirection accessDirection);
 
-  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text);
+    public abstract PyNamedParameter createParameter(String name, @Nullable String defaultValue, @Nullable String annotation,
+                                                     LanguageLevel level);
 
-  public abstract <T> T createPhysicalFromText(LanguageLevel langLevel, Class<T> aClass, String text);
+    public abstract PyNamedParameter createParameter(String name);
 
-  /**
-   * Creates an arbitrary PSI element from text, by creating a bigger construction and then cutting the proper subelement.
-   * Will produce all kinds of exceptions if the path or class would not match the PSI tree.
-   *
-   * @param langLevel the language level to use for parsing the text
-   * @param aClass    class of the PSI element; may be an interface not descending from PsiElement, as long as target node can be cast to it
-   * @param text      text to parse
-   * @param path      a sequence of numbers, each telling which child to select at current tree level; 0 means first child, etc.
-   * @return the newly created PSI element
-   */
-  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text, int[] path);
+    /**
+     * @param text parameters list already in parentheses, e.g. {@code (foo, *args, **kwargs)}.
+     */
+    public abstract PyParameterList createParameterList(LanguageLevel languageLevel, String text);
 
-  public abstract PyNamedParameter createParameter(String name,
-                                                   @Nullable String defaultValue,
-                                                   @Nullable String annotation,
-                                                   LanguageLevel level);
+    /**
+     * @param text argument list already in parentheses, e.g. {@code (1, 2, *xs)}.
+     */
+    public abstract PyArgumentList createArgumentList(LanguageLevel languageLevel, String text);
 
-  public abstract PyNamedParameter createParameter(String name);
+    public abstract PyKeywordArgument createKeywordArgument(LanguageLevel languageLevel, String keyword, String value);
 
-  /**
-   * @param text parameters list already in parentheses, e.g. {@code (foo, *args, **kwargs)}.
-   */
-  public abstract PyParameterList createParameterList(LanguageLevel languageLevel, String text);
+    @Override
+    public PyExpressionStatement createDocstring(String content) {
+        return (PyExpressionStatement)super.createDocstring(content);
+    }
 
-  /**
-   * @param text argument list already in parentheses, e.g. {@code (1, 2, *xs)}.
-   */
-  public abstract PyArgumentList createArgumentList(LanguageLevel languageLevel, String text);
+    @Override
+    public PyPassStatement createPassStatement() {
+        return (PyPassStatement)super.createPassStatement();
+    }
 
-  public abstract PyKeywordArgument createKeywordArgument(LanguageLevel languageLevel, String keyword, String value);
+    public abstract PyDecoratorList createDecoratorList(String... decoratorTexts);
 
-  public abstract PsiFile createDummyFile(LanguageLevel langLevel, String contents);
+    /**
+     * Creates new line whitespace
+     */
+    public abstract PsiElement createNewLine();
 
-  public abstract PyExpressionStatement createDocstring(String content);
+    /**
+     * Creates import statement of form {@code from qualifier import name as alias}.
+     *
+     * @param languageLevel language level for created element
+     * @param qualifier     from where {@code name} will be imported (module name)
+     * @param name          text of the reference in import element
+     * @param alias         optional alias for {@code as alias} part
+     * @return created {@link PyFromImportStatement}
+     */
+    public PyFromImportStatement createFromImportStatement(LanguageLevel languageLevel,
+                                                           String qualifier,
+                                                           String name,
+                                                           @Nullable String alias) {
+        return createFromImportStatement(languageLevel, qualifier, name, alias, false);
+    }
 
-  public abstract PyPassStatement createPassStatement();
+    /**
+     * Same as {@link #createFromImportStatement(LanguageLevel, String, String, String)} but with an optional
+     * {@code lazy} prefix (PEP 810).
+     */
+    public abstract PyFromImportStatement createFromImportStatement(LanguageLevel languageLevel,
+                                                                    String qualifier,
+                                                                    String name,
+                                                                    @Nullable String alias,
+                                                                    boolean lazy);
 
-  public abstract PyDecoratorList createDecoratorList(String... decoratorTexts);
+    /**
+     * Creates import statement of form {@code import name as alias}.
+     *
+     * @param languageLevel language level for created element
+     * @param name          text of the reference in import element (module name)
+     * @param alias         optional alias for {@code as alias} part
+     * @return created {@link PyImportStatement}
+     * @deprecated use #createImportStatement(com.jetbrains.python.psi.LanguageLevel, java.lang.String, java.lang.String, boolean)
+     */
+    @Deprecated
+    public PyImportStatement createImportStatement(LanguageLevel languageLevel,
+                                                   String name,
+                                                   @Nullable String alias) {
+        return createImportStatement(languageLevel, name, alias, false);
+    }
 
-  /**
-   * Creates new line whitespace
-   */
-  public abstract PsiElement createNewLine();
+    /**
+     * Same as {@link #createImportStatement(LanguageLevel, String, String)} but with an optional
+     * {@code lazy} prefix (PEP 810).
+     */
+    public abstract PyImportStatement createImportStatement(LanguageLevel languageLevel,
+                                                            String name,
+                                                            @Nullable String alias,
+                                                            boolean lazy);
 
-  /**
-   * Creates import statement of form {@code from qualifier import name as alias}.
-   *
-   * @param languageLevel language level for created element
-   * @param qualifier     from where {@code name} will be imported (module name)
-   * @param name          text of the reference in import element
-   * @param alias         optional alias for {@code as alias} part
-   * @return created {@link com.jetbrains.python.psi.PyFromImportStatement}
-   */
-  public abstract PyFromImportStatement createFromImportStatement(LanguageLevel languageLevel,
-                                                                  String qualifier,
-                                                                  String name,
-                                                                  @Nullable String alias);
+    public abstract PyEllipsisLiteralExpression createEllipsis();
 
-  /**
-   * Creates import statement of form {@code import name as alias}.
-   *
-   * @param languageLevel language level for created element
-   * @param name          text of the reference in import element (module name)
-   * @param alias         optional alias for {@code as alias} part
-   * @return created {@link com.jetbrains.python.psi.PyImportStatement}
-   */
-  public abstract PyImportStatement createImportStatement(LanguageLevel languageLevel,
-                                                          String name,
-                                                          @Nullable String alias);
+    public abstract PySingleStarParameter createSingleStarParameter();
+
+    public abstract PySlashParameter createSlashParameter();
 }

@@ -15,13 +15,15 @@
  */
 package com.jetbrains.python.psi;
 
+import com.jetbrains.python.ast.PyAstAnnotationOwner;
+import consulo.language.psi.PsiElement;
 import org.jspecify.annotations.Nullable;
 
 /**
  * @author Mikhail Golubev
  */
-public interface PyAnnotationOwner
-{
-	@Nullable
-	PyAnnotation getAnnotation();
+public interface PyAnnotationOwner extends PyAstAnnotationOwner, PsiElement {
+    @Override
+    @Nullable
+    PyAnnotation getAnnotation();
 }

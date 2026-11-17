@@ -23,7 +23,7 @@ import consulo.colorScheme.EditorColorsScheme;
 import consulo.codeEditor.EditorHighlighter;
 import consulo.virtualFileSystem.fileType.FileType;
 import consulo.language.psi.PsiFile;
-import com.jetbrains.python.impl.highlighting.PyHighlighter;
+import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
 

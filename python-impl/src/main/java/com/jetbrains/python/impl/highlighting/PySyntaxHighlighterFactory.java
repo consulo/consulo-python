@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.highlighting;
 
+import com.jetbrains.python.PyLanguageFacade;
+import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.parsing.console.PyConsoleHighlightingLexer;
 import com.jetbrains.python.lexer.PythonHighlightingLexer;
@@ -42,7 +44,7 @@ public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   @Override
   public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
     LanguageLevel level =
-      project != null && virtualFile != null ? PyUtil.getLanguageLevelForVirtualFile(project, virtualFile) : LanguageLevel.getDefault();
+      project != null && virtualFile != null ? PyLanguageFacade.getInstance().getEffectiveLanguageLevel(project, virtualFile) : LanguageLevel.getDefault();
     return myMap.computeIfAbsent(level, PyHighlighter::new);
   }
 

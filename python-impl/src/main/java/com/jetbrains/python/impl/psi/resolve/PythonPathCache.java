@@ -1,58 +1,67 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.resolve;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 import consulo.virtualFileSystem.VirtualFile;
-import consulo.virtualFileSystem.event.*;
+import consulo.virtualFileSystem.event.VirtualFileCopyEvent;
+import consulo.virtualFileSystem.event.VirtualFileEvent;
+import consulo.virtualFileSystem.event.VirtualFileListener;
+import consulo.virtualFileSystem.event.VirtualFileMoveEvent;
+import consulo.virtualFileSystem.event.VirtualFilePropertyEvent;
+import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author yole
- */
 public abstract class PythonPathCache {
-  private final Map<QualifiedName, List<PsiElement>> myCache = new HashMap<QualifiedName, List<PsiElement>>();
-  private final Map<VirtualFile, List<QualifiedName>> myQNameCache = new HashMap<VirtualFile, List<QualifiedName>>();
+  private final Map<QualifiedName, SoftReference<List<PsiElement>>> myCache = new ConcurrentHashMap<>();
+  private final Map<String, List<QualifiedName>> myQNameCache = new ConcurrentHashMap<>();
 
   public void clearCache() {
     myCache.clear();
     myQNameCache.clear();
   }
 
-  public synchronized List<PsiElement> get(QualifiedName qualifiedName) {
-    return myCache.get(qualifiedName);
+  /***
+   * @return null if nothing found in cache. If path resolves to nothing you get empty list
+   */
+  public @Nullable List<PsiElement> get(final QualifiedName qualifiedName) {
+    final SoftReference<List<PsiElement>> references = myCache.get(qualifiedName);
+    if (references == null) {
+      return null;
+    }
+    final List<PsiElement> elements = references.get();
+    if (elements != null && !elements.stream().allMatch(PsiElement::isValid)) {
+      // At least one element is invalid
+      return null;
+    }
+    return elements != null ? Collections.unmodifiableList(elements) : null;
   }
 
-  public synchronized void put(QualifiedName qualifiedName, List<PsiElement> results) {
-    myCache.put(qualifiedName, results);
+  public void put(QualifiedName qualifiedName, @Nullable List<PsiElement> results) {
+    if (results != null) {
+      myCache.put(qualifiedName, new SoftReference<>(results));
+    }
   }
 
-  public synchronized List<QualifiedName> getNames(VirtualFile vFile) {
-    return myQNameCache.get(vFile);
+  public @Nullable List<QualifiedName> getNames(@Nullable VirtualFile vFile) {
+    if (vFile == null) {
+      return null;
+    }
+    final List<QualifiedName> names = myQNameCache.get(vFile.getUrl());
+    return names != null ? Collections.unmodifiableList(names) : null;
   }
 
-  public synchronized void putNames(VirtualFile vFile, List<QualifiedName> qNames) {
-    myQNameCache.put(vFile, qNames);
+  public void putNames(VirtualFile vFile, List<QualifiedName> qNames) {
+    myQNameCache.put(vFile.getUrl(), new ArrayList<>(qNames));
   }
 
-  protected class MyVirtualFileAdapter extends VirtualFileAdapter {
+  protected class MyVirtualFileListener implements VirtualFileListener {
     @Override
     public void fileCreated(VirtualFileEvent event) {
       clearCache();

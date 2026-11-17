@@ -1,91 +1,63 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
-import consulo.language.ast.ASTNode;
-import consulo.language.ast.TokenSet;
-import consulo.language.psi.PsiNamedElement;
-import consulo.util.collection.ArrayUtil;
 
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.ast.TokenSet;
+import consulo.util.collection.ArrayUtil;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyGlobalStatement;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.impl.psi.PyUtil;
 import org.jspecify.annotations.Nullable;
-import java.util.Arrays;
+
 import java.util.List;
 
-/**
- * @author yole
- */
-public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStatement
-{
-	private static final TokenSet TARGET_EXPRESSION_SET = TokenSet.create(PyElementTypes.TARGET_EXPRESSION);
 
-	public PyGlobalStatementImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+// TODO consulo: com.intellij.psi.PsiListLikeElement missing
+public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStatement {
+    private static final TokenSet TARGET_EXPRESSION_SET = TokenSet.create(PyElementTypes.TARGET_EXPRESSION);
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyGlobalStatement(this);
-	}
+    public PyGlobalStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	@Override
-    @RequiredReadAction
-    public PyTargetExpression[] getGlobals()
-	{
-		return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyGlobalStatement(this);
+    }
 
-	@Override
-    @RequiredReadAction
-    public List<PsiNamedElement> getNamedElements()
-	{
-		return Arrays.<PsiNamedElement>asList(getGlobals());
-	}
+    @Override
+    public PyTargetExpression[] getGlobals() {
+        return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);
+    }
 
-	@Nullable
-    @RequiredReadAction
-	public PsiNamedElement getNamedElement(String the_name)
-	{
-		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
-	}
+    public @Nullable PsiNamedElement getNamedElement(String the_name) {
+        return PyUtil.IterHelper.findName(getNamedElements(), the_name);
+    }
 
-	@Override
-    @RequiredWriteAction
-    public void addGlobal(String name)
-	{
-		PyElementGenerator pyElementGenerator = PyElementGenerator.getInstance(getProject());
-		add(pyElementGenerator.createComma().getPsi());
-		add(pyElementGenerator.createFromText(LanguageLevel.getDefault(), PyGlobalStatement.class, "global " + name).getGlobals()[0]);
-	}
+    @Override
+    public void addGlobal(String name) {
+        PyElementGenerator pyElementGenerator = PyElementGenerator.getInstance(getProject());
+        add(pyElementGenerator.createComma().getPsi());
+        add(pyElementGenerator.createFromText(LanguageLevel.getDefault(), PyGlobalStatement.class, "global " + name).getGlobals()[0]);
+    }
 
-	@Override
-    @RequiredWriteAction
-	public void deleteChildInternal(ASTNode child)
-	{
-		if(ArrayUtil.contains(child.getPsi(), getGlobals()))
-		{
-			PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, child.getPsi());
-		}
-		super.deleteChildInternal(child);
-	}
+    @Override
+    public void deleteChildInternal(ASTNode child) {
+        if (ArrayUtil.contains(child.getPsi(), getGlobals())) {
+            PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, child.getPsi());
+        }
+        super.deleteChildInternal(child);
+    }
+
+    public List<? extends PsiElement> getComponents() {
+        return getNamedElements();
+    }
 }

@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.refactoring.rename;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ExtensionImpl;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author yole
  */
-@ExtensionImpl(id = "pyClass", order = "before pyVar")
+@ExtensionImpl(id = "pyClass", order = "before pyvar")
 public class RenamePyClassProcessor extends RenamePyElementProcessor
 {
 	@Override

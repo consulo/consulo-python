@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersUtil;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
@@ -97,7 +98,7 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
     String defaultFilePath = FileUtil.toSystemDependentName(myClassUnderRefactoring.getContainingFile().getVirtualFile().getPath());
     VirtualFile[] roots = ProjectRootManager.getInstance(myClassUnderRefactoring.getProject()).getContentRoots();
     Collection<PyMemberInfo<PyElement>> pyMemberInfos =
-      PyUtil.filterOutObject(myStorage.getClassMemberInfos(myClassUnderRefactoring));
+      PyMembersUtil.filterOutObject(myStorage.getClassMemberInfos(myClassUnderRefactoring));
     myView.configure(new PyExtractSuperclassInitializationInfo(myModel, pyMemberInfos, defaultFilePath, roots));
     myView.initAndShow();
   }
