@@ -2,9 +2,9 @@
 package com.jetbrains.python.psi.impl;
 
 import consulo.application.Application;
-import consulo.application.util.function.ThrowableComputable;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.util.lang.function.ThrowableSupplier;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +24,7 @@ public final class IntentionalUnstubbing {
     private IntentionalUnstubbing() {
     }
 
-    public static <R, E extends Throwable> R onFileOf(PsiElement element, ThrowableComputable<R, E> computable) throws E {
+    public static <R, E extends Throwable> R onFileOf(PsiElement element, ThrowableSupplier<R, E> supplier) throws E {
         PsiFile psiFile = element.getContainingFile();
         if (Application.get().isUnitTestMode()) {
             ourForciblyUnstubbed.add(psiFile);
@@ -32,8 +32,8 @@ public final class IntentionalUnstubbing {
         // We don't rely on AstLoadingFilter behavior for code analysis at the moment, as
         // its disallowTreeLoading is not set up for inspection threads, but
         // calling forceAllowTreeLoading here will ease potential future migration to that API.
-        // TODO consulo: AstLoadingFilter.forceAllowTreeLoading(PsiFile, ThrowableComputable) missing (internal in consulo.language.impl)
-        return computable.compute();
+        // TODO consulo: AstLoadingFilter.forceAllowTreeLoading(PsiFile, ThrowableSupplier) missing (internal in consulo.language.impl)
+        return supplier.get();
     }
 
     public static Set<PsiFile> getForciblyUnstubbedFiles() {
