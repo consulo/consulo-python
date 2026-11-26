@@ -3,8 +3,13 @@
   "project" : "consulo-python",
   "projectVersion" : "master",
   "sourceLocale" : "en-US",
-  "generatedAt" : "2026-11-17T12:46:38.293009416Z",
+  "generatedAt" : "2026-11-25T20:50:20.536343186Z",
   "documents" : {
+    "consulo.python.debugger.PydevLocalize" : {
+      "source" : {
+        "sig" : "aba7ac3e0961fe31c0c771e163d67606"
+      }
+    },
     "consulo.python.impl.PyCodeInsightLocalize" : {
       "source" : {
         "sig" : "5f2afa6102588230298245ca88f99727"
@@ -12,7 +17,7 @@
     },
     "consulo.python.impl.PyLocalize" : {
       "source" : {
-        "sig" : "0cd645375f2e28532460d7ea24c27b58"
+        "sig" : "e13c1b0d04719c7ecaebf44aaf903aa3"
       }
     },
     "consulo.python.impl.PyNavigationLocalize" : {
